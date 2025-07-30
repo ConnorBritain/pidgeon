@@ -1,0 +1,20 @@
+﻿Segmint.GUI
+2.0.0.0
+
+winexe
+C#
+.cs
+C:\Users\Connor.England.FUSIONMGT\OneDrive - Fusion\Documents\Code\CRE Code\hl7generator\segmint\src\Segmint.GUI\obj\Debug\net8.0-windows\
+Segmint.GUI
+none
+false
+TRACE;DEBUG;NET;NET8_0;NETCOREAPP
+C:\Users\Connor.England.FUSIONMGT\OneDrive - Fusion\Documents\Code\CRE Code\hl7generator\segmint\src\Segmint.GUI\App.xaml
+52016584475
+
+17-875782743
+234-1519948360
+MainWindow.xaml;Views\ConfigurationManagementView.xaml;Views\MessageGenerationView.xaml;Views\SettingsView.xaml;Views\ValidationDashboardView.xaml;
+
+True
+
