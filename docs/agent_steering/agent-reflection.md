@@ -32,10 +32,13 @@ After making code changes, provide a brief reflection covering:
 - Is token usage tracked and limited appropriately?
 - Could this be done with algorithmic fallback (Tier 2)?
 
-### 5. **Testing & Validation**
-- Are there unit tests for new functionality?
-- Do integration tests cover cross-standard scenarios?
-- Has performance impact been measured?
+### 5. **Testing & Validation** 
+*Following principles in `docs/agent_steering/test-philosophy.md`*
+- Are there behavior-driven tests that describe what the system does for users?
+- Do tests focus on healthcare scenarios rather than code coverage metrics?
+- Are critical healthcare validation paths covered (95%+ for domain logic)?
+- Has performance impact been measured against <50ms processing targets?
+- Do integration tests validate cross-standard workflows?
 
 ## Example Reflection Format
 
@@ -69,24 +72,27 @@ Added FHIR Patient resource generation to Core with basic fields only.
 
 ### Always Required For:
 - New standard implementations (HL7, FHIR, NCPDP)
-- Cross-standard transformations
+- Cross-standard transformations  
 - AI feature additions
 - Changes to Core vs Professional boundary
 - Performance-critical code
 - Breaking API changes
+- **Architectural exceptions** (deviations from sacred principles in `docs/roadmap/INIT.md`)
+- **Major decisions** requiring documentation in `docs/LEDGER.md`
 
 ### Red Flags to Always Explain
 
 If your changes include any of these, **detailed explanation required**:
 
-- ❌ Static classes or methods (violates DI principle)
+- ❌ Static classes for business logic (exceptions allowed per `INIT.md` for constants/pure functions)
 - ❌ Business logic depending on infrastructure
 - ❌ Hardcoded values instead of configuration
-- ❌ Exceptions for control flow (use Result<T>)
+- ❌ Exceptions for business logic control flow (exceptions allowed for framework violations)
 - ❌ Core changes for new message types (should be plugins)
 - ❌ Free features that should be paid (violates Core+ strategy)
 - ❌ Unlimited AI usage without cost control
-- ❌ Missing tests for new functionality
+- ❌ Missing tests for healthcare-critical functionality
+- ❌ Tests that focus on implementation rather than behavior
 
 ## Self-Audit Questions
 

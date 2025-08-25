@@ -10,17 +10,22 @@
 
 ## 📋 **Essential Context Documents**
 
+### **🚨 CRITICAL - Must Read for Every Session**
+1. **[`docs/roadmap/INIT.md`](docs/roadmap/INIT.md)** - 90-day foundation roadmap with SACRED architectural principles
+2. **[`docs/LEDGER.md`](docs/LEDGER.md)** - Complete development decision log and rollback procedures
+3. **[`docs/agent_steering/test-philosophy.md`](docs/agent_steering/test-philosophy.md)** - Testing strategy and behavior-driven approach
+
 ### **Agent Steering Documentation (READ FIRST)**
-1. **[`docs/agent_steering/product.md`](docs/agent_steering/product.md)** - Product vision and Core+ strategy
-2. **[`docs/agent_steering/structure.md`](docs/agent_steering/structure.md)** - Clean architecture principles
-3. **[`docs/agent_steering/tech.md`](docs/agent_steering/tech.md)** - Technology stack and patterns
-4. **[`docs/agent_steering/agent-reflection.md`](docs/agent_steering/agent-reflection.md)** - Decision framework
+4. **[`docs/agent_steering/product.md`](docs/agent_steering/product.md)** - Product vision and Core+ strategy
+5. **[`docs/agent_steering/structure.md`](docs/agent_steering/structure.md)** - Clean architecture principles
+6. **[`docs/agent_steering/tech.md`](docs/agent_steering/tech.md)** - Technology stack and patterns
+7. **[`docs/agent_steering/agent-reflection.md`](docs/agent_steering/agent-reflection.md)** - Decision framework
 
 ### **Founding Strategy Documents**
-5. **[`docs/founding_plan/core_plus_strategy.md`](docs/founding_plan/core_plus_strategy.md)** - Business model details
-6. **[`docs/founding_plan/1_founder.md`](docs/founding_plan/1_founder.md)** - Technical founder perspective
-7. **[`docs/founding_plan/2_consultant.md`](docs/founding_plan/2_consultant.md)** - Healthcare consultant insights
-8. **[`docs/founding_plan/3_investor.md`](docs/founding_plan/3_investor.md)** - Investor business case
+8. **[`docs/founding_plan/core_plus_strategy.md`](docs/founding_plan/core_plus_strategy.md)** - Business model details
+9. **[`docs/founding_plan/1_founder.md`](docs/founding_plan/1_founder.md)** - Technical founder perspective
+10. **[`docs/founding_plan/2_consultant.md`](docs/founding_plan/2_consultant.md)** - Healthcare consultant insights
+11. **[`docs/founding_plan/3_investor.md`](docs/founding_plan/3_investor.md)** - Investor business case
 
 ---
 
@@ -95,12 +100,22 @@ public Result<Message> ProcessMessage(string input)
 
 ## 🚧 **Development Guidelines**
 
+> **MANDATORY PROCESS**: Every significant change must follow the workflow in `docs/roadmap/INIT.md` and be logged in `docs/LEDGER.md`
+
+### **Development Workflow:**
+1. **Check INIT.md** - Verify change aligns with sacred architectural principles
+2. **Document decision** - Add LEDGER entry if architectural significance
+3. **Write tests first** - Follow behavior-driven approach from `test-philosophy.md`
+4. **Implement solution** - Use domain-first, plugin-based patterns
+5. **Validate with agent-reflection.md** - Ensure consistency
+6. **Update documentation** - LEDGER, roadmap, or other docs as needed
+
 ### **When Creating New Features:**
 1. **Start with domain model** - What's the healthcare concept?
 2. **Create standard adapters** - How does each standard serialize it?
 3. **Register plugins** - Add to DI container
-4. **Write tests first** - Domain, then adapters
-5. **Use Result<T>** - No exceptions for control flow
+4. **Write behavior tests first** - Healthcare scenarios, not code coverage
+5. **Use Result<T>** - No exceptions for business logic control flow
 
 ### **When Adding New Standards:**
 1. Create new namespace: `Segmint.Core.Standards.{Standard}`
@@ -109,12 +124,14 @@ public Result<Message> ProcessMessage(string input)
 4. Keep existing code unchanged
 
 ### **Before Any Commit:**
-- [ ] Domain logic has zero infrastructure dependencies
-- [ ] New features are plugins, not core changes
-- [ ] All services use dependency injection
-- [ ] Error handling uses Result<T> pattern
-- [ ] Core+ boundary respected (free vs paid features)
-- [ ] Tests pass and cover new functionality
+- [ ] **Follows sacred principles** in `INIT.md` (or exception documented in LEDGER)
+- [ ] **Domain logic has zero infrastructure dependencies**
+- [ ] **New features are plugins, not core changes**
+- [ ] **All services use dependency injection** (except allowed static utilities)
+- [ ] **Error handling uses Result<T>** for business logic
+- [ ] **Core+ boundary respected** (free vs paid features)
+- [ ] **Tests focus on behavior** not implementation details
+- [ ] **Agent reflection completed** for significant changes
 
 ### **AI Feature Development:**
 - [ ] BYOK for Professional tier (user provides OpenAI key)
@@ -157,11 +174,12 @@ public Result<Message> ProcessMessage(string input)
 
 ### **Always Use Agent Reflection**
 After any significant change, reference `agent-reflection.md` and explain:
-1. Architecture adherence
-2. Standards compliance
-3. Core+ strategy alignment
-4. AI cost management
-5. Testing strategy
+1. **Architecture adherence** - Follows sacred principles in INIT.md?
+2. **Standards compliance** - HL7/FHIR/NCPDP specifications met?
+3. **Core+ strategy alignment** - Correct tier placement?
+4. **AI cost management** - BYOK/usage limits in place?
+5. **Testing strategy** - Behavior-driven tests covering healthcare scenarios?
+6. **LEDGER documentation** - Major decisions properly logged?
 
 ---
 

@@ -13,9 +13,9 @@ segmint/
 │   ├── Segmint.Cloud/             # Cloud services & API (Proprietary)
 │   └── Segmint.AI/                # AI integration services (Proprietary)
 ├── tests/
-│   ├── Segmint.Core.Tests/        # Domain & engine tests
-│   ├── Segmint.Integration.Tests/ # Cross-standard tests
-│   └── Segmint.Performance.Tests/ # Benchmarking
+│   ├── Segmint.Core.Tests/        # Behavior-driven domain tests
+│   ├── Segmint.Integration.Tests/ # Cross-standard healthcare scenarios
+│   └── Segmint.Performance.Tests/ # <50ms processing benchmarks
 ├── docs/
 │   ├── agent_steering/            # AI agent guidance
 │   └── founding_plan/             # Strategic documents
@@ -218,29 +218,37 @@ Segmint.Core/
 ```
 
 ### Testing Structure
+*Following principles in `test-philosophy.md`*
 ```
 tests/
-├── Unit/              # Fast, isolated tests
-├── Integration/       # Cross-component tests
-├── Performance/       # Benchmarks
-└── TestData/         # Sample messages
+├── Unit/              # Behavior-driven domain tests (95% coverage critical paths)
+├── Integration/       # Healthcare workflow scenarios (25% of test suite)  
+├── Performance/       # <50ms processing benchmarks (5% of test suite)
+└── TestData/          # Anonymized real-world messages
+    ├── Epic/          # Epic implementation samples
+    ├── Cerner/        # Cerner implementation samples
+    └── Scenarios/     # Healthcare workflow test data
 ```
 
 ## Documentation Structure
 
 ```
 docs/
-├── agent_steering/          # AI agent guidance
-│   ├── product.md          # Product vision
-│   ├── structure.md        # This file
-│   ├── tech.md            # Technology stack
-│   └── agent-reflection.md # Decision framework
-├── founding_plan/          # Strategic documents
+├── roadmap/                 # Development roadmap
+│   └── INIT.md             # 90-day foundation with sacred principles
+├── LEDGER.md               # Complete decision log and rollback procedures
+├── agent_steering/         # AI agent guidance
+│   ├── product.md         # Product vision
+│   ├── structure.md       # This file
+│   ├── tech.md           # Technology stack
+│   ├── test-philosophy.md # Behavior-driven testing approach
+│   └── agent-reflection.md# Decision framework
+├── founding_plan/         # Strategic documents
 │   ├── core_plus_strategy.md
 │   ├── 1_founder.md
 │   ├── 2_consultant.md
 │   └── 3_investor.md
-└── api/                   # API documentation
+└── api/                  # API documentation
 ```
 
 ## Critical Design Principles
@@ -260,4 +268,17 @@ No exceptions for control flow. Explicit error handling with Result<T>.
 ### 5. Open Core
 Clear separation between open source (Core, CLI) and proprietary (GUI, Cloud, AI).
 
-This structure ensures Segmint can scale from a single developer using the CLI to enterprise deployments with hundreds of interfaces, without architectural refactoring.
+## Development Process Integration
+
+### **Every Development Session Should:**
+1. **Reference `docs/roadmap/INIT.md`** - Verify alignment with sacred principles
+2. **Check `docs/LEDGER.md`** - Understand current architectural state and decisions
+3. **Follow `test-philosophy.md`** - Write behavior-driven tests that describe healthcare scenarios
+4. **Use `agent-reflection.md`** - Validate consistency after significant changes
+
+### **Required Documentation Updates:**
+- **LEDGER.md**: For any architectural decisions or breaking changes
+- **test-philosophy.md**: If testing approaches evolve
+- **INIT.md**: Only for exceptions to sacred principles (requires consensus)
+
+This integrated structure ensures Segmint can scale from a single developer using the CLI to enterprise deployments with hundreds of interfaces, without architectural refactoring while maintaining complete traceability of all decisions.
