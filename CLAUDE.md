@@ -30,6 +30,51 @@
 
 ---
 
+## 🚨 **MANDATORY ERROR RESPONSE PROTOCOL**
+
+**TRIGGER**: When encountering ANY compilation errors, build failures, or runtime exceptions:
+
+### **STOP-THINK-ACT Requirement**
+1. **STOP**: Do not immediately attempt fixes
+2. **Reference methodology**: Always consult `docs/agent_steering/error-resolution-methodology.md`
+3. **Document analysis**: Explain your STOP-THINK-ACT process before implementing any solution
+4. **Get alignment**: For architectural decisions affecting base classes or abstractions, confirm approach before coding
+
+### **Error Categories Requiring Methodology**
+- **Compilation errors** (missing methods, type mismatches, interface violations)
+- **Build failures** (project reference issues, dependency problems)
+- **Runtime exceptions** (null reference, invalid operations, casting errors)
+- **Architectural conflicts** (abstract method implementations, inheritance issues)
+
+### **Trigger Phrases for User**
+If the user says any of these phrases, immediately follow the error methodology:
+- "compilation error"
+- "build failed"  
+- "doesn't implement"
+- "method not found"
+- "follow error methodology"
+
+### **Required Response Format**
+```
+🚨 ERROR METHODOLOGY CHECKPOINT
+
+STOP: [Brief description of error encountered]
+
+THINK - Root Cause Analysis:
+- Architecture Issue: [What design pattern is involved?]
+- Dependency Impact: [What else might be affected?]  
+- Cascade Effect: [Are there related errors?]
+
+ACT - Systematic Fix Plan:
+1. [Specific step 1]
+2. [Specific step 2]
+3. [Verification step]
+```
+
+**Enforcement**: Any error-fixing without following this protocol violates our senior-level development standards.
+
+---
+
 ## 🏗️ **Core Architectural Principles**
 
 ### **1. Domain-Driven Design First**

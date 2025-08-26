@@ -5,7 +5,7 @@
 using Segmint.Core.Standards.Common;
 using Segmint.Core.Standards.HL7.v23.Segments;
 
-namespace Segmint.Core.Standards.HL7.v23;
+namespace Segmint.Core.Standards.HL7.v23.Messages;
 
 /// <summary>
 /// Base class for all HL7 v2.3 messages.

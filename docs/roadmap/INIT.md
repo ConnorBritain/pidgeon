@@ -197,20 +197,37 @@ This ensures architectural coherence while allowing pragmatic flexibility when t
 **Technical Founder + Healthcare Consultant Lead**:
 
 #### **Core Architecture Setup**
-- [ ] **.NET 8 solution structure** with proper project separation
-- [ ] **Domain model design** for Patient, Medication, Provider, Encounter
-- [ ] **Plugin architecture foundation** with IStandardPlugin interface
-- [ ] **Dependency injection setup** throughout entire solution
-- [ ] **Result<T> implementation** with comprehensive error types
+- [x] **.NET 8 solution structure** with proper project separation
+- [x] **Domain model design** for Patient, Medication, Provider, Encounter
+- [x] **Plugin architecture foundation** with IStandardPlugin interface
+- [x] **Dependency injection setup** throughout entire solution
+- [x] **Result<T> implementation** with comprehensive error types
 
 #### **HL7 v2.3 Engine (Core)**
-- [ ] **HL7Field abstract base** with validation and encoding
-- [ ] **HL7Segment abstract base** with field management
-- [ ] **HL7Message abstract base** with segment orchestration
-- [ ] **Core field types**: StringField, NumericField, DateField, TimestampField
-- [ ] **Essential segments**: MSH, PID, EVN, PV1, ORC, RXE
+- [x] **HL7Field abstract base** with validation and encoding
+- [x] **HL7Segment abstract base** with field management
+- [x] **HL7Message abstract base** with segment orchestration
+- [x] **Core field types**: StringField, NumericField, DateField, TimestampField
+- [x] **Essential segments**: MSH (complete)
+- [ ] **Next priority segments**: PID, ADT^A01, RDE^O01
+
+#### **Domain Model Extensions (Post-Foundation)**
+> **Note**: Current domain models (Patient, Medication, Prescription, Provider, Encounter) provide 90% pharmacy workflow coverage. After foundation validation, extend with:
+
+**Pharmacy-Specific Domains**:
+- [ ] **Dispense** - Actual medication dispensing records (different from prescribing)
+- [ ] **Pharmacy** - Dispensing facility information with DEA registrations
+- [ ] **Insurance** - Payer coverage, prior authorization, formulary constraints
+- [ ] **Allergy** - Drug allergies, contraindications, interaction alerts
+
+**Specialized Healthcare Domains**:
+- [ ] **Location** - Healthcare facilities, departments, correctional facilities
+  - Critical for: ADT messages (transfers), correctional healthcare (inmate transfers)
+  - May integrate with existing Address model or require separate entity
+- [ ] **Order** - General order concept beyond prescriptions (labs, imaging, procedures)
 
 **Success Criteria**:
+- Generate valid HL7 ADT^A01 message programmatically  
 - Generate valid HL7 RDE^O01 message programmatically
 - Parse existing HL7 message into domain objects
 - Zero compilation errors, 90%+ test coverage
