@@ -20,12 +20,13 @@
 5. **[`docs/agent_steering/structure.md`](docs/agent_steering/structure.md)** - Clean architecture principles
 6. **[`docs/agent_steering/tech.md`](docs/agent_steering/tech.md)** - Technology stack and patterns
 7. **[`docs/agent_steering/agent-reflection.md`](docs/agent_steering/agent-reflection.md)** - Decision framework
+8. **[`docs/agent_steering/error-resolution-methodology.md`](docs/agent_steering/error-resolution-methodology.md)** - STOP-THINK-ACT error handling framework
 
 ### **Founding Strategy Documents**
-8. **[`docs/founding_plan/core_plus_strategy.md`](docs/founding_plan/core_plus_strategy.md)** - Business model details
-9. **[`docs/founding_plan/1_founder.md`](docs/founding_plan/1_founder.md)** - Technical founder perspective
-10. **[`docs/founding_plan/2_consultant.md`](docs/founding_plan/2_consultant.md)** - Healthcare consultant insights
-11. **[`docs/founding_plan/3_investor.md`](docs/founding_plan/3_investor.md)** - Investor business case
+9. **[`docs/founding_plan/core_plus_strategy.md`](docs/founding_plan/core_plus_strategy.md)** - Business model details
+10. **[`docs/founding_plan/1_founder.md`](docs/founding_plan/1_founder.md)** - Technical founder perspective
+11. **[`docs/founding_plan/2_consultant.md`](docs/founding_plan/2_consultant.md)** - Healthcare consultant insights
+12. **[`docs/founding_plan/3_investor.md`](docs/founding_plan/3_investor.md)** - Investor business case
 
 ---
 
@@ -109,6 +110,13 @@ public Result<Message> ProcessMessage(string input)
 4. **Implement solution** - Use domain-first, plugin-based patterns
 5. **Validate with agent-reflection.md** - Ensure consistency
 6. **Update documentation** - LEDGER, roadmap, or other docs as needed
+
+### **⚠️ When Encountering Errors - STOP-THINK-ACT**
+**CRITICAL**: Follow [`docs/agent_steering/error-resolution-methodology.md`](docs/agent_steering/error-resolution-methodology.md)
+- **STOP**: Don't immediately fix - understand the full error context
+- **THINK**: Perform root cause analysis, consider architectural implications
+- **ACT**: Make minimal, principled changes that address the root cause
+- **AVOID**: Trial-and-error fixes, compound changes, band-aid solutions
 
 ### **When Creating New Features:**
 1. **Start with domain model** - What's the healthcare concept?

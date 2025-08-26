@@ -10,6 +10,11 @@ Use this framework **after completing any code changes** to explain your decisio
 
 After making code changes, provide a brief reflection covering:
 
+### 0. **Error Resolution Process (If Applicable)**
+- If you encountered errors: Did you follow the STOP-THINK-ACT framework from [`error-resolution-methodology.md`](error-resolution-methodology.md)?
+- Did you identify root causes before implementing fixes?
+- Were your changes minimal and principled?
+
 ### 1. **Architecture Adherence Check**
 - Did you follow Domain-Driven Design principles?
 - Is business logic independent of infrastructure?
