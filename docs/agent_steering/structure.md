@@ -2,20 +2,20 @@
 
 ## Solution Organization
 
-Segmint follows **Domain-Driven Design** with **Clean Architecture** principles, ensuring the core business logic remains independent of infrastructure concerns:
+Pidgeon follows **Domain-Driven Design** with **Clean Architecture** principles, ensuring the core business logic remains independent of infrastructure concerns:
 
 ```
-segmint/
+pidgeon/
 ├── src/
-│   ├── Segmint.Core/              # Domain logic & standards engines (MPL 2.0)
-│   ├── Segmint.CLI/               # Command-line interface (MPL 2.0)
-│   ├── Segmint.GUI/               # Desktop application (Proprietary)
-│   ├── Segmint.Cloud/             # Cloud services & API (Proprietary)
-│   └── Segmint.AI/                # AI integration services (Proprietary)
+│   ├── Pidgeon.Core/              # Domain logic & standards engines (MPL 2.0)
+│   ├── Pidgeon.CLI/               # Command-line interface (MPL 2.0)
+│   ├── Pidgeon.GUI/               # Desktop application (Proprietary)
+│   ├── Pidgeon.Cloud/             # Cloud services & API (Proprietary)
+│   └── Pidgeon.AI/                # AI integration services (Proprietary)
 ├── tests/
-│   ├── Segmint.Core.Tests/        # Behavior-driven domain tests
-│   ├── Segmint.Integration.Tests/ # Cross-standard healthcare scenarios
-│   └── Segmint.Performance.Tests/ # <50ms processing benchmarks
+│   ├── Pidgeon.Core.Tests/        # Behavior-driven domain tests
+│   ├── Pidgeon.Integration.Tests/ # Cross-standard healthcare scenarios
+│   └── Pidgeon.Performance.Tests/ # <50ms processing benchmarks
 ├── docs/
 │   ├── agent_steering/            # AI agent guidance
 │   └── founding_plan/             # Strategic documents
@@ -24,7 +24,7 @@ segmint/
 
 ## Project Responsibilities
 
-### Segmint.Core (Open Source)
+### Pidgeon.Core (Open Source)
 - **Purpose**: Universal healthcare standards engine
 - **Contains**: Domain models, parsers, generators, validators
 - **Architecture**: Plugin-based with standard adapters
@@ -40,19 +40,19 @@ segmint/
   Validation/      # Multi-level validation pipeline
   ```
 
-### Segmint.CLI (Open Source)
+### Pidgeon.CLI (Open Source)
 - **Purpose**: Command-line interface for all operations
 - **Contains**: Commands, console output, configuration
 - **Pattern**: Command pattern with System.CommandLine
 - **Key Commands**:
   ```bash
-  segmint generate --type ADT --format hl7
-  segmint validate --file message.hl7 --standard hl7v23
-  segmint transform --from hl7 --to fhir --input file.hl7
-  segmint config infer --samples ./messages/
+  pidgeon generate --type ADT --format hl7
+  pidgeon validate --file message.hl7 --standard hl7v23
+  pidgeon transform --from hl7 --to fhir --input file.hl7
+  pidgeon config infer --samples ./messages/
   ```
 
-### Segmint.GUI (Proprietary)
+### Pidgeon.GUI (Proprietary)
 - **Purpose**: Professional desktop application
 - **Contains**: WPF/MAUI views, visual designers, workflows
 - **Architecture**: MVVM with dependency injection
@@ -62,7 +62,7 @@ segmint/
   - Validation studio
   - Batch processing
 
-### Segmint.Cloud (Proprietary)
+### Pidgeon.Cloud (Proprietary)
 - **Purpose**: Enterprise cloud services
 - **Contains**: REST APIs, multi-tenancy, collaboration
 - **Architecture**: ASP.NET Core with Azure integration
@@ -72,7 +72,7 @@ segmint/
   - Team workspaces
   - Audit logging
 
-### Segmint.AI (Proprietary)
+### Pidgeon.AI (Proprietary)
 - **Purpose**: AI augmentation services
 - **Contains**: LLM integration, mapping engine, chatbot
 - **Pattern**: Strategy pattern for multiple AI providers
@@ -87,7 +87,7 @@ segmint/
 ### Domain-Driven Design
 ```csharp
 // Core domain models (standard-agnostic)
-namespace Segmint.Core.Domain
+namespace Pidgeon.Core.Domain
 {
     public record Patient(
         string Id,
@@ -108,7 +108,7 @@ namespace Segmint.Core.Domain
 ### Plugin Architecture
 ```csharp
 // Standards are plugins
-namespace Segmint.Core.Standards.Common
+namespace Pidgeon.Core.Standards.Common
 {
     public interface IStandardAdapter<TDomain>
     {
@@ -119,7 +119,7 @@ namespace Segmint.Core.Standards.Common
 }
 
 // Each standard implements the adapter
-namespace Segmint.Core.Standards.HL7
+namespace Pidgeon.Core.Standards.HL7
 {
     public class HL7Adapter : IStandardAdapter<Prescription>
     {
@@ -176,8 +176,8 @@ public Result<HL7Message> GenerateMessage(Patient patient)
 ## Naming Conventions
 
 ### Projects
-- **Segmint.{Component}**: Core components
-- **Segmint.{Component}.Tests**: Test projects
+- **Pidgeon.{Component}**: Core components
+- **Pidgeon.{Component}.Tests**: Test projects
 
 ### Namespaces
 - **Domain**: Business entities
@@ -199,7 +199,7 @@ public Result<HL7Message> GenerateMessage(Patient patient)
 
 ### Core Library
 ```
-Segmint.Core/
+Pidgeon.Core/
 ├── Domain/              # Business entities
 │   ├── Patient.cs
 │   ├── Medication.cs
@@ -281,4 +281,4 @@ Clear separation between open source (Core, CLI) and proprietary (GUI, Cloud, AI
 - **test-philosophy.md**: If testing approaches evolve
 - **INIT.md**: Only for exceptions to sacred principles (requires consensus)
 
-This integrated structure ensures Segmint can scale from a single developer using the CLI to enterprise deployments with hundreds of interfaces, without architectural refactoring while maintaining complete traceability of all decisions.
+This integrated structure ensures Pidgeon can scale from a single developer using the CLI to enterprise deployments with hundreds of interfaces, without architectural refactoring while maintaining complete traceability of all decisions.

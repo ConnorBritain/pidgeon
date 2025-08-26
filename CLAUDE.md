@@ -1,4 +1,4 @@
-# Segmint Healthcare Interoperability Platform - Agent Context
+# Pidgeon Healthcare Interoperability Platform - Agent Context
 
 ## 🎯 **Strategic Direction: Core+ Architecture & Multi-Standard Excellence**
 
@@ -82,12 +82,12 @@ ACT - Systematic Fix Plan:
 ### **1. Domain-Driven Design First**
 ```csharp
 // ✅ Standards-agnostic domain models
-namespace Segmint.Core.Domain {
+namespace Pidgeon.Core.Domain {
     public record Prescription(Patient Patient, Medication Drug, Provider Prescriber);
 }
 
 // ✅ Standards as adapters
-namespace Segmint.Core.Standards {
+namespace Pidgeon.Core.Standards {
     public interface IStandardAdapter<T> {
         string Generate(T domain);
         T Parse(string message);
@@ -176,7 +176,7 @@ public Result<Message> ProcessMessage(string input)
 5. **Use Result<T>** - No exceptions for business logic control flow
 
 ### **When Adding New Standards:**
-1. Create new namespace: `Segmint.Core.Standards.{Standard}`
+1. Create new namespace: `Pidgeon.Core.Standards.{Standard}`
 2. Implement `IStandardAdapter<T>` interfaces
 3. Add plugin registration
 4. Keep existing code unchanged

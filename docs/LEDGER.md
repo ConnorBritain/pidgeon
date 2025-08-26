@@ -1,8 +1,34 @@
-# Segmint Development Ledger
+# Pidgeon Development Ledger
 
 **Purpose**: Comprehensive development changelog for architectural decisions, breaking changes, and reference points for rollbacks.  
 **Audience**: Development teams, AI agents, technical stakeholders  
 **Maintenance**: Updated for every significant architectural decision or breaking change
+
+---
+
+## 🚨 **BRAND CHANGE NOTICE - August 26, 2025**
+
+**IMPORTANT**: As of August 26, 2025, this project has been rebranded from **Segmint** to **Pidgeon**.
+
+### **Why Pidgeon?**
+- **PID + Gen**: Clever wordplay combining Patient ID (PID) with Generation
+- **Message Delivery**: Pigeons are legendary message carriers - perfect metaphor for healthcare interoperability
+- **Clear Trademark**: No conflicts with existing fintech companies (Segmint was taken)
+- **Memorable & Professional**: Easy to remember, professional yet approachable
+
+### **What Changed:**
+- All namespaces: `Segmint.*` → `Pidgeon.*`
+- Solution/Project files: `Segmint.sln` → `Pidgeon.sln`
+- Package names: Will be published as `Pidgeon.Core`, `Pidgeon.CLI`, etc.
+- Documentation: All references updated to reflect new branding
+
+### **What Didn't Change:**
+- All architectural decisions remain intact
+- API contracts are identical (just namespace changes)
+- Core functionality unchanged
+- Sacred principles still sacred
+
+**Note**: Historical entries below may still reference "Segmint" as they reflect the state at time of writing.
 
 ---
 
@@ -52,11 +78,11 @@ Each entry includes:
 
 ```csharp
 // Architectural Pattern Reference
-namespace Segmint.Core.Domain {
+namespace Pidgeon.Core.Domain {
     public record Patient(string Id, PersonName Name, DateTime BirthDate);
 }
 
-namespace Segmint.Core.Standards.HL7 {
+namespace Pidgeon.Core.Standards.HL7 {
     public interface IHL7Adapter<TDomain> {
         Result<string> Serialize(TDomain domain);
         Result<TDomain> Parse(string hl7Message);
@@ -74,21 +100,21 @@ namespace Segmint.Core.Standards.HL7 {
 
 **Tier Structure**:
 ```
-🆓 Segmint.Core (MPL 2.0)
+🆓 Pidgeon.Core (MPL 2.0)
 ├── Domain models (Patient, Prescription, etc.)
 ├── Basic HL7/FHIR/NCPDP support
 ├── Configuration inference (basic)
 ├── CLI interface
 └── Compatibility validation
 
-💼 Segmint.Professional ($299 one-time)
+💼 Pidgeon.Professional ($299 one-time)
 ├── GUI application  
 ├── Advanced configuration intelligence
 ├── AI features (BYOK)
 ├── Vendor template library
 └── Batch processing
 
-🏢 Segmint.Enterprise ($99-199/month)
+🏢 Pidgeon.Enterprise ($99-199/month)
 ├── Cloud services
 ├── Team collaboration
 ├── Real-time monitoring
@@ -1160,6 +1186,140 @@ src/Segmint.Core/Standards/Common/
 - **Core+ Strategy**: Clean architecture supports professional feature additions  
 - **Testing**: Focused files enable better unit test coverage
 - **Performance**: No impact on <50ms processing targets
+
+### **2025-08-26 - Architectural Planning & Multi-Standard Strategy**
+
+#### **🏗️ ARCH-012: Multi-Standard Configuration Intelligence Architecture**
+**Date**: 2025-08-26  
+**Decision**: Design comprehensive multi-standard configuration intelligence with healthcare compliance considerations  
+**Rationale**: Real-world healthcare requires vendor-specific configuration across HL7, FHIR, NCPDP standards with PHI protection  
+**Impact**: Establishes architecture for configuration inference, de-identification, and cross-standard analytics  
+**Rollback Impact**: Would lose key competitive differentiator and healthcare market positioning
+
+**Hierarchical Configuration Model**:
+```yaml
+Configuration Address System:
+  VENDOR -> STANDARD -> MESSAGE_TYPE
+  Examples:
+    - CorEMR-HL7v23-ADT^A01
+    - Epic-FHIRv4-Patient  
+    - SureScripts-NCPDP-NewRx
+```
+
+**Key Architectural Decisions**:
+- **Incremental Config Building**: Additive analysis as new message types discovered
+- **Consistency Mapping**: Same real identities → same anonymized identities across sessions
+- **Plugin-Based Standards**: Each standard (HL7, FHIR, NCPDP) has dedicated inference plugin
+- **Repository Pattern**: Abstract storage (file → SQLite → PostgreSQL → cloud) based on tier
+
+**Dependencies**: All configuration intelligence features, vendor template library, team collaboration  
+**Alternatives Considered**: 
+- Single standard focus (rejected: limits market addressability)
+- Generic configuration approach (rejected: healthcare needs vendor-specific patterns)
+
+---
+
+#### **📚 DOCS-001: Architectural Planning Documentation Structure**
+**Date**: 2025-08-26  
+**Decision**: Create `/docs/arch_planning/` for pre-implementation architectural planning  
+**Rationale**: Complex healthcare compliance and multi-standard architecture requires deep planning before coding  
+**Impact**: Provides foundation for major architectural decisions with proper research and alternatives analysis
+
+**Documents Created**:
+```
+docs/arch_planning/
+├── configuration_intelligence.md - Multi-standard inference architecture
+├── database_considerations.md - Storage strategy across tiers with healthcare compliance
+├── de_identification_strategy.md - HIPAA-compliant anonymization for real message analysis
+└── security_compliance.md - Healthcare compliance roadmap (SOC2, HIPAA, etc.)
+```
+
+**Strategic Planning Outcomes**:
+- **Configuration Intelligence**: Hierarchical vendor/standard/message addressing with incremental building
+- **Database Strategy**: On-premise first for healthcare compliance, hybrid cloud for collaboration
+- **De-Identification**: Privacy-first approach enabling real message analysis without PHI concerns
+- **Security Roadmap**: Phase approach from foundation ($100K) to full compliance ($500K+)
+
+**Dependencies**: All future development prioritization and architectural implementation  
+**Alternatives Considered**: Code-first approach (rejected: too complex for proper planning)
+
+---
+
+#### **🏥 ARCH-013: Healthcare-First Database Strategy**
+**Date**: 2025-08-26  
+**Decision**: Healthcare compliance constraints drive database architecture decisions  
+**Rationale**: PHI concerns, Windows dominance, on-premise preferences require specialized approach  
+**Impact**: Database selection and deployment strategy optimized for healthcare IT environments  
+**Rollback Impact**: Would lose healthcare market differentiation and compliance advantages
+
+**Healthcare Constraint Analysis**:
+- **Windows Dominance**: 85% of healthcare IT environments Windows-based
+- **On-Premise Preference**: Healthcare organizations extremely cautious about cloud PHI
+- **Compliance Requirements**: HIPAA, HITECH, state privacy laws drive architecture
+- **BAA Requirements**: Cloud services need Business Associate Agreements
+
+**Tiered Database Strategy**:
+```yaml
+Free CLI: JSON files (zero compliance burden)
+Professional: SQLite local (customer-controlled, encrypted)
+Team: PostgreSQL on-premise (customer infrastructure)  
+Enterprise: SQL Server or PostgreSQL (customer choice)
+```
+
+**SQL Server Consideration**: Added for Enterprise tier due to healthcare adoption and Windows integration
+
+**Dependencies**: All persistence features, team collaboration, enterprise deployment  
+**Alternatives Considered**: Cloud-first approach (rejected: healthcare compliance barriers)
+
+---
+
+#### **🔐 ARCH-014: De-Identification as Competitive Differentiator**
+**Date**: 2025-08-26  
+**Decision**: Integrate HIPAA-compliant de-identification to enable real message analysis without PHI concerns  
+**Rationale**: Removes biggest barrier to cloud adoption while providing real-world accuracy  
+**Impact**: Creates unique "Privacy-First Configuration Intelligence" market position  
+**Rollback Impact**: Would lose major competitive advantage and cloud processing capabilities
+
+**De-Identification Strategy**:
+- **Phase 1**: Safe Harbor method (18 identifier removal)
+- **Phase 2**: Consistency mapping for longitudinal analysis  
+- **Phase 3**: Expert Determination for statistical privacy
+
+**Consistent Anonymization Engine**:
+```csharp
+// Same real patient always gets same fake identity
+"John Smith MRN_123456" → "John_001 Doe_001 FAKE_789123"  // Session A
+"John Smith MRN_123456" → "John_001 Doe_001 FAKE_789123"  // Session B (same!)
+```
+
+**Business Model Integration**:
+- **Free**: Basic de-identification (Safe Harbor)
+- **Professional**: Consistent anonymization across sessions
+- **Team**: Cloud processing of de-identified data
+- **Enterprise**: Custom privacy controls and re-identification
+
+**Legal Considerations**: Safe Harbor implementation with legal review, conservative approach treating as PHI until confirmed
+
+**Dependencies**: Configuration intelligence development (integrated from start)  
+**Alternatives Considered**: Avoid real messages entirely (rejected: less accurate), Full HIPAA compliance (rejected: $500K+ cost)
+
+---
+
+#### **🎯 IMPL-001: Sequential Development Strategy Decision**
+**Date**: 2025-08-26  
+**Decision**: Implement configuration intelligence first, add de-identification as Phase 2  
+**Rationale**: Validate core inference algorithms with synthetic data before adding privacy complexity  
+**Impact**: Faster validation of core value proposition while preserving privacy-first architecture  
+
+**Implementation Sequence**:
+1. **Phase 1 (Weeks 3-6)**: Configuration intelligence with synthetic/test messages
+2. **Phase 2 (Weeks 7-10)**: De-identification service as pluggable component  
+3. **Phase 3 (Weeks 11+)**: Cloud processing of de-identified data
+
+**Architecture Planning**: De-identification interfaces designed but not implemented initially
+
+**Dependencies**: Successful configuration intelligence validation enables privacy features  
+**Alternatives Considered**: Integrated from start (rejected: two major features to debug simultaneously)
 
 ---
 

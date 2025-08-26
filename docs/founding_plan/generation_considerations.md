@@ -1,4 +1,4 @@
-# Segmint Generation Service Implementation Strategy
+# Pidgeon Generation Service Implementation Strategy
 
 **Document Version**: 1.0  
 **Date**: 2025-01-26  

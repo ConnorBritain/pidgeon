@@ -1,4 +1,4 @@
-# Segmint Core+ Strategy
+# Pidgeon Core+ Strategy
 
 ## Strategic Vision: Maximum Adoption Through Selective Generosity
 

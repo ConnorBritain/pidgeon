@@ -1,4 +1,4 @@
-# Segmint Healthcare Interoperability Platform - Business Model
+# Pidgeon Healthcare Interoperability Platform - Business Model
 
 **Document Version**: 1.1  
 **Date**: 2025-01-26  

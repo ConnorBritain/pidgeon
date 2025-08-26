@@ -1,0 +1,31 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+using System.Text.Json.Serialization;
+
+namespace Pidgeon.Core.Types;
+
+/// <summary>
+/// Represents a message type pattern observed during analysis.
+/// </summary>
+public record MessagePattern
+{
+    /// <summary>
+    /// HL7 message type (e.g., "ADT^A01", "RDE^O01").
+    /// </summary>
+    [JsonPropertyName("messageType")]
+    public string MessageType { get; init; } = default!;
+
+    /// <summary>
+    /// Frequency of this message type in the analyzed sample.
+    /// </summary>
+    [JsonPropertyName("frequency")]
+    public int Frequency { get; init; }
+
+    /// <summary>
+    /// Segment patterns within this message type.
+    /// </summary>
+    [JsonPropertyName("segmentPatterns")]
+    public Dictionary<string, SegmentPattern> SegmentPatterns { get; init; } = new();
+}

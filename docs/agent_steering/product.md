@@ -1,6 +1,6 @@
 # Product Overview
 
-## Segmint Healthcare Interoperability Platform
+## Pidgeon Healthcare Interoperability Platform
 
 An AI-augmented, universal healthcare standards platform that provides free basic generation for HL7, FHIR, and NCPDP SCRIPT, with premium features for professional productivity and enterprise governance.
 
@@ -126,4 +126,4 @@ Cloud Services:
 - Premium features professionals need
 - Enterprise governance organizations require
 
-Unlike Mirth (now closed), Rhapsody ($50K+), or cloud-only solutions (Redox), Segmint offers a modern, open platform with AI augmentation at a fraction of the cost.
+Unlike Mirth (now closed), Rhapsody ($50K+), or cloud-only solutions (Redox), Pidgeon offers a modern, open platform with AI augmentation at a fraction of the cost.

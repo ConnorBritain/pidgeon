@@ -1,4 +1,4 @@
-# Segmint Healthcare Interoperability Platform - Initiative Roadmap
+# Pidgeon Healthcare Interoperability Platform - Initiative Roadmap
 
 **Document Version**: 1.1  
 **Date**: Updated 2025-01-26  
@@ -46,13 +46,13 @@
 ### **1. Domain-Driven Design Foundation**
 ```csharp
 // ✅ SACRED: Domain models are standards-agnostic
-namespace Segmint.Core.Domain {
+namespace Pidgeon.Core.Domain {
     public record Patient(string Id, PersonName Name, DateTime BirthDate);
     public record Prescription(Patient Patient, Medication Drug, Provider Prescriber);
 }
 
 // ✅ SACRED: Standards are adapters around domain
-namespace Segmint.Core.Standards.HL7 {
+namespace Pidgeon.Core.Standards.HL7 {
     public interface IHL7Adapter<TDomain> {
         string Serialize(TDomain domain);
         TDomain Parse(string hl7Message);
@@ -281,10 +281,10 @@ This ensures architectural coherence while allowing pragmatic flexibility when t
 
 #### **Command-Line Interface**
 - [ ] **System.CommandLine setup** with proper command structure
-- [ ] **Generate command**: `segmint generate --type RDE --format hl7`
-- [ ] **Validate command**: `segmint validate --file message.hl7 --mode compatibility`
-- [ ] **Analyze command**: `segmint analyze --samples ./epic_messages/ --output epic.json`
-- [ ] **Config commands**: `segmint config list|diff|validate`
+- [ ] **Generate command**: `pidgeon generate --type RDE --format hl7`
+- [ ] **Validate command**: `pidgeon validate --file message.hl7 --mode compatibility`
+- [ ] **Analyze command**: `pidgeon analyze --samples ./epic_messages/ --output epic.json`
+- [ ] **Config commands**: `pidgeon config list|diff|validate`
 
 #### **Developer Experience**
 - [ ] **Rich console output** with Spectre.Console (tables, progress bars)

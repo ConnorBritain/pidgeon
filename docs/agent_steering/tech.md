@@ -105,10 +105,10 @@ dotnet build
 dotnet test
 
 # Run CLI
-dotnet run --project src/Segmint.CLI -- generate --type ADT --format hl7
+dotnet run --project src/Pidgeon.CLI -- generate --type ADT --format hl7
 
 # Run benchmarks
-dotnet run -c Release --project tests/Segmint.Performance.Tests
+dotnet run -c Release --project tests/Pidgeon.Performance.Tests
 
 # Create release build
 dotnet publish -c Release -r win-x64 --self-contained
@@ -119,7 +119,7 @@ dotnet publish -c Release -r win-x64 --self-contained
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY ./publish .
-ENTRYPOINT ["dotnet", "Segmint.Cloud.dll"]
+ENTRYPOINT ["dotnet", "Pidgeon.Cloud.dll"]
 ```
 
 ## Package Management
@@ -218,4 +218,4 @@ jobs:
 - **Health checks**: Service availability
 - **Custom metrics**: Business KPIs
 
-This technology stack balances modern capabilities with enterprise requirements, ensuring Segmint can scale from individual developers to large healthcare organizations.
+This technology stack balances modern capabilities with enterprise requirements, ensuring Pidgeon can scale from individual developers to large healthcare organizations.
