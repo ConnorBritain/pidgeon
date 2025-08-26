@@ -4,6 +4,7 @@
 
 using Microsoft.Extensions.Logging;
 using Segmint.Core.Extensions;
+using Segmint.Core.Generation;
 using System.CommandLine;
 
 namespace Segmint.CLI.Commands;
@@ -13,11 +14,11 @@ namespace Segmint.CLI.Commands;
 /// </summary>
 public class GenerateCommand : BaseCommand
 {
-    private readonly IGenerationService _generationService;
+    private readonly Segmint.Core.Extensions.IGenerationService _generationService;
 
     public GenerateCommand(
         ILogger<GenerateCommand> logger,
-        IGenerationService generationService) 
+        Segmint.Core.Extensions.IGenerationService generationService) 
         : base(logger)
     {
         _generationService = generationService;

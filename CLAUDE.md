@@ -23,10 +23,12 @@
 8. **[`docs/agent_steering/error-resolution-methodology.md`](docs/agent_steering/error-resolution-methodology.md)** - STOP-THINK-ACT error handling framework
 
 ### **Founding Strategy Documents**
-9. **[`docs/founding_plan/core_plus_strategy.md`](docs/founding_plan/core_plus_strategy.md)** - Business model details
-10. **[`docs/founding_plan/1_founder.md`](docs/founding_plan/1_founder.md)** - Technical founder perspective
-11. **[`docs/founding_plan/2_consultant.md`](docs/founding_plan/2_consultant.md)** - Healthcare consultant insights
-12. **[`docs/founding_plan/3_investor.md`](docs/founding_plan/3_investor.md)** - Investor business case
+9. **[`docs/founding_plan/business_model.md`](docs/founding_plan/business_model.md)** - **NEW: Crystallized subscription-first revenue model**
+10. **[`docs/founding_plan/generation_considerations.md`](docs/founding_plan/generation_considerations.md)** - **NEW: Generation service architecture & AI integration**
+11. **[`docs/founding_plan/core_plus_strategy.md`](docs/founding_plan/core_plus_strategy.md)** - Original business model details
+12. **[`docs/founding_plan/1_founder.md`](docs/founding_plan/1_founder.md)** - Technical founder perspective
+13. **[`docs/founding_plan/2_consultant.md`](docs/founding_plan/2_consultant.md)** - Healthcare consultant insights
+14. **[`docs/founding_plan/3_investor.md`](docs/founding_plan/3_investor.md)** - Investor business case
 
 ---
 
@@ -122,25 +124,28 @@ public Result<Message> ProcessMessage(string input)
 
 ---
 
-## 🎯 **Core+ Business Model**
+## 🎯 **Core+ Business Model** 
+*See [`docs/founding_plan/business_model.md`](docs/founding_plan/business_model.md) for complete details*
 
 ### **🆓 FREE CORE (MPL 2.0)**
-- **HL7 v2.3**: Complete engine with all message types
+- **Algorithmic Generation**: 25 medications, 50 names (70% common case coverage)
+- **HL7 v2.3**: Complete engine with all message types  
 - **FHIR R4**: Basic resources (Patient, Observation, MedicationRequest)
 - **NCPDP SCRIPT**: Basic messages (NewRx, Refill, Cancel)
-- **Universal**: CLI, domain models, validation
+- **CLI Interface**: Full command-line functionality
+- **Deterministic Testing**: Seeds for reproducible generation
 
-### **💼 PROFESSIONAL ($299 one-time)**
-- Advanced message types and features
-- Desktop GUI application
-- AI features with BYOK
-- Visual designers and tools
+### **💼 SUBSCRIPTION TIERS (Primary Revenue)**
+- **Professional ($29/month)**: Live datasets, AI enhancement (BYOK), cloud API
+- **Professional + Vendor Templates ($49/month)**: Epic/Cerner specific formatting  
+- **Team ($99/month)**: Collaboration features, team management, priority support
+- **Enterprise ($199/month per seat)**: Unlimited AI, custom datasets, SSO
 
-### **🏢 ENTERPRISE ($99-199/month per seat)**
-- Cross-standard transformation
-- Team collaboration and governance
-- Cloud services with SLA
-- Unlimited AI features
+### **🎁 ONE-TIME RESCUE OFFER ($299 - Downsell Only)**  
+- **Desktop GUI**: Full-featured application
+- **"B-Level" Datasets**: 150+ medications (static, 6+ months old)
+- **Batch Processing**: CSV export, bulk generation
+- **No Subscriptions**: Offline-focused, community support only
 
 ---
 
@@ -186,11 +191,13 @@ public Result<Message> ProcessMessage(string input)
 - [ ] **Tests focus on behavior** not implementation details
 - [ ] **Agent reflection completed** for significant changes
 
-### **AI Feature Development:**
-- [ ] BYOK for Professional tier (user provides OpenAI key)
-- [ ] Usage tracking for Enterprise tier
-- [ ] Algorithmic fallback when AI unavailable (Tier 2)
-- [ ] Token limits to control costs
+### **Generation Service Development:**
+*See [`docs/founding_plan/generation_considerations.md`](docs/founding_plan/generation_considerations.md) for architecture details*
+- [ ] **Two-Tier Architecture**: Algorithmic (free) + AI enhancement (subscription)
+- [ ] **BYOK for Professional**: User provides OpenAI/Anthropic keys
+- [ ] **Algorithmic Fallback**: Always works without AI dependencies
+- [ ] **Usage Tracking**: Token counting and cost allocation for Enterprise
+- [ ] **Dataset API**: Live specialty datasets for subscription tiers
 
 ---
 

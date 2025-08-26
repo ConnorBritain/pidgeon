@@ -700,6 +700,90 @@ segmint info
 
 ---
 
+### **2025-08-26 - Generation Architecture Investigation**
+
+#### **💡 RESEARCH-001: Generation Service Architecture Exploration**
+**Issue**: CLI v1 blocked by NotImplementedException in GenerationService  
+**Discovery**: Attempted plugin-based approach without researching original AI architecture intent  
+**Status**: **COMPLETED** ✅ - Original architecture intent documented  
+
+**Investigation Findings**:
+- CLI successfully accepts `segmint generate --type ADT --output test.hl7`
+- Current `IGenerationService.GenerateSyntheticDataAsync()` throws NotImplementedException
+- Archive documents reference two-tier generation system (AI + Algorithmic)
+- User guidance indicates original plans for separate Segmint.AI project
+
+**Research Completed - Key Findings from Founding Documents**:
+
+**Two-Tier Generation System** (from `GENERATION.md`):
+- **Tier 1: AI-Enhanced Generation** (with API keys) - Uses LLMs for contextually perfect data
+- **Tier 2: Algorithmic Generation** (without API keys) - Uses curated healthcare datasets
+- Both tiers generate completely synthetic, HIPAA-compliant data
+- AI features clearly marked as premium/professional tier
+
+**Core+ Business Model Boundaries** (from `founding_plan/*.md`):
+- 🆓 **FREE CORE (MPL 2.0)**: Basic generation with algorithmic fallback
+- 💼 **PROFESSIONAL ($299)**: AI features with BYOK (Bring Your Own Key)
+- 🏢 **ENTERPRISE ($99-199/month)**: Unlimited AI features, cloud services
+
+**AI Architecture Philosophy** (from `1_founder.md`):
+- "AI Changes Everything (If You Let It)" - Design for AI from day one
+- Streaming responses for LLM integration
+- Token tracking from day one
+- Fallback paths for when AI fails
+- Cost allocation per customer
+
+**Sacred Architectural Principle** (from `INIT.md`):
+- Domain-first architecture: Healthcare concepts drive design
+- Plugin extensibility: New standards as plugins
+- AI as augmentation, not dependency
+- BYOK model prevents cost explosion
+
+**No Explicit "Segmint.AI" Separation Found**:
+- Documents consistently reference AI as integrated features
+- AI positioned as premium tier enhancement, not separate product
+- Generation service should be unified with AI as optional enhancement
+
+**Recommended Architecture**:
+```csharp
+namespace Segmint.Core.Generation {
+    public interface IGenerationService {
+        Result<Patient> GeneratePatient(GenerationOptions options);
+    }
+    
+    public class GenerationOptions {
+        public bool UseAI { get; set; } = false;
+        public string? ApiKey { get; set; }
+        public AIProvider Provider { get; set; } = AIProvider.None;
+        public PatientType Type { get; set; } = PatientType.General;
+    }
+}
+```
+
+**Architecture Resolution**:
+1. **Core vs AI Boundary**: AI is an enhancement layer in Core, not separate project
+2. **Plugin Responsibility**: Plugins handle parsing/validation; Generation service handles data
+3. **Service Integration**: Single IGenerationService with AI options
+4. **Business Model**: Tier 1 (AI) = Professional/Enterprise, Tier 2 (Algorithmic) = Core
+
+**Next Steps**: 
+1. ✅ Research founding documents for original AI architecture intent
+2. 🔄 Design proper Core vs AI integration (not separation)
+3. ⏳ Implement unified generation service with two-tier approach
+
+**Dependencies**: Founding documents research (✅ completed)  
+**Implementation Strategy**: Unified service with AI enhancement options
+
+**Final Architecture Decision**:
+Based on comprehensive founding document analysis, generation service will follow unified AI-enhanced approach with subscription-first business model detailed in [`docs/founding_plan/business_model.md`](business_model.md) and [`docs/founding_plan/generation_considerations.md`](generation_considerations.md).
+
+**Key Implementation Points**:
+- **Two-tier generation**: Algorithmic (free) + AI enhancement (subscription)
+- **Business model alignment**: Free tier (25 meds), Subscription tiers (live datasets, AI), One-time rescue ($299 with "B-level" datasets)
+- **Sacred principles compliance**: Domain-driven, plugin architecture, DI throughout, Result<T> pattern
+
+---
+
 ## 🎯 **Future LEDGER Sections**
 
 *(These sections will be added as development progresses)*

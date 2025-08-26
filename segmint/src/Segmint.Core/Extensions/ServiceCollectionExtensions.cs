@@ -5,6 +5,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Segmint.Core.Standards.Common;
+using Segmint.Core.Domain;
 
 namespace Segmint.Core.Extensions;
 
@@ -28,6 +29,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidationService, ValidationService>();
         services.AddScoped<IGenerationService, GenerationService>();
         services.AddScoped<ITransformationService, TransformationService>();
+        
+        // Add domain-based generation services
+        services.AddScoped<Generation.IGenerationService, Generation.Algorithmic.AlgorithmicGenerationService>();
         
         // Add configuration services
         services.AddScoped<IConfigurationInferenceService, ConfigurationInferenceService>();
@@ -218,7 +222,7 @@ public interface IMessageService
     /// <param name="messageType">The message type to generate</param>
     /// <param name="options">Generation options</param>
     /// <returns>A result containing the generated message or an error</returns>
-    Task<Result<string>> GenerateMessageAsync(object domainObject, string standard, string messageType, GenerationOptions? options = null);
+    Task<Result<string>> GenerateMessageAsync(object domainObject, string standard, string messageType, Generation.GenerationOptions? options = null);
 }
 
 /// <summary>
@@ -249,7 +253,7 @@ public interface IGenerationService
     /// <param name="count">Number of messages to generate</param>
     /// <param name="options">Generation options</param>
     /// <returns>A result containing the generated messages or an error</returns>
-    Task<Result<IReadOnlyList<string>>> GenerateSyntheticDataAsync(string standard, string messageType, int count = 1, GenerationOptions? options = null);
+    Task<Result<IReadOnlyList<string>>> GenerateSyntheticDataAsync(string standard, string messageType, int count = 1, Generation.GenerationOptions? options = null);
 }
 
 /// <summary>
@@ -303,7 +307,7 @@ internal class MessageService : IMessageService
         throw new NotImplementedException("MessageService implementation pending");
     }
 
-    public Task<Result<string>> GenerateMessageAsync(object domainObject, string standard, string messageType, GenerationOptions? options = null)
+    public Task<Result<string>> GenerateMessageAsync(object domainObject, string standard, string messageType, Generation.GenerationOptions? options = null)
     {
         throw new NotImplementedException("MessageService implementation pending");
     }
@@ -319,9 +323,86 @@ internal class ValidationService : IValidationService
 
 internal class GenerationService : IGenerationService
 {
-    public Task<Result<IReadOnlyList<string>>> GenerateSyntheticDataAsync(string standard, string messageType, int count = 1, GenerationOptions? options = null)
+    private readonly Generation.IGenerationService _domainGenerationService;
+    
+    public GenerationService(Generation.IGenerationService domainGenerationService)
     {
-        throw new NotImplementedException("GenerationService implementation pending");
+        _domainGenerationService = domainGenerationService;
+    }
+    
+    public async Task<Result<IReadOnlyList<string>>> GenerateSyntheticDataAsync(string standard, string messageType, int count = 1, Generation.GenerationOptions? options = null)
+    {
+        try
+        {
+            var messages = new List<string>();
+            var generationOptions = new Generation.GenerationOptions();
+            
+            for (int i = 0; i < count; i++)
+            {
+                var result = messageType.ToUpperInvariant() switch
+                {
+                    "PATIENT" => await GeneratePatientMessageAsync(standard, generationOptions),
+                    "MEDICATION" => await GenerateMedicationMessageAsync(standard, generationOptions),
+                    "PRESCRIPTION" => await GeneratePrescriptionMessageAsync(standard, generationOptions),
+                    "ENCOUNTER" => await GenerateEncounterMessageAsync(standard, generationOptions),
+                    "ADT" => await GenerateEncounterMessageAsync(standard, generationOptions), // ADT maps to encounter
+                    "RDE" => await GeneratePrescriptionMessageAsync(standard, generationOptions), // RDE maps to prescription
+                    _ => Result<string>.Failure($"Unsupported message type: {messageType}")
+                };
+                
+                if (!result.IsSuccess)
+                    return Result<IReadOnlyList<string>>.Failure(result.Error);
+                    
+                messages.Add(result.Value);
+            }
+            
+            return Result<IReadOnlyList<string>>.Success(messages);
+        }
+        catch (Exception ex)
+        {
+            return Result<IReadOnlyList<string>>.Failure($"Generation failed: {ex.Message}");
+        }
+    }
+    
+    private async Task<Result<string>> GeneratePatientMessageAsync(string standard, Generation.GenerationOptions options)
+    {
+        var patientResult = _domainGenerationService.GeneratePatient(options);
+        if (!patientResult.IsSuccess)
+            return Result<string>.Failure(patientResult.Error);
+            
+        // For now, return a simple representation - this would be enhanced with proper HL7/FHIR serialization
+        var patient = patientResult.Value;
+        return Result<string>.Success($"Patient: {patient.Name.DisplayName}, DOB: {patient.BirthDate:yyyy-MM-dd}");
+    }
+    
+    private async Task<Result<string>> GenerateMedicationMessageAsync(string standard, Generation.GenerationOptions options)
+    {
+        var medicationResult = _domainGenerationService.GenerateMedication(options);
+        if (!medicationResult.IsSuccess)
+            return Result<string>.Failure(medicationResult.Error);
+            
+        var medication = medicationResult.Value;
+        return Result<string>.Success($"Medication: {medication.DisplayName} ({medication.GenericName})");
+    }
+    
+    private async Task<Result<string>> GeneratePrescriptionMessageAsync(string standard, Generation.GenerationOptions options)
+    {
+        var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
+        if (!prescriptionResult.IsSuccess)
+            return Result<string>.Failure(prescriptionResult.Error);
+            
+        var prescription = prescriptionResult.Value;
+        return Result<string>.Success($"Prescription: {prescription.Medication.DisplayName} for {prescription.Patient.Name.DisplayName}");
+    }
+    
+    private async Task<Result<string>> GenerateEncounterMessageAsync(string standard, Generation.GenerationOptions options)
+    {
+        var encounterResult = _domainGenerationService.GenerateEncounter(options);
+        if (!encounterResult.IsSuccess)
+            return Result<string>.Failure(encounterResult.Error);
+            
+        var encounter = encounterResult.Value;
+        return Result<string>.Success($"Encounter: {encounter.Patient.Name.DisplayName} at {encounter.Location} ({encounter.Type})");
     }
 }
 
@@ -351,7 +432,6 @@ internal class ConfigurationValidationService : IConfigurationValidationService
 
 // Supporting types (placeholders for now)
 public record ProcessedMessage;
-public record GenerationOptions;
 public record MessageProcessingOptions;
 public record TransformationOptions;
 public record InferenceOptions;

@@ -1,9 +1,10 @@
 # Segmint Healthcare Interoperability Platform - Initiative Roadmap
 
-**Document Version**: 1.0  
-**Date**: August 25, 2025  
+**Document Version**: 1.1  
+**Date**: Updated 2025-01-26  
 **Participants**: Technical Founder, Healthcare Consultant, Strategic Investor  
-**Scope**: First 90 Days - Foundation Architecture & Market Entry
+**Scope**: First 90 Days - Foundation Architecture & Market Entry  
+**Status**: Harmonized with crystallized business model and generation architecture
 
 ---
 
@@ -123,14 +124,23 @@ ValidationMode.Compatibility // Real-world vendor patterns
 ```
 
 ### **6. Core+ Business Model Architecture**
-```
-🆓 Segmint.Core (MPL 2.0)        💼 Segmint.Professional      🏢 Segmint.Enterprise
-├── Domain models                 ├── GUI application           ├── Cloud services  
-├── Basic HL7/FHIR/NCPDP         ├── Advanced inference        ├── Team collaboration
-├── Configuration inference       ├── Vendor template library   ├── Enterprise configs
-├── CLI interface                 ├── AI features (BYOK)        ├── Real-time monitoring
-└── Compatibility validation      └── Batch processing          └── Unlimited AI
-```
+*Full details in [`docs/founding_plan/business_model.md`](../founding_plan/business_model.md)*
+
+**🆓 FREE CORE (MPL 2.0)**:
+- Algorithmic generation (25 meds, 50 names) 
+- Complete HL7/FHIR/NCPDP standards
+- CLI interface, domain models
+- Deterministic testing with seeds
+
+**💼 SUBSCRIPTION TIERS (Primary Revenue)**:
+- Professional ($29/mo): Live datasets, AI (BYOK), cloud API
+- Pro + Templates ($49/mo): Vendor-specific formatting
+- Team ($99/mo): Collaboration, team management  
+- Enterprise ($199/seat): Unlimited AI, custom datasets
+
+**🎁 ONE-TIME RESCUE ($299 - Downsell Only)**:
+- Desktop GUI, "B-level" datasets (150+ meds, static)
+- Batch processing, offline-focused
 
 ---
 
@@ -283,10 +293,11 @@ This ensures architectural coherence while allowing pragmatic flexibility when t
 - [ ] **Example message templates** for common scenarios
 
 #### **Data Generation**
-- [ ] **Algorithmic synthetic data** (no AI dependencies required)
-- [ ] **Realistic healthcare data** (proper names, addresses, medications)
-- [ ] **Vendor-specific patterns** (Epic-style MRNs, Cerner timestamps)
-- [ ] **Deterministic generation** with seeds for testing
+*Architecture defined in [`docs/founding_plan/generation_considerations.md`](../founding_plan/generation_considerations.md)*
+- [ ] **Two-Tier Generation System**: Algorithmic (free) + AI enhancement (subscription)
+- [ ] **Free Tier Datasets**: 25 medications, 50 names (covers 70% of common cases)
+- [ ] **Algorithmic Generation**: No AI dependencies, deterministic with seeds
+- [ ] **Business Model Integration**: Clear separation between free/subscription features
 
 **Success Criteria**:
 - CLI generates Epic-compatible RDE message in <5 seconds
