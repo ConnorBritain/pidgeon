@@ -228,12 +228,6 @@ public abstract class HL7Segment
     }
 
     /// <summary>
-    /// Creates a copy of this segment.
-    /// </summary>
-    /// <returns>A copy of the segment</returns>
-    public abstract HL7Segment Clone();
-
-    /// <summary>
     /// Clears all field values in the segment.
     /// </summary>
     public virtual void Clear()

@@ -192,15 +192,6 @@ public class MSHSegment : HL7Segment
         return parts[0] + string.Join(FieldSeparator, parts.Skip(1));
     }
 
-    public override HL7Segment Clone()
-    {
-        var clone = new MSHSegment();
-        for (int i = 0; i < Fields.Count; i++)
-        {
-            clone.Fields[i] = Fields[i].Clone();
-        }
-        return clone;
-    }
 
     /// <summary>
     /// Gets message type components.

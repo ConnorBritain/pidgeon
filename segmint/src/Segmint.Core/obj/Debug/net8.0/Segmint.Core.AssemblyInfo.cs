@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Segmint.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+edc12fc5c154f904bf69568a1b0a431ebec52c9f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c2aebe97f830f90675a8cdc0b46633329bd2b256")]
 [assembly: System.Reflection.AssemblyProductAttribute("Segmint.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Segmint.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

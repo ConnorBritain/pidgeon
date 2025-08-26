@@ -112,12 +112,6 @@ public abstract class HL7Field
     }
 
     /// <summary>
-    /// Creates a copy of this field.
-    /// </summary>
-    /// <returns>A copy of the field</returns>
-    public abstract HL7Field Clone();
-
-    /// <summary>
     /// Clears the field value.
     /// </summary>
     public virtual void Clear()

@@ -41,11 +41,6 @@ public class StringField : HL7Field<string>
         return value;
     }
 
-    public override HL7Field Clone()
-    {
-        return new StringField(Value, MaxLength, IsRequired);
-    }
-
     /// <summary>
     /// Creates a required string field with maximum length.
     /// </summary>
@@ -119,11 +114,6 @@ public class NumericField : HL7Field<decimal?>
         return value?.ToString("0.##########"); // Remove trailing zeros
     }
 
-    public override HL7Field Clone()
-    {
-        return new NumericField(TypedValue);
-    }
-
     /// <summary>
     /// Gets the value as an integer (truncated).
     /// </summary>
@@ -195,11 +185,6 @@ public class DateField : HL7Field<DateTime?>
     protected override string? FormatTypedValue(DateTime? value)
     {
         return value?.ToString("yyyyMMdd");
-    }
-
-    public override HL7Field Clone()
-    {
-        return new DateField(TypedValue);
     }
 
     /// <summary>
@@ -282,8 +267,4 @@ public class TimestampField : HL7Field<DateTime?>
         return value?.ToString("yyyyMMddHHmmss");
     }
 
-    public override HL7Field Clone()
-    {
-        return new TimestampField(TypedValue);
-    }
 }
