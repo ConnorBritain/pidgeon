@@ -10,3 +10,12 @@
 **/*.user
 **/*.suo
 **/*.cache
+
+# .NET Core and MSBuild
+*.deps.json
+*.runtimeconfig.json
+*.runtimeconfig.dev.json
+
+# Visual Studio
+.vs/
+*.userprefs
