@@ -36,6 +36,7 @@ public static class ServiceCollectionExtensions
         // Add configuration services
         services.AddScoped<IConfigurationInferenceService, ConfigurationInferenceService>();
         services.AddScoped<IConfigurationValidationService, ConfigurationValidationService>();
+        services.AddScoped<IConfigurationCatalog, ConfigurationCatalog>();
         
         return services;
     }

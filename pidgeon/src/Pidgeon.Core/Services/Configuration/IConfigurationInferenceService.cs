@@ -12,10 +12,14 @@ namespace Pidgeon.Core.Services.Configuration;
 public interface IConfigurationInferenceService
 {
     /// <summary>
-    /// Analyzes sample messages and infers configuration patterns.
+    /// Analyzes sample messages and infers vendor configuration patterns.
     /// </summary>
     /// <param name="sampleMessages">Sample messages to analyze</param>
+    /// <param name="address">Configuration address for vendor/standard/message type</param>
     /// <param name="options">Analysis options</param>
-    /// <returns>A result containing the inferred configuration</returns>
-    Task<Result<InferredConfiguration>> InferConfigurationAsync(IEnumerable<string> sampleMessages, InferenceOptions? options = null);
+    /// <returns>A result containing the vendor configuration</returns>
+    Task<Result<VendorConfiguration>> InferConfigurationAsync(
+        IEnumerable<string> sampleMessages, 
+        ConfigurationAddress address, 
+        InferenceOptions? options = null);
 }

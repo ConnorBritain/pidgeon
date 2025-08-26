@@ -8,8 +8,11 @@ namespace Pidgeon.Core.Services.Configuration;
 
 internal class ConfigurationInferenceService : IConfigurationInferenceService
 {
-    public Task<Result<InferredConfiguration>> InferConfigurationAsync(IEnumerable<string> sampleMessages, InferenceOptions? options = null)
+    public Task<Result<VendorConfiguration>> InferConfigurationAsync(
+        IEnumerable<string> sampleMessages, 
+        ConfigurationAddress address, 
+        InferenceOptions? options = null)
     {
-        throw new NotImplementedException("ConfigurationInferenceService implementation pending");
+        throw new NotImplementedException("ConfigurationInferenceService implementation pending - will be implemented with plugin architecture");
     }
 }
