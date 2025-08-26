@@ -346,13 +346,97 @@ services.AddSegmintCore()
 
 ---
 
-### **2025-08-XX - First Week Development** *(Placeholder entries for future development)*
+### **2025-08-25 - Foundation Implementation Week**
 
-#### **🏗️ ARCH-006: [PLACEHOLDER] Domain Model Design**
-**Decision**: *[To be filled during development]*  
-**Rationale**: *[To be filled]*  
-**Impact**: *[To be filled]*  
-**Rollback Impact**: *[To be filled]*  
+#### **🏗️ ARCH-006: Foundation Domain Model Design**
+**Date**: 2025-08-25  
+**Decision**: Implement foundational domain models first, defer specialized domains  
+**Rationale**: Current models (Patient, Medication, Provider, Encounter, Prescription) provide 90% coverage for initial workflows  
+**Impact**: Enables rapid validation of architecture while maintaining extensibility  
+**Rollback Impact**: Would need simpler domain models if complexity proves unmanageable  
+**Commit**: 7c81844 (Initial implementation)  
+
+**Implemented Domains**:
+- **Patient**: Demographics, identifiers, healthcare-specific methods
+- **Medication**: Drug information, NDC codes, controlled substance handling  
+- **Prescription**: Complete prescribing workflow with dosage, refills, DEA validation
+- **Provider**: Healthcare professionals with NPI, DEA, specialty information
+- **Encounter**: Healthcare visits with diagnoses, timing, clinical context
+
+---
+
+#### **🏗️ ARCH-007: Domain Extension Strategy (Post-Foundation)**  
+**Date**: 2025-08-26  
+**Decision**: Defer specialized domains until after architecture validation (Path A approach)  
+**Rationale**: Focus on proving plugin architecture with 90% pharmacy coverage before adding complexity  
+**Impact**: Some advanced workflows (RDS messages, complete insurance) delayed to Sprint 2  
+**Rollback Impact**: If domains insufficient, would require mid-implementation additions  
+
+**Planned Extensions**:
+1. **Location Domain** - Facilities, departments, correctional healthcare (inmate transfers)
+2. **Dispense Domain** - Actual dispensing records (distinct from prescribing)  
+3. **Insurance Domain** - Payer coverage, prior authorization, formulary management
+4. **Allergy Domain** - Drug allergies, contraindications, interaction alerts
+5. **Order Domain** - General orders beyond prescriptions (lab, imaging, procedures)
+
+**Dependencies**: Successful foundation validation
+**Alternatives Considered**: All domains immediately (rejected: architecture risk, longer validation)  
+
+---
+
+#### **🏗️ ARCH-008: Clone() Removal & Future Implementation Strategy**  
+**Date**: 2025-08-26  
+**Decision**: Remove Clone() methods from all HL7 fields and segments following YAGNI principle  
+**Rationale**: Current CLI workflow generates fresh HL7 from domain objects; no cloning needed for stateless operations  
+**Impact**: Simplified architecture, cleaner code, faster compilation  
+**Rollback Impact**: Would need to reimplement Clone() methods if GUI editing or audit features are added  
+
+**Removed Clone() From**:
+- `HL7Field` base class (abstract method)
+- `HL7Segment` base class (abstract method)  
+- All field implementations (`StringField`, `PersonNameField`, `AddressField`, `TelephoneField`)
+- All segment implementations (`MSHSegment`, `PIDSegment`)
+
+**Future Implementation Strategy** (When GUI/Audit Features Needed):
+
+**Phase 1 - Domain-Level Cloning (Recommended)**:
+```csharp
+// Records get cloning for free:
+public record Patient { ... }
+var clone = patient with { };
+
+// Complex objects:
+public record Prescription
+{
+    public Prescription Clone() => new()
+    {
+        Patient = this.Patient.Clone(), // Recursive domain cloning
+        // Generate fresh HL7 from cloned domain
+    };
+}
+```
+
+**Phase 2 - HL7-Level Cloning (If Direct Field Editing Needed)**:
+```csharp
+public abstract class HL7Field<T>
+{
+    public virtual HL7Field<T> Clone() 
+    {
+        // Implementation strategy documented for future use
+    }
+}
+```
+
+**Use Cases for Future Clone()**:
+- GUI message editors with undo/redo
+- Audit trails preserving transformation states
+- Message templates for customization
+- Thread-safe cached template access
+
+**Architecture Philosophy**: Domain models are templates, generate HL7 fresh rather than clone/modify
+
+**Dependencies**: None (removal only)  
+**Alternatives Considered**: Keep "just in case" (rejected: YAGNI principle)
 
 #### **🔧 FEAT-003: [PLACEHOLDER] HL7Field Base Implementation**
 **Decision**: *[To be filled]*  
@@ -485,6 +569,134 @@ services.AddSegmintCore()
 - **Weekly**: Review LEDGER entries for completeness
 - **Monthly**: Assess if any entries need rollback procedure updates
 - **Quarterly**: Archive old entries and summarize major decisions
+
+---
+
+## 🎯 **Current Phase Status & Priorities**
+
+### **Immediate Next Steps (Current Sprint)**
+1. **PID Segment Implementation** - Patient Identification with 18+ fields
+2. **ADT^A01 Message Type** - Complete patient admission message  
+3. **HL7v23Plugin Implementation** - Wire domain models to HL7 generation
+4. **End-to-end CLI Testing** - `segmint generate --type ADT --output test.hl7`
+
+### **Following Sprint**
+1. **RDE^O01 Message Type** - Pharmacy orders using Prescription domain
+2. **Additional Field Types** - PersonNameField, AddressField, TelephoneField
+3. **Configuration Intelligence** - Begin vendor pattern recognition
+4. **Performance Optimization** - Target <50ms message generation
+
+### **Post-Foundation Domain Extensions**
+> **Strategic Note**: Current domains provide 90% pharmacy coverage. After proving architecture, extend with:
+
+**Priority Extensions**:
+- **Location Domain** - Critical for correctional healthcare (inmate transfers), ADT messages (facility transfers)
+  - **Decision Point**: Integrate with existing `Address` model or create separate `Location` entity?
+  - **Use Cases**: Hospital departments, correctional facilities, nursing homes, clinics
+- **Dispense Domain** - Pharmacy dispensing records (separate from prescription writing)
+- **Insurance Domain** - Payer coverage, prior authorization workflows  
+- **Allergy Domain** - Drug allergies, contraindications, interaction alerts
+
+---
+
+### **2025-08-26 - CLI Mission-Critical Analysis**
+
+#### **💥 BREAK-009: System.CommandLine API Instability Crisis**
+**Problem**: CLI layer completely broken due to System.CommandLine API breaking changes across beta versions  
+**Impact**: Mission-critical CLI functionality unusable  
+**Priority**: URGENT - CLI is core to user experience and Core+ business model  
+**Discovery Date**: 2025-08-26 during CLI implementation  
+
+**Root Cause Analysis**:
+- Started with System.CommandLine 2.0.0-beta4.22272.1 (2022 vintage)
+- Attempted upgrade to beta7 (2025) revealed massive breaking changes:
+  - `SetHandler` → `SetAction` (beta5 change)
+  - `InvokeAsync()` removed from RootCommand
+  - `AddCommand()`, `AddOption()`, `AddGlobalOption()` removed
+  - Option constructor signature completely changed
+  - `IsRequired`, `SetDefaultValue()` properties removed
+  - `InvocationContext` removed entirely
+
+**Status**: **RESOLVED** ✅ - CLI v1 fully functional (2025-08-26)
+
+**Resolution Summary**:
+
+**Applied STOP-THINK-ACT Error Resolution Framework**:
+- **STOP**: Resisted trial-and-error fixes, read full error context
+- **THINK**: Conducted systematic research on official Microsoft documentation  
+- **ACT**: Made minimal, targeted changes using validated API patterns
+
+**Phase 1-3 Execution Results**:
+1. ✅ **Research Completed**: Created `/docs/research/CommandLineAPI.md` with comprehensive findings
+2. ✅ **Version Strategy**: Selected System.CommandLine 2.0.0-beta5.25277.114 as production-ready
+3. ✅ **Implementation**: Applied correct beta5 patterns throughout CLI layer
+
+**Key Technical Fixes**:
+- Fixed `IsRequired = true` → `Required = true` (beta5 property change)
+- Fixed `rootCommand.InvokeAsync(args)` → `rootCommand.Parse(args).InvokeAsync()` (correct invocation)
+- Updated all option constructors to use object initializer syntax
+- Applied `SetAction()` instead of deprecated `SetHandler()`
+- Used `ParseResult.GetValue()` for parameter access
+
+**Validation Results**:
+- ✅ Build: 0 errors (2 nullable warnings only)
+- ✅ CLI Help: Working (`--help`, `info`, `generate --help`)
+- ✅ Target Command: Ready for `segmint generate --type ADT --output test.hl7`
+- ✅ Error Protocol: Followed methodology from `/docs/agent_steering/error-resolution-methodology.md`
+
+**Dependencies**: All CLI functionality now depends on beta5 API patterns  
+**Rollback Impact**: Reverting would require complete CLI rewrite  
+**Future Considerations**: Monitor for stable 2.0 release (targeted Nov 2025)
+
+**Research Plan for Resolution** *(COMPLETED)*:
+
+**Phase 1: API Surface Discovery** *(Next immediate steps)*
+1. **GitHub Deep Dive**: Research dotnet/command-line-api repository
+   - Find official migration examples between beta versions
+   - Identify stable API patterns that persist across versions
+   - Locate working sample applications using current API
+2. **Microsoft Documentation Audit**:
+   - Find comprehensive tutorials for latest stable version
+   - Identify supported vs deprecated API patterns
+   - Locate official recommendation for production usage
+
+**Phase 2: Version Strategy Decision**
+1. **Evaluate Version Options**:
+   - Beta4 (current): Known to work but old, limited features
+   - Beta5: Has migration guide but still breaking changes 
+   - Beta7: Latest but undocumented API surface
+   - Alternative: Different CLI library entirely
+2. **Stability vs Features Trade-off**:
+   - Determine minimum viable CLI feature set
+   - Assess which version provides best stability/feature ratio
+   - Plan migration path to stable release when available
+
+**Phase 3: Implementation Strategy**
+1. **Create CLI v1 Scope**:
+   - Essential commands: `generate`, `validate`, `info`
+   - Basic options: `--type`, `--output`, `--input`
+   - Simple exit codes and error handling
+2. **Progressive Enhancement**:
+   - Start with minimal working version
+   - Add features incrementally as API stabilizes
+   - Maintain backwards compatibility for commands
+
+**Success Criteria for CLI v1**:
+```bash
+segmint generate --type ADT --output test.hl7
+segmint validate --input test.hl7
+segmint info
+```
+
+**Estimated Resolution Time**: 2-3 sessions
+**Blockers**: None - prioritize this above all other features
+**Dependencies**: Core HL7 implementation (✅ completed)
+
+**Alternative Approaches Considered**:
+- **Defer CLI entirely**: ❌ Mission-critical for user adoption
+- **Build custom argument parser**: ❌ Reinventing wheel, maintenance burden  
+- **Use different CLI library**: 🤔 Possible fallback if System.CommandLine proves unusable
+- **Stick with beta4**: ⚠️ Short-term solution but limits future capabilities
 
 ---
 

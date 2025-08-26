@@ -3,3 +3,10 @@
 /archive2_c#init+docs/
 /.claude/
 /.vs/
+
+# .NET Build Artifacts
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/*.cache

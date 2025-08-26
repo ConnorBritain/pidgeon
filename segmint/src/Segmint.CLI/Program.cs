@@ -32,8 +32,8 @@ internal class Program
             // Create the root command with all subcommands
             var rootCommand = CreateRootCommand(host.Services);
             
-            // Parse and invoke the command
-            return await rootCommand.InvokeAsync(args);
+            // Parse and invoke the command using beta5 API
+            return await rootCommand.Parse(args).InvokeAsync();
         }
         catch (Exception ex)
         {
@@ -87,20 +87,18 @@ internal class Program
         };
 
         // Add global options
-        var verboseOption = new Option<bool>(
-            name: "--verbose",
-            description: "Enable verbose output")
+        var verboseOption = new Option<bool>("--verbose")
         {
-            IsGlobal = true
+            Description = "Enable verbose output"
         };
-        rootCommand.AddGlobalOption(verboseOption);
+        rootCommand.Add(verboseOption);
 
-        // Add subcommands
-        rootCommand.AddCommand(serviceProvider.GetRequiredService<GenerateCommand>().Build());
-        rootCommand.AddCommand(serviceProvider.GetRequiredService<ValidateCommand>().Build());
-        rootCommand.AddCommand(serviceProvider.GetRequiredService<TransformCommand>().Build());
-        rootCommand.AddCommand(serviceProvider.GetRequiredService<ConfigCommand>().Build());
-        rootCommand.AddCommand(serviceProvider.GetRequiredService<InfoCommand>().Build());
+        // Add subcommands using beta5 API
+        rootCommand.Add(serviceProvider.GetRequiredService<GenerateCommand>().CreateCommand());
+        rootCommand.Add(serviceProvider.GetRequiredService<ValidateCommand>().CreateCommand());
+        rootCommand.Add(serviceProvider.GetRequiredService<TransformCommand>().CreateCommand());
+        rootCommand.Add(serviceProvider.GetRequiredService<ConfigCommand>().CreateCommand());
+        rootCommand.Add(serviceProvider.GetRequiredService<InfoCommand>().CreateCommand());
 
         return rootCommand;
     }

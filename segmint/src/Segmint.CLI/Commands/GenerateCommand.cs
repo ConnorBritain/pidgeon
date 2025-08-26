@@ -17,66 +17,62 @@ public class GenerateCommand : BaseCommand
 
     public GenerateCommand(
         ILogger<GenerateCommand> logger,
-        IConsoleOutput console,
         IGenerationService generationService) 
-        : base(logger, console)
+        : base(logger)
     {
         _generationService = generationService;
     }
 
-    public override Command Build()
+    public Command CreateCommand()
     {
         var command = new Command("generate", "Generate healthcare messages and synthetic test data");
 
-        // Options
-        var typeOption = new Option<string>(
-            name: "--type",
-            description: "Message type to generate (e.g., ADT, RDE, Patient)")
+        // Options using beta5 API
+        var typeOption = new Option<string>("--type")
         {
-            IsRequired = true
+            Description = "Message type to generate (e.g., ADT, RDE, Patient)",
+            Required = true
         };
         
-        var standardOption = new Option<string>(
-            name: "--standard",
-            description: "Healthcare standard (hl7, fhir, ncpdp)")
+        var standardOption = new Option<string>("--standard")
         {
-            IsRequired = false
-        };
-        standardOption.SetDefaultValue("hl7");
-
-        var countOption = new Option<int>(
-            name: "--count",
-            description: "Number of messages to generate")
-        {
-            IsRequired = false
-        };
-        countOption.SetDefaultValue(1);
-
-        var outputOption = new Option<string>(
-            name: "--output",
-            description: "Output file path (optional, defaults to console)")
-        {
-            IsRequired = false
+            Description = "Healthcare standard (hl7, fhir, ncpdp)",
+            DefaultValueFactory = _ => "hl7"
         };
 
-        var formatOption = new Option<bool>(
-            name: "--format",
-            description: "Format output for readability")
+        var countOption = new Option<int>("--count")
         {
-            IsRequired = false
+            Description = "Number of messages to generate",
+            DefaultValueFactory = _ => 1
         };
-        formatOption.SetDefaultValue(false);
 
-        command.AddOption(typeOption);
-        command.AddOption(standardOption);
-        command.AddOption(countOption);
-        command.AddOption(outputOption);
-        command.AddOption(formatOption);
+        var outputOption = new Option<string>("--output")
+        {
+            Description = "Output file path (optional, defaults to console)"
+        };
 
-        command.SetHandler(async (type, standard, count, output, format) =>
+        var formatOption = new Option<bool>("--format")
+        {
+            Description = "Format output for readability",
+            DefaultValueFactory = _ => false
+        };
+
+        command.Add(typeOption);
+        command.Add(standardOption);
+        command.Add(countOption);
+        command.Add(outputOption);
+        command.Add(formatOption);
+
+        command.SetAction(async (ParseResult parseResult, CancellationToken cancellationToken) =>
         {
             try
             {
+                var type = parseResult.GetValue(typeOption);
+                var standard = parseResult.GetValue(standardOption);
+                var count = parseResult.GetValue(countOption);
+                var output = parseResult.GetValue(outputOption);
+                var format = parseResult.GetValue(formatOption);
+
                 Console.WriteLine($"Generating {count} {standard} {type} message(s)...");
                 
                 var options = new GenerationOptions(); // TODO: Set options based on parameters
@@ -88,13 +84,13 @@ public class GenerateCommand : BaseCommand
                     {
                         // Write to file
                         await WriteToFileAsync(output, result.Value, format);
-                        Console.WriteSuccess($"Generated {count} message(s) and saved to {output}");
+                        System.Console.WriteLine($"Generated {count} message(s) and saved to {output}");
                     }
                     else
                     {
                         // Write to console
                         WriteToConsole(result.Value, format);
-                        Console.WriteSuccess($"Generated {count} message(s)");
+                        System.Console.WriteLine($"Generated {count} message(s)");
                     }
                     
                     return 0;
@@ -106,7 +102,7 @@ public class GenerateCommand : BaseCommand
             {
                 return HandleException(ex, "message generation");
             }
-        }, typeOption, standardOption, countOption, outputOption, formatOption);
+        });
 
         return command;
     }

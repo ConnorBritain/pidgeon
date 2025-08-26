@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
+using Segmint.Core;
 using System.CommandLine;
 
 namespace Segmint.CLI.Commands;
@@ -13,19 +14,12 @@ namespace Segmint.CLI.Commands;
 public abstract class BaseCommand
 {
     protected readonly ILogger Logger;
-    protected readonly IConsoleOutput Console;
 
-    protected BaseCommand(ILogger logger, IConsoleOutput console)
+    protected BaseCommand(ILogger logger)
     {
         Logger = logger;
-        Console = console;
     }
 
-    /// <summary>
-    /// Builds and returns the command for the CLI system.
-    /// </summary>
-    /// <returns>The configured command</returns>
-    public abstract Command Build();
 
     /// <summary>
     /// Handles the execution result and provides appropriate console output.
@@ -39,13 +33,13 @@ public abstract class BaseCommand
         if (result.IsSuccess)
         {
             if (!string.IsNullOrEmpty(successMessage))
-                Console.WriteSuccess(successMessage);
+                System.Console.WriteLine(successMessage);
             return 0;
         }
 
-        Console.WriteError($"{result.Error.Code}: {result.Error.Message}");
+        System.Console.Error.WriteLine($"Error {result.Error.Code}: {result.Error.Message}");
         if (!string.IsNullOrEmpty(result.Error.Context))
-            Console.WriteLine($"Context: {result.Error.Context}");
+            System.Console.WriteLine($"Context: {result.Error.Context}");
         
         Logger.LogError("Command failed: {ErrorCode} - {ErrorMessage}", 
             result.Error.Code, result.Error.Message);
@@ -61,7 +55,7 @@ public abstract class BaseCommand
     /// <returns>Exit code (always 1 for errors)</returns>
     protected int HandleException(Exception ex, string context = "")
     {
-        Console.WriteError($"An error occurred{(string.IsNullOrEmpty(context) ? "" : $" during {context}")}: {ex.Message}");
+        System.Console.Error.WriteLine($"An error occurred{(string.IsNullOrEmpty(context) ? "" : $" during {context}")}: {ex.Message}");
         Logger.LogError(ex, "Command execution failed: {Context}", context);
         return 1;
     }

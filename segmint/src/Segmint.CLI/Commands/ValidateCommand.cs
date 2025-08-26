@@ -18,56 +18,54 @@ public class ValidateCommand : BaseCommand
 
     public ValidateCommand(
         ILogger<ValidateCommand> logger,
-        IConsoleOutput console,
         IValidationService validationService) 
-        : base(logger, console)
+        : base(logger)
     {
         _validationService = validationService;
     }
 
-    public override Command Build()
+    public Command CreateCommand()
     {
         var command = new Command("validate", "Validate healthcare messages against standards");
 
-        var fileOption = new Option<string>(
-            name: "--file",
-            description: "Path to the message file to validate")
+        var fileOption = new Option<string>("--file")
         {
-            IsRequired = true
+            Description = "Path to the message file to validate",
+            Required = true
         };
 
-        var modeOption = new Option<ValidationMode>(
-            name: "--mode",
-            description: "Validation mode (Strict, Compatibility, Lenient)")
+        var modeOption = new Option<ValidationMode>("--mode")
         {
-            IsRequired = false
-        };
-        modeOption.SetDefaultValue(ValidationMode.Strict);
-
-        var standardOption = new Option<string?>(
-            name: "--standard",
-            description: "Specific standard to validate against (auto-detect if not specified)")
-        {
-            IsRequired = false
+            Description = "Validation mode (Strict, Compatibility, Lenient)",
+            DefaultValueFactory = _ => ValidationMode.Strict
         };
 
-        command.AddOption(fileOption);
-        command.AddOption(modeOption);
-        command.AddOption(standardOption);
+        var standardOption = new Option<string?>("--standard")
+        {
+            Description = "Specific standard to validate against (auto-detect if not specified)"
+        };
 
-        command.SetHandler(async (file, mode, standard) =>
+        command.Add(fileOption);
+        command.Add(modeOption);
+        command.Add(standardOption);
+
+        command.SetAction(async (ParseResult parseResult, CancellationToken cancellationToken) =>
         {
             try
             {
+                var file = parseResult.GetValue(fileOption);
+                var mode = parseResult.GetValue(modeOption);
+                var standard = parseResult.GetValue(standardOption);
+
                 if (!File.Exists(file))
                 {
-                    Console.WriteError($"File not found: {file}");
+                    System.Console.Error.WriteLine($"File not found: {file}");
                     return 1;
                 }
 
                 Console.WriteLine($"Validating {file} with {mode} mode...");
                 
-                var content = await File.ReadAllTextAsync(file);
+                var content = await File.ReadAllTextAsync(file, cancellationToken);
                 var result = await _validationService.ValidateAsync(content, mode, standard);
                 
                 if (result.IsSuccess)
@@ -75,22 +73,22 @@ public class ValidateCommand : BaseCommand
                     var validation = result.Value;
                     if (validation.IsValid)
                     {
-                        Console.WriteSuccess("Validation passed!");
+                        System.Console.WriteLine("Validation passed!");
                         if (validation.Warnings.Any())
                         {
                             Console.WriteLine($"Warnings: {validation.Warnings.Count}");
                             foreach (var warning in validation.Warnings)
                             {
-                                Console.WriteWarning($"{warning.Code}: {warning.Message}");
+                                System.Console.WriteLine($"{warning.Code}: {warning.Message}");
                             }
                         }
                     }
                     else
                     {
-                        Console.WriteError($"Validation failed with {validation.Errors.Count} error(s):");
+                        System.Console.Error.WriteLine($"Validation failed with {validation.Errors.Count} error(s):");
                         foreach (var error in validation.Errors)
                         {
-                            Console.WriteError($"  {error.Code}: {error.Message}");
+                            System.Console.Error.WriteLine($"  {error.Code}: {error.Message}");
                             if (!string.IsNullOrEmpty(error.Location))
                                 Console.WriteLine($"    Location: {error.Location}");
                         }
@@ -104,7 +102,7 @@ public class ValidateCommand : BaseCommand
             {
                 return HandleException(ex, "validation");
             }
-        }, fileOption, modeOption, standardOption);
+        });
 
         return command;
     }
