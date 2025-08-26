@@ -19,3 +19,6 @@
 # Visual Studio
 .vs/
 *.userprefs
+
+# Test outputs
+segmint/tests/message_outputs/
