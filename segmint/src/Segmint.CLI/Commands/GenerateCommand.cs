@@ -74,10 +74,22 @@ public class GenerateCommand : BaseCommand
                 var output = parseResult.GetValue(outputOption);
                 var format = parseResult.GetValue(formatOption);
 
+                // Validate required parameters (defensive programming)
+                if (string.IsNullOrWhiteSpace(type))
+                {
+                    Logger.LogError("Message type is required but was not provided");
+                    return 1;
+                }
+                
+                if (string.IsNullOrWhiteSpace(standard))
+                {
+                    standard = "hl7"; // Default value is already set, but be explicit
+                }
+
                 Console.WriteLine($"Generating {count} {standard} {type} message(s)...");
                 
                 var options = new GenerationOptions(); // TODO: Set options based on parameters
-                var result = await _generationService.GenerateSyntheticDataAsync(standard, type, count, options);
+                var result = await _generationService.GenerateSyntheticDataAsync(standard!, type!, count, options);
                 
                 if (result.IsSuccess)
                 {

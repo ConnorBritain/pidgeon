@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Segmint.Core.Standards.Common;
 using Segmint.Core.Domain;
+using Segmint.Core.Standards;
 
 namespace Segmint.Core.Extensions;
 
@@ -370,8 +371,28 @@ internal class GenerationService : IGenerationService
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
             
-        // For now, return a simple representation - this would be enhanced with proper HL7/FHIR serialization
         var patient = patientResult.Value;
+        
+        if (standard.Equals("hl7", StringComparison.OrdinalIgnoreCase))
+        {
+            // Generate proper HL7 ADT message with PID segment
+            var adtResult = Standards.HL7.v23.Messages.ADTMessage.CreateAdmission(
+                patient,
+                sendingApplication: "Segmint",
+                sendingFacility: "SegmintCore"
+            );
+            
+            if (!adtResult.IsSuccess)
+                return Result<string>.Failure(adtResult.Error);
+                
+            var serializationResult = adtResult.Value.Serialize();
+            if (!serializationResult.IsSuccess)
+                return Result<string>.Failure(serializationResult.Error);
+                
+            return Result<string>.Success(serializationResult.Value);
+        }
+        
+        // Fallback to human-readable for non-HL7 standards
         return Result<string>.Success($"Patient: {patient.Name.DisplayName}, DOB: {patient.BirthDate:yyyy-MM-dd}");
     }
     
@@ -392,6 +413,27 @@ internal class GenerationService : IGenerationService
             return Result<string>.Failure(prescriptionResult.Error);
             
         var prescription = prescriptionResult.Value;
+        
+        if (standard.Equals("hl7", StringComparison.OrdinalIgnoreCase))
+        {
+            // Generate proper RDE^O01 pharmacy order message
+            var rdeResult = Standards.HL7.v23.Messages.RDEMessage.CreatePharmacyOrder(
+                prescription,
+                sendingApplication: "Segmint",
+                sendingFacility: "SegmintPharmacy"
+            );
+            
+            if (!rdeResult.IsSuccess)
+                return Result<string>.Failure(rdeResult.Error);
+                
+            var serializationResult = rdeResult.Value.Serialize();
+            if (!serializationResult.IsSuccess)
+                return Result<string>.Failure(serializationResult.Error);
+                
+            return Result<string>.Success(serializationResult.Value);
+        }
+        
+        // Fallback to human-readable for non-HL7 standards
         return Result<string>.Success($"Prescription: {prescription.Medication.DisplayName} for {prescription.Patient.Name.DisplayName}");
     }
     
@@ -402,6 +444,28 @@ internal class GenerationService : IGenerationService
             return Result<string>.Failure(encounterResult.Error);
             
         var encounter = encounterResult.Value;
+        
+        if (standard.Equals("hl7", StringComparison.OrdinalIgnoreCase))
+        {
+            // Generate proper HL7 ADT^A01 message from encounter
+            var adtResult = Standards.HL7.v23.Messages.ADTMessage.CreateAdmission(
+                encounter.Patient,
+                encounter,
+                sendingApplication: "Segmint",
+                sendingFacility: "SegmintCore"
+            );
+            
+            if (!adtResult.IsSuccess)
+                return Result<string>.Failure(adtResult.Error);
+                
+            var serializationResult = adtResult.Value.Serialize();
+            if (!serializationResult.IsSuccess)
+                return Result<string>.Failure(serializationResult.Error);
+                
+            return Result<string>.Success(serializationResult.Value);
+        }
+        
+        // Fallback to human-readable for non-HL7 standards
         return Result<string>.Success($"Encounter: {encounter.Patient.Name.DisplayName} at {encounter.Location} ({encounter.Type})");
     }
 }

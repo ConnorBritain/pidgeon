@@ -22,6 +22,11 @@ public class ADTMessage : HL7Message
     public PIDSegment PID => GetSegment<PIDSegment>()!;
 
     /// <summary>
+    /// Gets the PV1 (Patient Visit) segment.
+    /// </summary>
+    public PV1Segment? PV1 => GetSegment<PV1Segment>();
+
+    /// <summary>
     /// Gets the trigger event (e.g., A01, A03, A08).
     /// </summary>
     public string? TriggerEvent => MSH?.GetMessageTypeComponents()?.TriggerEvent;
@@ -37,6 +42,9 @@ public class ADTMessage : HL7Message
 
         // PID - Patient Identification (required for ADT messages)
         AddSegment(new PIDSegment());
+
+        // PV1 - Patient Visit (recommended for ADT messages to provide encounter context)
+        AddSegment(new PV1Segment());
     }
 
     /// <summary>
@@ -79,6 +87,14 @@ public class ADTMessage : HL7Message
             if (pidResult.IsFailure)
                 return Error.Create("ADT_PATIENT_POPULATION_FAILED", 
                     $"Failed to populate patient information: {pidResult.Error.Message}", "ADTMessage");
+
+            // Populate PV1 segment from encounter if provided
+            if (encounter != null && message.PV1 != null)
+            {
+                var pv1 = PV1Segment.Create(encounter); // Provider will be taken from encounter.Provider
+                message.Segments.RemoveAll(s => s is PV1Segment); // Remove default empty PV1
+                message.AddSegment(pv1); // Add populated PV1
+            }
 
             return Result<ADTMessage>.Success(message);
         }
@@ -147,6 +163,7 @@ public class ADTMessage : HL7Message
         return segmentId switch
         {
             "PID" => new PIDSegment(),
+            "PV1" => new PV1Segment(),
             _ => base.CreateSegmentFromId(segmentId)
         };
     }
