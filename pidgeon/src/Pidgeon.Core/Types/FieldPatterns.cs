@@ -7,12 +7,26 @@ using System.Text.Json.Serialization;
 namespace Pidgeon.Core.Types;
 
 /// <summary>
-/// Represents field usage patterns analyzed across a set of HL7 messages.
+/// Represents field usage patterns analyzed across a set of healthcare messages.
+/// Standard-agnostic container for field population patterns.
 /// </summary>
 public record FieldPatterns
 {
     /// <summary>
-    /// Field patterns organized by segment type.
+    /// Healthcare standard these patterns apply to (HL7v23, FHIRv4, NCPDP, etc.).
+    /// </summary>
+    [JsonPropertyName("standard")]
+    public string Standard { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Message type these patterns apply to (ADT^A01, RDE^O01, Patient, etc.).
+    /// </summary>
+    [JsonPropertyName("messageType")]
+    public string MessageType { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Field patterns organized by segment/resource type.
+    /// For HL7: segment patterns; For FHIR: resource patterns; For NCPDP: section patterns.
     /// </summary>
     [JsonPropertyName("segmentPatterns")]
     public Dictionary<string, SegmentFieldPatterns> SegmentPatterns { get; init; } = new();

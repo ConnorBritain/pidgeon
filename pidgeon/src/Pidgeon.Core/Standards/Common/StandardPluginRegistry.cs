@@ -7,16 +7,28 @@ using Microsoft.Extensions.Logging;
 namespace Pidgeon.Core.Standards.Common;
 
 /// <summary>
-/// Implementation of the standard plugin registry.
+/// Implementation of the standard plugin registry supporting both message generation
+/// and configuration analysis plugins.
 /// </summary>
 internal class StandardPluginRegistry : IStandardPluginRegistry
 {
     private readonly IEnumerable<IStandardPlugin> _plugins;
+    private readonly IEnumerable<IStandardFormatAnalysisPlugin> _formatAnalysisPlugins;
+    private readonly IEnumerable<IStandardVendorDetectionPlugin> _vendorDetectionPlugins;
+    private readonly IEnumerable<IStandardFieldAnalysisPlugin> _fieldAnalysisPlugins;
     private readonly ILogger<StandardPluginRegistry> _logger;
 
-    public StandardPluginRegistry(IEnumerable<IStandardPlugin> plugins, ILogger<StandardPluginRegistry> logger)
+    public StandardPluginRegistry(
+        IEnumerable<IStandardPlugin> plugins,
+        IEnumerable<IStandardFormatAnalysisPlugin> formatAnalysisPlugins,
+        IEnumerable<IStandardVendorDetectionPlugin> vendorDetectionPlugins,
+        IEnumerable<IStandardFieldAnalysisPlugin> fieldAnalysisPlugins,
+        ILogger<StandardPluginRegistry> logger)
     {
         _plugins = plugins;
+        _formatAnalysisPlugins = formatAnalysisPlugins;
+        _vendorDetectionPlugins = vendorDetectionPlugins;
+        _fieldAnalysisPlugins = fieldAnalysisPlugins;
         _logger = logger;
         
         LogRegisteredPlugins();
@@ -80,22 +92,57 @@ internal class StandardPluginRegistry : IStandardPluginRegistry
             p => p.SupportedMessageTypes);
     }
 
+    public IStandardFormatAnalysisPlugin? GetFormatAnalysisPlugin(string standard)
+    {
+        return _formatAnalysisPlugins.FirstOrDefault(p => p.CanHandle(standard));
+    }
+
+    public IStandardVendorDetectionPlugin? GetVendorDetectionPlugin(string standard)
+    {
+        return _vendorDetectionPlugins.FirstOrDefault(p => p.CanHandle(standard));
+    }
+
+    public IStandardFieldAnalysisPlugin? GetFieldAnalysisPlugin(string standard)
+    {
+        return _fieldAnalysisPlugins.FirstOrDefault(p => p.CanHandle(standard));
+    }
+
     private void LogRegisteredPlugins()
     {
-        if (!_plugins.Any())
+        var totalPlugins = _plugins.Count() + _formatAnalysisPlugins.Count() + 
+                          _vendorDetectionPlugins.Count() + _fieldAnalysisPlugins.Count();
+
+        if (totalPlugins == 0)
         {
-            _logger.LogWarning("No standard plugins are registered");
+            _logger.LogWarning("No plugins are registered");
             return;
         }
 
-        _logger.LogInformation("Registered {PluginCount} standard plugins:", _plugins.Count());
+        _logger.LogInformation("Registered {PluginCount} total plugins:", totalPlugins);
         
+        // Log standard plugins
         foreach (var plugin in _plugins)
         {
-            _logger.LogInformation("  - {StandardName} v{StandardVersion}: {MessageTypeCount} message types", 
+            _logger.LogInformation("  - Standard: {StandardName} v{StandardVersion}: {MessageTypeCount} message types", 
                 plugin.StandardName, 
                 plugin.StandardVersion, 
                 plugin.SupportedMessageTypes.Count);
+        }
+
+        // Log analysis plugins
+        foreach (var plugin in _formatAnalysisPlugins)
+        {
+            _logger.LogInformation("  - Format Analysis: {StandardName}", plugin.StandardName);
+        }
+
+        foreach (var plugin in _vendorDetectionPlugins)
+        {
+            _logger.LogInformation("  - Vendor Detection: {StandardName}", plugin.StandardName);
+        }
+
+        foreach (var plugin in _fieldAnalysisPlugins)
+        {
+            _logger.LogInformation("  - Field Analysis: {StandardName}", plugin.StandardName);
         }
     }
 }

@@ -30,7 +30,7 @@ public enum VendorProfile
 
     /// <summary>
     /// AllScripts EHR patterns (Professional+ tiers with vendor templates).
-    /// AllScripts-specific formatting quirks and field variations.
+    /// AllScripts-specific formatting deviations and field variations.
     /// </summary>
     AllScripts,
 

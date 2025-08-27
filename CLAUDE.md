@@ -243,6 +243,57 @@ After any significant change, reference `agent-reflection.md` and explain:
 
 ---
 
+## 🚨 **CRITICAL PLUGIN ARCHITECTURE RULE - NO STANDARD-SPECIFIC HARDCODING**
+
+### **MANDATORY: Core Services Must Be Standard-Agnostic**
+
+**NEVER put standard-specific logic in core services**. This violates our sacred plugin architecture principle and single responsibility principle.
+
+#### **❌ FORBIDDEN - Hardcoded Standard Logic in Core**
+```csharp
+// ❌ NEVER DO THIS in core services
+public class ConfidenceCalculator {
+    if (fieldPatterns.MessageType?.StartsWith("ADT") == true) // HL7-specific!
+    {
+        var expectedSegments = new[] { "MSH", "EVN", "PID", "PV1" }; // HL7-specific!
+    }
+}
+```
+
+#### **✅ CORRECT - Standard Logic Lives in Plugins**
+```csharp
+// ✅ Core service delegates to plugins
+public interface IStandardConfidencePlugin {
+    bool CanHandle(string standard);
+    Task<double> CalculateCoverageAsync(FieldPatterns patterns);
+}
+
+// ✅ HL7-specific logic in HL7 plugin only
+public class HL7ConfidencePlugin : IStandardConfidencePlugin {
+    public async Task<double> CalculateCoverageAsync(FieldPatterns patterns) {
+        // HL7-specific logic HERE, not in core
+        if (patterns.MessageType?.StartsWith("ADT") == true) { ... }
+    }
+}
+```
+
+### **Architecture Enforcement Checklist**
+Before creating or modifying ANY file in `Pidgeon.Core/Services/`:
+- [ ] **Zero standard-specific strings** (no "MSH", "ADT", "PID", etc.)
+- [ ] **Zero standard-specific logic** (no segment expectations, field positions)
+- [ ] **Plugin delegation for standard operations** (use plugin registry)
+- [ ] **Standard-agnostic interfaces** (work with any healthcare standard)
+
+### **File Organization Rules**
+- `Pidgeon.Core/Services/` → Standard-agnostic orchestration only
+- `Pidgeon.Core/Standards/HL7/` → HL7-specific implementations
+- `Pidgeon.Core/Standards/FHIR/` → FHIR-specific implementations  
+- `Pidgeon.Core/Standards/NCPDP/` → NCPDP-specific implementations
+
+**Remember**: If you find yourself typing "MSH", "ADT", "Patient resource", or any standard-specific term in a core service, STOP - you're violating the architecture!
+
+---
+
 ## 💡 **Remember: We're Building for Scale**
 
 **Not building**: An HL7 generator that happens to support FHIR

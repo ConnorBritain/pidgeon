@@ -55,14 +55,20 @@ public record VendorSignature
     public char FieldSeparator { get; init; } = '|';
 
     /// <summary>
-    /// List of vendor-specific quirks or deviations from standard.
+    /// List of format deviations from the healthcare standard.
     /// </summary>
-    [JsonPropertyName("quirks")]
-    public List<VendorQuirk> Quirks { get; init; } = new();
+    [JsonPropertyName("deviations")]
+    public List<FormatDeviation> Deviations { get; init; } = new();
 
     /// <summary>
     /// Timestamp when this vendor signature was detected.
     /// </summary>
     [JsonPropertyName("detectedTimestamp")]
     public DateTime DetectedTimestamp { get; init; } = DateTime.UtcNow;
+
+    /// <summary>
+    /// Method used to detect this vendor signature.
+    /// </summary>
+    [JsonPropertyName("detectionMethod")]
+    public string DetectionMethod { get; init; } = string.Empty;
 }
