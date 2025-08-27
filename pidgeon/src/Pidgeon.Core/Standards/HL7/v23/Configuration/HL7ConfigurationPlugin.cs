@@ -94,7 +94,7 @@ internal class HL7ConfigurationPlugin : IConfigurationPlugin
                     Confidence = confidenceResult.IsSuccess ? confidenceResult.Value : 0.5,
                     FirstSeen = DateTime.UtcNow,
                     LastUpdated = DateTime.UtcNow,
-                    Version = 1,
+                    Version = "1.0",
                     Changes = new List<ConfigurationChange>
                     {
                         new ConfigurationChange

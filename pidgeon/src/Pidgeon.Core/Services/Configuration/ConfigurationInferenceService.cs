@@ -116,7 +116,7 @@ internal class ConfigurationInferenceService : IConfigurationInferenceService
                     Confidence = overallConfidence,
                     FirstSeen = DateTime.UtcNow,
                     LastUpdated = DateTime.UtcNow,
-                    Version = 1,
+                    Version = "1.0",
                     Changes = new List<ConfigurationChange>
                     {
                         new ConfigurationChange

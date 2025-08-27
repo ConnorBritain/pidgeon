@@ -233,11 +233,11 @@ internal class HL7VendorDetectionPlugin : IStandardVendorDetectionPlugin
         
         return rule.MatchType switch
         {
-            MatchType.Exact => value.Equals(rule.Pattern, comparison),
-            MatchType.Contains => value.Contains(rule.Pattern, comparison),
-            MatchType.StartsWith => value.StartsWith(rule.Pattern, comparison),
-            MatchType.EndsWith => value.EndsWith(rule.Pattern, comparison),
-            MatchType.Regex => EvaluateRegexRule(rule, value),
+            Types.MatchType.Exact => value.Equals(rule.Pattern, comparison),
+            Types.MatchType.Contains => value.Contains(rule.Pattern, comparison),
+            Types.MatchType.StartsWith => value.StartsWith(rule.Pattern, comparison),
+            Types.MatchType.EndsWith => value.EndsWith(rule.Pattern, comparison),
+            Types.MatchType.Regex => EvaluateRegexRule(rule, value),
             _ => false
         };
     }

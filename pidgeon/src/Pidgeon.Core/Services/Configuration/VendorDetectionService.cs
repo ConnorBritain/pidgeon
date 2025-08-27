@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Standards.Common;
 using Pidgeon.Core.Types;
@@ -220,11 +221,11 @@ internal class VendorDetectionService : IVendorDetectionService
         
         return rule.MatchType switch
         {
-            MatchType.Exact => value.Equals(rule.Pattern, comparison),
-            MatchType.Contains => value.Contains(rule.Pattern, comparison),
-            MatchType.StartsWith => value.StartsWith(rule.Pattern, comparison),
-            MatchType.EndsWith => value.EndsWith(rule.Pattern, comparison),
-            MatchType.Regex => EvaluateRegexRule(rule, value),
+            Types.MatchType.Exact => value.Equals(rule.Pattern, comparison),
+            Types.MatchType.Contains => value.Contains(rule.Pattern, comparison),
+            Types.MatchType.StartsWith => value.StartsWith(rule.Pattern, comparison),
+            Types.MatchType.EndsWith => value.EndsWith(rule.Pattern, comparison),
+            Types.MatchType.Regex => EvaluateRegexRule(rule, value),
             _ => false
         };
     }

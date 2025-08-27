@@ -52,6 +52,12 @@ public record VendorDetectionPattern
     public List<DetectionRule> FacilityPatterns { get; init; } = new();
 
     /// <summary>
+    /// Patterns to match in message type field.
+    /// </summary>
+    [JsonPropertyName("messageTypePatterns")]
+    public List<DetectionRule> MessageTypePatterns { get; init; } = new();
+
+    /// <summary>
     /// Additional field patterns for advanced detection.
     /// </summary>
     [JsonPropertyName("additionalPatterns")]

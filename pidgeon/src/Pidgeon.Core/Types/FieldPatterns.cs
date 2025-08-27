@@ -43,3 +43,33 @@ public record FieldPatterns
     [JsonPropertyName("analysisDate")]
     public DateTime AnalysisDate { get; init; } = DateTime.UtcNow;
 }
+
+/// <summary>
+/// Represents field patterns for a specific segment or resource type.
+/// </summary>
+public record SegmentFieldPatterns
+{
+    /// <summary>
+    /// Segment or resource identifier (e.g., "PID", "MSH", "Patient").
+    /// </summary>
+    [JsonPropertyName("segmentId")]
+    public string SegmentId { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Field frequency analysis by field position or path.
+    /// </summary>
+    [JsonPropertyName("fieldFrequencies")]
+    public Dictionary<int, FieldFrequency> FieldFrequencies { get; init; } = new();
+
+    /// <summary>
+    /// Component patterns for composite fields.
+    /// </summary>
+    [JsonPropertyName("componentPatterns")]
+    public Dictionary<string, ComponentPattern> ComponentPatterns { get; init; } = new();
+
+    /// <summary>
+    /// Number of segments analyzed.
+    /// </summary>
+    [JsonPropertyName("sampleSize")]
+    public int SampleSize { get; init; }
+}

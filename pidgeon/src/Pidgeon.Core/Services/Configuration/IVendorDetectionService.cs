@@ -49,6 +49,8 @@ public record MessageHeaders
 {
     public string SendingApplication { get; init; } = string.Empty;
     public string SendingFacility { get; init; } = string.Empty;
+    public string ReceivingApplication { get; init; } = string.Empty;
+    public string ReceivingFacility { get; init; } = string.Empty;
     public string MessageType { get; init; } = string.Empty;
     public string Standard { get; init; } = string.Empty;
     public Dictionary<string, string> AdditionalFields { get; init; } = new();

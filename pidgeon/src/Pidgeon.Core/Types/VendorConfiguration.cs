@@ -38,6 +38,12 @@ public record VendorConfiguration
     public Dictionary<string, MessagePattern> MessagePatterns { get; init; } = new();
 
     /// <summary>
+    /// Format deviations detected in the messages.
+    /// </summary>
+    [JsonPropertyName("formatDeviations")]
+    public List<FormatDeviation> FormatDeviations { get; init; } = new();
+
+    /// <summary>
     /// Configuration metadata including evolution tracking.
     /// </summary>
     [JsonPropertyName("metadata")]
@@ -115,7 +121,7 @@ public record VendorConfiguration
         {
             changes.Add(new ConfigurationChange
             {
-                ChangeType = "ConfidenceChanged",
+                ChangeType = ConfigurationChangeType.PatternChanged,
                 Description = $"Confidence changed from {Metadata.Confidence:F2} to {newConfidence:F2}",
                 ImpactScore = Math.Abs(Metadata.Confidence - newConfidence)
             });

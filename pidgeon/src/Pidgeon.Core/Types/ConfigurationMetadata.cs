@@ -84,15 +84,56 @@ public record ConfigurationMetadata
     /// </summary>
     private static string IncrementVersion(string version)
     {
-        if (Version.TryParse(version, out var v))
+        if (System.Version.TryParse(version, out var v))
         {
             return v.Minor == 9 
-                ? new Version(v.Major + 1, 0).ToString() 
-                : new Version(v.Major, v.Minor + 1).ToString();
+                ? new System.Version(v.Major + 1, 0).ToString() 
+                : new System.Version(v.Major, v.Minor + 1).ToString();
         }
         
         return version; // Return unchanged if not parseable
     }
+}
+
+/// <summary>
+/// Types of configuration changes that can be detected.
+/// </summary>
+public enum ConfigurationChangeType
+{
+    /// <summary>
+    /// Configuration created for the first time.
+    /// </summary>
+    Created,
+
+    /// <summary>
+    /// Field pattern added.
+    /// </summary>
+    FieldAdded,
+
+    /// <summary>
+    /// Field pattern changed.
+    /// </summary>
+    FieldChanged,
+
+    /// <summary>
+    /// Field pattern removed.
+    /// </summary>
+    FieldRemoved,
+
+    /// <summary>
+    /// Message pattern changed.
+    /// </summary>
+    PatternChanged,
+
+    /// <summary>
+    /// Format deviation detected.
+    /// </summary>
+    DeviationDetected,
+
+    /// <summary>
+    /// Vendor signature changed.
+    /// </summary>
+    VendorChanged
 }
 
 /// <summary>
@@ -110,13 +151,19 @@ public record ConfigurationChange
     /// Type of change (e.g., "FieldAdded", "PatternChanged", "DeviationDetected").
     /// </summary>
     [JsonPropertyName("changeType")]
-    public string ChangeType { get; init; } = default!;
+    public ConfigurationChangeType ChangeType { get; init; }
 
     /// <summary>
     /// Human-readable description of the change.
     /// </summary>
     [JsonPropertyName("description")]
     public string Description { get; init; } = default!;
+
+    /// <summary>
+    /// Confidence impact of this change (-1.0 to 1.0).
+    /// </summary>
+    [JsonPropertyName("confidenceImpact")]
+    public double ConfidenceImpact { get; init; }
 
     /// <summary>
     /// Impact score of this change (0.0 = minor, 1.0 = major breaking change).

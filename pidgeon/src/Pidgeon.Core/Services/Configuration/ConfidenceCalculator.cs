@@ -264,7 +264,7 @@ internal class ConfidenceCalculator : IConfidenceCalculator
         // Basic heuristic: more segments and fields = better coverage
         var segmentCount = fieldPatterns.SegmentPatterns.Count;
         var totalFields = fieldPatterns.SegmentPatterns.Values
-            .SelectMany(s => s.FieldFrequencies?.Keys ?? Enumerable.Empty<string>())
+            .SelectMany(s => s.FieldFrequencies?.Keys?.Select(k => k.ToString()) ?? Enumerable.Empty<string>())
             .Distinct()
             .Count();
             

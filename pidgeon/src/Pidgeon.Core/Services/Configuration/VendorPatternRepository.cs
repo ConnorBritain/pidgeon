@@ -271,13 +271,13 @@ internal class VendorPatternRepository : IVendorPatternRepository
             SupportedStandards = new List<string> { "HL7v23", "HL7", "FHIRv4", "FHIR" },
             ApplicationPatterns = new List<DetectionRule>
             {
-                new() { MatchType = MatchType.Exact, Pattern = "EPIC", CaseSensitive = false, ConfidenceBoost = 0.15 },
-                new() { MatchType = MatchType.Contains, Pattern = "HYPERSPACE", CaseSensitive = false, ConfidenceBoost = 0.10 },
-                new() { MatchType = MatchType.Regex, Pattern = @"^EHR\d*$", CaseSensitive = false, ConfidenceBoost = 0.05 }
+                new() { MatchType = Types.MatchType.Exact, Pattern = "EPIC", CaseSensitive = false, ConfidenceBoost = 0.15 },
+                new() { MatchType = Types.MatchType.Contains, Pattern = "HYPERSPACE", CaseSensitive = false, ConfidenceBoost = 0.10 },
+                new() { MatchType = Types.MatchType.Regex, Pattern = @"^EHR\d*$", CaseSensitive = false, ConfidenceBoost = 0.05 }
             },
             FacilityPatterns = new List<DetectionRule>
             {
-                new() { MatchType = MatchType.Contains, Pattern = "EPIC", CaseSensitive = false, ConfidenceBoost = 0.05 }
+                new() { MatchType = Types.MatchType.Contains, Pattern = "EPIC", CaseSensitive = false, ConfidenceBoost = 0.05 }
             },
             BaseConfidence = 0.80,
             VendorValidated = true,
@@ -305,9 +305,9 @@ internal class VendorPatternRepository : IVendorPatternRepository
             SupportedStandards = new List<string> { "HL7v23", "HL7", "FHIRv4", "FHIR" },
             ApplicationPatterns = new List<DetectionRule>
             {
-                new() { MatchType = MatchType.Contains, Pattern = "CERNER", CaseSensitive = false, ConfidenceBoost = 0.15 },
-                new() { MatchType = MatchType.Contains, Pattern = "MILLENNIUM", CaseSensitive = false, ConfidenceBoost = 0.10 },
-                new() { MatchType = MatchType.Contains, Pattern = "POWERCHART", CaseSensitive = false, ConfidenceBoost = 0.10 }
+                new() { MatchType = Types.MatchType.Contains, Pattern = "CERNER", CaseSensitive = false, ConfidenceBoost = 0.15 },
+                new() { MatchType = Types.MatchType.Contains, Pattern = "MILLENNIUM", CaseSensitive = false, ConfidenceBoost = 0.10 },
+                new() { MatchType = Types.MatchType.Contains, Pattern = "POWERCHART", CaseSensitive = false, ConfidenceBoost = 0.10 }
             },
             BaseConfidence = 0.80,
             VendorValidated = false,

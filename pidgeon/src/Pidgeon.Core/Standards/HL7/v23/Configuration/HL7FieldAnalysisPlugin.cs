@@ -96,11 +96,11 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
             {
                 segmentFieldPatterns[kvp.Key] = new SegmentFieldPatterns
                 {
-                    FieldFrequencies = kvp.Value.FieldFrequencies?.ToDictionary(
+                    FieldFrequencies = (kvp.Value.FieldFrequencies ?? new Dictionary<int, FieldFrequency>()).ToDictionary(
                         f => f.Key,
                         f => new FieldFrequency
                         {
-                            FieldName = f.Key,
+                            FieldName = f.Key.ToString(),
                             Frequency = f.Value.Frequency,
                             TotalOccurrences = f.Value.TotalOccurrences,
                             UniqueValues = f.Value.UniqueValues,
@@ -150,7 +150,7 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
                 var segmentResult = await AnalyzeHL7Segment(segment);
                 if (segmentResult.IsSuccess)
                 {
-                    foreach (var field in segmentResult.Value.FieldFrequencies ?? new Dictionary<string, FieldFrequency>())
+                    foreach (var field in (segmentResult.Value.FieldFrequencies ?? new Dictionary<int, FieldFrequency>()).ToDictionary(f => f.Key.ToString(), f => f.Value))
                     {
                         if (fieldFrequencies.ContainsKey(field.Key))
                         {
@@ -169,7 +169,7 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
             var pattern = new SegmentPattern
             {
                 SegmentType = segmentType,
-                FieldFrequencies = fieldFrequencies,
+                FieldFrequencies = fieldFrequencies.ToDictionary(f => int.Parse(f.Key), f => f.Value),
                 TotalOccurrences = segmentList.Count,
                 Confidence = CalculateSegmentConfidence(fieldFrequencies, segmentList.Count)
             };
@@ -360,7 +360,7 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
             return Result<SegmentPattern>.Success(new SegmentPattern
             {
                 SegmentType = segmentType,
-                FieldFrequencies = fieldFrequencies,
+                FieldFrequencies = StringKeysToIntKeys(fieldFrequencies),
                 TotalOccurrences = 1,
                 Confidence = 1.0
             });
@@ -400,7 +400,7 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
             patterns.Add(new ComponentPattern
             {
                 FieldType = fieldName,
-                ComponentFrequencies = componentFreqs,
+                ComponentFrequencies = StringKeysToIntKeysComponents(componentFreqs),
                 TotalSamples = 1,
                 StandardName = StandardName
             });
@@ -454,9 +454,9 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
 
     private SegmentPattern MergeSegmentPatterns(SegmentPattern existing, SegmentPattern newPattern)
     {
-        var mergedFrequencies = new Dictionary<string, FieldFrequency>(existing.FieldFrequencies ?? new Dictionary<string, FieldFrequency>());
+        var mergedFrequencies = new Dictionary<string, FieldFrequency>(IntKeysToStringKeys(existing.FieldFrequencies));
 
-        foreach (var field in newPattern.FieldFrequencies ?? new Dictionary<string, FieldFrequency>())
+        foreach (var field in IntKeysToStringKeys(newPattern.FieldFrequencies))
         {
             if (mergedFrequencies.ContainsKey(field.Key))
             {
@@ -471,7 +471,7 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
         return new SegmentPattern
         {
             SegmentType = existing.SegmentType,
-            FieldFrequencies = mergedFrequencies,
+            FieldFrequencies = StringKeysToIntKeys(mergedFrequencies),
             TotalOccurrences = existing.TotalOccurrences + newPattern.TotalOccurrences,
             Confidence = CalculateSegmentConfidence(mergedFrequencies, existing.TotalOccurrences + newPattern.TotalOccurrences)
         };
@@ -562,6 +562,37 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
         // Base score for having MSH, bonus for additional segments
         return hasRequiredSegments ? 0.5 + Math.Min(0.5, (segmentCount - 1) / 10.0) : 0.1;
     }
+
+    #endregion
+
+    #region Dictionary Conversion Utilities
+
+    /// <summary>
+    /// Converts Dictionary with int keys (HL7 field positions) to string keys for API compatibility.
+    /// Preserves healthcare domain semantics while enabling plugin boundary conversion.
+    /// </summary>
+    /// <param name="source">Source dictionary with int keys representing HL7 field positions</param>
+    /// <returns>Dictionary with string keys for API compatibility</returns>
+    private static Dictionary<string, FieldFrequency> IntKeysToStringKeys(Dictionary<int, FieldFrequency>? source)
+        => source?.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value) ?? new Dictionary<string, FieldFrequency>();
+
+    /// <summary>
+    /// Converts Dictionary with string keys back to int keys (HL7 field positions) for domain compatibility.
+    /// Maintains healthcare domain semantics by preserving field position numbers.
+    /// </summary>
+    /// <param name="source">Source dictionary with string keys from API boundary</param>
+    /// <returns>Dictionary with int keys representing HL7 field positions</returns>
+    private static Dictionary<int, FieldFrequency> StringKeysToIntKeys(Dictionary<string, FieldFrequency>? source)
+        => source?.ToDictionary(kvp => int.Parse(kvp.Key), kvp => kvp.Value) ?? new Dictionary<int, FieldFrequency>();
+
+    /// <summary>
+    /// Converts Dictionary with string keys to int keys for ComponentFrequency collections.
+    /// Maintains healthcare domain semantics for component positions.
+    /// </summary>
+    /// <param name="source">Source dictionary with string keys</param>
+    /// <returns>Dictionary with int keys representing component positions</returns>
+    private static Dictionary<int, ComponentFrequency> StringKeysToIntKeysComponents(Dictionary<string, ComponentFrequency>? source)
+        => source?.ToDictionary(kvp => int.Parse(kvp.Key), kvp => kvp.Value) ?? new Dictionary<int, ComponentFrequency>();
 
     #endregion
 }

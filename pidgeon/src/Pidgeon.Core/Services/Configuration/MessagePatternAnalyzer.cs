@@ -55,7 +55,7 @@ internal class MessagePatternAnalyzer : IMessagePatternAnalyzer
             {
                 foreach (var fieldFreq in segmentPattern.FieldFrequencies)
                 {
-                    fieldFrequencies[fieldFreq.Key] = fieldFreq.Value;
+                    fieldFrequencies[fieldFreq.Key.ToString()] = fieldFreq.Value;
                 }
             }
 
@@ -108,11 +108,11 @@ internal class MessagePatternAnalyzer : IMessagePatternAnalyzer
                         // Let the plugin determine and extract field values for component analysis
                         // This avoids hardcoded parsing logic in core service
                         var componentResult = await AnalyzeFieldComponents(
-                            messageList, fieldFreq.Key, standard, plugin);
+                            messageList, fieldFreq.Key.ToString(), standard, plugin);
                         
                         if (componentResult.IsSuccess)
                         {
-                            componentPatterns[fieldFreq.Key] = componentResult.Value;
+                            componentPatterns[fieldFreq.Key.ToString()] = componentResult.Value;
                         }
                     }
                 }
@@ -245,10 +245,10 @@ internal class MessagePatternAnalyzer : IMessagePatternAnalyzer
                 TotalSamples = messageList.Count,
                 FieldFrequencies = frequencyResult.Value,
                 ComponentPatterns = componentResult.IsSuccess ? componentResult.Value : new Dictionary<string, ComponentPattern>(),
-                NullTolerance = nullToleranceResult.IsSuccess ? nullToleranceResult.Value : new Dictionary<string, double>(),
+                NullTolerance = nullToleranceResult.IsSuccess ? nullToleranceResult.Value.Values.FirstOrDefault() : 0.0,
                 Confidence = confidenceResult.IsSuccess ? confidenceResult.Value : 0.5,
                 AnalysisDate = DateTime.UtcNow,
-                SegmentPatterns = patternsResult.Value.SegmentPatterns.Keys.ToList()
+                SegmentPatterns = patternsResult.Value.SegmentPatterns
             };
 
             _logger.LogInformation("Comprehensive pattern analysis completed with {Confidence:P1} confidence",

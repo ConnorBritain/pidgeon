@@ -144,6 +144,95 @@ public readonly struct Result<T>
 }
 
 /// <summary>
+/// Represents the result of an operation that can succeed or fail (for void operations).
+/// Provides explicit error handling without exceptions for business logic control flow.
+/// </summary>
+public readonly struct Result
+{
+    private readonly Error _error;
+
+    private Result(Error error)
+    {
+        _error = error;
+        IsSuccess = false;
+    }
+
+    private Result(bool success)
+    {
+        _error = default;
+        IsSuccess = success;
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether the operation was successful.
+    /// </summary>
+    public bool IsSuccess { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the operation failed.
+    /// </summary>
+    public bool IsFailure => !IsSuccess;
+
+    /// <summary>
+    /// Gets the error if the operation failed.
+    /// Throws InvalidOperationException if accessed when IsSuccess is true.
+    /// </summary>
+    public Error Error => IsFailure 
+        ? _error 
+        : throw new InvalidOperationException("Cannot access Error when Result is in success state. Check IsFailure first.");
+
+    /// <summary>
+    /// Creates a successful result.
+    /// </summary>
+    /// <returns>A successful result</returns>
+    public static Result Success() => new(true);
+
+    /// <summary>
+    /// Creates a failed result with the specified error.
+    /// </summary>
+    /// <param name="error">The error information</param>
+    /// <returns>A failed result</returns>
+    public static Result Failure(Error error) => new(error);
+
+    /// <summary>
+    /// Creates a failed result with the specified error message.
+    /// </summary>
+    /// <param name="message">The error message</param>
+    /// <returns>A failed result</returns>
+    public static Result Failure(string message) => new(Error.Create(message));
+
+    /// <summary>
+    /// Executes an action if the result is successful, returning the original result.
+    /// </summary>
+    /// <param name="action">The action to execute</param>
+    /// <returns>The original result</returns>
+    public Result OnSuccess(Action action)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+        if (IsSuccess) action();
+        return this;
+    }
+
+    /// <summary>
+    /// Executes an action if the result is a failure, returning the original result.
+    /// </summary>
+    /// <param name="action">The action to execute</param>
+    /// <returns>The original result</returns>
+    public Result OnFailure(Action<Error> action)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+        if (IsFailure) action(_error);
+        return this;
+    }
+
+    /// <summary>
+    /// Implicit conversion from Error to Result.
+    /// </summary>
+    /// <param name="error">The error to convert</param>
+    public static implicit operator Result(Error error) => Failure(error);
+}
+
+/// <summary>
 /// Represents an error with contextual information.
 /// </summary>
 public readonly struct Error

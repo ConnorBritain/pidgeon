@@ -42,6 +42,42 @@ public record FieldFrequency
     /// </summary>
     [JsonPropertyName("commonValues")]
     public Dictionary<string, int> CommonValues { get; set; } = new();
+
+    /// <summary>
+    /// Average length of field values when populated.
+    /// </summary>
+    [JsonPropertyName("averageLength")]
+    public double AverageLength { get; set; }
+
+    /// <summary>
+    /// Total number of occurrences (same as TotalCount for compatibility).
+    /// </summary>
+    [JsonPropertyName("totalOccurrences")]
+    public int TotalOccurrences { get; set; }
+
+    /// <summary>
+    /// Field frequency rate (same as PopulationRate for compatibility).
+    /// </summary>
+    [JsonPropertyName("frequency")]
+    public double Frequency { get; set; }
+
+    /// <summary>
+    /// Field name for identification.
+    /// </summary>
+    [JsonPropertyName("fieldName")]
+    public string FieldName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Count of unique values observed.
+    /// </summary>
+    [JsonPropertyName("uniqueValues")]
+    public int UniqueValues { get; set; }
+
+    /// <summary>
+    /// Component patterns found in this field (for composite fields).
+    /// </summary>
+    [JsonPropertyName("componentPatterns")]
+    public Dictionary<string, ComponentPattern> ComponentPatterns { get; set; } = new();
 }
 
 /// <summary>
@@ -66,6 +102,36 @@ public record ComponentFrequency
     /// </summary>
     [JsonPropertyName("totalCount")]
     public int TotalCount { get; set; }
+
+    /// <summary>
+    /// Component name for identification.
+    /// </summary>
+    [JsonPropertyName("componentName")]
+    public string ComponentName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Component frequency rate.
+    /// </summary>
+    [JsonPropertyName("frequency")]
+    public double Frequency { get; set; }
+
+    /// <summary>
+    /// Total occurrences of this component.
+    /// </summary>
+    [JsonPropertyName("totalOccurrences")]
+    public int TotalOccurrences { get; set; }
+
+    /// <summary>
+    /// Count of unique values for this component.
+    /// </summary>
+    [JsonPropertyName("uniqueValues")]
+    public int UniqueValues { get; set; }
+
+    /// <summary>
+    /// Average length of component values.
+    /// </summary>
+    [JsonPropertyName("averageLength")]
+    public double AverageLength { get; set; }
 }
 
 /// <summary>
@@ -90,6 +156,18 @@ public record ComponentPattern
     /// </summary>
     [JsonPropertyName("sampleSize")]
     public int SampleSize { get; init; }
+
+    /// <summary>
+    /// Total samples analyzed for this pattern.
+    /// </summary>
+    [JsonPropertyName("totalSamples")]
+    public int TotalSamples { get; init; }
+
+    /// <summary>
+    /// Standard name for this pattern.
+    /// </summary>
+    [JsonPropertyName("standardName")]
+    public string StandardName { get; init; } = string.Empty;
 }
 
 /// <summary>
@@ -108,4 +186,28 @@ public record SegmentPattern
     /// </summary>
     [JsonPropertyName("fields")]
     public Dictionary<int, FieldFrequency> Fields { get; init; } = new();
+
+    /// <summary>
+    /// Field frequencies by field position.
+    /// </summary>
+    [JsonPropertyName("fieldFrequencies")]
+    public Dictionary<int, FieldFrequency> FieldFrequencies { get; set; } = new();
+
+    /// <summary>
+    /// Segment type name.
+    /// </summary>
+    [JsonPropertyName("segmentType")]
+    public string SegmentType { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Total occurrences of this segment.
+    /// </summary>
+    [JsonPropertyName("totalOccurrences")]
+    public int TotalOccurrences { get; init; }
+
+    /// <summary>
+    /// Confidence score for this pattern (0.0 to 1.0).
+    /// </summary>
+    [JsonPropertyName("confidence")]
+    public double Confidence { get; init; }
 }

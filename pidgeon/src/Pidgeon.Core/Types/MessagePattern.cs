@@ -30,6 +30,48 @@ public record MessagePattern
     public Dictionary<string, SegmentPattern> SegmentPatterns { get; init; } = new();
 
     /// <summary>
+    /// Healthcare standard this pattern applies to.
+    /// </summary>
+    [JsonPropertyName("standard")]
+    public string Standard { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Total number of samples analyzed for this pattern.
+    /// </summary>
+    [JsonPropertyName("totalSamples")]
+    public int TotalSamples { get; init; }
+
+    /// <summary>
+    /// Field frequency analysis for this message pattern.
+    /// </summary>
+    [JsonPropertyName("fieldFrequencies")]
+    public Dictionary<string, FieldFrequency> FieldFrequencies { get; init; } = new();
+
+    /// <summary>
+    /// Component patterns found in this message.
+    /// </summary>
+    [JsonPropertyName("componentPatterns")]
+    public Dictionary<string, ComponentPattern> ComponentPatterns { get; init; } = new();
+
+    /// <summary>
+    /// Null tolerance threshold for this pattern.
+    /// </summary>
+    [JsonPropertyName("nullTolerance")]
+    public double NullTolerance { get; init; }
+
+    /// <summary>
+    /// Confidence score for this pattern (0.0 to 1.0).
+    /// </summary>
+    [JsonPropertyName("confidence")]
+    public double Confidence { get; init; }
+
+    /// <summary>
+    /// When this analysis was performed.
+    /// </summary>
+    [JsonPropertyName("analysisDate")]
+    public DateTime AnalysisDate { get; init; } = DateTime.UtcNow;
+
+    /// <summary>
     /// Merges this message pattern with another pattern of the same type.
     /// Combines frequencies and segment patterns.
     /// </summary>
@@ -46,10 +88,29 @@ public record MessagePattern
         {
             if (mergedSegmentPatterns.ContainsKey(kvp.Key))
             {
-                // For now, keep the one with higher frequency
-                // TODO: Implement proper SegmentPattern.MergeWith when SegmentPattern is fully designed
-                if (kvp.Value.Frequency > mergedSegmentPatterns[kvp.Key].Frequency)
-                    mergedSegmentPatterns[kvp.Key] = kvp.Value;
+                // Merge field frequencies by combining dictionaries
+                var mergedFields = new Dictionary<int, FieldFrequency>(mergedSegmentPatterns[kvp.Key].Fields);
+                foreach (var fieldKvp in kvp.Value.Fields)
+                {
+                    if (mergedFields.ContainsKey(fieldKvp.Key))
+                    {
+                        // Merge field frequencies by adding counts
+                        var existing = mergedFields[fieldKvp.Key];
+                        mergedFields[fieldKvp.Key] = new FieldFrequency
+                        {
+                            FieldIndex = existing.FieldIndex,
+                            PopulatedCount = existing.PopulatedCount + fieldKvp.Value.PopulatedCount,
+                            TotalCount = existing.TotalCount + fieldKvp.Value.TotalCount,
+                            PopulationRate = (double)(existing.PopulatedCount + fieldKvp.Value.PopulatedCount) / (existing.TotalCount + fieldKvp.Value.TotalCount),
+                            CommonValues = existing.CommonValues.Concat(fieldKvp.Value.CommonValues).GroupBy(x => x.Key).ToDictionary(g => g.Key, g => g.Sum(x => x.Value))
+                        };
+                    }
+                    else
+                    {
+                        mergedFields[fieldKvp.Key] = fieldKvp.Value;
+                    }
+                }
+                mergedSegmentPatterns[kvp.Key] = kvp.Value with { Fields = mergedFields };
             }
             else
             {
@@ -65,28 +126,3 @@ public record MessagePattern
     }
 }
 
-/// <summary>
-/// Represents a segment pattern within a message type.
-/// TODO: This is a placeholder - needs proper design in Phase 1B.
-/// </summary>
-public record SegmentPattern
-{
-    /// <summary>
-    /// Segment type (e.g., "PID", "MSH", "ORC").
-    /// </summary>
-    [JsonPropertyName("segmentType")]
-    public string SegmentType { get; init; } = default!;
-
-    /// <summary>
-    /// Frequency of this segment pattern.
-    /// </summary>
-    [JsonPropertyName("frequency")]
-    public int Frequency { get; init; }
-
-    /// <summary>
-    /// Field patterns within this segment.
-    /// TODO: Define proper field pattern structure.
-    /// </summary>
-    [JsonPropertyName("fieldPatterns")]
-    public Dictionary<string, object> FieldPatterns { get; init; } = new();
-}
