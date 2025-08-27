@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Domain;
+using Pidgeon.Core.Domain.Clinical.Entities;
 using Pidgeon.Core.Standards.Common;
 using Pidgeon.Core.Standards.HL7.v23.Segments;
 

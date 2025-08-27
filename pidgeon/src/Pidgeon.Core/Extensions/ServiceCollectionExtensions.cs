@@ -5,7 +5,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Pidgeon.Core.Standards.Common;
 using Pidgeon.Core.Services;
-using Pidgeon.Core.Services.Configuration;
+using Pidgeon.Core.Domain.Configuration.Services;
 
 namespace Pidgeon.Core.Extensions;
 

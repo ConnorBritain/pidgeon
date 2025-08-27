@@ -4,7 +4,7 @@
 
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Standards.Common;
-using Pidgeon.Core.Types;
+using Pidgeon.Core.Domain.Configuration.Entities;
 using System.Text.RegularExpressions;
 
 namespace Pidgeon.Core.Standards.HL7.v23.Configuration;

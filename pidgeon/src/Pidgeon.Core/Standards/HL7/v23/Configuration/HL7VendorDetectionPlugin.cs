@@ -3,10 +3,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
-using Pidgeon.Core.Services.Configuration;
+using Pidgeon.Core.Domain.Configuration.Services;
 using Pidgeon.Core.Standards.Common;
-using Pidgeon.Core.Types;
+using Pidgeon.Core.Domain.Configuration.Entities;
 using System.Text.RegularExpressions;
+using ConfigMatchType = Pidgeon.Core.Domain.Configuration.Entities.MatchType;
 
 namespace Pidgeon.Core.Standards.HL7.v23.Configuration;
 
@@ -233,11 +234,11 @@ internal class HL7VendorDetectionPlugin : IStandardVendorDetectionPlugin
         
         return rule.MatchType switch
         {
-            Types.MatchType.Exact => value.Equals(rule.Pattern, comparison),
-            Types.MatchType.Contains => value.Contains(rule.Pattern, comparison),
-            Types.MatchType.StartsWith => value.StartsWith(rule.Pattern, comparison),
-            Types.MatchType.EndsWith => value.EndsWith(rule.Pattern, comparison),
-            Types.MatchType.Regex => EvaluateRegexRule(rule, value),
+            ConfigMatchType.Exact => value.Equals(rule.Pattern, comparison),
+            ConfigMatchType.Contains => value.Contains(rule.Pattern, comparison),
+            ConfigMatchType.StartsWith => value.StartsWith(rule.Pattern, comparison),
+            ConfigMatchType.EndsWith => value.EndsWith(rule.Pattern, comparison),
+            ConfigMatchType.Regex => EvaluateRegexRule(rule, value),
             _ => false
         };
     }

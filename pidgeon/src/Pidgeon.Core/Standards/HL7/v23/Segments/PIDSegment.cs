@@ -2,8 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Domain;
+using Pidgeon.Core.Domain.Clinical.Entities;
 using Pidgeon.Core.Standards.HL7.v23.Fields;
+using ClinicalMaritalStatus = Pidgeon.Core.Domain.Clinical.Entities.MaritalStatus;
 
 namespace Pidgeon.Core.Standards.HL7.v23.Segments;
 
@@ -260,12 +261,12 @@ public class PIDSegment : HL7Segment
             {
                 var maritalCode = patient.MaritalStatus.Value switch
                 {
-                    Domain.MaritalStatus.Single => "S",
-                    Domain.MaritalStatus.Married => "M",
-                    Domain.MaritalStatus.Divorced => "D",
-                    Domain.MaritalStatus.Widowed => "W",
-                    Domain.MaritalStatus.Separated => "A",
-                    Domain.MaritalStatus.Unknown => "U",
+                    ClinicalMaritalStatus.Single => "S",
+                    ClinicalMaritalStatus.Married => "M",
+                    ClinicalMaritalStatus.Divorced => "D",
+                    ClinicalMaritalStatus.Widowed => "W",
+                    ClinicalMaritalStatus.Separated => "A",
+                    ClinicalMaritalStatus.Unknown => "U",
                     _ => "U"
                 };
                 MaritalStatus.SetValue(maritalCode);

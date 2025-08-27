@@ -2,7 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Types;
+using Pidgeon.Core.Domain.Configuration.Entities;
+using Pidgeon.Core.Domain.Transformation.Entities;
 
 namespace Pidgeon.Core.Services;
 
