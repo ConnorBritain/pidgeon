@@ -258,7 +258,7 @@ public record XPN_ExtendedPersonName
         {
             var rangeValidation = NameValidityRange.Validate();
             if (!rangeValidation.IsSuccess)
-                return Error.Validation($"Name validity range is invalid: {rangeValidation.Error?.Message}", nameof(NameValidityRange));
+                return Error.Validation($"Name validity range is invalid: {rangeValidation.Error.Message}", nameof(NameValidityRange));
         }
 
         return Result<XPN_ExtendedPersonName>.Success(this);

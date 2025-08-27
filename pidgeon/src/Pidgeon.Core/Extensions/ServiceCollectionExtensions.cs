@@ -43,6 +43,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IConfidenceCalculator, ConfidenceCalculator>();
         services.AddScoped<IFormatDeviationDetector, FormatDeviationDetector>();
         services.AddScoped<IVendorPatternRepository, VendorPatternRepository>();
+        services.AddScoped<IFieldStatisticsService, FieldStatisticsService>();
         
         // Register HL7 configuration plugins
         services.AddStandardConfigurationPlugins();

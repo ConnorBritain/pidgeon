@@ -303,6 +303,56 @@ All key documents updated to reflect Four-Domain Architecture (August 27, 2025):
 - ✅ `INIT.md`: Updated sacred principles to show four domains
 - ✅ `pidgeon_domain_model.md`: Complete four-domain specification created
 
+---
+
+## 📝 **Code Marker Standards for Technical Debt Tracking**
+
+### **MANDATORY: Use Markers for Identified Issues**
+When making sweeping changes, architectural migrations, or identifying problems, **ALWAYS add markers** for future tracking:
+
+```csharp
+// TODO: Description of what needs to be implemented/fixed
+// FIXME: Description of broken/problematic code that needs repair  
+// HACK: Description of temporary workaround that needs proper solution
+// BUG: Description of defect that needs fixing
+```
+
+### **When to Add Markers**:
+1. **During major refactoring** - Mark incomplete implementations
+2. **Interface changes** - Mark methods that need updating downstream
+3. **Domain migrations** - Mark cross-domain dependencies to resolve
+4. **Service relocations** - Mark services in wrong architectural locations
+5. **Plugin modifications** - Mark plugin responsibilities that should move to adapters
+6. **Pattern violations** - Mark code that violates sacred architectural principles
+
+### **Marker Examples**:
+```csharp
+public class ExampleService : IExampleService {
+    // TODO: Implement proper Result<T> pattern instead of throwing exceptions
+    public void ProcessData(string input) {
+        throw new NotImplementedException();
+    }
+    
+    // FIXME: This creates dependency on multiple domains - violates single-domain rule
+    private readonly IConfigurationService _config;
+    private readonly ITransformationService _transform;
+    
+    // HACK: Hard-coded HL7 logic in core service - should be in plugin
+    if (messageType.StartsWith("ADT")) { /* ... */ }
+    
+    // BUG: Null reference possible if fieldPatterns.SegmentPatterns is empty
+    return fieldPatterns.SegmentPatterns.First().Value;
+}
+```
+
+### **Tracking and Resolution**:
+- Use `grep -r "TODO:\|FIXME:\|HACK:\|BUG:" .` to find all markers
+- Include marker count in technical debt assessments  
+- Remove markers only when properly resolved, not just commented out
+- Include marker context in architectural decision documentation
+
+This ensures **comprehensive tracking** during major changes and prevents issues from being forgotten during fast development cycles.
+
 **No competing architectural ideologies remain in documentation.**
 
 ---

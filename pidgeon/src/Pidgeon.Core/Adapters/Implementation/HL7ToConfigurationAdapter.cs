@@ -49,14 +49,14 @@ public class HL7ToConfigurationAdapter : IMessagingToConfigurationAdapter
             {
                 MessageType = "Unknown",
                 Standard = "HL7v2",
-                FieldFrequencies = new Dictionary<string, FieldFrequency>(),
-                TotalSamples = 0,
+                SegmentPatterns = new Dictionary<string, SegmentPattern>(),
+                Confidence = 0.0,
                 AnalysisDate = DateTime.UtcNow
             };
         }
 
         // Group messages by type for analysis
-        var messageGroups = hl7Messages.GroupBy(m => m.MessageType ?? "Unknown");
+        var messageGroups = hl7Messages.GroupBy(m => m.MessageType?.MessageTypeCode ?? "Unknown");
         var allFieldFrequencies = new Dictionary<string, FieldFrequency>();
         int totalSamples = 0;
 
@@ -82,14 +82,43 @@ public class HL7ToConfigurationAdapter : IMessagingToConfigurationAdapter
 
         var primaryMessageType = messageGroups.First().Key;
         
+        // Convert field frequencies to segment patterns
+        var segmentPatterns = new Dictionary<string, SegmentPattern>();
+        foreach (var fieldPath in allFieldFrequencies.Keys)
+        {
+            var parts = fieldPath.Split('.');
+            if (parts.Length >= 2)
+            {
+                var segmentId = parts[0];
+                if (!segmentPatterns.ContainsKey(segmentId))
+                {
+                    segmentPatterns[segmentId] = new SegmentPattern
+                    {
+                        SegmentId = segmentId,
+                        Fields = new Dictionary<int, FieldFrequency>(),
+                        FieldFrequencies = new Dictionary<int, FieldFrequency>(), // TODO: Remove duplicate in Phase 2
+                        SegmentType = segmentId, // Use segment ID as type for now
+                        TotalOccurrences = totalSamples,
+                        Confidence = 1.0, // Default confidence
+                        SampleSize = totalSamples
+                    };
+                }
+                
+                if (int.TryParse(parts[1], out var fieldIndex))
+                {
+                    segmentPatterns[segmentId].FieldFrequencies[fieldIndex] = allFieldFrequencies[fieldPath];
+                    segmentPatterns[segmentId].Fields[fieldIndex] = allFieldFrequencies[fieldPath]; // TODO: Remove duplicate in Phase 2
+                }
+            }
+        }
+        
         return new FieldPatterns
         {
             MessageType = primaryMessageType,
             Standard = "HL7v2",
-            FieldFrequencies = allFieldFrequencies,
-            TotalSamples = totalSamples,
-            AnalysisDate = DateTime.UtcNow,
-            Confidence = CalculateOverallConfidence(allFieldFrequencies)
+            SegmentPatterns = segmentPatterns,
+            Confidence = CalculateOverallConfidence(allFieldFrequencies),
+            AnalysisDate = DateTime.UtcNow
         };
     }
 
@@ -102,29 +131,33 @@ public class HL7ToConfigurationAdapter : IMessagingToConfigurationAdapter
         var fieldPatterns = await AnalyzePatternsAsync(messages);
         var vendorSignature = await DetectVendorSignatureAsync(messages);
         
-        return new VendorConfiguration
+        // Use VendorConfiguration.Create factory method to properly construct
+        var messagePatterns = new Dictionary<string, MessagePattern>();
+        messagePatterns[fieldPatterns.MessageType] = new MessagePattern
         {
-            Address = new ConfigurationAddress
-            {
-                Vendor = vendorSignature?.VendorName ?? "Unknown",
-                Standard = "HL7v2",
-                MessageType = fieldPatterns.MessageType,
-                Version = "2.3"
-            },
-            RequiredFields = ExtractRequiredFields(fieldPatterns),
-            OptionalFields = ExtractOptionalFields(fieldPatterns),
-            CustomSegments = new List<CustomSegmentPattern>(),
-            FormatDeviations = new List<FormatDeviation>(),
-            Confidence = fieldPatterns.Confidence,
-            Metadata = new ConfigurationMetadata
-            {
-                FirstSeen = DateTime.UtcNow,
-                LastUpdated = DateTime.UtcNow,
-                MessagesSampled = fieldPatterns.TotalSamples,
-                Version = "1.0",
-                Confidence = fieldPatterns.Confidence
-            }
+            MessageType = fieldPatterns.MessageType,
+            Frequency = 1,
+            SegmentSequence = fieldPatterns.SegmentPatterns.Keys.ToList(),
+            RequiredSegments = fieldPatterns.SegmentPatterns.Keys.ToList(),
+            OptionalSegments = new List<string>()
         };
+        
+        var sampleCount = fieldPatterns.SegmentPatterns.Values
+            .Select(s => s.SampleSize)
+            .FirstOrDefault();
+        
+        return VendorConfiguration.Create(
+            address: new ConfigurationAddress(
+                Vendor: vendorSignature?.Name ?? "Unknown",
+                Standard: "HL7v2",
+                MessageType: fieldPatterns.MessageType
+            ),
+            signature: vendorSignature ?? new VendorSignature { Name = "Unknown", Version = null },
+            fieldPatterns: fieldPatterns,
+            messagePatterns: messagePatterns,
+            confidence: fieldPatterns.Confidence,
+            sampleCount: sampleCount
+        );
     }
 
     /// <summary>
@@ -154,7 +187,19 @@ public class HL7ToConfigurationAdapter : IMessagingToConfigurationAdapter
     public async Task<Dictionary<string, FieldFrequency>> CalculateFieldStatisticsAsync(IEnumerable<HealthcareMessage> messages)
     {
         var patterns = await AnalyzePatternsAsync(messages);
-        return patterns.FieldFrequencies;
+        
+        // Convert segment patterns back to flat field frequency dictionary
+        var fieldFrequencies = new Dictionary<string, FieldFrequency>();
+        foreach (var segmentPattern in patterns.SegmentPatterns.Values)
+        {
+            foreach (var fieldFreq in segmentPattern.FieldFrequencies)
+            {
+                var fieldPath = $"{segmentPattern.SegmentId}.{fieldFreq.Key}";
+                fieldFrequencies[fieldPath] = fieldFreq.Value;
+            }
+        }
+        
+        return fieldFrequencies;
     }
 
     #region Private Helper Methods
@@ -184,34 +229,54 @@ public class HL7ToConfigurationAdapter : IMessagingToConfigurationAdapter
 
     private static Dictionary<string, FieldPattern> ExtractRequiredFields(FieldPatterns patterns)
     {
-        return patterns.FieldFrequencies
-            .Where(f => f.Value.PopulationRate > 0.8) // Fields present in >80% of messages are considered required
-            .ToDictionary(
-                f => f.Key,
-                f => new FieldPattern
+        var requiredFields = new Dictionary<string, FieldPattern>();
+        
+        foreach (var segmentPattern in patterns.SegmentPatterns.Values)
+        {
+            foreach (var fieldFreq in segmentPattern.FieldFrequencies)
+            {
+                if (fieldFreq.Value.PopulationRate > 0.8) // Fields present in >80% of messages are considered required
                 {
-                    Path = f.Key,
-                    PopulationRate = f.Value.PopulationRate,
-                    CommonValues = f.Value.CommonValues.Keys.ToList(),
-                    RegexPattern = null
+                    var fieldPath = $"{segmentPattern.SegmentId}.{fieldFreq.Key}";
+                    requiredFields[fieldPath] = new FieldPattern
+                    {
+                        Path = fieldPath,
+                        PopulationRate = fieldFreq.Value.PopulationRate,
+                        CommonValues = fieldFreq.Value.CommonValues?.Keys.ToList() ?? new List<string>(),
+                        RegexPattern = null,
+                        Cardinality = Cardinality.Required
+                    };
                 }
-            );
+            }
+        }
+        
+        return requiredFields;
     }
 
     private static Dictionary<string, FieldPattern> ExtractOptionalFields(FieldPatterns patterns)
     {
-        return patterns.FieldFrequencies
-            .Where(f => f.Value.PopulationRate <= 0.8) // Fields present in ≤80% of messages are considered optional
-            .ToDictionary(
-                f => f.Key,
-                f => new FieldPattern
+        var optionalFields = new Dictionary<string, FieldPattern>();
+        
+        foreach (var segmentPattern in patterns.SegmentPatterns.Values)
+        {
+            foreach (var fieldFreq in segmentPattern.FieldFrequencies)
+            {
+                if (fieldFreq.Value.PopulationRate <= 0.8) // Fields present in ≤80% of messages are considered optional
                 {
-                    Path = f.Key,
-                    PopulationRate = f.Value.PopulationRate,
-                    CommonValues = f.Value.CommonValues.Keys.ToList(),
-                    RegexPattern = null
+                    var fieldPath = $"{segmentPattern.SegmentId}.{fieldFreq.Key}";
+                    optionalFields[fieldPath] = new FieldPattern
+                    {
+                        Path = fieldPath,
+                        PopulationRate = fieldFreq.Value.PopulationRate,
+                        CommonValues = fieldFreq.Value.CommonValues?.Keys.ToList() ?? new List<string>(),
+                        RegexPattern = null,
+                        Cardinality = Cardinality.Optional
+                    };
                 }
-            );
+            }
+        }
+        
+        return optionalFields;
     }
 
     private static double CalculateOverallConfidence(Dictionary<string, FieldFrequency> fieldFrequencies)
@@ -225,4 +290,71 @@ public class HL7ToConfigurationAdapter : IMessagingToConfigurationAdapter
     }
 
     #endregion
+
+    public async Task<SegmentPattern> AnalyzeSegmentPatternsAsync(
+        IEnumerable<HealthcareMessage> messages,
+        string segmentType)
+    {
+        var hl7Messages = messages.OfType<HL7Message>().ToList();
+        
+        if (!hl7Messages.Any())
+        {
+            _logger.LogWarning("No HL7 messages found for segment analysis of type {SegmentType}", segmentType);
+            return new SegmentPattern
+            {
+                SegmentId = segmentType,
+                FieldFrequencies = new Dictionary<int, FieldFrequency>(),
+                SampleSize = 0
+            };
+        }
+
+        var fieldFrequencies = new Dictionary<int, FieldFrequency>();
+        var totalSegments = 0;
+
+        foreach (var message in hl7Messages)
+        {
+            // TODO: Extract segments of specific type from HL7Message.Segments dictionary
+            // Current HL7Message structure may need enhancement to support segment type filtering
+            totalSegments++;
+        }
+
+        await Task.CompletedTask;
+        return new SegmentPattern
+        {
+            SegmentId = segmentType,
+            FieldFrequencies = fieldFrequencies,
+            SampleSize = totalSegments
+        };
+    }
+
+    public async Task<ComponentPattern> AnalyzeComponentPatternsAsync(
+        IEnumerable<HealthcareMessage> messages,
+        string fieldType)
+    {
+        var hl7Messages = messages.OfType<HL7Message>().ToList();
+        
+        if (!hl7Messages.Any())
+        {
+            _logger.LogWarning("No HL7 messages found for component analysis of type {FieldType}", fieldType);
+            return new ComponentPattern
+            {
+                FieldType = fieldType,
+                ComponentFrequencies = new Dictionary<int, ComponentFrequency>(),
+                SampleSize = 0
+            };
+        }
+
+        var componentFrequencies = new Dictionary<int, ComponentFrequency>();
+        
+        // TODO: Extract field values of specified type from HL7 messages
+        // This requires field type mapping (XPN, CE, CX, etc.) and field extraction logic
+
+        await Task.CompletedTask;
+        return new ComponentPattern
+        {
+            FieldType = fieldType,
+            ComponentFrequencies = componentFrequencies,
+            SampleSize = 0
+        };
+    }
 }

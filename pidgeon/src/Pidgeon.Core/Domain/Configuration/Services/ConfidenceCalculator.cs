@@ -246,9 +246,11 @@ internal class ConfidenceCalculator : IConfidenceCalculator
                 if (plugin != null)
                 {
                     _logger.LogDebug("Using {Standard} plugin for coverage calculation", fieldPatterns.Standard);
-                    var coverageResult = await plugin.CalculateFieldCoverageAsync(fieldPatterns);
-                    if (coverageResult.IsSuccess)
-                        return coverageResult.Value;
+                    // FIXME: Plugin no longer handles coverage calculation - need to use IFieldStatisticsService
+                    // Temporary workaround: skip plugin coverage calculation
+                    // var coverageResult = await plugin.CalculateFieldCoverageAsync(fieldPatterns);
+                    // if (coverageResult.IsSuccess)
+                    //     return coverageResult.Value;
                 }
             }
         }

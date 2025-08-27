@@ -302,7 +302,7 @@ internal class MessagePatternAnalyzer : IMessagePatternAnalyzer
             var componentPattern = new ComponentPattern
             {
                 FieldType = fieldName,
-                ComponentFrequencies = new Dictionary<string, ComponentFrequency>(),
+                ComponentFrequencies = new Dictionary<int, ComponentFrequency>(),
                 TotalSamples = messageList.Count,
                 StandardName = standard
             };

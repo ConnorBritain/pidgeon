@@ -53,4 +53,29 @@ public interface IMessagingToConfigurationAdapter
     /// <param name="messages">Messages to analyze for field statistics</param>
     /// <returns>Statistical analysis using configuration domain types</returns>
     Task<Dictionary<string, FieldFrequency>> CalculateFieldStatisticsAsync(IEnumerable<HealthcareMessage> messages);
+
+    /// <summary>
+    /// Analyzes patterns for a specific segment or resource type across messages.
+    /// Focuses analysis on a single segment/resource structure and usage patterns.
+    /// </summary>
+    /// <param name="messages">Collection of healthcare messages containing the segment/resource</param>
+    /// <param name="segmentType">Type of segment or resource to analyze (MSH, PID, Patient, etc.)</param>
+    /// <returns>Segment-specific pattern analysis</returns>
+    Task<SegmentPattern> AnalyzeSegmentPatternsAsync(
+        IEnumerable<HealthcareMessage> messages, 
+        string segmentType);
+
+    /// <summary>
+    /// Analyzes component structure patterns within composite fields across messages.
+    /// Extracts patterns for complex data types and composite field usage.
+    /// For HL7: XPN, XAD, CE component patterns and population frequency
+    /// For FHIR: Complex data type patterns (Address, HumanName, CodeableConcept)
+    /// For NCPDP: Composite field structures and component usage
+    /// </summary>
+    /// <param name="messages">Collection of healthcare messages containing composite fields</param>
+    /// <param name="fieldType">Type of composite field to analyze (XPN, Address, etc.)</param>
+    /// <returns>Component pattern analysis</returns>
+    Task<ComponentPattern> AnalyzeComponentPatternsAsync(
+        IEnumerable<HealthcareMessage> messages,
+        string fieldType);
 }

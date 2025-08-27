@@ -72,6 +72,24 @@ public record MessagePattern
     public DateTime AnalysisDate { get; init; } = DateTime.UtcNow;
 
     /// <summary>
+    /// Ordered sequence of segments in this message pattern.
+    /// </summary>
+    [JsonPropertyName("segmentSequence")]
+    public List<string> SegmentSequence { get; init; } = new();
+
+    /// <summary>
+    /// Required segments for this message type.
+    /// </summary>
+    [JsonPropertyName("requiredSegments")]
+    public List<string> RequiredSegments { get; init; } = new();
+
+    /// <summary>
+    /// Optional segments for this message type.
+    /// </summary>
+    [JsonPropertyName("optionalSegments")]
+    public List<string> OptionalSegments { get; init; } = new();
+
+    /// <summary>
     /// Merges this message pattern with another pattern of the same type.
     /// Combines frequencies and segment patterns.
     /// </summary>

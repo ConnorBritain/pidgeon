@@ -59,7 +59,7 @@ public abstract record FHIRBundle : HealthcareMessage
             {
                 var resourceValidation = entry.Resource.Validate();
                 if (!resourceValidation.IsSuccess)
-                    return Error.Validation($"Entry {i} resource validation failed: {resourceValidation.Error?.Message}", $"Entries[{i}].Resource");
+                    return Error.Validation($"Entry {i} resource validation failed: {resourceValidation.Error.Message}", $"Entries[{i}].Resource");
             }
         }
 

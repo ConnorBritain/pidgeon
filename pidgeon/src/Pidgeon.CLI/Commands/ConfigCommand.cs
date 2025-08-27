@@ -4,8 +4,8 @@
 
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core;
-using Pidgeon.Core.Services.Configuration;
-using Pidgeon.Core.Types;
+using Pidgeon.Core.Domain.Configuration.Entities;
+using Pidgeon.Core.Domain.Configuration.Services;
 using System.CommandLine;
 
 namespace Pidgeon.CLI.Commands;

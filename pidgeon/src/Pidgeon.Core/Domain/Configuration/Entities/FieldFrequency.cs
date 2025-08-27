@@ -210,4 +210,10 @@ public record SegmentPattern
     /// </summary>
     [JsonPropertyName("confidence")]
     public double Confidence { get; init; }
+
+    /// <summary>
+    /// Number of samples used to generate this segment pattern.
+    /// </summary>
+    [JsonPropertyName("sampleSize")]
+    public int SampleSize { get; init; }
 }

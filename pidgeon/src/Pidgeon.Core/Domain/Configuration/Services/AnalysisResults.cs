@@ -372,4 +372,16 @@ public record FieldStatistics
     /// </summary>
     [JsonPropertyName("analysisDate")]
     public DateTime AnalysisDate { get; init; } = DateTime.UtcNow;
+
+    /// <summary>
+    /// Quality score for field patterns (0.0 to 1.0).
+    /// </summary>
+    [JsonPropertyName("qualityScore")]
+    public double QualityScore { get; init; }
+
+    /// <summary>
+    /// Number of samples analyzed for these statistics.
+    /// </summary>
+    [JsonPropertyName("sampleSize")]
+    public int SampleSize { get; init; }
 }
