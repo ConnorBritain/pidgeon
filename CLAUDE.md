@@ -284,13 +284,82 @@ Before creating or modifying ANY file in `Pidgeon.Core/Services/`:
 - [ ] **Plugin delegation for standard operations** (use plugin registry)
 - [ ] **Standard-agnostic interfaces** (work with any healthcare standard)
 
-### **File Organization Rules**
-- `Pidgeon.Core/Services/` → Standard-agnostic orchestration only
-- `Pidgeon.Core/Standards/HL7/` → HL7-specific implementations
-- `Pidgeon.Core/Standards/FHIR/` → FHIR-specific implementations  
-- `Pidgeon.Core/Standards/NCPDP/` → NCPDP-specific implementations
+### **Updated Domain Architecture Rules**
+**CRITICAL UPDATE**: We now use a **Four-Domain Architecture** (see `docs/arch_planning/pidgeon_domain_model.md`):
 
-**Remember**: If you find yourself typing "MSH", "ADT", "Patient resource", or any standard-specific term in a core service, STOP - you're violating the architecture!
+- `Pidgeon.Core/Domain/Clinical/` → Healthcare business concepts (Patient, Prescription)
+- `Pidgeon.Core/Domain/Messaging/` → Wire format structures (HL7_ORM_Message, FHIR_Bundle)  
+- `Pidgeon.Core/Domain/Configuration/` → Vendor patterns (VendorConfiguration, FieldPattern)
+- `Pidgeon.Core/Domain/Transformation/` → Mapping rules (MappingRule, TransformationSet)
+- `Pidgeon.Core/AntiCorruption/` → Interfaces between domains (IClinicalToMessaging)
+
+**NEW RULE**: Each service should depend on exactly ONE domain. Cross-domain operations happen through Anti-Corruption Layer interfaces.
+
+### **Documentation Synchronization Status**
+All key documents updated to reflect Four-Domain Architecture (August 27, 2025):
+- ✅ `WAVEZERO.md`: Updated from dual-domain to four-domain decision
+- ✅ `LEDGER.md`: Added ARCH-019 entry documenting final architectural decision
+- ✅ `082725.md`: Updated to reference new architecture (document superseded)
+- ✅ `INIT.md`: Updated sacred principles to show four domains
+- ✅ `pidgeon_domain_model.md`: Complete four-domain specification created
+
+**No competing architectural ideologies remain in documentation.**
+
+---
+
+## 🎯 **Professional Code Standards & Agent Behavior**
+
+### **Clean, Senior-Level Code Practices**
+**CRITICAL**: Write professional, maintainable code without meta-commentary or development artifacts.
+
+#### **❌ AVOID: Development Artifacts in Code**
+- **Meta-commentary**: Comments like "ELIMINATES TECHNICAL DEBT", "AVOIDS ARCHITECTURAL ISSUES"
+- **Justification comments**: Explaining WHY changes were made instead of WHAT the code does
+- **Conversation references**: Mentions of "Claude Code", "AI-generated", architectural discussions
+- **Code graveyards**: Commenting out old code with "LEGACY" or "OLD APPROACH" markers
+
+#### **✅ DO: Professional Documentation**
+- **Clear, concise summaries**: What the code does and how to use it
+- **Business context**: Healthcare-specific requirements and constraints  
+- **Technical specifications**: Parameters, return values, error conditions
+- **Usage examples**: For complex interfaces and patterns
+
+#### **Example - Bad vs Good Comments**:
+```csharp
+// ❌ BAD - Meta-commentary and justification
+/// <summary>
+/// ELIMINATES TECHNICAL DEBT: Uses adapter pattern to avoid Dictionary<int,FieldFrequency> 
+/// to Dictionary<string,FieldFrequency> conversion utilities that were causing compilation 
+/// errors. This follows our STOP-THINK-ACT methodology and four-domain architecture.
+/// </summary>
+
+// ✅ GOOD - Clear, professional documentation  
+/// <summary>
+/// Analyzes HL7 messages to extract field population patterns.
+/// Converts field positions to configuration domain paths (e.g., "PID.5").
+/// </summary>
+/// <param name="messages">HL7 messages to analyze</param>
+/// <returns>Field patterns with population statistics</returns>
+```
+
+#### **File Management Standards**
+- **Edit existing files directly** - Don't create "_Refactored.cs" or "_New.cs" variants
+- **Delete dead code decisively** - Don't comment out with explanatory notes
+- **Use git for rollbacks** - Version control handles safety, not code comments
+- **Commit architectural changes** - Be decisive about implementation approach
+
+#### **Decision-Making Approach**
+- **Senior-level decisions**: Make clean, decisive changes without hedging
+- **Architectural commitment**: Fully implement chosen patterns without fallback options  
+- **Clean implementation**: Remove old approaches when implementing new ones
+- **Professional confidence**: Write code that demonstrates technical competence
+
+### **Code Review Standards**
+All code should pass the "senior developer review" test:
+- ✅ **Clear purpose**: Any developer can understand intent from documentation
+- ✅ **Clean structure**: No development artifacts or meta-commentary
+- ✅ **Decisive implementation**: No hedged approaches or "just in case" code
+- ✅ **Professional quality**: Represents our platform's technical excellence
 
 ---
 

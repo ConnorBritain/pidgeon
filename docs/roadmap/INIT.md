@@ -43,19 +43,30 @@
 
 > **These decisions are IMMUTABLE for the first 90 days. Changes require unanimous agreement from all three perspectives.**
 
-### **1. Domain-Driven Design Foundation**
+### **1. Four-Domain Architecture Foundation**
 ```csharp
-// ✅ SACRED: Domain models are standards-agnostic
-namespace Pidgeon.Core.Domain {
-    public record Patient(string Id, PersonName Name, DateTime BirthDate);
-    public record Prescription(Patient Patient, Medication Drug, Provider Prescriber);
+// ✅ SACRED: Four bounded contexts for healthcare integration
+namespace Pidgeon.Core.Domain.Clinical {
+    public record Patient(string MRN, PersonName Name, DateTime BirthDate);
+    public record Prescription(Medication Drug, Provider Prescriber);
 }
 
-// ✅ SACRED: Standards are adapters around domain
-namespace Pidgeon.Core.Standards.HL7 {
-    public interface IHL7Adapter<TDomain> {
-        string Serialize(TDomain domain);
-        TDomain Parse(string hl7Message);
+namespace Pidgeon.Core.Domain.Messaging.HL7v2 {
+    public record HL7_ORM_Message(MSH_Segment MSH, PID_Segment PID);
+}
+
+namespace Pidgeon.Core.Domain.Configuration {
+    public record VendorConfiguration(ConfigurationAddress Address);
+}
+
+namespace Pidgeon.Core.Domain.Transformation {
+    public record MappingRule(SourcePath Source, TargetPath Target);
+}
+
+// ✅ SACRED: Anti-corruption boundaries between domains
+namespace Pidgeon.Core.AntiCorruption {
+    public interface IClinicalToMessaging {
+        HL7_ORM_Message CreateOrder(Prescription prescription);
     }
 }
 ```
