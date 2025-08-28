@@ -2,30 +2,67 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using Pidgeon.Core;
+using Pidgeon.Core.Infrastructure.Standards.Abstractions;
+using Pidgeon.Core.Infrastructure.Standards.Common;
+using Pidgeon.Core.Standards.Common;
+
 namespace Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
 /// <summary>
 /// Base class for all HL7 v2.x messages.
 /// Captures HL7-specific concepts like encoding characters and segment structure.
 /// </summary>
-public abstract record HL7Message : HealthcareMessage
+public abstract class HL7Message : HealthcareMessage, IStandardMessage
 {
     /// <summary>
     /// Gets the HL7 encoding characters used for field, component, and escape sequences.
     /// Default: Field=|, Component=^, Repetition=~, Escape=\, Subcomponent=&
     /// </summary>
-    public HL7EncodingChars Encoding { get; init; } = HL7EncodingChars.Standard;
+    public HL7EncodingChars Encoding { get; set; } = HL7EncodingChars.Standard;
 
     /// <summary>
     /// Gets the HL7 message type and trigger event (e.g., "ORM^O01").
     /// </summary>
-    public required HL7MessageType MessageType { get; init; }
+    public virtual required HL7MessageType MessageType { get; set; }
+
+    /// <summary>
+    /// Initializes the message with default segments and structure.
+    /// Override in concrete message types to set up required segments.
+    /// </summary>
+    public virtual void InitializeMessage()
+    {
+        // Default implementation - override in concrete messages
+    }
+
+    /// <summary>
+    /// Creates a segment instance from a segment ID.
+    /// Override in concrete message types to support specific segment types.
+    /// </summary>
+    /// <param name="segmentId">The segment ID</param>
+    /// <returns>A segment instance or null if not supported</returns>
+    protected virtual HL7Segment? CreateSegmentFromId(string segmentId)
+    {
+        // Default implementation - override in concrete messages
+        return null;
+    }
+
+    /// <summary>
+    /// Validates message-specific structure and business rules.
+    /// Override in concrete message types to add specific validation.
+    /// </summary>
+    /// <returns>A validation result</returns>
+    protected virtual Result<HL7Message> ValidateMessageStructure()
+    {
+        return Result<HL7Message>.Success(this);
+    }
+
 
     /// <summary>
     /// Gets all segments in this message, keyed by segment ID.
     /// For repeating segments, use segment ID with sequence number (e.g., "OBX1", "OBX2").
     /// </summary>
-    public Dictionary<string, HL7Segment> Segments { get; init; } = new();
+    public Dictionary<string, HL7Segment> Segments { get; set; } = new();
 
     /// <summary>
     /// Validates HL7-specific message structure and encoding.
@@ -85,6 +122,104 @@ public abstract record HL7Message : HealthcareMessage
             .Select(kvp => kvp.Value)
             .OfType<T>();
     }
+
+    #region IStandardMessage Implementation
+
+    /// <summary>
+    /// Gets the message type as a string (implements IStandardMessage.MessageType).
+    /// </summary>
+    string IStandardMessage.MessageType => MessageType?.MessageTypeCode ?? "Unknown";
+
+    /// <summary>
+    /// Gets the standard version (implements IStandardMessage.StandardVersion).
+    /// </summary>
+    Version IStandardMessage.StandardVersion => Version.Parse(Version);
+
+    /// <summary>
+    /// Serializes the message to its HL7 string representation.
+    /// </summary>
+    /// <param name="options">Serialization options</param>
+    /// <returns>A result containing the serialized message or an error</returns>
+    public virtual Result<string> Serialize(SerializationOptions? options = null)
+    {
+        try
+        {
+            var segments = Segments.Values
+                .OrderBy(s => s.SegmentId == "MSH" ? 0 : s.SequenceNumber)
+                .Select(s => s.ToHL7String());
+                
+            var hl7String = string.Join(Environment.NewLine, segments);
+            return Result<string>.Success(hl7String);
+        }
+        catch (Exception ex)
+        {
+            return Result<string>.Failure($"Failed to serialize HL7 message: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Validates the message structure and content.
+    /// </summary>
+    /// <param name="validationMode">The validation mode to use</param>
+    /// <returns>A result containing validation results</returns>
+    public virtual Result<ValidationResult> Validate(ValidationMode validationMode = ValidationMode.Strict)
+    {
+        var errors = new List<ValidationError>();
+        var warnings = new List<ValidationWarning>();
+
+        // Basic HL7 validation
+        var baseValidation = base.Validate();
+        if (!baseValidation.IsSuccess)
+        {
+            errors.Add(new ValidationError
+            {
+                Code = "BASE_VALIDATION_FAILED",
+                Message = baseValidation.Error.Message
+            });
+        }
+
+        // Segment validation
+        foreach (var segment in Segments.Values)
+        {
+            var segmentResult = segment.Validate();
+            if (!segmentResult.IsSuccess)
+            {
+                errors.Add(new ValidationError
+                {
+                    Code = "SEGMENT_VALIDATION_FAILED",
+                    Message = $"Segment {segment.SegmentId}: {segmentResult.Error.Message}"
+                });
+            }
+        }
+
+        var result = new ValidationResult
+        {
+            IsValid = errors.Count == 0,
+            Errors = errors,
+            Warnings = warnings
+        };
+
+        return Result<ValidationResult>.Success(result);
+    }
+
+    /// <summary>
+    /// Gets metadata about the message.
+    /// </summary>
+    /// <returns>Message metadata</returns>
+    public virtual MessageMetadata GetMetadata()
+    {
+        return new MessageMetadata
+        {
+            MessageType = ((IStandardMessage)this).MessageType,
+            Standard = Standard,
+            Version = ((IStandardMessage)this).StandardVersion.ToString(),
+            SegmentCount = Segments.Count,
+            CreatedAt = Timestamp,
+            ControlId = MessageControlId
+        };
+    }
+
+    #endregion
 }
 
 /// <summary>
@@ -183,7 +318,7 @@ public record HL7MessageType
 /// <summary>
 /// Base class for all HL7 segments.
 /// </summary>
-public abstract record HL7Segment
+public abstract class HL7Segment
 {
     /// <summary>
     /// Gets the segment ID (e.g., "MSH", "PID", "OBR").
@@ -193,7 +328,40 @@ public abstract record HL7Segment
     /// <summary>
     /// Gets the sequence number for this segment instance (for repeating segments).
     /// </summary>
-    public int SequenceNumber { get; init; } = 1;
+    public int SequenceNumber { get; set; } = 1;
+
+    /// <summary>
+    /// Gets the display name for this segment type.
+    /// Override in concrete segments to provide meaningful names.
+    /// </summary>
+    public virtual string DisplayName => SegmentId;
+
+    /// <summary>
+    /// Initializes fields for this segment with default values.
+    /// Override in concrete segments to set up required fields.
+    /// </summary>
+    public virtual void InitializeFields()
+    {
+        // Default implementation - override in concrete segments
+    }
+
+    /// <summary>
+    /// Converts the segment to HL7 string representation.
+    /// Override in concrete segments to implement proper serialization.
+    /// </summary>
+    public virtual string ToHL7String()
+    {
+        return SegmentId; // Basic implementation - override for full serialization
+    }
+
+    /// <summary>
+    /// Gets a display-friendly representation of the segment.
+    /// Override in concrete segments to provide meaningful summaries.
+    /// </summary>
+    public virtual string GetDisplayValue()
+    {
+        return $"{DisplayName} ({SegmentId})";
+    }
 
     /// <summary>
     /// Validates the segment structure and required fields.

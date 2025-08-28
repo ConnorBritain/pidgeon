@@ -9,7 +9,7 @@ namespace Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 /// where the specific message type is not known or not important.
 /// Used primarily by adapters and plugins for field pattern analysis.
 /// </summary>
-public record GenericHL7Message : HL7Message
+public class GenericHL7Message : HL7Message
 {
     /// <summary>
     /// Creates a new generic HL7 message.

@@ -8,7 +8,7 @@ namespace Pidgeon.Core.Domain.Messaging.FHIR.Bundles;
 /// Base class for all FHIR Bundle messages.
 /// Captures FHIR-specific concepts like resources, Bundle types, and references.
 /// </summary>
-public abstract record FHIRBundle : HealthcareMessage
+public abstract class FHIRBundle : HealthcareMessage
 {
     /// <summary>
     /// Gets the FHIR Bundle identifier.

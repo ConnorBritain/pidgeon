@@ -3,9 +3,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.DependencyInjection;
-using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Infrastructure.Standards.Abstractions;
 using Pidgeon.Core.Services;
 using Pidgeon.Core.Domain.Configuration.Services;
+using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Application.Interfaces.Validation;
+using Pidgeon.Core.Application.Services.Validation;
 
 namespace Pidgeon.Core.Extensions;
 
@@ -92,17 +95,17 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddStandardConfigurationPlugins(this IServiceCollection services)
     {
         // Register HL7 v2.3 configuration plugins
-        services.AddScoped<Standards.HL7.v23.Configuration.HL7VendorDetectionPlugin>();
-        services.AddScoped<Standards.HL7.v23.Configuration.HL7FieldAnalysisPlugin>();
-        services.AddScoped<Standards.HL7.v23.Configuration.HL7ConfigurationPlugin>();
+        services.AddScoped<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7VendorDetectionPlugin>();
+        services.AddScoped<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7FieldAnalysisPlugin>();
+        services.AddScoped<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7ConfigurationPlugin>();
 
         // Register HL7 plugins in plugin registry
         services.AddScoped<IStandardVendorDetectionPlugin>(provider => 
-            provider.GetRequiredService<Standards.HL7.v23.Configuration.HL7VendorDetectionPlugin>());
+            provider.GetRequiredService<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7VendorDetectionPlugin>());
         services.AddScoped<IStandardFieldAnalysisPlugin>(provider => 
-            provider.GetRequiredService<Standards.HL7.v23.Configuration.HL7FieldAnalysisPlugin>());
+            provider.GetRequiredService<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7FieldAnalysisPlugin>());
         services.AddScoped<IConfigurationPlugin>(provider => 
-            provider.GetRequiredService<Standards.HL7.v23.Configuration.HL7ConfigurationPlugin>());
+            provider.GetRequiredService<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7ConfigurationPlugin>());
 
         // Future plugins would be added here:
         // services.AddScoped<Standards.FHIR.R4.Configuration.FHIRVendorDetectionPlugin>();

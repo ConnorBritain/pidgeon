@@ -3,10 +3,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Text;
-using Pidgeon.Core.Standards.HL7.v23.Messages;
-using Pidgeon.Core.Standards.HL7.v23.Segments;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Parsing;
+namespace Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 
 /// <summary>
 /// HL7 v2.3 message parser.
@@ -294,16 +294,15 @@ public class HL7Parser
 /// </summary>
 public class GenericHL7Message : HL7Message
 {
-    private readonly string _messageType;
-    
     public GenericHL7Message(string messageType)
     {
-        _messageType = messageType;
+        // Parse the message type string into HL7MessageType format
+        MessageType = HL7MessageType.Parse(messageType);
     }
     
-    public override string MessageType => _messageType;
+    public override required HL7MessageType MessageType { get; set; }
     
-    protected override void InitializeMessage()
+    public override void InitializeMessage()
     {
         // Generic messages start with just MSH
         AddSegment(new MSHSegment());
@@ -324,7 +323,7 @@ public class GenericSegment : HL7Segment
     
     public override string SegmentId => _segmentId;
     
-    protected override void InitializeFields()
+    public override void InitializeFields()
     {
         // Generic segments have no predefined fields
         // They will be populated during parsing

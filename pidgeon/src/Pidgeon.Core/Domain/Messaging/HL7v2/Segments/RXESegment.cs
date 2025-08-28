@@ -3,9 +3,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Clinical.Entities;
-using Pidgeon.Core.Standards.HL7.v23.Fields;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Segments;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 
 /// <summary>
 /// RXE - Pharmacy/Treatment Encoded Order Segment.
@@ -25,7 +26,7 @@ public class RXESegment : HL7Segment
     public StringField GiveDosageForm => GetField<StringField>(6)!;
     public StringField ProviderInstructions => GetField<StringField>(7)!;
 
-    protected override void InitializeFields()
+    public override void InitializeFields()
     {
         // RXE.1 - Quantity/Timing
         AddField(StringField.Optional(200));

@@ -4,7 +4,7 @@
 
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Standards.Common;
+namespace Pidgeon.Core.Infrastructure.Standards.Abstractions;
 
 /// <summary>
 /// Plugin interface for standard-specific format deviation analysis.

@@ -3,9 +3,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Clinical.Entities;
-using Pidgeon.Core.Standards.HL7.v23.Fields;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Segments;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 
 /// <summary>
 /// PV1 - Patient Visit Segment.
@@ -41,7 +42,7 @@ public class PV1Segment : HL7Segment
     public TimestampField AdmitDateTime => GetField<TimestampField>(44)!;
     public TimestampField DischargeDateTime => GetField<TimestampField>(45)!;
 
-    protected override void InitializeFields()
+    public override void InitializeFields()
     {
         // PV1.1 - Set ID (Optional)
         AddField(StringField.Optional(4));

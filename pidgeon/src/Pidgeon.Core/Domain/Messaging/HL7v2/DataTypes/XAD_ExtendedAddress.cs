@@ -3,8 +3,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Fields;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.DataTypes;
 
 /// <summary>
 /// Represents an address field (XAD data type) in HL7 v2.3.
@@ -12,27 +13,38 @@ namespace Pidgeon.Core.Standards.HL7.v23.Fields;
 /// </summary>
 public class AddressField : HL7Field<Address?>
 {
-    public AddressField() : base()
+    /// <inheritdoc />
+    public override string DataType => "XAD";
+
+    public AddressField()
     {
     }
 
-    public AddressField(Address? value) : base(value)
+    public AddressField(Address? value)
     {
+        Value = value;
+        RawValue = FormatValue(value);
     }
 
-    public AddressField(string? stringValue) : base(stringValue)
+    public AddressField(string? stringValue)
     {
+        var parseResult = ParseFromHL7String(stringValue ?? "");
+        if (parseResult.IsSuccess)
+        {
+            Value = parseResult.Value;
+            RawValue = stringValue ?? "";
+        }
     }
 
-    protected override Result<Address?> ParseStringValue(string stringValue)
+    protected override Result<Address?> ParseFromHL7String(string hl7Value)
     {
-        if (string.IsNullOrWhiteSpace(stringValue))
+        if (string.IsNullOrWhiteSpace(hl7Value))
             return Result<Address?>.Success(null);
 
         try
         {
             // Split on component separator (^)
-            var components = stringValue.Split('^');
+            var components = hl7Value.Split('^');
             
             // XAD fields: Street^OtherDesignation^City^State^Zip^Country^AddressType^OtherGeographicDesignation
             var street1 = GetComponent(components, 0);
@@ -56,14 +68,14 @@ public class AddressField : HL7Field<Address?>
         }
         catch (Exception ex)
         {
-            return Error.Parsing($"Invalid address format: {stringValue} - {ex.Message}", "AddressField");
+            return Result<Address?>.Failure($"Invalid address format: {hl7Value} - {ex.Message}");
         }
     }
 
-    protected override string? FormatTypedValue(Address? value)
+    protected override string FormatValue(Address? value)
     {
         if (value == null)
-            return null;
+            return "";
 
         var components = new[]
         {

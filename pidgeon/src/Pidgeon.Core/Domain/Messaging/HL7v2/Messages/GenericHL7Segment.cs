@@ -8,7 +8,7 @@ namespace Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 /// Generic HL7 segment implementation for parsing and analysis scenarios.
 /// Used when the specific segment type is not known or not important.
 /// </summary>
-public record GenericHL7Segment : HL7Segment
+public class GenericHL7Segment : HL7Segment
 {
     private readonly string _segmentId;
     
@@ -20,7 +20,7 @@ public record GenericHL7Segment : HL7Segment
     /// <summary>
     /// Raw field values for this segment.
     /// </summary>
-    public string[] Fields { get; init; } = Array.Empty<string>();
+    public string[] Fields { get; set; } = Array.Empty<string>();
     
     /// <summary>
     /// Number of fields in this segment.

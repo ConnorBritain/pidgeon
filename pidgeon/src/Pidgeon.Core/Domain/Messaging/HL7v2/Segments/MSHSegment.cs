@@ -2,9 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Standards.HL7.v23.Fields;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Segments;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 
 /// <summary>
 /// MSH - Message Header Segment.
@@ -33,7 +34,7 @@ public class MSHSegment : HL7Segment
     public StringField ApplicationAcknowledgmentType => GetField<StringField>(15)!;
     public StringField CountryCode => GetField<StringField>(16)!;
 
-    protected override void InitializeFields()
+    public override void InitializeFields()
     {
         // MSH.1 - Encoding Characters (Required)
         AddField(new StringField("^~\\&", 4, true));

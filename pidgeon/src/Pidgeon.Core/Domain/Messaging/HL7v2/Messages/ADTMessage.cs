@@ -3,10 +3,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 using Pidgeon.Core.Standards.Common;
-using Pidgeon.Core.Standards.HL7.v23.Segments;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Messages;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
 /// <summary>
 /// ADT - Admission, Discharge, Transfer Message.
@@ -14,7 +14,7 @@ namespace Pidgeon.Core.Standards.HL7.v23.Messages;
 /// </summary>
 public class ADTMessage : HL7Message
 {
-    public override string MessageType => "ADT";
+    public override required HL7MessageType MessageType { get; set; } = HL7MessageType.Common.ADT_A01;
 
     /// <summary>
     /// Gets the PID (Patient Identification) segment.
@@ -31,7 +31,7 @@ public class ADTMessage : HL7Message
     /// </summary>
     public string? TriggerEvent => MSH?.GetMessageTypeComponents()?.TriggerEvent;
 
-    protected override void InitializeMessage()
+    public override void InitializeMessage()
     {
         // MSH - Message Header (required for all HL7 messages)
         var msh = MSHSegment.Create(
@@ -187,49 +187,6 @@ public class ADTMessage : HL7Message
         return Result<HL7Message>.Success(this);
     }
 
-    protected override void ValidateStrictMode(List<ValidationError> errors, List<ValidationWarning> warnings)
-    {
-        base.ValidateStrictMode(errors, warnings);
-
-        // In strict mode, ensure trigger event is valid for ADT
-        var validTriggerEvents = new[] { "A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11", "A12" };
-        var triggerEvent = TriggerEvent;
-        
-        if (string.IsNullOrEmpty(triggerEvent) || !validTriggerEvents.Contains(triggerEvent))
-        {
-            errors.Add(new ValidationError
-            {
-                Code = "INVALID_TRIGGER_EVENT",
-                Message = $"Invalid or missing trigger event for ADT message: {triggerEvent}",
-                Field = "MSH.9",
-                Severity = ValidationSeverity.Error
-            });
-        }
-
-        // Ensure required patient fields are present
-        var pid = PID;
-        if (pid.PatientId.IsEmpty)
-        {
-            errors.Add(new ValidationError
-            {
-                Code = "MISSING_PATIENT_ID",
-                Message = "Patient ID is required in PID segment",
-                Field = "PID.3",
-                Severity = ValidationSeverity.Error
-            });
-        }
-
-        if (pid.PatientName.IsEmpty || pid.PatientName.TypedValue?.IsEmpty() != false)
-        {
-            errors.Add(new ValidationError
-            {
-                Code = "MISSING_PATIENT_NAME",
-                Message = "Patient name is required in PID segment",
-                Field = "PID.5",
-                Severity = ValidationSeverity.Error
-            });
-        }
-    }
 
     /// <summary>
     /// Generates a unique message control ID.

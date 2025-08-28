@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core.Infrastructure.Standards.Abstractions;
 using Pidgeon.Core.Standards;
 
 namespace Pidgeon.Core.Services;
@@ -10,10 +11,14 @@ namespace Pidgeon.Core.Services;
 internal class GenerationService : IGenerationService
 {
     private readonly Generation.IGenerationService _domainGenerationService;
+    private readonly IStandardPluginRegistry _pluginRegistry;
     
-    public GenerationService(Generation.IGenerationService domainGenerationService)
+    public GenerationService(
+        Generation.IGenerationService domainGenerationService,
+        IStandardPluginRegistry pluginRegistry)
     {
         _domainGenerationService = domainGenerationService;
+        _pluginRegistry = pluginRegistry;
     }
     
     public async Task<Result<IReadOnlyList<string>>> GenerateSyntheticDataAsync(string standard, string messageType, int count = 1, Generation.GenerationOptions? options = null)
@@ -58,26 +63,17 @@ internal class GenerationService : IGenerationService
             
         var patient = patientResult.Value;
         
-        if (standard.Equals("hl7", StringComparison.OrdinalIgnoreCase))
+        // Use plugin registry to find appropriate standard plugin
+        var plugin = _pluginRegistry.GetPlugin(standard);
+        if (plugin != null)
         {
-            // Generate proper HL7 ADT message with PID segment
-            var adtResult = Standards.HL7.v23.Messages.ADTMessage.CreateAdmission(
-                patient,
-                sendingApplication: "Pidgeon",
-                sendingFacility: "PidgeonCore"
-            );
-            
-            if (!adtResult.IsSuccess)
-                return Result<string>.Failure(adtResult.Error);
-                
-            var serializationResult = adtResult.Value.Serialize();
-            if (!serializationResult.IsSuccess)
-                return Result<string>.Failure(serializationResult.Error);
-                
-            return Result<string>.Success(serializationResult.Value);
+            // TODO: Plugin should accept domain objects and create standard messages
+            // This requires updating IStandardPlugin interface to support domain-to-message mapping
+            // For now, return NotImplemented to avoid architectural violations
+            return Result<string>.Failure($"Plugin-based generation not yet implemented for standard: {standard}");
         }
         
-        // Fallback to human-readable for non-HL7 standards
+        // Fallback to human-readable for unsupported standards
         return Result<string>.Success($"Patient: {patient.Name.DisplayName}, DOB: {patient.BirthDate:yyyy-MM-dd}");
     }
     
@@ -99,26 +95,17 @@ internal class GenerationService : IGenerationService
             
         var prescription = prescriptionResult.Value;
         
-        if (standard.Equals("hl7", StringComparison.OrdinalIgnoreCase))
+        // Use plugin registry to find appropriate standard plugin
+        var plugin = _pluginRegistry.GetPlugin(standard);
+        if (plugin != null)
         {
-            // Generate proper RDE^O01 pharmacy order message
-            var rdeResult = Standards.HL7.v23.Messages.RDEMessage.CreatePharmacyOrder(
-                prescription,
-                sendingApplication: "Pidgeon",
-                sendingFacility: "PidgeonPharmacy"
-            );
-            
-            if (!rdeResult.IsSuccess)
-                return Result<string>.Failure(rdeResult.Error);
-                
-            var serializationResult = rdeResult.Value.Serialize();
-            if (!serializationResult.IsSuccess)
-                return Result<string>.Failure(serializationResult.Error);
-                
-            return Result<string>.Success(serializationResult.Value);
+            // TODO: Plugin should accept domain objects and create standard messages
+            // This requires updating IStandardPlugin interface to support domain-to-message mapping
+            // For now, return NotImplemented to avoid architectural violations
+            return Result<string>.Failure($"Plugin-based generation not yet implemented for standard: {standard}");
         }
         
-        // Fallback to human-readable for non-HL7 standards
+        // Fallback to human-readable for unsupported standards
         return Result<string>.Success($"Prescription: {prescription.Medication.DisplayName} for {prescription.Patient.Name.DisplayName}");
     }
     
@@ -130,27 +117,17 @@ internal class GenerationService : IGenerationService
             
         var encounter = encounterResult.Value;
         
-        if (standard.Equals("hl7", StringComparison.OrdinalIgnoreCase))
+        // Use plugin registry to find appropriate standard plugin
+        var plugin = _pluginRegistry.GetPlugin(standard);
+        if (plugin != null)
         {
-            // Generate proper HL7 ADT^A01 message from encounter
-            var adtResult = Standards.HL7.v23.Messages.ADTMessage.CreateAdmission(
-                encounter.Patient,
-                encounter,
-                sendingApplication: "Pidgeon",
-                sendingFacility: "PidgeonCore"
-            );
-            
-            if (!adtResult.IsSuccess)
-                return Result<string>.Failure(adtResult.Error);
-                
-            var serializationResult = adtResult.Value.Serialize();
-            if (!serializationResult.IsSuccess)
-                return Result<string>.Failure(serializationResult.Error);
-                
-            return Result<string>.Success(serializationResult.Value);
+            // TODO: Plugin should accept domain objects and create standard messages
+            // This requires updating IStandardPlugin interface to support domain-to-message mapping
+            // For now, return NotImplemented to avoid architectural violations
+            return Result<string>.Failure($"Plugin-based generation not yet implemented for standard: {standard}");
         }
         
-        // Fallback to human-readable for non-HL7 standards
+        // Fallback to human-readable for unsupported standards
         return Result<string>.Success($"Encounter: {encounter.Patient.Name.DisplayName} at {encounter.Location} ({encounter.Type})");
     }
 }

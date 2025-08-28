@@ -2,9 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using Pidgeon.Core;
+using Pidgeon.Core.Application.Interfaces.Validation;
 using Pidgeon.Core.Standards.Common;
 
-namespace Pidgeon.Core.Services;
+namespace Pidgeon.Core.Application.Services.Validation;
 
 internal class ValidationService : IValidationService
 {

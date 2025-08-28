@@ -3,10 +3,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Clinical.Entities;
-using Pidgeon.Core.Standards.HL7.v23.Fields;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
+using Pidgeon.Core.Domain.Messaging.HL7v2.DataTypes;
 using ClinicalMaritalStatus = Pidgeon.Core.Domain.Clinical.Entities.MaritalStatus;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Segments;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 
 /// <summary>
 /// PID - Patient Identification Segment
@@ -156,7 +158,7 @@ public class PIDSegment : HL7Segment
     /// </summary>
     public StringField EthnicGroup { get; set; } = new();
 
-    protected override void InitializeFields()
+    public override void InitializeFields()
     {
         AddField(SetId);                      // PID.1
         AddField(ExternalPatientId);          // PID.2

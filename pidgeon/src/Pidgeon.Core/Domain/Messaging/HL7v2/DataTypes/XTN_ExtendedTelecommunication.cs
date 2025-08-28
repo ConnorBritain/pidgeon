@@ -2,7 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-namespace Pidgeon.Core.Standards.HL7.v23.Fields;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.DataTypes;
 
 /// <summary>
 /// Represents a telephone number field (XTN data type) in HL7 v2.3.
@@ -11,17 +13,22 @@ namespace Pidgeon.Core.Standards.HL7.v23.Fields;
 /// </summary>
 public class TelephoneField : HL7Field<string?>
 {
-    public TelephoneField() : base()
+    /// <inheritdoc />
+    public override string DataType => "XTN";
+
+    public TelephoneField()
     {
     }
 
-    public TelephoneField(string? value) : base(value)
+    public TelephoneField(string? value)
     {
+        Value = value;
+        RawValue = FormatValue(value);
     }
 
-    protected override Result<string?> ParseStringValue(string stringValue)
+    protected override Result<string?> ParseFromHL7String(string hl7Value)
     {
-        if (string.IsNullOrWhiteSpace(stringValue))
+        if (string.IsNullOrWhiteSpace(hl7Value))
             return Result<string?>.Success(null);
 
         try
@@ -40,14 +47,14 @@ public class TelephoneField : HL7Field<string?>
         }
         catch (Exception ex)
         {
-            return Error.Parsing($"Invalid telephone format: {stringValue} - {ex.Message}", "TelephoneField");
+            return Result<string?>.Failure($"Invalid telephone format: {hl7Value} - {ex.Message}");
         }
     }
 
-    protected override string? FormatTypedValue(string? value)
+    protected override string FormatValue(string? value)
     {
         if (string.IsNullOrEmpty(value))
-            return null;
+            return "";
 
         // For HL7 output, we can use the phone number as-is in the first component
         // More sophisticated formatting could be added later

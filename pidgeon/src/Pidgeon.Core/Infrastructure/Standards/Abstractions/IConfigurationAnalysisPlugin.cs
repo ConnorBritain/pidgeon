@@ -5,7 +5,7 @@
 using Pidgeon.Core.Domain.Configuration.Entities;
 using Pidgeon.Core.Domain.Configuration.Services;
 
-namespace Pidgeon.Core.Standards.Common;
+namespace Pidgeon.Core.Infrastructure.Standards.Abstractions;
 
 /// <summary>
 /// Universal Configuration Intelligence plugin interface.

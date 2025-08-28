@@ -8,27 +8,27 @@ namespace Pidgeon.Core.Domain.Messaging.NCPDP.Transactions;
 /// Base class for all NCPDP pharmacy transaction messages.
 /// Captures NCPDP-specific concepts like transaction types and pharmacy routing.
 /// </summary>
-public abstract record NCPDPTransaction : HealthcareMessage
+public abstract class NCPDPTransaction : HealthcareMessage
 {
     /// <summary>
     /// Gets the NCPDP transaction type (e.g., "NEWRX", "REFILL", "CANCEL").
     /// </summary>
-    public required NCPDPTransactionType TransactionType { get; init; }
+    public required NCPDPTransactionType TransactionType { get; set; }
 
     /// <summary>
     /// Gets all segments in this transaction, keyed by segment ID.
     /// </summary>
-    public Dictionary<string, NCPDPSegment> Segments { get; init; } = new();
+    public Dictionary<string, NCPDPSegment> Segments { get; set; } = new();
 
     /// <summary>
     /// Gets the NCPDP version being used.
     /// </summary>
-    public NCPDPVersion NCPDPVersion { get; init; } = NCPDPVersion.Version2017071;
+    public NCPDPVersion NCPDPVersion { get; set; } = NCPDPVersion.Version2017071;
 
     /// <summary>
     /// Gets the transaction reference number for tracking.
     /// </summary>
-    public string? TransactionReferenceNumber { get; init; }
+    public string? TransactionReferenceNumber { get; set; }
 
     /// <summary>
     /// Validates NCPDP transaction structure and required segments.
@@ -183,7 +183,7 @@ public enum NCPDPVersion
 /// <summary>
 /// Base class for all NCPDP segments.
 /// </summary>
-public abstract record NCPDPSegment
+public abstract class NCPDPSegment
 {
     /// <summary>
     /// Gets the segment ID (e.g., "UIB", "UIH", "PVD", "DRU").
@@ -193,13 +193,13 @@ public abstract record NCPDPSegment
     /// <summary>
     /// Gets the segment sequence number (for segments that can repeat).
     /// </summary>
-    public int SequenceNumber { get; init; } = 1;
+    public int SequenceNumber { get; set; } = 1;
 
     /// <summary>
     /// Gets additional data elements specific to this segment.
     /// NCPDP uses numbered data elements rather than named fields.
     /// </summary>
-    public Dictionary<string, object> DataElements { get; init; } = new();
+    public Dictionary<string, object> DataElements { get; set; } = new();
 
     /// <summary>
     /// Validates the segment structure and required data elements.
@@ -233,15 +233,9 @@ public abstract record NCPDPSegment
     /// </summary>
     /// <param name="elementId">The data element identifier</param>
     /// <param name="value">The value to set</param>
-    /// <returns>A new segment instance with the updated data element</returns>
-    public NCPDPSegment WithDataElement(string elementId, object value)
+    public void SetDataElement(string elementId, object value)
     {
-        var newDataElements = new Dictionary<string, object>(DataElements)
-        {
-            [elementId] = value
-        };
-
-        return this with { DataElements = newDataElements };
+        DataElements[elementId] = value;
     }
 }
 

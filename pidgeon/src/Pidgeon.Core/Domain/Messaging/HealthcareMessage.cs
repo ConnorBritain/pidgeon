@@ -8,54 +8,54 @@ namespace Pidgeon.Core.Domain.Messaging;
 /// Base class for all healthcare messages across standards.
 /// Captures universal message concepts while remaining standard-agnostic.
 /// </summary>
-public abstract record HealthcareMessage
+public abstract class HealthcareMessage
 {
     /// <summary>
     /// Gets the unique message control identifier.
     /// This is equivalent to HL7 MSH.10, FHIR Bundle.identifier, NCPDP message ID.
     /// </summary>
-    public required string MessageControlId { get; init; }
+    public required string MessageControlId { get; set; }
 
     /// <summary>
     /// Gets the timestamp when the message was created.
     /// </summary>
-    public required DateTime Timestamp { get; init; }
+    public required DateTime Timestamp { get; set; }
 
     /// <summary>
     /// Gets the identifier of the system sending this message.
     /// This is equivalent to HL7 MSH.3, FHIR Bundle.entry.resource.identifier, NCPDP sender ID.
     /// </summary>
-    public required string SendingSystem { get; init; }
+    public required string SendingSystem { get; set; }
 
     /// <summary>
     /// Gets the identifier of the system receiving this message.
     /// This is equivalent to HL7 MSH.5, FHIR Bundle target, NCPDP receiver ID.
     /// </summary>
-    public required string ReceivingSystem { get; init; }
+    public required string ReceivingSystem { get; set; }
 
     /// <summary>
     /// Gets the healthcare standard this message conforms to.
     /// Values: "HL7v23", "HL7v25", "HL7v251", "FHIR", "NCPDP"
     /// </summary>
-    public required string Standard { get; init; }
+    public required string Standard { get; set; }
 
     /// <summary>
     /// Gets the specific version of the standard.
     /// Examples: "2.3", "2.5.1", "4.0.1", "2017071"
     /// </summary>
-    public required string Version { get; init; }
+    public required string Version { get; set; }
 
     /// <summary>
     /// Gets the processing instructions for this message.
     /// Values like "Production", "Training", "Debugging"
     /// </summary>
-    public string ProcessingId { get; init; } = "Production";
+    public string ProcessingId { get; set; } = "Production";
 
     /// <summary>
     /// Gets additional metadata associated with this message.
     /// Used for extensibility without breaking base class contracts.
     /// </summary>
-    public Dictionary<string, object> Metadata { get; init; } = new();
+    public Dictionary<string, object> Metadata { get; set; } = new();
 
     /// <summary>
     /// Validates the basic structure and required fields of the healthcare message.

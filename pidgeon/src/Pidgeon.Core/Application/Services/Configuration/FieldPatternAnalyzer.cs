@@ -3,7 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
-using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Infrastructure.Standards.Abstractions;
 using Pidgeon.Core.Domain.Configuration.Entities;
 
 namespace Pidgeon.Core.Domain.Configuration.Services;

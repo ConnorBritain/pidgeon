@@ -3,10 +3,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 using Pidgeon.Core.Standards.Common;
-using Pidgeon.Core.Standards.HL7.v23.Segments;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Messages;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
 /// <summary>
 /// RDE - Pharmacy/Treatment Encoded Order Message.
@@ -15,7 +15,7 @@ namespace Pidgeon.Core.Standards.HL7.v23.Messages;
 /// </summary>
 public class RDEMessage : HL7Message
 {
-    public override string MessageType => "RDE";
+    public override required HL7MessageType MessageType { get; set; } = HL7MessageType.Common.RDE_O11;
 
     /// <summary>
     /// Gets the PID (Patient Identification) segment.
@@ -42,7 +42,7 @@ public class RDEMessage : HL7Message
     /// </summary>
     public string? TriggerEvent => MSH?.GetMessageTypeComponents()?.TriggerEvent;
 
-    protected override void InitializeMessage()
+    public override void InitializeMessage()
     {
         // MSH - Message Header (required for all HL7 messages)
         var msh = MSHSegment.Create(
@@ -174,49 +174,6 @@ public class RDEMessage : HL7Message
         return Result<HL7Message>.Success(this);
     }
 
-    protected override void ValidateStrictMode(List<ValidationError> errors, List<ValidationWarning> warnings)
-    {
-        base.ValidateStrictMode(errors, warnings);
-
-        // In strict mode, ensure trigger event is O01
-        var triggerEvent = TriggerEvent;
-        if (triggerEvent != "O01")
-        {
-            errors.Add(new ValidationError
-            {
-                Code = "INVALID_TRIGGER_EVENT",
-                Message = $"Invalid trigger event for RDE message: {triggerEvent}",
-                Field = "MSH.9",
-                Severity = ValidationSeverity.Error
-            });
-        }
-
-        // Ensure required patient fields are present
-        var pid = PID;
-        if (pid.PatientId.IsEmpty)
-        {
-            errors.Add(new ValidationError
-            {
-                Code = "MISSING_PATIENT_ID",
-                Message = "Patient ID is required in PID segment",
-                Field = "PID.3",
-                Severity = ValidationSeverity.Error
-            });
-        }
-
-        // Ensure RXE has required fields
-        var rxe = RXE;
-        if (rxe != null && rxe.GiveCode.IsEmpty)
-        {
-            errors.Add(new ValidationError
-            {
-                Code = "MISSING_DRUG_CODE",
-                Message = "Drug/Give code is required in RXE segment",
-                Field = "RXE.2",
-                Severity = ValidationSeverity.Error
-            });
-        }
-    }
 
     /// <summary>
     /// Generates a unique message control ID.

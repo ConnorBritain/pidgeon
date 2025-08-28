@@ -3,8 +3,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Fields;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.DataTypes;
 
 /// <summary>
 /// Represents a person name field (XPN data type) in HL7 v2.3.
@@ -12,21 +13,32 @@ namespace Pidgeon.Core.Standards.HL7.v23.Fields;
 /// </summary>
 public class PersonNameField : HL7Field<PersonName?>
 {
-    public PersonNameField() : base()
+    /// <inheritdoc />
+    public override string DataType => "XPN";
+
+    public PersonNameField()
     {
     }
 
-    public PersonNameField(PersonName? value) : base(value)
+    public PersonNameField(PersonName? value)
     {
+        Value = value;
+        RawValue = FormatValue(value);
     }
 
-    public PersonNameField(string? stringValue) : base(stringValue)
+    public PersonNameField(string? stringValue)
     {
+        var parseResult = ParseFromHL7String(stringValue ?? "");
+        if (parseResult.IsSuccess)
+        {
+            Value = parseResult.Value;
+            RawValue = stringValue ?? "";
+        }
     }
 
-    protected override Result<PersonName?> ParseStringValue(string stringValue)
+    protected override Result<PersonName?> ParseFromHL7String(string hl7Value)
     {
-        if (string.IsNullOrWhiteSpace(stringValue))
+        if (string.IsNullOrWhiteSpace(hl7Value))
             return Result<PersonName?>.Success(null);
 
         try
@@ -54,14 +66,14 @@ public class PersonNameField : HL7Field<PersonName?>
         }
         catch (Exception ex)
         {
-            return Error.Parsing($"Invalid person name format: {stringValue} - {ex.Message}", "PersonNameField");
+            return Result<PersonName?>.Failure($"Invalid person name format: {hl7Value} - {ex.Message}");
         }
     }
 
-    protected override string? FormatTypedValue(PersonName? value)
+    protected override string FormatValue(PersonName? value)
     {
         if (value == null)
-            return null;
+            return "";
 
         var components = new[]
         {

@@ -4,7 +4,7 @@
 
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Services;
-using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Infrastructure.Standards.Abstractions;
 using System.CommandLine;
 
 namespace Pidgeon.CLI.Commands;

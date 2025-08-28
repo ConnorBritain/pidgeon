@@ -3,9 +3,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Clinical.Entities;
-using Pidgeon.Core.Standards.HL7.v23.Fields;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Segments;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 
 /// <summary>
 /// ORC - Common Order Segment.
@@ -16,7 +17,7 @@ public class ORCSegment : HL7Segment
     public override string SegmentId => "ORC";
     public override string DisplayName => "Common Order";
 
-    protected override void InitializeFields()
+    public override void InitializeFields()
     {
         // ORC.1 - Order Control (Required)
         AddField(new StringField("NW", 2, true)); // NW = New order

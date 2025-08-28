@@ -2,10 +2,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using Pidgeon.Core.Infrastructure.Standards.Abstractions;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 using Pidgeon.Core.Standards.Common;
-using Pidgeon.Core.Standards.HL7.v23.Messages;
+using Pidgeon.Core;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Plugins;
+namespace Pidgeon.Core.Infrastructure.Standards.Plugins.HL7.v23;
 
 /// <summary>
 /// Plugin implementation for HL7 v2.3 standard.
@@ -40,7 +42,16 @@ public class HL7v23Plugin : IStandardPlugin
 
             IStandardMessage message = normalizedType switch
             {
-                "ADT" => new ADTMessage(),
+                "ADT" => new ADTMessage
+                {
+                    MessageControlId = Guid.NewGuid().ToString(),
+                    Timestamp = DateTime.UtcNow,
+                    SendingSystem = "PIDGEON",
+                    ReceivingSystem = "UNKNOWN",
+                    Standard = "HL7",
+                    Version = "2.3",
+                    MessageType = HL7MessageType.Common.ADT_A01
+                },
                 _ => throw new NotSupportedException($"Message type '{messageType}' is not yet supported by HL7v23Plugin")
             };
 

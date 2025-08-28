@@ -2,9 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Standards.HL7.v23.Fields;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
-namespace Pidgeon.Core.Standards.HL7.v23.Segments;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 
 /// <summary>
 /// RXR - Pharmacy/Treatment Route Segment.
@@ -21,7 +22,7 @@ public class RXRSegment : HL7Segment
     public StringField AdministrationDevice => GetField<StringField>(3)!;
     public StringField AdministrationMethod => GetField<StringField>(4)!;
 
-    protected override void InitializeFields()
+    public override void InitializeFields()
     {
         // RXR.1 - Route (Required)
         AddField(StringField.Required(60));
