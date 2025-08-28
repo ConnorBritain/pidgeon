@@ -72,4 +72,42 @@ public class StringField : HL7Field<string?>
     /// <param name="value">The string value to format</param>
     /// <returns>The HL7-formatted string</returns>
     protected override string FormatValue(string? value) => value ?? string.Empty;
+
+    /// <summary>
+    /// Creates a required StringField with the specified maximum length.
+    /// </summary>
+    /// <param name="maxLength">Maximum allowed length for the field</param>
+    /// <returns>A new StringField instance marked as required</returns>
+    public static StringField Required(int maxLength)
+    {
+        return new StringField(null, maxLength, isRequired: true);
+    }
+
+    /// <summary>
+    /// Creates an optional StringField with the specified maximum length.
+    /// </summary>
+    /// <param name="maxLength">Maximum allowed length for the field</param>
+    /// <returns>A new StringField instance marked as optional</returns>
+    public static StringField Optional(int maxLength)
+    {
+        return new StringField(null, maxLength, isRequired: false);
+    }
+
+    /// <summary>
+    /// Creates a required StringField with no maximum length constraint.
+    /// </summary>
+    /// <returns>A new StringField instance marked as required</returns>
+    public static StringField Required()
+    {
+        return new StringField(null, null, isRequired: true);
+    }
+
+    /// <summary>
+    /// Creates an optional StringField with no maximum length constraint.
+    /// </summary>
+    /// <returns>A new StringField instance marked as optional</returns>
+    public static StringField Optional()
+    {
+        return new StringField(null, null, isRequired: false);
+    }
 }

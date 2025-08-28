@@ -4,6 +4,7 @@
 
 using Pidgeon.Core.Infrastructure.Standards.Abstractions;
 using Pidgeon.Core;
+using Pidgeon.Core.Standards.HL7v24Plugin;
 
 namespace Pidgeon.Core.Standards.HL7v24Plugin;
 
@@ -33,6 +34,11 @@ public class HL7v24Plugin : IStandardPlugin
         "QBP", // Query by Parameter
         "RSP"  // Response to Query
     }.AsReadOnly();
+
+    /// <summary>
+    /// Gets the message factory for creating HL7 v2.4 messages.
+    /// </summary>
+    public IStandardMessageFactory MessageFactory => new HL7v24MessageFactory(this);
 
     /// <inheritdoc />
     public Result<IStandardMessage> CreateMessage(string messageType)

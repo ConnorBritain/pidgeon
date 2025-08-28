@@ -92,6 +92,11 @@ public abstract class HL7Field<T> : HL7Field
     public T? Value { get; protected set; }
 
     /// <summary>
+    /// Gets the typed value of this field (alias for Value for backward compatibility).
+    /// </summary>
+    public T? TypedValue => Value;
+
+    /// <summary>
     /// Sets the typed value of this field and updates the raw HL7 representation.
     /// Uses Result<T> pattern per sacred architectural principles.
     /// </summary>

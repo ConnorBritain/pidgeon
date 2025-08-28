@@ -19,14 +19,39 @@ public interface IStandardMessage
     string MessageType { get; }
 
     /// <summary>
-    /// Gets the standard this message belongs to.
+    /// Gets or sets the standard this message belongs to.
     /// </summary>
-    string Standard { get; }
+    string Standard { get; set; }
 
     /// <summary>
     /// Gets the version of the standard.
     /// </summary>
     Version StandardVersion { get; }
+
+    /// <summary>
+    /// Gets or sets the message control ID for tracking purposes.
+    /// </summary>
+    string MessageControlId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the timestamp when the message was created.
+    /// </summary>
+    DateTime Timestamp { get; set; }
+
+    /// <summary>
+    /// Gets or sets the sending system/application name.
+    /// </summary>
+    string SendingSystem { get; set; }
+
+    /// <summary>
+    /// Gets or sets the receiving system/application name.
+    /// </summary>
+    string ReceivingSystem { get; set; }
+
+    /// <summary>
+    /// Gets or sets the version of the message format (separate from StandardVersion).
+    /// </summary>
+    string Version { get; set; }
 
     /// <summary>
     /// Serializes the message to its string representation.

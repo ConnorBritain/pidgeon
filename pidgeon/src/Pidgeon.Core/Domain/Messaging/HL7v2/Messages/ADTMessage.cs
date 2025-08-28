@@ -67,7 +67,17 @@ public class ADTMessage : HL7Message
     {
         try
         {
-            var message = new ADTMessage();
+            // TODO: Replace with proper factory pattern - this is temporary for CS9035 fix
+            var message = new ADTMessage()
+            {
+                MessageControlId = Guid.NewGuid().ToString(),
+                Timestamp = DateTime.UtcNow,
+                SendingSystem = sendingApplication ?? "PIDGEON",
+                ReceivingSystem = receivingApplication ?? "UNKNOWN",
+                Standard = "HL7", // TODO: Should come from plugin
+                Version = "2.3",  // TODO: Should come from plugin
+                MessageType = HL7MessageType.Common.ADT_A01
+            };
 
             // Configure MSH segment
             var msh = message.MSH;
@@ -92,7 +102,11 @@ public class ADTMessage : HL7Message
             if (encounter != null && message.PV1 != null)
             {
                 var pv1 = PV1Segment.Create(encounter); // Provider will be taken from encounter.Provider
-                message.Segments.RemoveAll(s => s is PV1Segment); // Remove default empty PV1
+                var keysToRemove = message.Segments.Where(kvp => kvp.Value is PV1Segment).Select(kvp => kvp.Key).ToList();
+                foreach (var key in keysToRemove)
+                {
+                    message.Segments.Remove(key);
+                }
                 message.AddSegment(pv1); // Add populated PV1
             }
 
@@ -200,7 +214,7 @@ public class ADTMessage : HL7Message
     /// Gets a display representation of the ADT message.
     /// </summary>
     /// <returns>Human-readable message summary</returns>
-    public string GetDisplaySummary()
+    public override string GetDisplaySummary()
     {
         var triggerEvent = TriggerEvent;
         var eventDescription = triggerEvent switch

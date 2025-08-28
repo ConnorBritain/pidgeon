@@ -27,6 +27,11 @@ public class HL7v23Plugin : IStandardPlugin
     public IReadOnlyList<string> SupportedMessageTypes => _supportedMessageTypes;
 
     /// <summary>
+    /// Gets the message factory for creating HL7 v2.3 messages.
+    /// </summary>
+    public IStandardMessageFactory MessageFactory => new HL7v23MessageFactory(this);
+
+    /// <summary>
     /// Creates a message builder for the specified message type.
     /// </summary>
     /// <param name="messageType">The type of message to create (e.g., "ADT", "RDE")</param>

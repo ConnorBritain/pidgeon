@@ -31,9 +31,9 @@ public class GenericHL7Message : HL7Message
     /// <summary>
     /// Parses an HL7 string into a generic message.
     /// </summary>
-    public Result<HealthcareMessage> ParseHL7String(string hl7String)
+    public override Result<HL7Message> ParseHL7String(string hl7String)
     {
         // TODO: Implement generic message parsing
-        return Result<HealthcareMessage>.Success(this);
+        return Result<HL7Message>.Success(this);
     }
 }

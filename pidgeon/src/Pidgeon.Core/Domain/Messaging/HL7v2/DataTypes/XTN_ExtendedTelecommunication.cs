@@ -34,8 +34,8 @@ public class TelephoneField : HL7Field<string?>
         try
         {
             // XTN can be complex, but often just contains phone number in first component
-            var components = stringValue.Split('^');
-            var phoneNumber = GetComponent(components, 0);
+            var components = hl7Value.Split('^');
+            var phoneNumber = components.Length > 0 ? components[0] : null;
             
             // Clean up the phone number (remove common HL7 formatting)
             if (!string.IsNullOrEmpty(phoneNumber))

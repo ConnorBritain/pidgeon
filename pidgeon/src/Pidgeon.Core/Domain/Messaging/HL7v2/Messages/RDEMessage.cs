@@ -187,7 +187,7 @@ public class RDEMessage : HL7Message
     /// Gets a display representation of the RDE message.
     /// </summary>
     /// <returns>Human-readable message summary</returns>
-    public string GetDisplaySummary()
+    public override string GetDisplaySummary()
     {
         var patientInfo = PID?.GetPatientDisplay() ?? "Unknown Patient";
         var drugInfo = RXE?.GetDrugDisplay() ?? "Unknown Drug";

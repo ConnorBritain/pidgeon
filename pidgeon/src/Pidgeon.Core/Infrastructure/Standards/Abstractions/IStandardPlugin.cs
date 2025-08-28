@@ -32,6 +32,11 @@ public interface IStandardPlugin
     IReadOnlyList<string> SupportedMessageTypes { get; }
 
     /// <summary>
+    /// Gets the message factory for creating healthcare messages.
+    /// </summary>
+    IStandardMessageFactory MessageFactory { get; }
+
+    /// <summary>
     /// Creates a message builder for the specified message type.
     /// </summary>
     /// <param name="messageType">The type of message to create (e.g., "ADT", "RDE", "Patient")</param>

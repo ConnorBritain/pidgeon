@@ -44,14 +44,14 @@ public class PersonNameField : HL7Field<PersonName?>
         try
         {
             // Split on component separator (^)
-            var components = stringValue.Split('^');
+            var components = hl7Value.Split('^');
             
             // XPN fields: Family^Given^Middle^Suffix^Prefix^Degree^NameTypeCode
-            var family = GetComponent(components, 0);
-            var given = GetComponent(components, 1);
-            var middle = GetComponent(components, 2);
-            var suffix = GetComponent(components, 3);
-            var prefix = GetComponent(components, 4);
+            var family = components.Length > 0 ? components[0] : null;
+            var given = components.Length > 1 ? components[1] : null;
+            var middle = components.Length > 2 ? components[2] : null;
+            var suffix = components.Length > 3 ? components[3] : null;
+            var prefix = components.Length > 4 ? components[4] : null;
             
             var personName = new PersonName
             {
