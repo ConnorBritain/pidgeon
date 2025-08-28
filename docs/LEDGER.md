@@ -2225,6 +2225,60 @@ This clean build establishes stable foundation for Phase 2 domain model review c
 
 ---
 
+#### **📋 PRODUCT-001: User Story Development Framework Establishment**
+**Date**: August 28, 2025  
+**Decision**: Implement comprehensive user story development before continuing domain implementation  
+**Rationale**: Technical excellence without user value leads to over-engineered solutions; need product-first development approach  
+**Impact**: All future development guided by validated user needs rather than technical assumptions  
+**Rollback Impact**: Would lose user-centered development approach and risk building technically sound but commercially irrelevant features
+
+**Strategic User Segmentation Established**:
+1. **Consultants** - External interoperability experts helping healthcare organizations implement/troubleshoot interfaces
+2. **Informaticists/IT Professionals** - Internal healthcare IT staff maintaining, governing, and troubleshooting messaging systems  
+3. **Developers** - Technical implementers creating, debugging, and configuring healthcare interfaces and vendor integrations
+4. **Administrators** - Strategic decision makers focused on compliance, security, finance, team management, and enterprise governance
+
+**Product Development Philosophy**:
+- **80/20 Rule Application**: Identify 20% of core features providing 80%+ value across all user segments
+- **MVP Hypothesis Validation**: Build toward specific user outcomes, not technical completeness
+- **Form Follows Function**: Ensure application architecture serves validated user workflows
+- **Iterative Scrum Approach**: Systematic backlog development with user story prioritization
+
+**User Story Framework Structure**:
+```
+/docs/user_stories/
+├── consultant/        # External interop experts
+├── informaticist/     # Internal healthcare IT 
+├── developer/         # Technical implementers
+└── administrator/     # Strategic decision makers
+```
+
+**Implementation Approach**:
+1. **Phase 1**: Core user story development (identify MVP hypothesis features)
+2. **Phase 2**: User story validation against current architecture capabilities  
+3. **Phase 3**: Domain development prioritization based on validated user needs
+4. **Phase 4**: Iterative backlog development with feature impact assessment
+
+**Success Criteria**:
+- Clear MVP feature set defined for each user segment
+- User workflow validation for core 20% features  
+- Architecture alignment verified for priority user stories
+- Product roadmap established with user value prioritization
+
+**Business Model Integration**:  
+User stories will inform Core+ tier feature allocation:
+- **Core (Free)**: Features essential for individual developer/consultant adoption
+- **Professional**: Features valuable for team/organizational workflows
+- **Enterprise**: Features critical for large healthcare system deployment
+
+**Dependencies**: Domain Model V1 MVP Review (ARCH-021) will be informed by validated user stories  
+**Alternatives Considered**: 
+- Continue technical development first (rejected: risks over-engineering without user validation)
+- Generic user stories (rejected: healthcare interop requires domain-specific workflows)
+- Single user type focus (rejected: limits market addressability and platform potential)
+
+---
+
 **LEDGER Principles**:
 1. **Every significant decision gets documented**
 2. **Rollback procedures are mandatory for architectural changes**
