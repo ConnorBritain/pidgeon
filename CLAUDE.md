@@ -14,21 +14,29 @@
 1. **[`docs/roadmap/INIT.md`](docs/roadmap/INIT.md)** - 90-day foundation roadmap with SACRED architectural principles
 2. **[`docs/LEDGER.md`](docs/LEDGER.md)** - Complete development decision log and rollback procedures
 3. **[`docs/agent_steering/test-philosophy.md`](docs/agent_steering/test-philosophy.md)** - Testing strategy and behavior-driven approach
+4. **[`docs/user_stories/BACKLOG.md`](docs/user_stories/BACKLOG.md)** - **NEW: Prioritized user stories and MVP definition**
 
 ### **Agent Steering Documentation (READ FIRST)**
-4. **[`docs/agent_steering/product.md`](docs/agent_steering/product.md)** - Product vision and Core+ strategy
-5. **[`docs/agent_steering/structure.md`](docs/agent_steering/structure.md)** - Clean architecture principles
-6. **[`docs/agent_steering/tech.md`](docs/agent_steering/tech.md)** - Technology stack and patterns
-7. **[`docs/agent_steering/agent-reflection.md`](docs/agent_steering/agent-reflection.md)** - Decision framework
-8. **[`docs/agent_steering/error-resolution-methodology.md`](docs/agent_steering/error-resolution-methodology.md)** - STOP-THINK-ACT error handling framework
+5. **[`docs/agent_steering/product.md`](docs/agent_steering/product.md)** - Product vision and Core+ strategy
+6. **[`docs/agent_steering/structure.md`](docs/agent_steering/structure.md)** - Clean architecture principles
+7. **[`docs/agent_steering/tech.md`](docs/agent_steering/tech.md)** - Technology stack and patterns
+8. **[`docs/agent_steering/agent-reflection.md`](docs/agent_steering/agent-reflection.md)** - Decision framework
+9. **[`docs/agent_steering/error-resolution-methodology.md`](docs/agent_steering/error-resolution-methodology.md)** - STOP-THINK-ACT error handling framework
+
+### **User-Centered Development (PRODUCT-FIRST)**
+10. **[`docs/user_stories/MVP_VALIDATION.md`](docs/user_stories/MVP_VALIDATION.md)** - Business model alignment and MVP validation
+11. **[`docs/user_stories/developer/core_stories.md`](docs/user_stories/developer/core_stories.md)** - Developer workflows and pain points
+12. **[`docs/user_stories/consultant/core_stories.md`](docs/user_stories/consultant/core_stories.md)** - Consultant engagement scenarios
+13. **[`docs/user_stories/informaticist/core_stories.md`](docs/user_stories/informaticist/core_stories.md)** - Healthcare IT operational needs
+14. **[`docs/user_stories/administrator/core_stories.md`](docs/user_stories/administrator/core_stories.md)** - Strategic and compliance requirements
 
 ### **Founding Strategy Documents**
-9. **[`docs/founding_plan/business_model.md`](docs/founding_plan/business_model.md)** - **NEW: Crystallized subscription-first revenue model**
-10. **[`docs/founding_plan/generation_considerations.md`](docs/founding_plan/generation_considerations.md)** - **NEW: Generation service architecture & AI integration**
-11. **[`docs/founding_plan/core_plus_strategy.md`](docs/founding_plan/core_plus_strategy.md)** - Original business model details
-12. **[`docs/founding_plan/1_founder.md`](docs/founding_plan/1_founder.md)** - Technical founder perspective
-13. **[`docs/founding_plan/2_consultant.md`](docs/founding_plan/2_consultant.md)** - Healthcare consultant insights
-14. **[`docs/founding_plan/3_investor.md`](docs/founding_plan/3_investor.md)** - Investor business case
+15. **[`docs/founding_plan/business_model.md`](docs/founding_plan/business_model.md)** - **Crystallized subscription-first revenue model**
+16. **[`docs/founding_plan/generation_considerations.md`](docs/founding_plan/generation_considerations.md)** - **Generation service architecture & AI integration**
+17. **[`docs/founding_plan/core_plus_strategy.md`](docs/founding_plan/core_plus_strategy.md)** - Original business model details
+18. **[`docs/founding_plan/1_founder.md`](docs/founding_plan/1_founder.md)** - Technical founder perspective
+19. **[`docs/founding_plan/2_consultant.md`](docs/founding_plan/2_consultant.md)** - Healthcare consultant insights
+20. **[`docs/founding_plan/3_investor.md`](docs/founding_plan/3_investor.md)** - Investor business case
 
 ---
 
@@ -146,6 +154,25 @@ public Result<Message> ProcessMessage(string input)
 - **"B-Level" Datasets**: 150+ medications (static, 6+ months old)
 - **Batch Processing**: CSV export, bulk generation
 - **No Subscriptions**: Offline-focused, community support only
+
+---
+
+## 🎯 **MVP-FOCUSED DEVELOPMENT (PRODUCT-001)**
+
+> **CRITICAL**: All development must prioritize validated user stories. Reference `docs/user_stories/BACKLOG.md` for P0 features.
+
+### **P0 MVP Features (Build These First)**
+1. **Message Generation** - All user types need realistic test messages daily
+2. **Message Validation** - Critical for quality assurance and debugging  
+3. **Vendor Pattern Detection** - Our unique differentiator from generic tools
+4. **Format Error Debugging** - Reduces troubleshooting time by 75%
+5. **Synthetic Test Data** - Safe testing without PHI exposure
+
+### **User-First Development Principle**
+- **Check User Stories First**: Every feature must map to validated user stories
+- **80/20 Rule**: Focus on P0 features that provide 80% of user value
+- **Business Model Alignment**: Verify features align with Core/Professional/Enterprise tiers
+- **User Workflow Support**: Ensure features fit real healthcare workflows
 
 ---
 
