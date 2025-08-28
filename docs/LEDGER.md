@@ -32,6 +32,95 @@
 
 ---
 
+## 🏗️ **ARCH-024: Comprehensive Clean Architecture Reorganization** 
+**Date**: August 28, 2025  
+**Decision**: Complete codebase reorganization following Clean Architecture patterns
+
+### **Context**
+The codebase had grown organically with:
+- Services scattered across multiple directories (root /Services/, /Domain/Configuration/Services/, etc.)
+- Interface placement inconsistency (some with implementations, some scattered)
+- Standards plugin flat structure becoming unwieldy
+- Empty placeholder directories adding noise
+- No clear architectural layer boundaries
+
+### **Decision Made**
+Implemented comprehensive Clean Architecture reorganization:
+
+```
+Pidgeon.Core/
+├── Domain/                     # Pure domain models (no services moved out)
+│   ├── Clinical/               # Healthcare business concepts
+│   ├── Messaging/              # Wire format structures  
+│   ├── Configuration/          # Vendor patterns (entities only)
+│   └── Transformation/         # Mapping rules
+│
+├── Application/                # Application services & use cases
+│   ├── Interfaces/            # ALL service interfaces
+│   │   ├── Configuration/
+│   │   ├── Generation/
+│   │   ├── Validation/
+│   │   └── Transformation/
+│   ├── Services/              # Service implementations
+│   │   ├── Configuration/
+│   │   ├── Generation/
+│   │   ├── Validation/
+│   │   └── Transformation/
+│   └── Adapters/              # Anti-corruption layer
+│       ├── Interfaces/
+│       └── Implementation/
+│
+├── Infrastructure/            # External concerns
+│   ├── Standards/            # Standard-specific implementations
+│   │   ├── Abstractions/    # Plugin interfaces
+│   │   ├── Common/          # Shared standard logic
+│   │   │   ├── HL7/
+│   │   │   ├── FHIR/
+│   │   │   └── NCPDP/
+│   │   └── Plugins/         # Thin plugin registrations
+│   │       ├── HL7/{v23,v24,v25}/
+│   │       ├── FHIR/{FHIRv4Plugin,FHIRv5Plugin}/
+│   │       └── NCPDP/{NCPDPPlugin}/
+│   ├── Generation/          # Generation infrastructure
+│   └── Registry/           # Plugin registry
+│
+└── Common/                 # Shared kernel
+    ├── Extensions/
+    ├── Types/
+    └── Result.cs
+```
+
+### **Key Improvements**
+1. **Clear layer boundaries** - Each layer has specific responsibilities
+2. **Consistent interface placement** - Interfaces near their implementations
+3. **Plugin family organization** - Standards grouped by family with version nesting
+4. **Clean domain** - No services in domain, only entities and value objects
+5. **Centralized abstractions** - All plugin interfaces in Standards/Abstractions
+6. **Shared kernel** - Common concerns properly isolated
+
+### **Architecture Benefits**
+- **Better navigation** - Developers know exactly where to find things
+- **Easier testing** - Clear layer boundaries enable better mocking
+- **AI-friendly structure** - Consistent patterns help AI agents navigate
+- **Scalable organization** - Can add new standards/versions without cluttering
+- **Clean Architecture compliance** - Proper dependency flow and separation
+
+### **Dependencies**
+- All existing features maintained, just relocated
+- Configuration intelligence moved to Standards/Common/HL7/Configuration/ 
+- Universal HL7 parser supports all versions from Common location
+- Plugin registration patterns established for all standard families
+
+### **Rollback Impact** 
+- **High**: Requires namespace updates throughout codebase
+- **Mitigation**: All functionality preserved, only organizational changes
+- **Files preserved**: No code logic lost, only moved to proper architectural layers
+- **Git history**: All file history maintained through git moves
+
+**Commit Reference**: TBD (pending commit)
+
+---
+
 ## 📋 **Ledger Usage Guide**
 
 ### **Entry Types**
@@ -2298,6 +2387,89 @@ User stories will inform Core+ tier feature allocation:
 4. **Week 4**: User validation and iteration
 
 **Next Immediate Action**: Domain Model V1 MVP Review focusing on P0 feature support
+
+---
+
+#### **🏗️ ARCH-023: Messaging Domain Organizational Strategy**
+**Date**: August 28, 2025  
+**Decision**: Established comprehensive messaging domain organization strategy for scalable standards support  
+**Type**: Architectural Foundation  
+**Impact**: HIGH - Affects all future messaging implementation  
+
+**Problem Statement**:
+Current messaging domain organization has critical inconsistencies:
+- Inconsistent versioning strategy (HL7v2/ vs FHIR/ vs NCPDP/)
+- Unclear shared component strategy (segments used across multiple messages)  
+- Domain vs Standards separation confusion
+- Risk of namespace conflicts and single responsibility violations as standards proliferate
+
+**Solution Implemented**:
+**Three-part architectural strategy** based on systematic evaluation:
+
+1. **Explicit Versioning Strategy** (Q1 = Option A):
+   - Standards plugins: `HL7v23Plugin/`, `HL7v24Plugin/`, `FHIRv4Plugin/`, `NCPDPPlugin/`
+   - Domain organization: `HL7v2/` (version-agnostic), `FHIR/`, `NCPDP/`
+   - **Rationale**: Healthcare systems run different versions simultaneously; future-proof architecture
+
+2. **Hybrid Shared Components** (Q2 = Option C):
+   - Common segments in `Domain/Messaging/HL7v2/Segments/` (MSH, PID, PV1)
+   - Version-specific overrides in `Standards/HL7v23/Segments/` when needed
+   - **Rationale**: 95% of HL7 segments identical across versions, 5% need version-specific handling
+
+3. **Wire Format Structures** (Q3 = Option B):
+   - Domain contains concrete message structures, not abstract concepts
+   - Direct Clinical → HL7/FHIR/NCPDP mapping for P0 MVP simplicity
+   - **Rationale**: P0 features need direct generation, not cross-standard abstraction
+
+**Architectural Decision Documentation**: Updated `docs/arch_planning/pidgeon_domain_model.md` with comprehensive messaging domain strategy including organizational principles and namespace structure
+
+**Target Directory Structure**:
+```
+Domain/
+  Messaging/
+    HL7v2/                    # Wire format structures for HL7 v2.x
+      Messages/               # ADTMessage, RDEMessage, etc.
+      Segments/               # MSH, PID, PV1 (shared across versions)
+      DataTypes/              # XPN, CX, CE (shared across versions)  
+    FHIR/                     # Wire format structures for FHIR
+      Resources/              # PatientResource, MedicationRequestResource
+      Bundles/                # FHIRBundle
+      DataTypes/              # HumanName, Identifier, CodeableConcept
+    NCPDP/                    # Wire format structures for NCPDP
+      Transactions/           # NewRxTransaction, RefillTransaction
+      Segments/               # UIB, PVD, PTT
+
+Standards/                    # Version-specific plugin implementations
+  HL7v23Plugin/               # v2.3-specific parsing, validation, serialization
+  HL7v24Plugin/               # v2.4-specific (future)
+  FHIRv4Plugin/               # R4-specific business logic
+  NCPDPPlugin/                # Version-specific business logic
+```
+
+**Sacred Principles Compliance**:
+- **Principle #1**: Four-domain architecture maintained with clear messaging domain boundaries
+- **Principle #2**: Plugin architecture enhanced with explicit versioning support
+- **Principle #3**: All services remain injectable with standard-agnostic interfaces
+
+**Success Criteria**:
+- Consistent naming and versioning across all standards
+- Shared components properly isolated without duplication
+- Clear separation between domain models and plugin implementations
+- Scalable architecture supporting future standards without refactoring
+
+**Dependencies**: Domain Model V1 MVP Review completion  
+**Alternatives Considered**:
+- **Standards-agnostic abstractions**: Rejected for P0 - adds complexity without immediate value
+- **Version-agnostic standards**: Rejected - healthcare reality requires multiple version support
+- **Separate domains per standard**: Rejected - creates duplication and maintenance burden
+
+**Implementation Status**: 🎯 **READY FOR IMPLEMENTATION**  
+**Next Action**: Begin Phase 3 messaging domain restructuring following approved architectural strategy  
+
+**Rollback Procedure**: 
+1. Revert `docs/arch_planning/pidgeon_domain_model.md` to previous messaging domain section
+2. Continue with current inconsistent directory structure
+3. Document decision to accept architectural debt for faster P0 delivery
 
 ---
 

@@ -1,7 +1,9 @@
 # Pidgeon Domain Model Architecture
 **Date**: August 27, 2025  
-**Status**: 🎯 FOUNDATIONAL DOMAIN ARCHITECTURE  
+**Status**: 🎯 FOUNDATIONAL DOMAIN ARCHITECTURE - Updated August 28, 2025  
 **Purpose**: Define the right-sized domain model architecture for long-term scalability and completeness
+
+**Latest Update**: Added comprehensive Messaging Domain organizational strategy based on P0 MVP requirements and sacred architectural principles.
 
 ---
 
@@ -53,58 +55,155 @@ namespace Pidgeon.Core.Domain.Clinical
 
 ### **2. Messaging Domain (Wire Format Structures)**
 
+**ARCHITECTURAL DECISION (August 28, 2025)**: Based on P0 MVP requirements and sacred principles analysis, the Messaging Domain uses **explicit versioning**, **hybrid shared components**, and **wire format structures**.
+
 ```csharp
 namespace Pidgeon.Core.Domain.Messaging
 {
-    // What actually goes over the wire
+    // Standard-specific wire format structures
     namespace HL7v2
     {
-        public record HL7_ORM_Message(
-            MSH_Segment MSH,  // 21 fields
-            PID_Segment PID,  // 39 fields
-            List<OrderGroup> Orders
-        );
+        namespace Messages
+        {
+            // Message types shared across HL7 v2.x versions
+            public abstract record HL7Message(
+                MSHSegment MSH,
+                string MessageControlId,
+                HL7EncodingChars Encoding
+            ) : HealthcareMessage;
+            
+            public record ADTMessage : HL7Message; // Admissions/Discharges/Transfers
+            public record RDEMessage : HL7Message; // Pharmacy Orders
+            public record ORMMessage : HL7Message; // General Orders
+            public record ORUMessage : HL7Message; // Observation Results
+        }
         
-        public record PID_Segment(
-            int SetId,                              // PID.1
-            CX_ExtendedCompositeId PatientId,       // PID.2
-            List<CX_ExtendedCompositeId> PatientIdList, // PID.3
-            // ... all 39 fields
-        );
+        namespace Segments
+        {
+            // Segments shared across HL7 v2.x versions (hybrid approach)
+            public record MSHSegment(...); // Message Header - same across versions
+            public record PIDSegment(...); // Patient ID - mostly same, minor version differences
+            public record PV1Segment(...); // Patient Visit - same across versions
+            public record ORCSegment(...); // Common Order - same across versions
+        }
+        
+        namespace DataTypes  
+        {
+            // Data types shared across HL7 v2.x versions
+            public record XPN_ExtendedPersonName(...); // Person name structure
+            public record CX_ExtendedCompositeId(...); // Patient ID structure  
+            public record CE_CodedElement(...);        // Coded values
+        }
     }
     
     namespace FHIR
     {
-        public record MedicationRequestBundle(
-            List<Resource> Entries,
-            BundleType Type,
-            Meta Metadata
-        );
+        namespace Resources
+        {
+            // FHIR R4 resource structures (explicit versioning for future R5 support)
+            public abstract record FHIRResource(string Id, Meta Metadata);
+            public record PatientResource : FHIRResource;
+            public record MedicationRequestResource : FHIRResource;
+        }
         
-        public record PatientResource(
-            string Id,
-            List<Identifier> Identifiers,
-            List<HumanName> Names,
-            DateTime BirthDate
-        );
+        namespace Bundles
+        {
+            public record FHIRBundle(
+                List<FHIRResource> Entry,
+                FHIRBundleType Type,
+                Meta Metadata
+            ) : HealthcareMessage;
+        }
+        
+        namespace DataTypes
+        {
+            public record HumanName(...);    // FHIR person name
+            public record Identifier(...);   // FHIR identifier  
+            public record CodeableConcept(...); // FHIR coded concepts
+        }
     }
     
     namespace NCPDP
     {
-        public record NewRxTransaction(
-            UIB_InterchangeHeader Header,
-            PVD_ProviderSegment Provider,
-            PTT_PatientSegment Patient,
-            DRU_DrugSegment Drug
-        );
+        namespace Transactions
+        {
+            // NCPDP SCRIPT transaction structures
+            public abstract record NCPDPTransaction(
+                string TransactionId,
+                NCPDPTransactionType Type
+            ) : HealthcareMessage;
+            
+            public record NewRxTransaction : NCPDPTransaction;
+            public record RefillTransaction : NCPDPTransaction;
+        }
+        
+        namespace Segments
+        {
+            public record UIB_InterchangeHeader(...); // NCPDP header
+            public record PVD_ProviderSegment(...);   // Provider information
+            public record PTT_PatientSegment(...);    // Patient information
+        }
+    }
+    
+    // Base healthcare message abstraction
+    public abstract record HealthcareMessage(
+        string Standard,           // "HL7v2", "FHIR", "NCPDP"
+        string MessageControlId,   // Unique message identifier
+        string SendingSystem,      // Source system
+        string ReceivingSystem,    // Target system
+        DateTime Timestamp
+    );
+}
+```
+
+#### **Messaging Domain Organizational Principles:**
+
+1. **Explicit Versioning Strategy**: 
+   - Standards folder: `HL7v23Plugin/`, `HL7v24Plugin/`, `FHIRv4Plugin/`
+   - Domain folder: `HL7v2/` (version-agnostic), `FHIR/` (version-agnostic)
+   - **Rationale**: Healthcare systems run different versions simultaneously
+
+2. **Hybrid Shared Components**:
+   - Common segments (MSH, PID) live in `Domain/Messaging/HL7v2/Segments/`
+   - Version-specific overrides live in `Standards/HL7v23/Segments/` (when needed)
+   - **Rationale**: 95% of segments are identical across versions, 5% need overrides
+
+3. **Wire Format Structures**:
+   - Domain contains concrete message structures, not abstract concepts  
+   - Direct mapping from Clinical domain to specific standard formats
+   - **Rationale**: P0 features need direct HL7/FHIR generation, not cross-standard mapping
+
+#### **Standards Plugin Separation:**
+
+```csharp
+namespace Pidgeon.Core.Standards
+{
+    // Version-specific business logic and parsing
+    namespace HL7v23
+    {
+        public class HL7v23Plugin : IStandardPlugin
+        {
+            // v2.3-specific parsing rules
+            // v2.3-specific validation logic
+            // v2.3-specific serialization
+        }
+        
+        namespace Segments
+        {
+            // Only contains segments that differ from common HL7v2 segments
+            public record PIDSegment : Domain.Messaging.HL7v2.Segments.PIDSegment
+            {
+                // v2.3-specific field differences (if any)
+            }
+        }
     }
 }
 ```
 
-**Owns**: Complete message structures as they exist in standards  
-**Purpose**: Parse, validate, and analyze actual messages  
-**Language**: "MSH.9 contains ORM^O01, PID.5 has 3 components"  
-**Changes When**: Standards evolve (HL7 v2.3 → v2.7, FHIR R4 → R5)
+**Owns**: Complete message structures as they exist in standards, organized by standard family  
+**Purpose**: Parse, validate, generate, and analyze actual healthcare messages  
+**Language**: "MSH.9 contains ORM^O01, PID.5 has 3 components, using HL7 v2.3 encoding"  
+**Changes When**: Standards evolve (HL7 v2.3 → v2.4 → v2.5, FHIR R4 → R5), new standards added
 
 ### **3. Configuration Domain (Vendor Patterns)**
 
@@ -312,51 +411,49 @@ Service Layer:
 
 ---
 
-## **The Anti-Corruption Layer Strategy**
+## **Domain Adapter Strategy**
 
-Each domain boundary needs protection to prevent concepts from leaking:
+Each domain boundary uses adapters to translate between bounded contexts without leaking domain concepts:
 
 ```csharp
-namespace Pidgeon.Core.AntiCorruption
+namespace Pidgeon.Core.Adapters.Interfaces
 {
-    // Clinical → Messaging
-    public interface IClinicalToMessaging
+    // Clinical → Messaging Adapter
+    public interface IClinicalToMessagingAdapter
     {
-        HL7_ADT CreateAdmission(Patient patient, Encounter encounter);
-        HL7_RDE CreatePrescriptionOrder(Prescription prescription);
-        FHIR_Bundle CreateBundle(Prescription prescription);
-        NCPDP_NewRx CreateNewRx(Prescription prescription);
+        Task<HL7Message> CreateAdmissionMessageAsync(Patient patient, Encounter encounter, string eventType = "A01");
+        Task<HL7Message> CreatePrescriptionOrderAsync(Prescription prescription);
+        Task<FHIRBundle> CreateFHIRBundleAsync(Patient patient, IEnumerable<Prescription>? prescriptions = null);
+        Task<NCPDPTransaction> CreateNCPDPTransactionAsync(Prescription prescription, string transactionType = "NewRx");
     }
     
-    // Messaging → Clinical  
-    public interface IMessagingToClinical
+    // Messaging → Clinical Adapter  
+    public interface IMessagingToClinicalAdapter
     {
-        Patient ExtractPatient(HL7_ADT message);
-        Patient ExtractPatient(FHIR_PatientResource resource);
-        Prescription ExtractPrescription(HL7_RDE message);
-        Prescription ExtractPrescription(FHIR_MedicationRequest resource);
+        Task<Patient?> ExtractPatientFromHL7Async(HL7Message message);
+        Task<Patient?> ExtractPatientFromFHIRAsync(FHIRBundle bundle);
+        Task<Prescription?> ExtractPrescriptionFromHL7Async(HL7Message message);
+        Task<IEnumerable<Prescription>> ExtractPrescriptionsFromFHIRAsync(FHIRBundle bundle);
+        Task<Prescription?> ExtractPrescriptionFromNCPDPAsync(NCPDPTransaction transaction);
+        Task<Encounter?> ExtractEncounterFromHL7Async(HL7Message message);
     }
     
-    // Messaging → Configuration
-    public interface IMessagingToConfiguration
+    // Messaging → Configuration Adapter
+    public interface IMessagingToConfigurationAdapter
     {
-        FieldPatterns AnalyzePatterns(IEnumerable<HL7Message> messages);
-        VendorConfiguration InferConfiguration(IEnumerable<HL7Message> messages);
-        List<FormatDeviation> DetectDeviations(HL7Message message, VendorConfiguration config);
+        Task<FieldPatterns> AnalyzePatternsAsync(IEnumerable<HealthcareMessage> messages);
+        Task<VendorConfiguration> InferConfigurationAsync(IEnumerable<HealthcareMessage> messages);
+        Task<List<FormatDeviation>> DetectDeviationsAsync(HealthcareMessage message, VendorConfiguration configuration);
+        Task<Dictionary<string, FieldFrequency>> CalculateFieldStatisticsAsync(IEnumerable<HealthcareMessage> messages);
+        Task<SegmentPattern> AnalyzeSegmentPatternsAsync(IEnumerable<HealthcareMessage> messages, string segmentType);
+        Task<ComponentPattern> AnalyzeComponentPatternsAsync(IEnumerable<HealthcareMessage> messages, string fieldType);
     }
     
-    // Configuration → Transformation
-    public interface IConfigurationToTransformation
+    // Configuration → Transformation Adapter
+    public interface IConfigurationToTransformationAdapter
     {
-        TransformationSet GenerateRules(VendorConfiguration config);
-        MappingRule AdaptRule(MappingRule baseRule, VendorConfiguration config);
-    }
-    
-    // Transformation → Execution
-    public interface ITransformationExecutor
-    {
-        TTarget Execute<TSource, TTarget>(TSource source, TransformationSet rules);
-        ValidationResult Validate<T>(T entity, TransformationSet rules);
+        Task<TransformationSet> GenerateRulesAsync(VendorConfiguration config);
+        Task<MappingRule> AdaptRuleAsync(MappingRule baseRule, VendorConfiguration config);
     }
 }
 ```

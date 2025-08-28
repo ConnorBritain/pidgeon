@@ -318,9 +318,9 @@ Before creating or modifying ANY file in `Pidgeon.Core/Services/`:
 - `Pidgeon.Core/Domain/Messaging/` → Wire format structures (HL7_ORM_Message, FHIR_Bundle)  
 - `Pidgeon.Core/Domain/Configuration/` → Vendor patterns (VendorConfiguration, FieldPattern)
 - `Pidgeon.Core/Domain/Transformation/` → Mapping rules (MappingRule, TransformationSet)
-- `Pidgeon.Core/AntiCorruption/` → Interfaces between domains (IClinicalToMessaging)
+- `Pidgeon.Core/Adapters/` → Interfaces between domains (IClinicalToMessagingAdapter)
 
-**NEW RULE**: Each service should depend on exactly ONE domain. Cross-domain operations happen through Anti-Corruption Layer interfaces.
+**NEW RULE**: Each service should depend on exactly ONE domain. Cross-domain operations happen through Domain Adapter interfaces.
 
 ### **Documentation Synchronization Status**
 All key documents updated to reflect Four-Domain Architecture (August 27, 2025):
