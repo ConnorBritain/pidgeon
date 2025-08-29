@@ -14,17 +14,17 @@ namespace Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 /// </summary>
 public class ADTMessage : HL7Message
 {
-    public override required HL7MessageType MessageType { get; set; } = HL7MessageType.Common.ADT_A01;
+    public override HL7MessageType MessageType { get; set; } = HL7MessageType.Common.ADT_A01;
 
     /// <summary>
     /// Gets the PID (Patient Identification) segment.
     /// </summary>
-    public PIDSegment PID => GetSegment<PIDSegment>()!;
+    public PIDSegment PID => GetSegment<PIDSegment>("PID")!;
 
     /// <summary>
     /// Gets the PV1 (Patient Visit) segment.
     /// </summary>
-    public PV1Segment? PV1 => GetSegment<PV1Segment>();
+    public PV1Segment? PV1 => GetSegment<PV1Segment>("PV1");
 
     /// <summary>
     /// Gets the trigger event (e.g., A01, A03, A08).
@@ -102,11 +102,7 @@ public class ADTMessage : HL7Message
             if (encounter != null && message.PV1 != null)
             {
                 var pv1 = PV1Segment.Create(encounter); // Provider will be taken from encounter.Provider
-                var keysToRemove = message.Segments.Where(kvp => kvp.Value is PV1Segment).Select(kvp => kvp.Key).ToList();
-                foreach (var key in keysToRemove)
-                {
-                    message.Segments.Remove(key);
-                }
+                message.Segments.RemoveAll(s => s is PV1Segment);
                 message.AddSegment(pv1); // Add populated PV1
             }
 

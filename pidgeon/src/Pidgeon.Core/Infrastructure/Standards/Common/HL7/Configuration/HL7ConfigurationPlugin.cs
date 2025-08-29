@@ -130,7 +130,7 @@ internal class HL7ConfigurationPlugin : IConfigurationPlugin
             _logger.LogDebug("Validating HL7 message against configuration {Address}", configuration.Address);
 
             // Delegate to the configuration validator service
-            var result = await _validator.ValidateAsync(message, configuration, ValidationMode.Compatibility);
+            var result = await _validator.ValidateAsync(message, configuration, Domain.Configuration.Services.ValidationMode.Compatibility);
             
             if (result.IsSuccess)
             {

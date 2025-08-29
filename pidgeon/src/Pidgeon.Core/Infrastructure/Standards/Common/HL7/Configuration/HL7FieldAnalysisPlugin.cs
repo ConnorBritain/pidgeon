@@ -103,7 +103,7 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
                 SendingSystem = ExtractSendingSystem(segments),
                 ReceivingSystem = ExtractReceivingSystem(segments),
                 Timestamp = DateTime.UtcNow,
-                Segments = ParseSegments(segments)
+                Segments = ParseSegments(segments).Values.ToList()
             };
 
             await Task.CompletedTask;

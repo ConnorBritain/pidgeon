@@ -300,7 +300,7 @@ public class GenericHL7Message : HL7Message
         MessageType = HL7MessageType.Parse(messageType);
     }
     
-    public override required HL7MessageType MessageType { get; set; }
+    public override HL7MessageType MessageType { get; set; }
     
     public override void InitializeMessage()
     {

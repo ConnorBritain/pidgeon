@@ -15,27 +15,27 @@ namespace Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 /// </summary>
 public class RDEMessage : HL7Message
 {
-    public override required HL7MessageType MessageType { get; set; } = HL7MessageType.Common.RDE_O11;
+    public override HL7MessageType MessageType { get; set; } = HL7MessageType.Common.RDE_O11;
 
     /// <summary>
     /// Gets the PID (Patient Identification) segment.
     /// </summary>
-    public PIDSegment PID => GetSegment<PIDSegment>()!;
+    public PIDSegment PID => GetSegment<PIDSegment>("PID")!;
 
     /// <summary>
     /// Gets the ORC (Common Order) segment.
     /// </summary>
-    public ORCSegment? ORC => GetSegment<ORCSegment>();
+    public ORCSegment? ORC => GetSegment<ORCSegment>("ORC");
 
     /// <summary>
     /// Gets the RXE (Pharmacy/Treatment Encoded Order) segment.
     /// </summary>
-    public RXESegment? RXE => GetSegment<RXESegment>();
+    public RXESegment? RXE => GetSegment<RXESegment>("RXE");
 
     /// <summary>
     /// Gets the RXR (Pharmacy/Treatment Route) segment.
     /// </summary>
-    public RXRSegment? RXR => GetSegment<RXRSegment>();
+    public RXRSegment? RXR => GetSegment<RXRSegment>("RXR");
 
     /// <summary>
     /// Gets the trigger event (O01 for order).

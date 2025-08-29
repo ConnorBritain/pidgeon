@@ -10,6 +10,31 @@ namespace Pidgeon.Core.Standards.Common;
 public record MessageMetadata
 {
     /// <summary>
+    /// Gets the message type.
+    /// </summary>
+    public string MessageType { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Gets the healthcare standard.
+    /// </summary>
+    public string Standard { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Gets the standard version.
+    /// </summary>
+    public string Version { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Gets the number of segments in the message.
+    /// </summary>
+    public int SegmentCount { get; init; }
+
+    /// <summary>
+    /// Gets the message control ID.
+    /// </summary>
+    public string ControlId { get; init; } = string.Empty;
+
+    /// <summary>
     /// Gets when the message was created.
     /// </summary>
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;

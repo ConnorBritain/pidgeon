@@ -2,9 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Standards.HL7.v23.Parsing;
-using Pidgeon.Core.Standards.HL7.v23.Messages;
-using Pidgeon.Core.Standards.HL7.v23.Segments;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 using Xunit;
 
 namespace Pidgeon.Core.Tests;
@@ -27,10 +27,10 @@ public class HL7ParserTests
         // Assert
         Assert.True(result.IsSuccess, result.IsFailure ? $"Parser failed: {result.Error.Message}" : "");
         Assert.NotNull(result.Value);
-        Assert.Equal("ADT", result.Value.MessageType);
-        Assert.Equal(3, result.Value.SegmentCount);
+        Assert.Equal("ADT", result.Value.MessageType.MessageCode);
+        Assert.Equal(3, result.Value.Segments.Count);
         
-        var allSegments = result.Value.GetAllSegments();
+        var allSegments = result.Value.Segments;
         // Verify segment types
         Assert.IsType<MSHSegment>(allSegments[0]);
         Assert.IsType<PIDSegment>(allSegments[1]); 
@@ -55,8 +55,8 @@ public class HL7ParserTests
         // Assert
         Assert.True(result.IsSuccess, result.IsFailure ? $"Parser failed: {result.Error.Message}" : "");
         Assert.NotNull(result.Value);
-        Assert.Equal("RDE", result.Value.MessageType);
-        Assert.Equal(5, result.Value.SegmentCount);
+        Assert.Equal("RDE", result.Value.MessageType.MessageCode);
+        Assert.Equal(5, result.Value.Segments.Count);
     }
 
     [Fact]

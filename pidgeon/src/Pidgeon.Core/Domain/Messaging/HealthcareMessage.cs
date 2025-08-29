@@ -14,36 +14,36 @@ public abstract class HealthcareMessage
     /// Gets the unique message control identifier.
     /// This is equivalent to HL7 MSH.10, FHIR Bundle.identifier, NCPDP message ID.
     /// </summary>
-    public required string MessageControlId { get; set; }
+    public string MessageControlId { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the timestamp when the message was created.
     /// </summary>
-    public required DateTime Timestamp { get; set; }
+    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Gets the identifier of the system sending this message.
     /// This is equivalent to HL7 MSH.3, FHIR Bundle.entry.resource.identifier, NCPDP sender ID.
     /// </summary>
-    public required string SendingSystem { get; set; }
+    public string SendingSystem { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the identifier of the system receiving this message.
     /// This is equivalent to HL7 MSH.5, FHIR Bundle target, NCPDP receiver ID.
     /// </summary>
-    public required string ReceivingSystem { get; set; }
+    public string ReceivingSystem { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the healthcare standard this message conforms to.
     /// Values: "HL7v23", "HL7v25", "HL7v251", "FHIR", "NCPDP"
     /// </summary>
-    public required string Standard { get; set; }
+    public string Standard { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the specific version of the standard.
     /// Examples: "2.3", "2.5.1", "4.0.1", "2017071"
     /// </summary>
-    public required string Version { get; set; }
+    public string Version { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the processing instructions for this message.

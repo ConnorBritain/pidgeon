@@ -8,6 +8,7 @@ using Pidgeon.Core.Infrastructure.Standards.Abstractions;
 using Pidgeon.Core.Infrastructure.Standards.Common;
 using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 using Pidgeon.Core.Standards.Common;
+using System.Linq;
 
 namespace Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
@@ -26,7 +27,7 @@ public abstract class HL7Message : HealthcareMessage, IStandardMessage
     /// <summary>
     /// Gets the HL7 message type and trigger event (e.g., "ORM^O01").
     /// </summary>
-    public virtual required HL7MessageType MessageType { get; set; }
+    public virtual HL7MessageType MessageType { get; set; } = new HL7MessageType();
 
     /// <summary>
     /// Initializes the message with default segments and structure.
@@ -61,10 +62,10 @@ public abstract class HL7Message : HealthcareMessage, IStandardMessage
 
 
     /// <summary>
-    /// Gets all segments in this message, keyed by segment ID.
-    /// For repeating segments, use segment ID with sequence number (e.g., "OBX1", "OBX2").
+    /// Gets all segments in this message, maintaining HL7-required order.
+    /// MSH segment should always be first, followed by other segments in proper sequence.
     /// </summary>
-    public Dictionary<string, HL7Segment> Segments { get; set; } = new();
+    public List<HL7Segment> Segments { get; set; } = new();
 
     /// <summary>
     /// Validates HL7-specific message structure and encoding.
@@ -82,7 +83,7 @@ public abstract class HL7Message : HealthcareMessage, IStandardMessage
         if (MessageType == null)
             return Error.Validation("HL7 Message Type is required", nameof(MessageType));
 
-        if (!Segments.ContainsKey("MSH"))
+        if (!Segments.Any(s => s.SegmentId == "MSH"))
             return Error.Validation("HL7 messages must contain MSH (Message Header) segment", nameof(Segments));
 
         return Result<HealthcareMessage>.Success(this);
@@ -107,8 +108,17 @@ public abstract class HL7Message : HealthcareMessage, IStandardMessage
     /// <returns>The segment if found and of correct type, null otherwise</returns>
     public T? GetSegment<T>(string segmentId, int? sequence = null) where T : HL7Segment
     {
-        var key = sequence.HasValue ? $"{segmentId}{sequence}" : segmentId;
-        return Segments.TryGetValue(key, out var segment) ? segment as T : null;
+        if (sequence.HasValue)
+        {
+            // For specific sequence, find the Nth occurrence of the segment type
+            var segmentsOfType = Segments.Where(s => s.SegmentId == segmentId && s is T).Cast<T>().ToList();
+            return sequence.Value > 0 && sequence.Value <= segmentsOfType.Count 
+                ? segmentsOfType[sequence.Value - 1] // 1-based indexing
+                : null;
+        }
+        
+        // For no sequence specified, get first occurrence
+        return Segments.FirstOrDefault(s => s.SegmentId == segmentId && s is T) as T;
     }
 
     /// <summary>
@@ -119,10 +129,7 @@ public abstract class HL7Message : HealthcareMessage, IStandardMessage
     /// <returns>All segments matching the type</returns>
     public IEnumerable<T> GetSegments<T>(string segmentId) where T : HL7Segment
     {
-        return Segments
-            .Where(kvp => kvp.Key.StartsWith(segmentId))
-            .Select(kvp => kvp.Value)
-            .OfType<T>();
+        return Segments.Where(s => s.SegmentId == segmentId).OfType<T>();
     }
 
     /// <summary>
@@ -132,27 +139,28 @@ public abstract class HL7Message : HealthcareMessage, IStandardMessage
 
     /// <summary>
     /// Adds a segment to this message.
+    /// MSH segments are automatically placed first; other segments are appended.
     /// </summary>
     /// <param name="segment">The segment to add</param>
     public void AddSegment(HL7Segment segment)
     {
         if (segment == null) throw new ArgumentNullException(nameof(segment));
         
-        // For repeating segments, append sequence number
-        var key = segment.SegmentId;
-        if (Segments.ContainsKey(key))
-        {
-            // Find the next available sequence number
-            var sequence = 2;
-            while (Segments.ContainsKey($"{key}{sequence}"))
-            {
-                sequence++;
-            }
-            key = $"{key}{sequence}";
-            segment.SequenceNumber = sequence;
-        }
+        // Set sequence number for repeating segments
+        var existingCount = Segments.Count(s => s.SegmentId == segment.SegmentId);
+        segment.SequenceNumber = existingCount + 1;
         
-        Segments[key] = segment;
+        // MSH segment should always be first
+        if (segment.SegmentId == "MSH")
+        {
+            // Remove any existing MSH and add at the beginning
+            Segments.RemoveAll(s => s.SegmentId == "MSH");
+            Segments.Insert(0, segment);
+        }
+        else
+        {
+            Segments.Add(segment);
+        }
     }
 
     #region IStandardMessage Implementation
@@ -165,7 +173,7 @@ public abstract class HL7Message : HealthcareMessage, IStandardMessage
     /// <summary>
     /// Gets the standard version (implements IStandardMessage.StandardVersion).
     /// </summary>
-    Version IStandardMessage.StandardVersion => Version.Parse(Version);
+    Version IStandardMessage.StandardVersion => System.Version.Parse(Version);
 
     /// <summary>
     /// Serializes the message to its HL7 string representation.
@@ -176,9 +184,7 @@ public abstract class HL7Message : HealthcareMessage, IStandardMessage
     {
         try
         {
-            var segments = Segments.Values
-                .OrderBy(s => s.SegmentId == "MSH" ? 0 : s.SequenceNumber)
-                .Select(s => s.ToHL7String());
+            var segments = Segments.Select(s => s.ToHL7String());
                 
             var hl7String = string.Join(Environment.NewLine, segments);
             return Result<string>.Success(hl7String);
@@ -211,7 +217,7 @@ public abstract class HL7Message : HealthcareMessage, IStandardMessage
         }
 
         // Segment validation
-        foreach (var segment in Segments.Values)
+        foreach (var segment in Segments)
         {
             var segmentResult = segment.Validate();
             if (!segmentResult.IsSuccess)
@@ -317,12 +323,12 @@ public record HL7MessageType
     /// <summary>
     /// Gets the message code (e.g., "ORM", "ADT", "RDE").
     /// </summary>
-    public required string MessageCode { get; init; }
+    public string MessageCode { get; init; } = string.Empty;
 
     /// <summary>
     /// Gets the trigger event (e.g., "O01", "A01", "O11").
     /// </summary>
-    public required string TriggerEvent { get; init; }
+    public string TriggerEvent { get; init; } = string.Empty;
 
     /// <summary>
     /// Gets the full message type (e.g., "ORM^O01").
@@ -366,6 +372,21 @@ public record HL7MessageType
 public abstract class HL7Segment
 {
     /// <summary>
+    /// HL7 field separator (standard is |).
+    /// </summary>
+    protected const string FieldSeparator = "|";
+    
+    /// <summary>
+    /// HL7 component separator (standard is ^).
+    /// </summary>
+    protected const string ComponentSeparator = "^";
+    
+    /// <summary>
+    /// HL7 repetition separator (standard is ~).
+    /// </summary>
+    protected const string RepetitionSeparator = "~";
+    
+    /// <summary>
     /// Gets the segment ID (e.g., "MSH", "PID", "OBR").
     /// </summary>
     public abstract string SegmentId { get; }
@@ -387,6 +408,11 @@ public abstract class HL7Segment
     private readonly Dictionary<int, HL7Field> _fields = new Dictionary<int, HL7Field>();
     
     /// <summary>
+    /// Protected access to fields for serialization in derived classes.
+    /// </summary>
+    protected IEnumerable<HL7Field> Fields => _fields.Values;
+    
+    /// <summary>
     /// Current field position counter for AddField operations.
     /// </summary>
     private int _currentFieldPosition = 1;
@@ -404,6 +430,16 @@ public abstract class HL7Segment
             return field as T;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Sets a field value at a specific position (1-based indexing per HL7 standard).
+    /// </summary>
+    /// <param name="position">The field position (1-based)</param>
+    /// <param name="value">The string value to set</param>
+    protected void SetField(int position, string value)
+    {
+        _fields[position] = new StringField(value);
     }
 
     /// <summary>
