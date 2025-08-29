@@ -2729,6 +2729,98 @@ Time Elapsed 00:00:02.42
 
 ---
 
+## 🔍 **ARCH-026: Comprehensive Architectural Consistency Review Framework**
+**Date**: August 29, 2025  
+**Decision**: Implement systematic five-phase architectural review before P0 MVP development
+
+### **Context**
+Following ARCH-025B complete build success (85 → 0 errors), need to ensure architectural foundation is solid before investing in P0 feature development that will create deep dependencies.
+
+**Strategic Question**: *"We have a clean build - but do we have a solid foundation?"*
+
+Build success is necessary but not sufficient for sustainable development. Historical architectural changes (ARCH-004 through ARCH-025B) may have left legacy code, dead code, or architectural inconsistencies that could undermine P0 development.
+
+### **Decision: Five-Phase "Embryonic Development" Review Sequence**
+
+**Phase 1: Historical Context & Baseline** - Archaeological analysis of LEDGER.md decisions and git history to understand WHY code exists before deciding IF it should exist
+
+**Phase 2: Code Cleanup Identification** - Systematic identification of dead code, unhelpful comments, and architectural fossils for removal
+
+**Phase 3: Fundamental Analysis** - Sacred principles compliance and single responsibility principle analysis on cleaned codebase
+
+**Phase 4: Quality Analysis** - DRY violations and technical debt inventory after architectural issues resolved
+
+**Phase 5: Coherence Verification** - Final integration assessment and pattern consistency validation
+
+### **Methodological Innovation: "FULL CODESWEEP" Standard**
+**Thoroughness Requirements**:
+- ✅ **No Spot Checks**: Every file examined individually
+- ✅ **No Summaries**: Complete analysis, not representative sampling
+- ✅ **Line-by-Line Attention**: File:line references for all findings
+- ✅ **Cross-Reference Everything**: Verify documentation against implementation
+
+### **Strategic Rationale**
+**Sequence Criticality**: Like biological development, each phase must properly enable the next. Historical context informs cleanup decisions; cleanup enables accurate analysis; fundamental fixes enable quality assessment; quality improvements enable coherence verification.
+
+**Foundation-First Philosophy**: Better to identify and resolve architectural issues before P0 investment than to discover them during feature development when fixes become expensive.
+
+### **Implementation**
+**Master Document**: `docs/PIDGEON_ARCH_REVIEW.md` - Complete methodology with bash commands, analysis frameworks, and quality gates
+
+**Execution Strategy**: Staged Parallelization with Agent Coordination
+- **Stage 1**: Sequential Foundation (Agent 1: Phases 1-2)
+- **Stage 2**: Parallel Analysis (Agents 2-4: Phases 3-5)  
+- **Stage 3**: Consolidated Integration (Agent 1: Fix planning & implementation)
+
+**Agent Distribution**:
+- **Agent 1 (Foundation)**: Phases 1-2 + Consolidation + Final Integration
+- **Agent 2 (Architecture)**: Phase 3 (Sacred Principles & SRP)
+- **Agent 3 (Quality)**: Phase 4 (DRY & Technical Debt)
+- **Agent 4 (Integration)**: Phase 5 (Coherence Assessment)
+
+**Git Branch Strategy**:
+```
+main
+├── arch-review-foundation (Agent 1: Phases 1-2)
+├── arch-review-fundamentals (Agent 2: Phase 3) 
+├── arch-review-quality (Agent 3: Phase 4)
+├── arch-review-coherence (Agent 4: Phase 5)
+└── arch-review-consolidation (Agent 1: Integration)
+```
+
+**Phase Deliverables Location**: `docs/arch_reviews/ar_082925/`
+- Phase 1: `HISTORICAL_EVOLUTION_ANALYSIS.md` - Archaeological context (Agent 1)
+- Phase 2: `CLEANUP_INVENTORY.md` - Dead code catalog (Agent 1)
+- Phase 3: `FUNDAMENTAL_ANALYSIS.md` - Sacred principles assessment (Agent 2)
+- Phase 4: `QUALITY_ANALYSIS.md` - DRY/debt inventory (Agent 3)
+- Phase 5: `COHERENCE_ASSESSMENT.md` - Integration health score (Agent 4)
+
+**Coordination Requirements**:
+- Agents 2-4 must wait for Agent 1 Phase 2 completion
+- All agents reference shared `REVIEW_STATUS.md` for dependencies
+- Agent 1 has final architectural authority for consistency
+
+**Quality Gates**: Each phase requires 100% coverage with documented findings before progression to next phase
+
+### **Expected Outcomes**
+- **Architectural Health Baseline**: Complete understanding of codebase quality and consistency
+- **Risk Mitigation**: Foundation issues identified before P0 development investment
+- **Quality Standards**: Measurable benchmarks established for ongoing development
+- **P0 Readiness Assessment**: Definitive evaluation of prerequisites for MVP development
+
+### **Alternative Approaches Considered**
+- **Immediate P0 Development**: Rejected - risk of expensive refactoring if foundation issues discovered during feature implementation
+- **Lightweight Review**: Rejected - spot checks insufficient for complex architectural evolution
+- **Tool-Only Analysis**: Rejected - requires human architectural judgment for historical context and pattern assessment
+
+**Dependencies**: None - self-contained review process  
+**Rollback**: Skip comprehensive review and proceed directly to P0 development (not recommended)
+
+**Implementation Status**: 🎯 **READY FOR EXECUTION**  
+**Next Action**: Begin Phase 1 Historical Evolution Analysis per PIDGEON_ARCH_REVIEW.md
+
+---
+
 **LEDGER Principles**:
 1. **Every significant decision gets documented**
 2. **Rollback procedures are mandatory for architectural changes**
