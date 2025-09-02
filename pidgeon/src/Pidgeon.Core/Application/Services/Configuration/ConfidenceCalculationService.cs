@@ -5,19 +5,19 @@
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Configuration.Entities;
-using Pidgeon.Core.Domain.Configuration.Services;
+using Pidgeon.Core.Application.Services.Configuration;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Standard-agnostic confidence calculator that delegates to standard-specific plugins.
 /// Follows sacred principle: Plugin architecture with no hardcoded standard logic.
 /// </summary>
-internal class ConfidenceCalculator : IConfidenceCalculator
+internal class ConfidenceCalculationService : IConfidenceCalculationService
 {
     private readonly IStandardPluginRegistry _pluginRegistry;
     private readonly IFieldStatisticsService _statisticsService;
-    private readonly ILogger<ConfidenceCalculator> _logger;
+    private readonly ILogger<ConfidenceCalculationService> _logger;
     
     // Confidence calculation weights
     private const double MinimumSampleSizeForHighConfidence = 50;
@@ -26,10 +26,10 @@ internal class ConfidenceCalculator : IConfidenceCalculator
     private const double ConsistencyWeight = 0.5;
     private const double CoverageWeight = 0.2;
 
-    public ConfidenceCalculator(
+    public ConfidenceCalculationService(
         IStandardPluginRegistry pluginRegistry,
         IFieldStatisticsService statisticsService,
-        ILogger<ConfidenceCalculator> logger)
+        ILogger<ConfidenceCalculationService> logger)
     {
         _pluginRegistry = pluginRegistry ?? throw new ArgumentNullException(nameof(pluginRegistry));
         _statisticsService = statisticsService ?? throw new ArgumentNullException(nameof(statisticsService));

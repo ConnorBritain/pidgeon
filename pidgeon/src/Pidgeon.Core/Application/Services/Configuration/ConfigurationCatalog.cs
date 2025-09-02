@@ -5,7 +5,7 @@
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// In-memory implementation of configuration catalog for Phase 1A.

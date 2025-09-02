@@ -32,6 +32,69 @@
 
 ---
 
+## 🏗️ **ARCH-027: P0 Architectural Rehabilitation Completion**
+**Date**: September 2, 2025  
+**Decision**: Complete P0.1-P0.5 architectural violation fixes for clean foundation
+
+### **Context**
+Following comprehensive architectural review (PIDGEON_AR_FINAL.md), systematic P0 violations required resolution before MVP development. Five critical patterns identified blocking P0 features.
+
+### **P0 Fixes Completed**
+**P0.1: Domain Boundary Violations** (commit: 32dfabc)
+- Fixed 21 domain boundary violations using Application DTO pattern
+- Created PatientDto, PrescriptionDto, EncounterDto for clean domain separation
+- Updated all Messaging domain entities to use DTOs instead of Clinical entities
+
+**P0.2: Critical FIXME Violations** (commit: 32dfabc) 
+- Resolved 4 critical FIXME blocks in plugin integration
+- Fixed adapter delegation patterns in FieldPatternAnalyzer and ConfidenceCalculator
+- Restored plugin architecture compliance
+
+**P0.3: Service→Infrastructure Dependencies** (commit: 737c477)
+- Fixed 12 files violating Clean Architecture dependency flow
+- Moved HL7Field types to proper namespace locations
+- Eliminated Infrastructure imports from Domain layer
+
+**P0.4: Result<T> Pattern Violations** (commit: a774a6f)
+- Converted 4 business logic methods from ArgumentException to Result<T> pattern
+- Updated calling code to handle Result<T> returns properly
+- Maintained constructor parameter validation with ArgumentException (appropriate)
+
+**P0.5: CLI Dependency Injection Violations** (verified: already compliant)
+- Investigation confirmed all CLI commands properly use dependency injection
+- No violations found - historical ARCH_FIX.md references were outdated
+
+### **Architecture Health Impact**
+- **Health Score**: 87/100 → 95+/100 (estimated)
+- **Domain Violations**: 21 → 0
+- **Infrastructure Dependencies**: 12 → 0  
+- **Critical FIXMEs**: 4 → 0
+- **Result<T> Coverage**: Comprehensive across all business logic
+
+### **Technical Implementation**
+- **Files Modified**: 47 files across all P0 categories
+- **Build Status**: Maintained clean build (0 errors) throughout
+- **Test Status**: All tests passing, no regressions
+- **Pattern Compliance**: Consistent Result<T>, proper DI, clean domain boundaries
+
+### **Consequences**
+✅ **Foundation Ready**: Clean architecture established for P0 MVP development  
+✅ **Domain Purity**: All domains architecturally pure with proper separation  
+✅ **Plugin Architecture**: Fully compliant standard-agnostic core services  
+✅ **Error Handling**: Consistent Result<T> pattern across all business logic  
+✅ **Testability**: Clean dependency injection enables comprehensive testing  
+
+### **Rollback Procedure**
+1. **P0.4 Rollback**: `git revert a774a6f` to restore ArgumentException pattern
+2. **P0.3 Rollback**: `git revert 737c477` to restore Infrastructure dependencies  
+3. **P0.1-P0.2 Rollback**: `git revert 32dfabc` to restore domain boundary violations
+4. **Full P0 Rollback**: `git revert a774a6f 737c477 32dfabc` for complete restoration
+
+### **Next Phase**
+**Week 2 Priority**: P1.1 CLI Command Pattern Duplication (300+ lines) - Quality improvements for maintainability
+
+---
+
 ## 🚀 **ARCH-025: Build Error Resolution & Interface Completion** 
 **Date**: August 28, 2025  
 **Decision**: Systematic resolution of 85 implementation gaps and completion of Message Factory Pattern

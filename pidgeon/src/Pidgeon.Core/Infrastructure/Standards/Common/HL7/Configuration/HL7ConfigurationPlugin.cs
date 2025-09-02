@@ -3,7 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
-using Pidgeon.Core.Domain.Configuration.Services;
+using Pidgeon.Core.Application.Services.Configuration;
 using Pidgeon.Core.Domain.Configuration.Entities;
 
 namespace Pidgeon.Core.Standards.Common.HL7.Configuration;
@@ -17,17 +17,17 @@ namespace Pidgeon.Core.Standards.Common.HL7.Configuration;
 internal class HL7ConfigurationPlugin : IConfigurationPlugin
 {
     private readonly IVendorDetectionService _vendorDetector;
-    private readonly IFieldPatternAnalyzer _fieldAnalyzer;
-    private readonly IFormatDeviationDetector _deviationDetector;
-    private readonly IConfidenceCalculator _confidenceCalculator;
+    private readonly IFieldPatternAnalysisService _fieldAnalyzer;
+    private readonly IFormatDeviationDetectionService _deviationDetector;
+    private readonly IConfidenceCalculationService _confidenceCalculator;
     private readonly IConfigurationValidator _validator;
     private readonly ILogger<HL7ConfigurationPlugin> _logger;
 
     public HL7ConfigurationPlugin(
         IVendorDetectionService vendorDetector,
-        IFieldPatternAnalyzer fieldAnalyzer,
-        IFormatDeviationDetector deviationDetector,
-        IConfidenceCalculator confidenceCalculator,
+        IFieldPatternAnalysisService fieldAnalyzer,
+        IFormatDeviationDetectionService deviationDetector,
+        IConfidenceCalculationService confidenceCalculator,
         IConfigurationValidator validator,
         ILogger<HL7ConfigurationPlugin> logger)
     {
@@ -130,7 +130,7 @@ internal class HL7ConfigurationPlugin : IConfigurationPlugin
             _logger.LogDebug("Validating HL7 message against configuration {Address}", configuration.Address);
 
             // Delegate to the configuration validator service
-            var result = await _validator.ValidateAsync(message, configuration, Domain.Configuration.Services.ValidationMode.Compatibility);
+            var result = await _validator.ValidateAsync(message, configuration, ValidationMode.Compatibility);
             
             if (result.IsSuccess)
             {

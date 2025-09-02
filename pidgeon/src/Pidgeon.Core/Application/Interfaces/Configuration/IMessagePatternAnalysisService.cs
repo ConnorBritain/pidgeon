@@ -4,7 +4,7 @@
 
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Service responsible for analyzing message patterns and detecting statistical patterns.
@@ -12,7 +12,7 @@ namespace Pidgeon.Core.Domain.Configuration.Services;
 /// and statistical confidence scoring across healthcare message samples.
 /// Single responsibility: "What are the statistical patterns in these messages?"
 /// </summary>
-public interface IMessagePatternAnalyzer
+public interface IMessagePatternAnalysisService
 {
     /// <summary>
     /// Analyzes field population frequency across a collection of messages.

@@ -3,7 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.DependencyInjection;
-using Pidgeon.Core.Domain.Configuration.Services;
+using Pidgeon.Core.Application.Services.Configuration;
 using Pidgeon.Core.Extensions;
 using Xunit;
 using FluentAssertions;
@@ -17,8 +17,8 @@ namespace Pidgeon.Core.Tests.Configuration;
 /// </summary>
 public class VendorDetectionEndToEndTests : IDisposable
 {
-    private readonly IFieldPatternAnalyzer _patternAnalyzer;
-    private readonly IConfidenceCalculator _confidenceCalculator;
+    private readonly IFieldPatternAnalysisService _patternAnalyzer;
+    private readonly IConfidenceCalculationService _confidenceCalculator;
     private readonly ServiceProvider _serviceProvider;
 
     public VendorDetectionEndToEndTests()
@@ -28,8 +28,8 @@ public class VendorDetectionEndToEndTests : IDisposable
         services.AddPidgeonCore();
         
         _serviceProvider = services.BuildServiceProvider();
-        _patternAnalyzer = _serviceProvider.GetRequiredService<IFieldPatternAnalyzer>();
-        _confidenceCalculator = _serviceProvider.GetRequiredService<IConfidenceCalculator>();
+        _patternAnalyzer = _serviceProvider.GetRequiredService<IFieldPatternAnalysisService>();
+        _confidenceCalculator = _serviceProvider.GetRequiredService<IConfidenceCalculationService>();
     }
 
     [Fact(DisplayName = "P0 Feature #3: Should detect vendor patterns from sample HL7 messages")]

@@ -4,7 +4,7 @@
 
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Configuration inference service for analyzing messages and inferring configurations.

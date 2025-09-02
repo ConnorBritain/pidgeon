@@ -4,7 +4,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Universal analysis result types for Configuration Intelligence plugins.

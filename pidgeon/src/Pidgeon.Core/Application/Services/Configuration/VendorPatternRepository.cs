@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Domain.Configuration.Entities;
 using System.Text.Json;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// File-based implementation of vendor pattern repository.
@@ -271,13 +271,13 @@ internal class VendorPatternRepository : IVendorPatternRepository
             SupportedStandards = new List<string> { "HL7v23", "HL7", "FHIRv4", "FHIR" },
             ApplicationPatterns = new List<DetectionRule>
             {
-                new() { MatchType = Entities.MatchType.Exact, Pattern = "EPIC", CaseSensitive = false, ConfidenceBoost = 0.15 },
-                new() { MatchType = Entities.MatchType.Contains, Pattern = "HYPERSPACE", CaseSensitive = false, ConfidenceBoost = 0.10 },
-                new() { MatchType = Entities.MatchType.Regex, Pattern = @"^EHR\d*$", CaseSensitive = false, ConfidenceBoost = 0.05 }
+                new() { MatchType = Domain.Configuration.Entities.MatchType.Exact, Pattern = "EPIC", CaseSensitive = false, ConfidenceBoost = 0.15 },
+                new() { MatchType = Domain.Configuration.Entities.MatchType.Contains, Pattern = "HYPERSPACE", CaseSensitive = false, ConfidenceBoost = 0.10 },
+                new() { MatchType = Domain.Configuration.Entities.MatchType.Regex, Pattern = @"^EHR\d*$", CaseSensitive = false, ConfidenceBoost = 0.05 }
             },
             FacilityPatterns = new List<DetectionRule>
             {
-                new() { MatchType = Entities.MatchType.Contains, Pattern = "EPIC", CaseSensitive = false, ConfidenceBoost = 0.05 }
+                new() { MatchType = Domain.Configuration.Entities.MatchType.Contains, Pattern = "EPIC", CaseSensitive = false, ConfidenceBoost = 0.05 }
             },
             BaseConfidence = 0.80,
             VendorValidated = true,
@@ -305,9 +305,9 @@ internal class VendorPatternRepository : IVendorPatternRepository
             SupportedStandards = new List<string> { "HL7v23", "HL7", "FHIRv4", "FHIR" },
             ApplicationPatterns = new List<DetectionRule>
             {
-                new() { MatchType = Entities.MatchType.Contains, Pattern = "CERNER", CaseSensitive = false, ConfidenceBoost = 0.15 },
-                new() { MatchType = Entities.MatchType.Contains, Pattern = "MILLENNIUM", CaseSensitive = false, ConfidenceBoost = 0.10 },
-                new() { MatchType = Entities.MatchType.Contains, Pattern = "POWERCHART", CaseSensitive = false, ConfidenceBoost = 0.10 }
+                new() { MatchType = Domain.Configuration.Entities.MatchType.Contains, Pattern = "CERNER", CaseSensitive = false, ConfidenceBoost = 0.15 },
+                new() { MatchType = Domain.Configuration.Entities.MatchType.Contains, Pattern = "MILLENNIUM", CaseSensitive = false, ConfidenceBoost = 0.10 },
+                new() { MatchType = Domain.Configuration.Entities.MatchType.Contains, Pattern = "POWERCHART", CaseSensitive = false, ConfidenceBoost = 0.10 }
             },
             BaseConfidence = 0.80,
             VendorValidated = false,

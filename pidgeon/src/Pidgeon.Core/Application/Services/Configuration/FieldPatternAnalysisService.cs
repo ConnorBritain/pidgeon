@@ -6,10 +6,10 @@ using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Configuration.Entities;
 using Pidgeon.Core.Adapters.Interfaces;
-using Pidgeon.Core.Domain.Configuration.Services;
+using Pidgeon.Core.Application.Services.Configuration;
 using Pidgeon.Core.Domain.Messaging;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Standard-agnostic orchestrator for analyzing field population patterns across healthcare messages.
@@ -17,18 +17,18 @@ namespace Pidgeon.Core.Domain.Configuration.Services;
 /// unified interface for field pattern analysis across all healthcare standards.
 /// Single responsibility: "Orchestrate field pattern analysis using standard plugins."
 /// </summary>
-internal class FieldPatternAnalyzer : IFieldPatternAnalyzer
+internal class FieldPatternAnalysisService : IFieldPatternAnalysisService
 {
     private readonly IStandardPluginRegistry _pluginRegistry;
     private readonly IMessagingToConfigurationAdapter _adapter;
     private readonly IFieldStatisticsService _statisticsService;
-    private readonly ILogger<FieldPatternAnalyzer> _logger;
+    private readonly ILogger<FieldPatternAnalysisService> _logger;
 
-    public FieldPatternAnalyzer(
+    public FieldPatternAnalysisService(
         IStandardPluginRegistry pluginRegistry,
         IMessagingToConfigurationAdapter adapter,
         IFieldStatisticsService statisticsService,
-        ILogger<FieldPatternAnalyzer> logger)
+        ILogger<FieldPatternAnalysisService> logger)
     {
         _pluginRegistry = pluginRegistry ?? throw new ArgumentNullException(nameof(pluginRegistry));
         _adapter = adapter ?? throw new ArgumentNullException(nameof(adapter));

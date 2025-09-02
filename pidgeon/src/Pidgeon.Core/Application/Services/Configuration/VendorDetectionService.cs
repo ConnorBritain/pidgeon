@@ -8,7 +8,7 @@ using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Configuration.Entities;
 using ConfigMatchType = Pidgeon.Core.Domain.Configuration.Entities.MatchType;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Standard-agnostic service responsible for detecting vendor signatures from healthcare messages.

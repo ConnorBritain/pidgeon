@@ -5,7 +5,7 @@
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Standard-agnostic configuration inference service that orchestrates vendor pattern analysis.
@@ -16,18 +16,18 @@ namespace Pidgeon.Core.Domain.Configuration.Services;
 internal class ConfigurationInferenceService : IConfigurationInferenceService
 {
     private readonly IVendorDetectionService _vendorDetector;
-    private readonly IFieldPatternAnalyzer _fieldAnalyzer;
-    private readonly IFormatDeviationDetector _deviationDetector;
-    private readonly IConfidenceCalculator _confidenceCalculator;
-    private readonly IMessagePatternAnalyzer _messagePatternAnalyzer;
+    private readonly IFieldPatternAnalysisService _fieldAnalyzer;
+    private readonly IFormatDeviationDetectionService _deviationDetector;
+    private readonly IConfidenceCalculationService _confidenceCalculator;
+    private readonly IMessagePatternAnalysisService _messagePatternAnalyzer;
     private readonly ILogger<ConfigurationInferenceService> _logger;
 
     public ConfigurationInferenceService(
         IVendorDetectionService vendorDetector,
-        IFieldPatternAnalyzer fieldAnalyzer,
-        IFormatDeviationDetector deviationDetector,
-        IConfidenceCalculator confidenceCalculator,
-        IMessagePatternAnalyzer messagePatternAnalyzer,
+        IFieldPatternAnalysisService fieldAnalyzer,
+        IFormatDeviationDetectionService deviationDetector,
+        IConfidenceCalculationService confidenceCalculator,
+        IMessagePatternAnalysisService messagePatternAnalyzer,
         ILogger<ConfigurationInferenceService> logger)
     {
         _vendorDetector = vendorDetector ?? throw new ArgumentNullException(nameof(vendorDetector));

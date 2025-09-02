@@ -4,14 +4,14 @@
 
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Service responsible for analyzing field population patterns across healthcare messages.
 /// Identifies which fields are commonly populated, frequency patterns, and data structures.
 /// Single responsibility: "How are fields typically populated in this vendor's messages?"
 /// </summary>
-public interface IFieldPatternAnalyzer
+public interface IFieldPatternAnalysisService
 {
     /// <summary>
     /// Analyzes field population patterns across multiple messages.

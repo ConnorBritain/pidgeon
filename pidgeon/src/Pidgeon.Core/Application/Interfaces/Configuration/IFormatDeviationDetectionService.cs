@@ -4,7 +4,7 @@
 
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Service responsible for detecting format deviations in healthcare messages.
@@ -12,7 +12,7 @@ namespace Pidgeon.Core.Domain.Configuration.Services;
 /// structural variations, and vendor-specific formatting patterns.
 /// Single responsibility: "What format variations exist in these messages?"
 /// </summary>
-public interface IFormatDeviationDetector
+public interface IFormatDeviationDetectionService
 {
     /// <summary>
     /// Detects encoding deviations across a set of messages for a specific healthcare standard.

@@ -5,13 +5,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Infrastructure.Registry;
-using Pidgeon.Core.Services;
-using Pidgeon.Core.Domain.Configuration.Services;
-using Pidgeon.Core.Application.Common;
-using Pidgeon.Core.Application.Interfaces.Validation;
-using Pidgeon.Core.Application.Services.Validation;
-using Pidgeon.Core.Adapters.Interfaces;
-using Pidgeon.Core.Adapters.Implementation;
 
 namespace Pidgeon.Core.Extensions;
 
@@ -22,39 +15,19 @@ public static class ServiceCollectionExtensions
 {
     /// <summary>
     /// Adds core Pidgeon services to the dependency injection container.
+    /// Uses convention-based registration to eliminate manual service registration duplication.
     /// </summary>
     /// <param name="services">The service collection</param>
     /// <returns>The service collection for method chaining</returns>
     public static IServiceCollection AddPidgeonCore(this IServiceCollection services)
     {
-        // Add standard plugin registry
+        // Add standard plugin registry (singleton pattern)
         services.AddSingleton<IStandardPluginRegistry, StandardPluginRegistry>();
         
-        // Add core services
-        services.AddScoped<IMessageService, MessageService>();
-        services.AddScoped<IValidationService, ValidationService>();
-        services.AddScoped<IGenerationService, GenerationService>();
-        services.AddScoped<ITransformationService, TransformationService>();
+        // Add all core services using convention-based registration
+        services.AddPidgeonCoreServices();
         
-        // Add domain-based generation services
-        services.AddScoped<Generation.IGenerationService, Generation.Algorithmic.AlgorithmicGenerationService>();
-        
-        // Add configuration intelligence services
-        services.AddScoped<IConfigurationInferenceService, ConfigurationInferenceService>();
-        services.AddScoped<IConfigurationValidationService, ConfigurationValidationService>();
-        services.AddScoped<IConfigurationCatalog, ConfigurationCatalog>();
-        services.AddScoped<IVendorDetectionService, VendorDetectionService>();
-        services.AddScoped<IFieldPatternAnalyzer, FieldPatternAnalyzer>();
-        services.AddScoped<IMessagePatternAnalyzer, MessagePatternAnalyzer>();
-        services.AddScoped<IConfidenceCalculator, ConfidenceCalculator>();
-        services.AddScoped<IFormatDeviationDetector, FormatDeviationDetector>();
-        services.AddScoped<IVendorPatternRepository, VendorPatternRepository>();
-        services.AddScoped<IFieldStatisticsService, FieldStatisticsService>();
-        
-        // Add adapter implementations
-        services.AddScoped<IMessagingToConfigurationAdapter, HL7ToConfigurationAdapter>();
-        
-        // Register HL7 configuration plugins
+        // Register standard-specific configuration plugins
         services.AddStandardConfigurationPlugins();
         
         return services;
@@ -93,30 +66,4 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    /// <summary>
-    /// Registers all standard-specific configuration plugins.
-    /// </summary>
-    /// <param name="services">The service collection</param>
-    /// <returns>The service collection for method chaining</returns>
-    public static IServiceCollection AddStandardConfigurationPlugins(this IServiceCollection services)
-    {
-        // Register HL7 v2.3 configuration plugins
-        services.AddScoped<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7VendorDetectionPlugin>();
-        services.AddScoped<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7FieldAnalysisPlugin>();
-        services.AddScoped<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7ConfigurationPlugin>();
-
-        // Register HL7 plugins in plugin registry
-        services.AddScoped<IStandardVendorDetectionPlugin>(provider => 
-            provider.GetRequiredService<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7VendorDetectionPlugin>());
-        services.AddScoped<IStandardFieldAnalysisPlugin>(provider => 
-            provider.GetRequiredService<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7FieldAnalysisPlugin>());
-        services.AddScoped<IConfigurationPlugin>(provider => 
-            provider.GetRequiredService<Pidgeon.Core.Standards.Common.HL7.Configuration.HL7ConfigurationPlugin>());
-
-        // Future plugins would be added here:
-        // services.AddScoped<Standards.FHIR.R4.Configuration.FHIRVendorDetectionPlugin>();
-        // services.AddScoped<Standards.NCPDP.Configuration.NCPDPVendorDetectionPlugin>();
-
-        return services;
-    }
 }

@@ -6,25 +6,25 @@ using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Standard-agnostic service for analyzing message patterns and detecting statistical patterns.
 /// Pure orchestrator that delegates ALL standard-specific operations to plugins.
 /// Contains ZERO hardcoded standard logic - follows sacred plugin architecture principle.
 /// </summary>
-internal class MessagePatternAnalyzer : IMessagePatternAnalyzer
+internal class MessagePatternAnalysisService : IMessagePatternAnalysisService
 {
     private readonly IStandardPluginRegistry _pluginRegistry;
-    private readonly IFieldPatternAnalyzer _fieldAnalyzer;
-    private readonly IConfidenceCalculator _confidenceCalculator;
-    private readonly ILogger<MessagePatternAnalyzer> _logger;
+    private readonly IFieldPatternAnalysisService _fieldAnalyzer;
+    private readonly IConfidenceCalculationService _confidenceCalculator;
+    private readonly ILogger<MessagePatternAnalysisService> _logger;
 
-    public MessagePatternAnalyzer(
+    public MessagePatternAnalysisService(
         IStandardPluginRegistry pluginRegistry,
-        IFieldPatternAnalyzer fieldAnalyzer,
-        IConfidenceCalculator confidenceCalculator,
-        ILogger<MessagePatternAnalyzer> logger)
+        IFieldPatternAnalysisService fieldAnalyzer,
+        IConfidenceCalculationService confidenceCalculator,
+        ILogger<MessagePatternAnalysisService> logger)
     {
         _pluginRegistry = pluginRegistry ?? throw new ArgumentNullException(nameof(pluginRegistry));
         _fieldAnalyzer = fieldAnalyzer ?? throw new ArgumentNullException(nameof(fieldAnalyzer));

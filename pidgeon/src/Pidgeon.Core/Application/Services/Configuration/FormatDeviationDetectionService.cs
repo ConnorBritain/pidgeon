@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Standard-agnostic orchestrator for detecting format deviations in healthcare messages.
@@ -14,14 +14,14 @@ namespace Pidgeon.Core.Domain.Configuration.Services;
 /// unified interface for format deviation detection across all healthcare standards.
 /// Single responsibility: "Orchestrate format deviation detection using standard plugins."
 /// </summary>
-internal class FormatDeviationDetector : IFormatDeviationDetector
+internal class FormatDeviationDetectionService : IFormatDeviationDetectionService
 {
     private readonly IStandardPluginRegistry _pluginRegistry;
-    private readonly ILogger<FormatDeviationDetector> _logger;
+    private readonly ILogger<FormatDeviationDetectionService> _logger;
 
-    public FormatDeviationDetector(
+    public FormatDeviationDetectionService(
         IStandardPluginRegistry pluginRegistry,
-        ILogger<FormatDeviationDetector> logger)
+        ILogger<FormatDeviationDetectionService> logger)
     {
         _pluginRegistry = pluginRegistry ?? throw new ArgumentNullException(nameof(pluginRegistry));
         _logger = logger;

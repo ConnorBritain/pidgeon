@@ -5,7 +5,7 @@
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core;
 using Pidgeon.Core.Domain.Configuration.Entities;
-using Pidgeon.Core.Domain.Configuration.Services;
+using Pidgeon.Core.Application.Services.Configuration;
 using System.CommandLine;
 
 namespace Pidgeon.CLI.Commands;

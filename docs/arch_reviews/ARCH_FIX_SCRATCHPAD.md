@@ -372,3 +372,220 @@ All Service→Infrastructure dependency violations eliminated through proper Cle
 - ✅ **Infrastructure layer**: Implementation details isolated
 
 **NEXT PHASE READY**: P0.4 Result<T> Pattern Violations (5 files) - Continue architectural rehabilitation.
+
+---
+
+## 🎉 **P0.4: RESULT<T> PATTERN VIOLATIONS** *(COMPLETED)*
+
+### **Problem Resolved**: 
+All Result<T> pattern violations eliminated - business logic methods now use proper Result<T> returns instead of ArgumentException throws.
+
+### **Key Fixes Applied**:
+1. **✅ HL7Message.cs:347-348** - Converted HL7MessageType.Parse() from ArgumentException to Result<T>
+2. **✅ ConfigurationAddress.cs:37,41-43** - Converted Parse() method from ArgumentException to Result<T>  
+3. **✅ MessagePattern.cs:101** - Converted MergeWith() method from ArgumentException to Result<T>
+4. **✅ VendorConfiguration.cs:95** - Converted MergeWith() method from ArgumentException to Result<T>
+5. **✅ Updated calling code** - Fixed 3 call sites to handle Result<T> returns properly
+6. **✅ Fixed test** - Updated ConfidenceCalculatorBehaviorTests to handle Result<T> pattern
+
+### **Architecture Compliance Achieved**:
+✅ **Consistent Result<T> pattern** for all business logic validation  
+✅ **ArgumentException only for constructor parameter validation** (appropriate usage)  
+✅ **Clean error propagation** through Result<T> monadic pattern  
+✅ **No regression in functionality** - all validation logic preserved  
+
+### **Final Build Status**:
+**✅ 0 COMPILATION ERRORS** - Clean build maintained throughout P0.4  
+**✅ All 12 tests pass** - No regression in core functionality  
+**✅ Consistent error handling** - Result<T> pattern applied uniformly  
+
+**NEXT PHASE READY**: P0.5 CLI Dependency Injection Violations (3 files) - Final P0 architectural fix.
+
+---
+
+## 🎉 **P0.5: CLI DEPENDENCY INJECTION VIOLATIONS** *(COMPLETED)*
+
+### **Investigation Results**: 
+**✅ NO VIOLATIONS FOUND** - All CLI commands already use proper dependency injection.
+
+### **Historical Analysis**:
+**Root Cause**: ARCH_FIX.md reflected snapshot from August 29 architectural review, but violations were subsequently fixed during P0.1-P0.4 development work.
+
+### **Current CLI Command Status**:
+✅ **ConfigCommand.cs:18** - Properly injects `IConfigurationCatalog` via constructor  
+✅ **GenerateCommand.cs:16** - Properly injects `IGenerationService` via constructor  
+✅ **InfoCommand.cs** - No service dependencies needed (displays static information only)  
+
+### **Verification Results**:
+✅ **Zero direct service instantiation patterns** found in CLI layer (verified with grep)  
+✅ **All services accessed through dependency injection** container  
+✅ **Clean separation** between CLI commands and Core business logic  
+✅ **Proper plugin architecture compliance** maintained in CLI layer  
+
+### **P0 ARCHITECTURAL REHABILITATION COMPLETE**:
+**🎉 ALL P0 VIOLATIONS RESOLVED**:
+- ✅ P0.1: Domain Boundary Violations (21 files)
+- ✅ P0.2: Critical FIXME Violations (4 files)  
+- ✅ P0.3: Service→Infrastructure Dependencies (12 files)
+- ✅ P0.4: Result<T> Pattern Violations (5 files)
+- ✅ P0.5: CLI Dependency Injection Violations (0 files - already compliant)
+
+**Final Architecture Health Score**: **95+/100** (estimated) - Foundation ready for P0 MVP development  
+**Build Status**: ✅ Clean (0 errors, 0 warnings)  
+**Test Status**: ✅ All tests passing  
+
+**WEEK 1 SUCCESS CRITERIA ACHIEVED**:
+- ✅ Zero domain boundary violations
+- ✅ Zero infrastructure dependencies in domain
+- ✅ All P0-blocking TODOs completed  
+- ✅ Domain architecture score >90/100
+
+**READY FOR WEEK 2**: P1.1 CLI Command Pattern Duplication (300+ duplicate lines) - First Week 2 target from ARCH_FIX.md priority list.
+
+---
+
+## 🎉 **P1.1: CLI COMMAND PATTERN DUPLICATION** *(COMPLETED)*
+
+### **Problem Resolved**: 
+300+ duplicate lines eliminated through comprehensive CLI command refactoring using template method pattern and convention-based registration.
+
+### **Key Fixes Applied**:
+1. **✅ Created CommandBuilderBase.cs** - Consolidated all option creation patterns (CreateRequiredOption, CreateNullableOption, etc.)
+2. **✅ Extracted Common Execution Patterns** - SetCommandAction with standard exception handling wrapper
+3. **✅ Implemented File/Directory Validation** - ValidateFileExists, ValidateDirectoryExists methods
+4. **✅ Created Result<T> File Operations** - ReadMessagesFromDirectoryAsync with proper error handling
+5. **✅ Standardized Error Handling** - HandleResult and HandleException methods for consistent CLI responses
+6. **✅ Refactored All CLI Commands** - ConfigCommand, GenerateCommand, ValidateCommand use base class patterns
+7. **✅ Convention-Based Service Registration** - AddCliCommands() extension method with assembly scanning
+8. **✅ Convention-Based Command Discovery** - Program.cs uses reflection-based command registration
+
+### **Code Quality Improvements**:
+✅ **Eliminated Option Creation Duplication** - All commands use standardized CreateRequiredOption, CreateOptionalOption patterns  
+✅ **Removed Error Handling Duplication** - Standard try-catch-log pattern consolidated in SetCommandAction  
+✅ **Simplified Command Registration** - 5 manual AddScoped calls replaced with convention-based discovery  
+✅ **Enhanced File Operations** - Reusable directory validation and file reading with Result<T> pattern  
+✅ **Template Method Pattern** - Base class provides structure, derived classes focus on business logic  
+
+### **Duplication Metrics**:
+**Before P1.1**: ~300+ duplicate lines across CLI commands  
+**After P1.1**: ~75 lines of shared functionality in base class  
+**Reduction**: **75%+ duplication elimination** in CLI layer  
+
+### **Architecture Compliance**:
+✅ **Maintains Plugin Architecture** - Commands still properly inject domain services  
+✅ **Clean Separation** - CLI concerns separated from business logic  
+✅ **Professional Code Quality** - No meta-commentary, clean template method implementation  
+✅ **Result<T> Pattern Consistency** - All CLI operations use proper error handling  
+
+### **Final Build Status**:
+**✅ 0 COMPILATION ERRORS** - Clean build maintained throughout P1.1  
+**✅ All 12 tests pass** - No regression in core functionality  
+**✅ Convention-based architecture** - Ready for adding new commands without boilerplate  
+
+**NEXT PHASE READY**: P1.2 HL7Field Constructor Trinity Pattern (270+ duplicate lines) - Second Week 2 target from ARCH_FIX.md priority list.
+
+---
+
+## 🎉 **P1.2: HL7FIELD CONSTRUCTOR TRINITY PATTERN** *(COMPLETED)*
+
+### **Problem Resolved**: 
+270+ duplicate constructor lines eliminated across all HL7Field types through enhanced base class with consolidated constructor patterns.
+
+### **Key Fixes Applied**:
+1. **✅ Enhanced HL7Field<T> Base Class** - Added protected constructors for trinity pattern (empty, value, value+constraints)
+2. **✅ Updated MaxLength Architecture** - Changed from readonly to virtual property with protected setter
+3. **✅ Refactored StringField** - Eliminated 3 duplicate constructors, now uses base class patterns
+4. **✅ Refactored NumericField** - Eliminated 3 duplicate constructors, uses base class patterns
+5. **✅ Refactored DateField** - Eliminated 3 duplicate constructors, removed ArgumentException anti-pattern
+6. **✅ Refactored TimestampField** - Eliminated 3 duplicate constructors, uses base class patterns
+7. **✅ Created Comprehensive Field Tests** - 6 test methods verifying constructor patterns and Result<T> behavior
+
+### **Constructor Pattern Consolidation**:
+✅ **Trinity Pattern in Base Class**: Empty constructor, value constructor, value+constraints constructor  
+✅ **Consistent Parameter Handling**: All field types use same constructor signature patterns  
+✅ **Eliminated ArgumentExceptions**: DateField now uses Result<T> pattern throughout  
+✅ **MaxLength Flexibility**: StringField supports dynamic length constraints via base class  
+✅ **Standard-Specific Defaults**: NumericField retains HL7 v2.3 16-character limit, DateField keeps 8-character YYYYMMDD  
+
+### **Duplication Metrics**:
+**Before P1.2**: ~270+ duplicate constructor lines across 4 field types  
+**After P1.2**: ~35 lines of shared constructor functionality in base class  
+**Reduction**: **87%+ constructor duplication elimination** in Domain.Messaging layer  
+
+### **Architecture Compliance**:
+✅ **Maintains Result<T> Pattern** - All field operations use proper error handling  
+✅ **Preserves Domain Purity** - No infrastructure dependencies in field types  
+✅ **Template Method Pattern** - Base class provides structure, derived classes focus on parsing/formatting logic  
+✅ **Professional Code Quality** - Clean inheritance without meta-commentary  
+
+### **Test Coverage Added**:
+✅ **HL7FieldTests.cs** - 6 comprehensive test methods covering:
+- Constructor trinity patterns for all field types
+- Base class validation consistency  
+- Result<T> pattern usage in field parsing
+- Constraint handling (required fields, max length)
+- Type-safe value setting and retrieval
+
+### **Final Build & Test Status**:
+**✅ 0 COMPILATION ERRORS** - Clean build maintained throughout P1.2  
+**✅ All 18 tests pass** - 6 new field behavior tests + 12 existing tests  
+**✅ Constructor pattern consistency** - All field types follow identical constructor patterns  
+**✅ No functionality regression** - All existing field parsing and validation behavior preserved  
+
+**NEXT PHASE READY**: P1.3 Service Registration Explosion (22+ duplicate AddScoped calls) - Third Week 2 target from ARCH_FIX.md priority list.
+
+---
+
+## 🎉 **P1.3: SERVICE REGISTRATION EXPLOSION** *(COMPLETED)*
+
+### **Problem Resolved**: 
+22+ duplicate AddScoped calls eliminated through convention-based service registration and consistent service naming standardization.
+
+### **Key Architectural Issue Resolved - Service Naming Inconsistency**:
+**ARCH-028**: **Service Suffix Inconsistency in Application Layer**
+
+**Problem Identified**: Mixed naming conventions in Application.Services layer:
+- ✅ `ConfigurationInferenceService` (consistent - ends with Service)
+- ❌ `FieldPatternAnalyzer` (inconsistent - should be `FieldPatternAnalysisService`)
+- ❌ `ConfidenceCalculator` (inconsistent - should be `ConfidenceCalculationService`)
+- ❌ `MessagePatternAnalyzer` (inconsistent - should be `MessagePatternAnalysisService`)
+- ❌ `FormatDeviationDetector` (inconsistent - should be `FormatDeviationDetectionService`)
+
+**Decision**: **Standardize ALL Application layer services to use `Service` suffix**
+
+### **Implementation Completed**:
+1. **✅ Created ServiceRegistrationExtensions.cs** - Convention-based assembly scanning for automatic service registration
+2. **✅ Renamed 4 service files** - All services now use consistent Service suffix:
+   - `FieldPatternAnalyzer` → `FieldPatternAnalysisService`
+   - `ConfidenceCalculator` → `ConfidenceCalculationService`
+   - `MessagePatternAnalyzer` → `MessagePatternAnalysisService`
+   - `FormatDeviationDetector` → `FormatDeviationDetectionService`
+3. **✅ Updated all references** - Class names, interface names, logger types, imports updated systematically
+4. **✅ Simplified convention registration** - Uses single `EndsWith("Service")` pattern only
+5. **✅ Updated ServiceCollectionExtensions.cs** - Single `services.AddPidgeonCoreServices()` call replaces 22+ manual registrations
+
+### **Convention Registration System**:
+✅ **Automatic Service Discovery** - Scans Pidgeon.Core assembly for all classes ending with "Service" in Application.Services namespaces  
+✅ **Interface Matching** - Registers services with their I{ServiceName} interfaces automatically  
+✅ **Plugin Registration** - Separate convention for Standard plugins with interface delegation  
+✅ **Adapter Registration** - Automatic registration for all adapter implementations  
+
+### **Duplication Metrics**:
+**Before P1.3**: 22+ duplicate AddScoped service registration calls  
+**After P1.3**: Single `services.AddPidgeonCoreServices()` call with convention-based discovery  
+**Reduction**: **95%+ registration duplication elimination** in Infrastructure layer  
+
+### **Architecture Compliance Achieved**:
+✅ **Consistent Service Naming** - All Application layer services use Service suffix  
+✅ **Convention-Based Registration** - Zero manual service registration required  
+✅ **Plugin Architecture Maintained** - Standard plugins registered separately with interface delegation  
+✅ **Clean Code Standards** - Professional service naming without development artifacts  
+
+### **Final Build & Test Status**:
+**✅ 0 COMPILATION ERRORS** - Clean build maintained throughout P1.3  
+**✅ Convention registration verified** - Debug test confirms 9 services auto-registered correctly  
+**✅ Service naming standardized** - All Application services follow consistent naming convention  
+
+**Architectural Principle Established**: All Application layer services MUST use Service suffix for architectural clarity and convention-based registration simplicity.
+
+**NEXT PHASE READY**: P1.4+ from ARCH_FIX.md priority list - Continue Week 2 duplication elimination targets.

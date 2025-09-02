@@ -3,7 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.DependencyInjection;
-using Pidgeon.Core.Domain.Configuration.Services;
+using Pidgeon.Core.Application.Services.Configuration;
 using Pidgeon.Core.Extensions;
 using Xunit;
 using FluentAssertions;
@@ -17,7 +17,7 @@ namespace Pidgeon.Core.Tests.Configuration;
 /// </summary>
 public class FieldPatternAnalyzerIntegrationTests : IDisposable
 {
-    private readonly IFieldPatternAnalyzer _analyzer;
+    private readonly IFieldPatternAnalysisService _analyzer;
     private readonly ServiceProvider _serviceProvider;
 
     public FieldPatternAnalyzerIntegrationTests()
@@ -27,7 +27,7 @@ public class FieldPatternAnalyzerIntegrationTests : IDisposable
         services.AddPidgeonCore();
         
         _serviceProvider = services.BuildServiceProvider();
-        _analyzer = _serviceProvider.GetRequiredService<IFieldPatternAnalyzer>();
+        _analyzer = _serviceProvider.GetRequiredService<IFieldPatternAnalysisService>();
     }
 
     [Fact(DisplayName = "Should analyze field patterns from real HL7 ADT messages")]

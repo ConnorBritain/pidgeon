@@ -4,7 +4,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Pidgeon.Core.Domain.Configuration.Entities;
-using Pidgeon.Core.Domain.Configuration.Services;
+using Pidgeon.Core.Application.Services.Configuration;
 using Pidgeon.Core.Extensions;
 using Xunit;
 using FluentAssertions;
@@ -18,7 +18,7 @@ namespace Pidgeon.Core.Tests.Configuration;
 /// </summary>
 public class ConfidenceCalculatorBehaviorTests : IDisposable
 {
-    private readonly IConfidenceCalculator _calculator;
+    private readonly IConfidenceCalculationService _calculator;
     private readonly ServiceProvider _serviceProvider;
 
     public ConfidenceCalculatorBehaviorTests()
@@ -28,7 +28,7 @@ public class ConfidenceCalculatorBehaviorTests : IDisposable
         services.AddPidgeonCore();
         
         _serviceProvider = services.BuildServiceProvider();
-        _calculator = _serviceProvider.GetRequiredService<IConfidenceCalculator>();
+        _calculator = _serviceProvider.GetRequiredService<IConfidenceCalculationService>();
     }
 
     [Fact(DisplayName = "Should calculate high confidence for well-populated field patterns")]

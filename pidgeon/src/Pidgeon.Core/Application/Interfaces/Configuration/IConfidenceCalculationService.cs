@@ -4,13 +4,13 @@
 
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Domain.Configuration.Services;
+namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Service responsible for calculating confidence scores for configuration analysis.
 /// Single responsibility: "How confident are we in this analysis?"
 /// </summary>
-public interface IConfidenceCalculator
+public interface IConfidenceCalculationService
 {
     /// <summary>
     /// Calculates confidence score for field pattern analysis.

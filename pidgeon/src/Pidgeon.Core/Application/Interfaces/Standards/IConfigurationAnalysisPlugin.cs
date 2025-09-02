@@ -3,7 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Configuration.Entities;
-using Pidgeon.Core.Domain.Configuration.Services;
+using Pidgeon.Core.Application.Services.Configuration;
 
 namespace Pidgeon.Core.Application.Interfaces.Standards;
 
@@ -74,7 +74,7 @@ public interface IConfigurationAnalysisPlugin
     /// </summary>
     /// <param name="patterns">Domain field patterns to analyze</param>
     /// <returns>Universal field statistics</returns>
-    Task<Result<Domain.Configuration.Services.FieldStatistics>> CalculateFieldStatisticsAsync(FieldPatterns patterns);
+    Task<Result<Domain.Configuration.Entities.FieldStatistics>> CalculateFieldStatisticsAsync(FieldPatterns patterns);
 
     /// <summary>
     /// Detects vendor/system signatures from message patterns.
