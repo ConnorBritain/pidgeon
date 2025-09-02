@@ -5,6 +5,9 @@
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Infrastructure.Standards.Abstractions;
 using Pidgeon.Core.Domain.Configuration.Entities;
+using Pidgeon.Core.Adapters.Interfaces;
+using Pidgeon.Core.Domain.Configuration.Services;
+using Pidgeon.Core.Domain.Messaging;
 
 namespace Pidgeon.Core.Domain.Configuration.Services;
 
@@ -17,13 +20,19 @@ namespace Pidgeon.Core.Domain.Configuration.Services;
 internal class FieldPatternAnalyzer : IFieldPatternAnalyzer
 {
     private readonly IStandardPluginRegistry _pluginRegistry;
+    private readonly IMessagingToConfigurationAdapter _adapter;
+    private readonly IFieldStatisticsService _statisticsService;
     private readonly ILogger<FieldPatternAnalyzer> _logger;
 
     public FieldPatternAnalyzer(
         IStandardPluginRegistry pluginRegistry,
+        IMessagingToConfigurationAdapter adapter,
+        IFieldStatisticsService statisticsService,
         ILogger<FieldPatternAnalyzer> logger)
     {
         _pluginRegistry = pluginRegistry ?? throw new ArgumentNullException(nameof(pluginRegistry));
+        _adapter = adapter ?? throw new ArgumentNullException(nameof(adapter));
+        _statisticsService = statisticsService ?? throw new ArgumentNullException(nameof(statisticsService));
         _logger = logger;
     }
 
@@ -88,15 +97,26 @@ internal class FieldPatternAnalyzer : IFieldPatternAnalyzer
                 return Result<SegmentPattern>.Failure($"No field analysis plugin available for standard: {standard}");
             }
 
-            // FIXME: Plugin no longer handles segment analysis - need to use IMessagingToConfigurationAdapter
-            // This requires parsing raw segments into HealthcareMessage objects first
-            // Temporary workaround: return empty pattern until adapter integration complete
-            var result = Result<SegmentPattern>.Success(new SegmentPattern
-            {
-                SegmentId = segmentType,
-                FieldFrequencies = new Dictionary<int, FieldFrequency>(),
-                SampleSize = segmentList.Count
-            });
+            // Create minimal valid messages containing each segment for analysis
+            var messageStrings = segmentList.Select(segment => 
+                $"MSH|^~\\&|SYSTEM||RECEIVER||{DateTime.UtcNow:yyyyMMddHHmmss}||{segmentType}|{Guid.NewGuid()}|P|2.3\r{segment}"
+            ).ToList();
+
+            // Use existing plugin method for full message analysis
+            var patternsResult = await plugin.AnalyzeFieldPatternsAsync(messageStrings, segmentType);
+            if (patternsResult.IsFailure)
+                return Result<SegmentPattern>.Failure(patternsResult.Error.Message);
+
+            // Extract specific segment pattern from full analysis
+            var segmentPattern = patternsResult.Value.SegmentPatterns.GetValueOrDefault(segmentType);
+            var result = segmentPattern != null 
+                ? Result<SegmentPattern>.Success(segmentPattern)
+                : Result<SegmentPattern>.Success(new SegmentPattern
+                {
+                    SegmentId = segmentType,
+                    FieldFrequencies = new Dictionary<int, FieldFrequency>(),
+                    SampleSize = segmentList.Count
+                });
             
             if (result.IsSuccess)
             {
@@ -138,15 +158,41 @@ internal class FieldPatternAnalyzer : IFieldPatternAnalyzer
                 return Result<ComponentPattern>.Failure($"No field analysis plugin available for standard: {standard}");
             }
 
-            // FIXME: Plugin no longer handles component analysis - need to use IMessagingToConfigurationAdapter
-            // This requires parsing field values into HealthcareMessage objects first
-            // Temporary workaround: return empty pattern until adapter integration complete
-            var result = Result<ComponentPattern>.Success(new ComponentPattern
-            {
-                FieldType = fieldType,
-                ComponentFrequencies = new Dictionary<int, ComponentFrequency>(),
-                SampleSize = valueList.Count
-            });
+            // Create minimal valid messages containing each field value for analysis
+            var messageStrings = valueList.Select(fieldValue => 
+                $"MSH|^~\\&|SYSTEM||RECEIVER||{DateTime.UtcNow:yyyyMMddHHmmss}||ADT^A01|{Guid.NewGuid()}|P|2.3\rPID|1||12345||{fieldValue}||||||||||||||||||||||||||||"
+            ).ToList();
+
+            // Use existing plugin method for full message analysis
+            var patternsResult = await plugin.AnalyzeFieldPatternsAsync(messageStrings, "ADT^A01");
+            if (patternsResult.IsFailure)
+                return Result<ComponentPattern>.Failure(patternsResult.Error.Message);
+
+            // Extract component pattern from PID segment analysis
+            var pidPattern = patternsResult.Value.SegmentPatterns.GetValueOrDefault("PID");
+            var fieldFrequency = pidPattern?.FieldFrequencies.Values.FirstOrDefault(f => f.FieldName == fieldType);
+            
+            var result = fieldFrequency?.ComponentPatterns.Any() == true
+                ? Result<ComponentPattern>.Success(new ComponentPattern
+                {
+                    FieldType = fieldType,
+                    ComponentFrequencies = fieldFrequency.ComponentPatterns.ToDictionary(
+                        kvp => int.Parse(kvp.Key), 
+                        kvp => new ComponentFrequency 
+                        { 
+                            ComponentIndex = int.Parse(kvp.Key), 
+                            PopulatedCount = kvp.Value.ComponentFrequencies.Values.Sum(cf => cf.PopulatedCount),
+                            TotalCount = valueList.Count,
+                            ComponentName = kvp.Key
+                        }),
+                    SampleSize = valueList.Count
+                })
+                : Result<ComponentPattern>.Success(new ComponentPattern
+                {
+                    FieldType = fieldType,
+                    ComponentFrequencies = new Dictionary<int, ComponentFrequency>(),
+                    SampleSize = valueList.Count
+                });
             
             if (result.IsSuccess)
             {
@@ -186,20 +232,8 @@ internal class FieldPatternAnalyzer : IFieldPatternAnalyzer
                 return Result<FieldStatistics>.Failure($"No field analysis plugin available for standard: {standard}");
             }
 
-            // FIXME: Plugin no longer handles statistics - need to use IFieldStatisticsService
-            // Temporary workaround: calculate basic statistics inline until service integration complete
-            var totalFields = patterns.SegmentPatterns.Values.Sum(s => s.FieldFrequencies.Count);
-            var populatedFields = patterns.SegmentPatterns.Values
-                .SelectMany(s => s.FieldFrequencies.Values)
-                .Count(f => f.PopulationRate > 0);
-            
-            var result = Result<FieldStatistics>.Success(new FieldStatistics
-            {
-                TotalFields = totalFields,
-                PopulatedFields = populatedFields,
-                QualityScore = totalFields > 0 ? (double)populatedFields / totalFields : 0.0,
-                SampleSize = patterns.SegmentPatterns.Values.FirstOrDefault()?.SampleSize ?? 0
-            });
+            // Use dedicated field statistics service for proper domain separation
+            var result = await _statisticsService.CalculateFieldStatisticsAsync(patterns);
             
             if (result.IsSuccess)
             {

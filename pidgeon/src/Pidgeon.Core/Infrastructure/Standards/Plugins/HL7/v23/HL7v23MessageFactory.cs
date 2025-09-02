@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 using Pidgeon.Core.Infrastructure.Standards.Abstractions;
@@ -60,7 +61,7 @@ public class HL7v23MessageFactory : IStandardMessageFactory
             }
 
             // Populate PID segment from patient
-            var pidResult = message.PID.PopulateFromPatient(patient);
+            var pidResult = message.PID.PopulateFromPatient(patient.ToDto());
             if (pidResult.IsFailure)
                 return Error.Create("ADT_PATIENT_POPULATION_FAILED",
                     $"Failed to populate patient information: {pidResult.Error.Message}", "HL7v23MessageFactory");
@@ -87,7 +88,7 @@ public class HL7v23MessageFactory : IStandardMessageFactory
             // Populate PV1 segment from encounter
             if (adtMessage.PV1 != null)
             {
-                var pv1 = PV1Segment.Create(encounter);
+                var pv1 = PV1Segment.Create(encounter.ToDto());
                 adtMessage.Segments.RemoveAll(s => s is PV1Segment);
                 adtMessage.AddSegment(pv1);
             }

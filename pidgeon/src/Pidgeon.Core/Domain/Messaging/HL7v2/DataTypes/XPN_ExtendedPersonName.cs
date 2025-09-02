@@ -2,7 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core;
+using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 
 namespace Pidgeon.Core.Domain.Messaging.HL7v2.DataTypes;
@@ -11,7 +12,7 @@ namespace Pidgeon.Core.Domain.Messaging.HL7v2.DataTypes;
 /// Represents a person name field (XPN data type) in HL7 v2.3.
 /// Format: Family^Given^Middle^Suffix^Prefix^Degree^Name Type Code
 /// </summary>
-public class PersonNameField : HL7Field<PersonName?>
+public class PersonNameField : HL7Field<PersonNameDto?>
 {
     /// <inheritdoc />
     public override string DataType => "XPN";
@@ -20,7 +21,7 @@ public class PersonNameField : HL7Field<PersonName?>
     {
     }
 
-    public PersonNameField(PersonName? value)
+    public PersonNameField(PersonNameDto? value)
     {
         Value = value;
         RawValue = FormatValue(value);
@@ -36,10 +37,10 @@ public class PersonNameField : HL7Field<PersonName?>
         }
     }
 
-    protected override Result<PersonName?> ParseFromHL7String(string hl7Value)
+    protected override Result<PersonNameDto?> ParseFromHL7String(string hl7Value)
     {
         if (string.IsNullOrWhiteSpace(hl7Value))
-            return Result<PersonName?>.Success(null);
+            return Result<PersonNameDto?>.Success(null);
 
         try
         {
@@ -53,36 +54,36 @@ public class PersonNameField : HL7Field<PersonName?>
             var suffix = components.Length > 3 ? components[3] : null;
             var prefix = components.Length > 4 ? components[4] : null;
             
-            var personName = new PersonName
+            var personName = new PersonNameDto
             {
-                Family = family,
-                Given = given,
-                Middle = middle,
+                LastName = family ?? "",
+                FirstName = given ?? "",
+                MiddleName = middle,
                 Suffix = suffix,
                 Prefix = prefix
             };
 
-            return Result<PersonName?>.Success(personName);
+            return Result<PersonNameDto?>.Success(personName);
         }
         catch (Exception ex)
         {
-            return Result<PersonName?>.Failure($"Invalid person name format: {hl7Value} - {ex.Message}");
+            return Result<PersonNameDto?>.Failure($"Invalid person name format: {hl7Value} - {ex.Message}");
         }
     }
 
-    protected override string FormatValue(PersonName? value)
+    protected override string FormatValue(PersonNameDto? value)
     {
         if (value == null)
             return "";
 
         var components = new[]
         {
-            value.Family ?? "",
-            value.Given ?? "",
-            value.Middle ?? "",
+            value.LastName ?? "",
+            value.FirstName ?? "",
+            value.MiddleName ?? "",
             value.Suffix ?? "",
             value.Prefix ?? "",
-            "", // Degree - not in our PersonName model yet
+            "", // Degree - not in DTO
             ""  // Name Type Code - typically empty
         };
 
@@ -121,11 +122,11 @@ public class PersonNameField : HL7Field<PersonName?>
     public static PersonNameField Create(string? family, string? given, string? middle = null, 
         string? prefix = null, string? suffix = null)
     {
-        var personName = new PersonName
+        var personName = new PersonNameDto
         {
-            Family = family,
-            Given = given,
-            Middle = middle,
+            LastName = family ?? "",
+            FirstName = given ?? "",
+            MiddleName = middle,
             Prefix = prefix,
             Suffix = suffix
         };

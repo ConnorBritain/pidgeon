@@ -9,6 +9,8 @@ using Pidgeon.Core.Domain.Configuration.Services;
 using Pidgeon.Core.Standards.Common;
 using Pidgeon.Core.Application.Interfaces.Validation;
 using Pidgeon.Core.Application.Services.Validation;
+using Pidgeon.Core.Adapters.Interfaces;
+using Pidgeon.Core.Adapters.Implementation;
 
 namespace Pidgeon.Core.Extensions;
 
@@ -47,6 +49,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFormatDeviationDetector, FormatDeviationDetector>();
         services.AddScoped<IVendorPatternRepository, VendorPatternRepository>();
         services.AddScoped<IFieldStatisticsService, FieldStatisticsService>();
+        
+        // Add adapter implementations
+        services.AddScoped<IMessagingToConfigurationAdapter, HL7ToConfigurationAdapter>();
         
         // Register HL7 configuration plugins
         services.AddStandardConfigurationPlugins();

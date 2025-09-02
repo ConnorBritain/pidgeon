@@ -2,7 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core;
+using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
@@ -124,8 +125,8 @@ public class PV1Segment : HL7Segment
     /// <param name="attendingProvider">Attending physician information</param>
     /// <returns>Configured PV1 segment</returns>
     public static PV1Segment Create(
-        Encounter? encounter = null,
-        Provider? attendingProvider = null)
+        EncounterDto? encounter = null,
+        ProviderDto? attendingProvider = null)
     {
         var pv1 = new PV1Segment();
 
@@ -169,18 +170,18 @@ public class PV1Segment : HL7Segment
     /// <summary>
     /// Maps encounter type to HL7 patient class codes.
     /// </summary>
-    private static string MapEncounterTypeToPatientClass(EncounterType encounterType)
+    private static string MapEncounterTypeToPatientClass(EncounterTypeDto encounterType)
     {
         return encounterType switch
         {
-            EncounterType.Inpatient => "I",
-            EncounterType.Outpatient => "O", 
-            EncounterType.Emergency => "E",
-            EncounterType.Observation => "O",
-            EncounterType.DaySurgery => "O",
-            EncounterType.Telemedicine => "O",
-            EncounterType.HomeHealth => "H",
-            EncounterType.PreAdmission => "P",
+            EncounterTypeDto.Inpatient => "I",
+            EncounterTypeDto.Outpatient => "O", 
+            EncounterTypeDto.Emergency => "E",
+            EncounterTypeDto.Observation => "O",
+            EncounterTypeDto.DaySurgery => "O",
+            EncounterTypeDto.Telemedicine => "O",
+            EncounterTypeDto.HomeHealth => "H",
+            EncounterTypeDto.PreAdmission => "P",
             _ => "O" // Default to outpatient
         };
     }
@@ -189,20 +190,20 @@ public class PV1Segment : HL7Segment
     /// Formats provider information for HL7 XCN data type.
     /// Format: ID^Last^First^Middle^Suffix^Prefix^Degree
     /// </summary>
-    private static string FormatProviderForHL7(Provider provider)
+    private static string FormatProviderForHL7(ProviderDto provider)
     {
         var parts = new[]
         {
             provider.Id ?? "",
-            provider.Name.Family ?? "", // Family name (last name)
-            provider.Name.Given ?? "", // Given name (first name)
-            provider.Name.Middle ?? "", // Middle name from PersonName
-            provider.Name.Suffix ?? "", // Suffix from PersonName  
-            provider.Name.Prefix ?? "", // Prefix from PersonName
-            provider.Degree ?? ""
+            provider.Name.LastName ?? "",
+            provider.Name.FirstName ?? "",
+            provider.Name.MiddleName ?? "",
+            provider.Name.Suffix ?? "",
+            provider.Name.Prefix ?? "",
+            "" // Degree not in DTO
         };
 
-        return string.Join(ComponentSeparator, parts);
+        return string.Join("^", parts);
     }
 
     /// <summary>
@@ -215,12 +216,12 @@ public class PV1Segment : HL7Segment
         var validClasses = new[] { "I", "O", "E", "P", "R", "B", "N", "U" };
         if (!validClasses.Contains(patientClass.ToUpper()))
         {
-            return Error.Validation($"Invalid patient class: {patientClass}. Valid values are I, O, E, P, R, B, N, U", "PatientClass");
+            return Result<PV1Segment>.Failure($"Invalid patient class: {patientClass}. Valid values are I, O, E, P, R, B, N, U");
         }
 
         var result = PatientClass.SetValue(patientClass.ToUpper());
         if (result.IsFailure)
-            return Error.Validation($"Failed to set patient class: {result.Error.Message}", "PatientClass");
+            return Result<PV1Segment>.Failure("Failed to set patient class");
 
         return Result<PV1Segment>.Success(this);
     }
@@ -251,7 +252,7 @@ public class PV1Segment : HL7Segment
         var result = AssignedPatientLocation.SetValue(location);
         
         if (result.IsFailure)
-            return Error.Validation($"Failed to set patient location: {result.Error.Message}", "AssignedPatientLocation");
+            return Result<PV1Segment>.Failure("Failed to set patient location");
 
         return Result<PV1Segment>.Success(this);
     }
@@ -278,5 +279,14 @@ public class PV1Segment : HL7Segment
         }
         
         return $"PV1: {string.Join(", ", displayParts)}";
+    }
+    
+    /// <summary>
+    /// Validates the PV1 segment according to HL7 requirements.
+    /// </summary>
+    public override Result<HL7Segment> Validate()
+    {
+        // PV1 has no strictly required fields in HL7 v2.3
+        return Result<HL7Segment>.Success(this);
     }
 }

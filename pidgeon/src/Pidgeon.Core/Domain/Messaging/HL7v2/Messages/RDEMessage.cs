@@ -2,7 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core;
+using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 using Pidgeon.Core.Standards.Common;
 
@@ -74,7 +75,7 @@ public class RDEMessage : HL7Message
     /// <param name="receivingFacility">Receiving facility name</param>
     /// <returns>A result containing the populated RDE message</returns>
     public static Result<RDEMessage> CreatePharmacyOrder(
-        Prescription prescription,
+        PrescriptionDto prescription,
         string? sendingApplication = null,
         string? sendingFacility = null,
         string? receivingApplication = null,
@@ -100,16 +101,14 @@ public class RDEMessage : HL7Message
             // Populate PID segment from patient
             var pidResult = message.PID.PopulateFromPatient(prescription.Patient);
             if (pidResult.IsFailure)
-                return Error.Create("RDE_PATIENT_POPULATION_FAILED", 
-                    $"Failed to populate patient information: {pidResult.Error.Message}", "RDEMessage");
+                return Result<RDEMessage>.Failure($"Failed to populate patient information: {pidResult.Error}");
 
             // Populate ORC segment (Common Order)
             if (message.ORC != null)
             {
                 var orcResult = message.ORC.PopulateFromPrescription(prescription);
                 if (orcResult.IsFailure)
-                    return Error.Create("RDE_ORDER_POPULATION_FAILED",
-                        $"Failed to populate order information: {orcResult.Error.Message}", "RDEMessage");
+                    return Result<RDEMessage>.Failure($"Failed to populate order information: {orcResult.Error}");
             }
 
             // Populate RXE segment (Pharmacy Encoded Order)
@@ -117,8 +116,7 @@ public class RDEMessage : HL7Message
             {
                 var rxeResult = message.RXE.PopulateFromPrescription(prescription);
                 if (rxeResult.IsFailure)
-                    return Error.Create("RDE_PRESCRIPTION_POPULATION_FAILED",
-                        $"Failed to populate prescription information: {rxeResult.Error.Message}", "RDEMessage");
+                    return Result<RDEMessage>.Failure($"Failed to populate prescription information: {rxeResult.Error}");
             }
 
             // Populate RXR segment (Route)
@@ -127,15 +125,14 @@ public class RDEMessage : HL7Message
                 var route = prescription.Dosage.Route.ToString();
                 var rxrResult = message.RXR.SetRoute(route);
                 if (rxrResult.IsFailure)
-                    return Error.Create("RDE_ROUTE_POPULATION_FAILED",
-                        $"Failed to populate route information: {rxrResult.Error.Message}", "RDEMessage");
+                    return Result<RDEMessage>.Failure($"Failed to populate route information: {rxrResult.Error}");
             }
 
             return Result<RDEMessage>.Success(message);
         }
         catch (Exception ex)
         {
-            return Error.Create("RDE_CREATION_FAILED", $"Failed to create RDE message: {ex.Message}", "RDEMessage");
+            return Result<RDEMessage>.Failure($"Failed to create RDE message: {ex.Message}");
         }
     }
 

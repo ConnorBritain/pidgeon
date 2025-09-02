@@ -2,11 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core;
+using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 using Pidgeon.Core.Domain.Messaging.HL7v2.DataTypes;
-using ClinicalMaritalStatus = Pidgeon.Core.Domain.Clinical.Entities.MaritalStatus;
 
 namespace Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 
@@ -185,18 +185,17 @@ public class PIDSegment : HL7Segment
     }
 
     /// <summary>
-    /// Populates the PID segment from a Patient domain object.
+    /// Populates the PID segment from patient data.
     /// </summary>
-    /// <param name="patient">The patient domain object</param>
+    /// <param name="patient">The patient data</param>
     /// <returns>A result indicating success or validation errors</returns>
-    public Result<PIDSegment> PopulateFromPatient(Patient patient)
+    public Result<PIDSegment> PopulateFromPatient(PatientDto patient)
     {
         try
         {
-            // Validate patient first
-            var patientValidation = patient.Validate();
-            if (patientValidation.IsFailure)
-                return Result<PIDSegment>.Failure(patientValidation.Error);
+            // Basic validation
+            if (string.IsNullOrEmpty(patient.Id) && string.IsNullOrEmpty(patient.MedicalRecordNumber))
+                return Result<PIDSegment>.Failure("Patient must have ID or MRN");
 
             // Set sequence number (typically 1 for single patient)
             SetId.SetTypedValue(1);
@@ -225,10 +224,10 @@ public class PIDSegment : HL7Segment
             {
                 var genderCode = patient.Gender.Value switch
                 {
-                    Gender.Male => "M",
-                    Gender.Female => "F",
-                    Gender.Other => "O",
-                    Gender.Unknown => "U",
+                    GenderDto.Male => "M",
+                    GenderDto.Female => "F",
+                    GenderDto.Other => "O",
+                    GenderDto.Unknown => "U",
                     _ => "U"
                 };
                 Sex.SetValue(genderCode);
@@ -263,12 +262,12 @@ public class PIDSegment : HL7Segment
             {
                 var maritalCode = patient.MaritalStatus.Value switch
                 {
-                    ClinicalMaritalStatus.Single => "S",
-                    ClinicalMaritalStatus.Married => "M",
-                    ClinicalMaritalStatus.Divorced => "D",
-                    ClinicalMaritalStatus.Widowed => "W",
-                    ClinicalMaritalStatus.Separated => "A",
-                    ClinicalMaritalStatus.Unknown => "U",
+                    MaritalStatusDto.Single => "S",
+                    MaritalStatusDto.Married => "M",
+                    MaritalStatusDto.Divorced => "D",
+                    MaritalStatusDto.Widowed => "W",
+                    MaritalStatusDto.Separated => "A",
+                    MaritalStatusDto.Unknown => "U",
                     _ => "U"
                 };
                 MaritalStatus.SetValue(maritalCode);
@@ -290,16 +289,16 @@ public class PIDSegment : HL7Segment
         }
         catch (Exception ex)
         {
-            return Error.Create("PID_POPULATION_FAILED", $"Failed to populate PID segment from patient: {ex.Message}", "PIDSegment");
+            return Result<PIDSegment>.Failure($"Failed to populate PID segment from patient: {ex.Message}");
         }
     }
 
     /// <summary>
-    /// Creates a PID segment from a Patient domain object.
+    /// Creates a PID segment from patient data.
     /// </summary>
-    /// <param name="patient">The patient domain object</param>
+    /// <param name="patient">The patient data</param>
     /// <returns>A result containing the populated PID segment or an error</returns>
-    public static Result<PIDSegment> FromPatient(Patient patient)
+    public static Result<PIDSegment> FromPatient(PatientDto patient)
     {
         var pidSegment = new PIDSegment();
         return pidSegment.PopulateFromPatient(patient);
@@ -326,7 +325,7 @@ public class PIDSegment : HL7Segment
         if (errors.Any())
         {
             var errorMessage = string.Join("; ", errors);
-            return Error.Validation($"PID segment validation failed: {errorMessage}", "PIDSegment");
+            return Result<HL7Segment>.Failure($"PID segment validation failed: {errorMessage}");
         }
 
         return Result<HL7Segment>.Success(this);

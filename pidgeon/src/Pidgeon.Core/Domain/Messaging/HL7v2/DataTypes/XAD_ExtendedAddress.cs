@@ -2,7 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core;
+using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 
 namespace Pidgeon.Core.Domain.Messaging.HL7v2.DataTypes;
@@ -11,7 +12,7 @@ namespace Pidgeon.Core.Domain.Messaging.HL7v2.DataTypes;
 /// Represents an address field (XAD data type) in HL7 v2.3.
 /// Format: Street^OtherDesignation^City^State^Zip^Country^AddressType^OtherGeographicDesignation
 /// </summary>
-public class AddressField : HL7Field<Address?>
+public class AddressField : HL7Field<AddressDto?>
 {
     /// <inheritdoc />
     public override string DataType => "XAD";
@@ -20,7 +21,7 @@ public class AddressField : HL7Field<Address?>
     {
     }
 
-    public AddressField(Address? value)
+    public AddressField(AddressDto? value)
     {
         Value = value;
         RawValue = FormatValue(value);
@@ -36,10 +37,10 @@ public class AddressField : HL7Field<Address?>
         }
     }
 
-    protected override Result<Address?> ParseFromHL7String(string hl7Value)
+    protected override Result<AddressDto?> ParseFromHL7String(string hl7Value)
     {
         if (string.IsNullOrWhiteSpace(hl7Value))
-            return Result<Address?>.Success(null);
+            return Result<AddressDto?>.Success(null);
 
         try
         {
@@ -54,7 +55,7 @@ public class AddressField : HL7Field<Address?>
             var postalCode = GetComponent(components, 4);
             var country = GetComponent(components, 5);
             
-            var address = new Address
+            var address = new AddressDto
             {
                 Street1 = street1,
                 Street2 = street2,
@@ -64,15 +65,15 @@ public class AddressField : HL7Field<Address?>
                 Country = country
             };
 
-            return Result<Address?>.Success(address);
+            return Result<AddressDto?>.Success(address);
         }
         catch (Exception ex)
         {
-            return Result<Address?>.Failure($"Invalid address format: {hl7Value} - {ex.Message}");
+            return Result<AddressDto?>.Failure($"Invalid address format: {hl7Value} - {ex.Message}");
         }
     }
 
-    protected override string FormatValue(Address? value)
+    protected override string FormatValue(AddressDto? value)
     {
         if (value == null)
             return "";
@@ -124,7 +125,7 @@ public class AddressField : HL7Field<Address?>
     public static AddressField Create(string? street1, string? city, string? state, 
         string? postalCode, string? street2 = null, string? country = null)
     {
-        var address = new Address
+        var address = new AddressDto
         {
             Street1 = street1,
             Street2 = street2,

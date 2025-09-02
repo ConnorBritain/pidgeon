@@ -5,6 +5,7 @@
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Infrastructure.Standards.Abstractions;
 using Pidgeon.Core.Domain.Configuration.Entities;
+using Pidgeon.Core.Domain.Configuration.Services;
 
 namespace Pidgeon.Core.Domain.Configuration.Services;
 
@@ -15,6 +16,7 @@ namespace Pidgeon.Core.Domain.Configuration.Services;
 internal class ConfidenceCalculator : IConfidenceCalculator
 {
     private readonly IStandardPluginRegistry _pluginRegistry;
+    private readonly IFieldStatisticsService _statisticsService;
     private readonly ILogger<ConfidenceCalculator> _logger;
     
     // Confidence calculation weights
@@ -26,9 +28,11 @@ internal class ConfidenceCalculator : IConfidenceCalculator
 
     public ConfidenceCalculator(
         IStandardPluginRegistry pluginRegistry,
+        IFieldStatisticsService statisticsService,
         ILogger<ConfidenceCalculator> logger)
     {
         _pluginRegistry = pluginRegistry ?? throw new ArgumentNullException(nameof(pluginRegistry));
+        _statisticsService = statisticsService ?? throw new ArgumentNullException(nameof(statisticsService));
         _logger = logger;
     }
 
@@ -246,11 +250,10 @@ internal class ConfidenceCalculator : IConfidenceCalculator
                 if (plugin != null)
                 {
                     _logger.LogDebug("Using {Standard} plugin for coverage calculation", fieldPatterns.Standard);
-                    // FIXME: Plugin no longer handles coverage calculation - need to use IFieldStatisticsService
-                    // Temporary workaround: skip plugin coverage calculation
-                    // var coverageResult = await plugin.CalculateFieldCoverageAsync(fieldPatterns);
-                    // if (coverageResult.IsSuccess)
-                    //     return coverageResult.Value;
+                    // Use dedicated field statistics service for coverage calculation
+                    var coverageResult = await _statisticsService.CalculateFieldCoverageAsync(fieldPatterns);
+                    if (coverageResult.IsSuccess)
+                        return coverageResult.Value;
                 }
             }
         }

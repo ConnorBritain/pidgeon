@@ -2,7 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core;
+using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
@@ -57,9 +58,9 @@ public class ORCSegment : HL7Segment
     }
 
     /// <summary>
-    /// Populates the ORC segment from a Prescription domain object.
+    /// Populates the ORC segment from prescription data.
     /// </summary>
-    public Result<ORCSegment> PopulateFromPrescription(Prescription prescription)
+    public Result<ORCSegment> PopulateFromPrescription(PrescriptionDto prescription)
     {
         try
         {
@@ -83,8 +84,28 @@ public class ORCSegment : HL7Segment
         }
         catch (Exception ex)
         {
-            return Error.Create("ORC_POPULATION_FAILED", 
-                $"Failed to populate ORC segment: {ex.Message}", "ORCSegment");
+            return Result<ORCSegment>.Failure($"Failed to populate ORC segment: {ex.Message}");
         }
+    }
+    
+    /// <summary>
+    /// Validates the ORC segment according to HL7 requirements.
+    /// </summary>
+    public override Result<HL7Segment> Validate()
+    {
+        var errors = new List<string>();
+        
+        // ORC.1 (Order Control) is required
+        var orderControl = GetField<StringField>(1);
+        if (orderControl?.IsEmpty != false)
+            errors.Add("ORC.1 Order Control is required");
+        
+        if (errors.Any())
+        {
+            var errorMessage = string.Join("; ", errors);
+            return Result<HL7Segment>.Failure($"ORC segment validation failed: {errorMessage}");
+        }
+        
+        return Result<HL7Segment>.Success(this);
     }
 }

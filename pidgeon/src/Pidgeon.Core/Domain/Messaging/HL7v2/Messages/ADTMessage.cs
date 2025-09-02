@@ -2,7 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core;
+using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 using Pidgeon.Core.Standards.Common;
 
@@ -58,8 +59,8 @@ public class ADTMessage : HL7Message
     /// <param name="receivingFacility">Receiving facility name</param>
     /// <returns>A result containing the populated ADT message</returns>
     public static Result<ADTMessage> CreateAdmission(
-        Patient patient,
-        Encounter? encounter = null,
+        PatientDto patient,
+        EncounterDto? encounter = null,
         string? sendingApplication = null,
         string? sendingFacility = null,
         string? receivingApplication = null,
@@ -95,8 +96,7 @@ public class ADTMessage : HL7Message
             // Populate PID segment from patient
             var pidResult = message.PID.PopulateFromPatient(patient);
             if (pidResult.IsFailure)
-                return Error.Create("ADT_PATIENT_POPULATION_FAILED", 
-                    $"Failed to populate patient information: {pidResult.Error.Message}", "ADTMessage");
+                return Result<ADTMessage>.Failure($"Failed to populate patient information: {pidResult.Error}");
 
             // Populate PV1 segment from encounter if provided
             if (encounter != null && message.PV1 != null)
@@ -110,7 +110,7 @@ public class ADTMessage : HL7Message
         }
         catch (Exception ex)
         {
-            return Error.Create("ADT_CREATION_FAILED", $"Failed to create ADT message: {ex.Message}", "ADTMessage");
+            return Result<ADTMessage>.Failure($"Failed to create ADT message: {ex.Message}");
         }
     }
 
@@ -125,8 +125,8 @@ public class ADTMessage : HL7Message
     /// <param name="receivingFacility">Receiving facility name</param>
     /// <returns>A result containing the populated ADT message</returns>
     public static Result<ADTMessage> CreateDischarge(
-        Patient patient,
-        Encounter? encounter = null,
+        PatientDto patient,
+        EncounterDto? encounter = null,
         string? sendingApplication = null,
         string? sendingFacility = null,
         string? receivingApplication = null,
@@ -152,8 +152,8 @@ public class ADTMessage : HL7Message
     /// <param name="receivingFacility">Receiving facility name</param>
     /// <returns>A result containing the populated ADT message</returns>
     public static Result<ADTMessage> CreatePatientUpdate(
-        Patient patient,
-        Encounter? encounter = null,
+        PatientDto patient,
+        EncounterDto? encounter = null,
         string? sendingApplication = null,
         string? sendingFacility = null,
         string? receivingApplication = null,

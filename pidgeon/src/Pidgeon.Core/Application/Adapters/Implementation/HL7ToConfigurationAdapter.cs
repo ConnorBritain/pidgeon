@@ -12,17 +12,8 @@ namespace Pidgeon.Core.Adapters.Implementation;
 
 /// <summary>
 /// Adapter implementation for translating HL7 messaging structures to configuration domain types.
-/// 
-/// ARCHITECTURAL RESPONSIBILITY:
-/// - Handles the Messaging → Configuration domain boundary
-/// - Converts int-based HL7 field positions to string-based configuration paths
-/// - Translates message structures into vendor pattern analysis
-/// - Maintains clean separation between messaging semantics and configuration semantics
-/// 
-/// ELIMINATES TECHNICAL DEBT:
-/// - No conversion utilities needed in plugins
-/// - No type mismatches between Dictionary<int, FieldFrequency> and Dictionary<string, FieldFrequency>
-/// - Plugins work with single domain types only
+/// Converts int-based HL7 field positions to string-based configuration paths.
+/// Translates message structures into vendor pattern analysis.
 /// </summary>
 public class HL7ToConfigurationAdapter : IMessagingToConfigurationAdapter
 {
