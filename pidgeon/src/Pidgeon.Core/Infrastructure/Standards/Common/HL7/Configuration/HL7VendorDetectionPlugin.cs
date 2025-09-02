@@ -163,47 +163,42 @@ internal class HL7VendorDetectionPlugin : IStandardVendorDetectionPlugin
         {
             double confidence = pattern.BaseConfidence;
 
-            // Check application patterns
+            // Create rule sets for pattern evaluation
+            var patternRuleSets = new List<PatternRuleSet>();
+
             if (!string.IsNullOrWhiteSpace(headers.SendingApplication))
             {
-                foreach (var rule in pattern.ApplicationPatterns)
+                patternRuleSets.Add(new PatternRuleSet
                 {
-                    if (EvaluateRule(rule, headers.SendingApplication))
-                    {
-                        confidence += rule.ConfidenceBoost;
-                        _logger.LogTrace("HL7 application rule matched: {Pattern} -> +{Boost}", 
-                            rule.Pattern, rule.ConfidenceBoost);
-                    }
-                }
+                    RuleType = "application",
+                    HeaderValue = headers.SendingApplication,
+                    Rules = pattern.ApplicationPatterns
+                });
             }
 
-            // Check facility patterns
             if (!string.IsNullOrWhiteSpace(headers.SendingFacility))
             {
-                foreach (var rule in pattern.FacilityPatterns)
+                patternRuleSets.Add(new PatternRuleSet
                 {
-                    if (EvaluateRule(rule, headers.SendingFacility))
-                    {
-                        confidence += rule.ConfidenceBoost;
-                        _logger.LogTrace("HL7 facility rule matched: {Pattern} -> +{Boost}", 
-                            rule.Pattern, rule.ConfidenceBoost);
-                    }
-                }
+                    RuleType = "facility", 
+                    HeaderValue = headers.SendingFacility,
+                    Rules = pattern.FacilityPatterns
+                });
             }
 
-            // Check message type patterns
             if (!string.IsNullOrWhiteSpace(headers.MessageType) && pattern.MessageTypePatterns != null)
             {
-                foreach (var rule in pattern.MessageTypePatterns)
+                patternRuleSets.Add(new PatternRuleSet
                 {
-                    if (EvaluateRule(rule, headers.MessageType))
-                    {
-                        confidence += rule.ConfidenceBoost;
-                        _logger.LogTrace("HL7 message type rule matched: {Pattern} -> +{Boost}", 
-                            rule.Pattern, rule.ConfidenceBoost);
-                    }
-                }
+                    RuleType = "message type",
+                    HeaderValue = headers.MessageType,
+                    Rules = pattern.MessageTypePatterns
+                });
             }
+
+            // Use consolidated pattern evaluation framework
+            var confidenceBoost = PatternEvaluationFramework.EvaluatePatternRuleSets(patternRuleSets, headers, _logger);
+            confidence += confidenceBoost;
 
             // Ensure confidence is between 0 and 1
             confidence = Math.Min(1.0, Math.Max(0.0, confidence));
@@ -217,38 +212,6 @@ internal class HL7VendorDetectionPlugin : IStandardVendorDetectionPlugin
         }
     }
 
-    private bool EvaluateRule(DetectionRule rule, string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            return false;
-
-        var comparison = rule.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-        
-        return rule.MatchType switch
-        {
-            ConfigMatchType.Exact => value.Equals(rule.Pattern, comparison),
-            ConfigMatchType.Contains => value.Contains(rule.Pattern, comparison),
-            ConfigMatchType.StartsWith => value.StartsWith(rule.Pattern, comparison),
-            ConfigMatchType.EndsWith => value.EndsWith(rule.Pattern, comparison),
-            ConfigMatchType.Regex => EvaluateRegexRule(rule, value),
-            _ => false
-        };
-    }
-
-    private bool EvaluateRegexRule(DetectionRule rule, string value)
-    {
-        try
-        {
-            var options = rule.CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
-            var regex = new Regex(rule.Pattern, options | RegexOptions.Compiled);
-            return regex.IsMatch(value);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Invalid regex pattern in HL7 vendor detection: {Pattern}", rule.Pattern);
-            return false;
-        }
-    }
 
     private VendorSignature CreateVendorSignature(VendorDetectionPattern pattern, MessageHeaders headers, double confidence)
     {

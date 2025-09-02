@@ -11,7 +11,8 @@
 **Command**: Read these documents in order:
 1. **`docs/RULES.md`** - Sacred principles, anti-patterns, validation rules
 2. **`docs/arch_reviews/ARCH_FIX.md`** - Current rehabilitation roadmap with specific tasks
-3. **`docs/DEVELOPMENT.md`** - Strategic direction and P0 feature priorities
+3. **`docs/arch_reviews/ARCH_FIX_SCRATCHPAD.md`** - Real-time progress tracking and current fix status
+4. **`docs/DEVELOPMENT.md`** - Strategic direction and P0 feature priorities
 
 ### **Step 2: Assess Current State** ⭐
 **Commands**:
@@ -73,7 +74,8 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 ### **🚨 CRITICAL - Read Every Session**
 1. **`docs/RULES.md`** - Development rules and sacred principles
 2. **`docs/arch_reviews/ARCH_FIX.md`** - Current rehabilitation tasks
-3. **`docs/DEVELOPMENT.md`** - Strategic roadmap and P0 features
+3. **`docs/arch_reviews/ARCH_FIX_SCRATCHPAD.md`** - Real-time progress and current status
+4. **`docs/DEVELOPMENT.md`** - Strategic roadmap and P0 features
 
 ### **🔍 REFERENCE - Read When Relevant**
 4. **`docs/roadmap/INIT.md`** - Sacred architectural principles (for architecture questions)

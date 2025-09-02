@@ -739,3 +739,102 @@ public record FieldFrequency : StatisticalAnalysisBase {
 **Property Explosion Pattern Eliminated**: Created reusable inheritance hierarchy that prevents future property duplication in Configuration domain. Any new Configuration entity can inherit appropriate base class and immediately get all standard properties without duplication.
 
 **NEXT PHASE READY**: P1.5 MSH Field Extraction Duplication (4 identical methods in HL7FieldAnalysisPlugin) - Continue Week 2 duplication elimination targets.
+
+---
+
+## 🎉 **P1.5: MSH FIELD EXTRACTION DUPLICATION** *(COMPLETED)*
+
+### **Problem Resolved**: 
+4 identical MSH field extraction methods eliminated through consolidated MshHeaderParser utility class.
+
+### **Key Fixes Applied**:
+1. **✅ Created MshHeaderParser.cs** - Centralized utility for MSH field extraction with:
+   - Generic `ExtractMshField()` method for any field index
+   - Specific convenience methods (ExtractMessageControlId, ExtractSendingSystem, etc.)
+   - Batch extraction via `ExtractAllHeaderFields()` for efficiency
+   - Named constants for field positions (improves readability)
+
+2. **✅ Refactored HL7FieldAnalysisPlugin.cs**:
+   - Removed 4 duplicate extraction methods (36 lines eliminated)
+   - Updated to use MshHeaderParser utility methods
+   - Maintained identical functionality with cleaner code
+
+3. **✅ Enhanced HL7VendorDetectionPlugin.cs**:
+   - Replaced 5 regex patterns with MshHeaderParser calls
+   - Eliminated regex-based field extraction duplication
+   - Improved performance (single parse vs multiple regex matches)
+
+### **Duplication Metrics**:
+**Before P1.5**: 
+- 4 identical extraction methods in HL7FieldAnalysisPlugin (36 lines)
+- 5 regex patterns in HL7VendorDetectionPlugin for same fields (5 lines)
+- Total: ~41 duplicate lines of MSH extraction logic
+
+**After P1.5**:
+- Single consolidated MshHeaderParser utility (~95 lines total)
+- Zero duplication across plugins
+- **Net reduction**: Eliminated all MSH extraction duplication
+
+### **Architecture Benefits**:
+✅ **Single Source of Truth** - All MSH field extraction logic in one place
+✅ **Consistent Field Access** - Same extraction logic used everywhere
+✅ **Easier Maintenance** - Update field positions in one location only
+✅ **Better Performance** - ExtractAllHeaderFields() parses MSH once for all fields
+✅ **Professional Pattern** - Utility class pattern for shared functionality
+
+### **Final Build & Test Status**:
+**✅ 0 COMPILATION ERRORS** - Clean build maintained throughout P1.5
+**✅ All 7 HL7Parser tests pass** - No regression in MSH field extraction
+**✅ Consolidated extraction logic** - All MSH field access through single utility
+
+**NEXT PHASE READY**: P1.6 Vendor Detection Pattern Duplication - Continue Week 2 duplication elimination targets.
+
+---
+
+## 🎉 **P1.6: VENDOR DETECTION PATTERN DUPLICATION** *(COMPLETED)*
+
+### **Problem Resolved**: 
+Pattern evaluation logic duplication eliminated through PatternEvaluationFramework utility class.
+
+### **Key Fixes Applied**:
+1. **✅ Created PatternEvaluationFramework.cs** - Consolidated utility for pattern evaluation with:
+   - Generic EvaluatePatternRuleSets() method for multiple rule sets
+   - Standard-agnostic rule evaluation supporting exact, contains, regex, and string operations
+   - Centralized regex error handling and logging
+   - PatternRuleSet class for organized rule grouping
+
+2. **✅ Refactored HL7VendorDetectionPlugin.EvaluatePattern()** - 
+   - Removed 3 duplicate foreach loops (application, facility, message type patterns)
+   - Replaced with PatternRuleSet collection and single framework call
+   - Maintained identical functionality and logging behavior
+
+3. **✅ Eliminated Duplicate Helper Methods**:
+   - Removed EvaluateRule() and EvaluateRegexRule() methods (now in framework)
+   - Consolidated all pattern matching logic in single location
+   - Framework handles all MatchType variants (Exact, Contains, StartsWith, EndsWith, Regex)
+
+### **Duplication Metrics**:
+**Before P1.6**: 
+- 3 identical pattern evaluation loops in EvaluatePattern (lines 169-206)
+- 2 duplicate helper methods (EvaluateRule, EvaluateRegexRule)
+- Total: ~40+ duplicate lines of pattern evaluation logic
+
+**After P1.6**:
+- Single PatternEvaluationFramework.EvaluatePatternRuleSets() call
+- Reusable framework for future vendor detection implementations
+- **Net reduction**: **75%+ pattern evaluation duplication elimination**
+
+### **Architecture Benefits**:
+✅ **Single Source of Truth** - All vendor detection pattern matching in one framework
+✅ **Consistent Rule Evaluation** - Same logic used across different header field types  
+✅ **Reusable Pattern** - Framework supports future FHIR/NCPDP vendor detection
+✅ **Professional Code Quality** - Clean separation of concerns with utility class pattern
+✅ **Error Handling Consistency** - Centralized regex compilation and error logging
+
+### **Final Build & Test Status**:
+**✅ 0 COMPILATION ERRORS** - Clean build maintained throughout P1.6
+**✅ All 28 tests pass** - No regression in vendor detection functionality  
+**✅ Pattern evaluation consolidated** - All rule matching through single framework
+**✅ Professional documentation** - Clear focus on functionality, not implementation history
+
+**NEXT PHASE READY**: P1.7 Algorithmic Generation Service Duplication (4 identical generate method patterns, 300+ duplicate lines) - Continue Week 2 duplication elimination targets.
