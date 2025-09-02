@@ -15,20 +15,17 @@ namespace Pidgeon.Core.Application.Services.Configuration;
 /// Orchestrates vendor detection by delegating to standard-specific plugins.
 /// Single responsibility: Coordinate vendor detection across all standards.
 /// </summary>
-internal class VendorDetectionService : IVendorDetectionService
+internal class VendorDetectionService : PluginAccessorBase<VendorDetectionService, IStandardVendorDetectionPlugin>, IVendorDetectionService
 {
     private readonly IVendorPatternRepository _patternRepository;
-    private readonly IStandardPluginRegistry _pluginRegistry;
-    private readonly ILogger<VendorDetectionService> _logger;
 
     public VendorDetectionService(
         IVendorPatternRepository patternRepository,
         IStandardPluginRegistry pluginRegistry,
         ILogger<VendorDetectionService> logger)
+        : base(pluginRegistry, logger)
     {
         _patternRepository = patternRepository ?? throw new ArgumentNullException(nameof(patternRepository));
-        _pluginRegistry = pluginRegistry ?? throw new ArgumentNullException(nameof(pluginRegistry));
-        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -94,50 +91,44 @@ internal class VendorDetectionService : IVendorDetectionService
     /// <inheritdoc />
     public async Task<Result<VendorSignature>> DetectFromMessageAsync(string message, string standard)
     {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(message))
-                return Result<VendorSignature>.Failure("Message cannot be null or empty");
+        if (string.IsNullOrWhiteSpace(message))
+            return Result<VendorSignature>.Failure("Message cannot be null or empty");
+            
+        if (string.IsNullOrWhiteSpace(standard))
+            return Result<VendorSignature>.Failure("Standard cannot be null or empty");
+
+        _logger.LogDebug("Detecting vendor from {Standard} message", standard);
+
+        var result = await ExecutePluginOperationAsync(
+            standard,
+            registry => registry.GetVendorDetectionPlugin(standard),
+            async plugin =>
+            {
+                // Validate message format using plugin
+                if (!plugin.IsValidMessageFormat(message))
+                {
+                    return Result<VendorSignature>.Failure($"Message is not in valid {standard} format");
+                }
+
+                // Delegate vendor detection to the standard-specific plugin
+                var vendorResult = await plugin.DetectVendorSignatureAsync(message, _patternRepository);
                 
-            if (string.IsNullOrWhiteSpace(standard))
-                return Result<VendorSignature>.Failure("Standard cannot be null or empty");
+                if (vendorResult.IsSuccess)
+                {
+                    _logger.LogInformation("Detected vendor: {VendorName} with confidence {Confidence:P1}",
+                        vendorResult.Value.Name, vendorResult.Value.Confidence);
+                }
+                else
+                {
+                    _logger.LogWarning("Vendor detection failed: {Error}", vendorResult.Error);
+                }
+                
+                return vendorResult;
+            },
+            "vendor detection");
 
-            _logger.LogDebug("Detecting vendor from {Standard} message", standard);
-
-            // Get the appropriate vendor detection plugin for this standard
-            var plugin = _pluginRegistry.GetVendorDetectionPlugin(standard);
-            if (plugin == null)
-            {
-                _logger.LogWarning("No vendor detection plugin found for standard: {Standard}", standard);
-                return CreateUnknownVendorSignature(standard);
-            }
-
-            // Validate message format using plugin
-            if (!plugin.IsValidMessageFormat(message))
-            {
-                return Result<VendorSignature>.Failure($"Message is not in valid {standard} format");
-            }
-
-            // Delegate vendor detection to the standard-specific plugin
-            var vendorResult = await plugin.DetectVendorSignatureAsync(message, _patternRepository);
-            
-            if (vendorResult.IsSuccess)
-            {
-                _logger.LogInformation("Detected vendor: {VendorName} with confidence {Confidence:P1}",
-                    vendorResult.Value.Name, vendorResult.Value.Confidence);
-            }
-            else
-            {
-                _logger.LogWarning("Vendor detection failed: {Error}", vendorResult.Error);
-            }
-            
-            return vendorResult;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error detecting vendor from raw message");
-            return Result<VendorSignature>.Failure($"Message-based vendor detection failed: {ex.Message}");
-        }
+        // If plugin not found, return unknown vendor signature
+        return result.IsSuccess ? result : CreateUnknownVendorSignature(standard);
     }
 
     /// <inheritdoc />

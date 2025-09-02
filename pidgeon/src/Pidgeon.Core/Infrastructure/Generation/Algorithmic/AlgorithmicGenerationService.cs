@@ -47,93 +47,92 @@ public class AlgorithmicGenerationService : IGenerationService
 
     public Result<Patient> GeneratePatient(GenerationOptions options)
     {
-        return ExecuteGeneration(options, 0, "patient", (random) =>
-        {
-            // Generate culturally-consistent name
-            var (firstName, lastName, gender) = HealthcareNames.GenerateRandomName(random);
-            
-            // Generate age with healthcare-realistic distribution
-            var age = GenerateAgeForPatientType(random);
-            
-            // Generate other demographics
-            var mrn = GenerateMRN(random);
-            var ssn = GenerateSSN(random);
-            var dob = CalculateDateOfBirth(age);
-            var phoneNumber = GeneratePhoneNumber(random);
-            var address = GenerateAddress(random);
-            
-            var patient = new Patient
-            {
-                Id = mrn, // Use MRN as the primary ID
-                MedicalRecordNumber = mrn,
-                Name = PersonName.Create(lastName, firstName),
-                Gender = ParseGender(gender),
-                BirthDate = dob,
-                SocialSecurityNumber = ssn,
-                PhoneNumber = phoneNumber,
-                Address = address
-            };
+        return ExecuteGeneration(options, 0, "patient", GeneratePatientLogic);
+    }
 
-            _logger.LogDebug("Generated patient: {MRN} - {Name}, Age {Age}", 
-                mrn, $"{firstName} {lastName}", age);
-            
-            return patient;
-        });
+    private Patient GeneratePatientLogic(Random random)
+    {
+        // Generate culturally-consistent name
+        var (firstName, lastName, gender) = HealthcareNames.GenerateRandomName(random);
+        
+        // Generate age with healthcare-realistic distribution
+        var age = GenerateAgeForPatientType(random);
+        
+        // Generate other demographics
+        var mrn = GenerateMRN(random);
+        var ssn = GenerateSSN(random);
+        var dob = CalculateDateOfBirth(age, random);
+        var phoneNumber = GeneratePhoneNumber(random);
+        var address = GenerateAddress(random);
+        
+        var patient = new Patient
+        {
+            Id = mrn, // Use MRN as the primary ID
+            MedicalRecordNumber = mrn,
+            Name = PersonName.Create(lastName, firstName),
+            Gender = ParseGender(gender),
+            BirthDate = dob,
+            SocialSecurityNumber = ssn,
+            PhoneNumber = phoneNumber,
+            Address = address
+        };
+
+        _logger.LogDebug("Generated patient: {MRN} - {Name}, Age {Age}", 
+            mrn, $"{firstName} {lastName}", age);
+        
+        return patient;
     }
 
     public Result<Medication> GenerateMedication(GenerationOptions options)
     {
-        return ExecuteGeneration(options, 0, "medication", (random) =>
+        return ExecuteGeneration(options, 0, "medication", GenerateMedicationLogic);
+    }
+
+    private Medication GenerateMedicationLogic(Random random)
+    {
+        // Get available medications for generation
+        var availableMeds = GetAvailableMedications();
+        
+        if (!availableMeds.Any())
         {
-            // Get available medications for generation
-            var availableMeds = GetAvailableMedications();
-            
-            if (!availableMeds.Any())
-            {
-                throw new InvalidOperationException("No medications available for specified patient type");
-            }
+            throw new InvalidOperationException("No medications available for specified patient type");
+        }
 
-            var medData = availableMeds[random.Next(availableMeds.Count)];
-            
-            var medication = new Medication
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = medData.BrandName ?? medData.GenericName,
-                GenericName = medData.GenericName,
-                Strength = medData.AvailableStrengths.FirstOrDefault() ?? "Unknown",
-                DrugClass = medData.TherapeuticClass,
-                ControlledSchedule = ParseControlledSchedule(medData.IsControlledSubstance)
-            };
+        var medData = availableMeds[random.Next(availableMeds.Count)];
+        
+        var medication = new Medication
+        {
+            Id = GenerateDeterministicId(random, "MED"),
+            Name = medData.BrandName ?? medData.GenericName,
+            GenericName = medData.GenericName,
+            Strength = medData.AvailableStrengths.FirstOrDefault() ?? "Unknown",
+            DrugClass = medData.TherapeuticClass,
+            ControlledSchedule = ParseControlledSchedule(medData.IsControlledSubstance)
+        };
 
-            _logger.LogDebug("Generated medication: {Name} ({Generic})", 
-                medication.Name, medication.GenericName);
-                
-            return medication;
-        });
+        _logger.LogDebug("Generated medication: {Name} ({Generic})", 
+            medication.Name, medication.GenericName);
+            
+        return medication;
     }
 
     public Result<Prescription> GeneratePrescription(GenerationOptions options)
     {
         return ExecuteGeneration(options, 1000, "prescription", (random) =>
         {
-            // Generate patient and medication for this prescription
-            var patientResult = GeneratePatient(options);
-            if (!patientResult.IsSuccess)
-                throw new InvalidOperationException($"Failed to generate patient: {patientResult.Error}");
-
-            var medicationResult = GenerateMedication(options);
-            if (!medicationResult.IsSuccess)
-                throw new InvalidOperationException($"Failed to generate medication: {medicationResult.Error}");
+            // Generate patient and medication using seeded random for consistency
+            var patient = GeneratePatientLogic(random);
+            var medication = GenerateMedicationLogic(random);
             
             var prescription = new Prescription
             {
                 Id = GeneratePrescriptionNumber(random),
-                Patient = patientResult.Value,
-                Medication = medicationResult.Value,
+                Patient = patient,
+                Medication = medication,
                 Prescriber = GenerateProvider(random),
-                Dosage = GenerateDosageInstructions(random, medicationResult.Value),
+                Dosage = GenerateDosageInstructions(random, medication),
                 DatePrescribed = GeneratePrescriptionDate(random),
-                Instructions = GenerateSpecialInstructions(random, medicationResult.Value)
+                Instructions = GenerateSpecialInstructions(random, medication)
             };
 
             _logger.LogDebug("Generated prescription: {RxId} for {Patient}", 
@@ -147,14 +146,12 @@ public class AlgorithmicGenerationService : IGenerationService
     {
         return ExecuteGeneration(options, 2000, "encounter", (random) =>
         {
-            var patientResult = GeneratePatient(options);
-            if (!patientResult.IsSuccess)
-                throw new InvalidOperationException($"Failed to generate patient: {patientResult.Error}");
+            var patient = GeneratePatientLogic(random);
             
             var encounter = new Encounter
             {
                 Id = GenerateEncounterNumber(random),
-                Patient = patientResult.Value,
+                Patient = patient,
                 Provider = GenerateProvider(random),
                 Type = GenerateEncounterTypeEnum(random),
                 Status = EncounterStatus.Finished,
@@ -200,6 +197,12 @@ public class AlgorithmicGenerationService : IGenerationService
 
     #region Private Generation Methods
 
+    private string GenerateDeterministicId(Random random, string prefix)
+    {
+        var randomValue = random.Next(100000000, 999999999);
+        return $"{prefix}{randomValue}";
+    }
+
     private int GenerateAgeForPatientType(Random random)
     {
         // Generate weighted age distribution based on healthcare utilization patterns
@@ -241,10 +244,10 @@ public class AlgorithmicGenerationService : IGenerationService
         return $"{area}-{group:D2}-{serial:D4}";
     }
 
-    private DateTime CalculateDateOfBirth(int age)
+    private DateTime CalculateDateOfBirth(int age, Random random)
     {
         var today = DateTime.Today;
-        return today.AddYears(-age).AddDays(Random.Shared.Next(-365, 365));
+        return today.AddYears(-age).AddDays(random.Next(-365, 365));
     }
 
     private string GeneratePhoneNumber(Random random)

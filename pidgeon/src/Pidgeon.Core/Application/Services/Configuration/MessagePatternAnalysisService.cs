@@ -13,23 +13,20 @@ namespace Pidgeon.Core.Application.Services.Configuration;
 /// Pure orchestrator that delegates ALL standard-specific operations to plugins.
 /// Contains ZERO hardcoded standard logic - follows sacred plugin architecture principle.
 /// </summary>
-internal class MessagePatternAnalysisService : IMessagePatternAnalysisService
+internal class MessagePatternAnalysisService : PluginAccessorBase<MessagePatternAnalysisService, IStandardFieldAnalysisPlugin>, IMessagePatternAnalysisService
 {
-    private readonly IStandardPluginRegistry _pluginRegistry;
     private readonly IFieldPatternAnalysisService _fieldAnalyzer;
     private readonly IConfidenceCalculationService _confidenceCalculator;
-    private readonly ILogger<MessagePatternAnalysisService> _logger;
 
     public MessagePatternAnalysisService(
         IStandardPluginRegistry pluginRegistry,
         IFieldPatternAnalysisService fieldAnalyzer,
         IConfidenceCalculationService confidenceCalculator,
         ILogger<MessagePatternAnalysisService> logger)
+        : base(pluginRegistry, logger)
     {
-        _pluginRegistry = pluginRegistry ?? throw new ArgumentNullException(nameof(pluginRegistry));
         _fieldAnalyzer = fieldAnalyzer ?? throw new ArgumentNullException(nameof(fieldAnalyzer));
         _confidenceCalculator = confidenceCalculator ?? throw new ArgumentNullException(nameof(confidenceCalculator));
-        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -77,57 +74,48 @@ internal class MessagePatternAnalysisService : IMessagePatternAnalysisService
         string standard,
         string messageType)
     {
-        try
-        {
-            var messageList = messages.ToList();
-            _logger.LogInformation("Detecting component patterns for {MessageCount} {Standard} {MessageType} messages",
-                messageList.Count, standard, messageType);
+        var messageList = messages.ToList();
+        _logger.LogInformation("Detecting component patterns for {MessageCount} {Standard} {MessageType} messages",
+            messageList.Count, standard, messageType);
 
-            // Get the standard-specific plugin - pure delegation
-            var plugin = _pluginRegistry.GetFieldAnalysisPlugin(standard);
-            if (plugin == null)
+        return await ExecutePluginOperationAsync(
+            standard,
+            registry => registry.GetFieldAnalysisPlugin(standard),
+            async plugin =>
             {
-                _logger.LogWarning("No field analysis plugin found for standard: {Standard}", standard);
-                return Result<Dictionary<string, ComponentPattern>>.Failure($"No plugin available for standard: {standard}");
-            }
+                // Delegate field pattern analysis to plugin
+                var patternsResult = await plugin.AnalyzeFieldPatternsAsync(messageList, messageType);
+                if (patternsResult.IsFailure)
+                    return Result<Dictionary<string, ComponentPattern>>.Failure($"Field pattern analysis failed: {patternsResult.Error}");
 
-            // Delegate field pattern analysis to plugin
-            var patternsResult = await plugin.AnalyzeFieldPatternsAsync(messageList, messageType);
-            if (patternsResult.IsFailure)
-                return Result<Dictionary<string, ComponentPattern>>.Failure($"Field pattern analysis failed: {patternsResult.Error}");
+                var componentPatterns = new Dictionary<string, ComponentPattern>();
 
-            var componentPatterns = new Dictionary<string, ComponentPattern>();
-
-            // For each field that might have components, delegate component analysis to plugin
-            foreach (var segmentPattern in patternsResult.Value.SegmentPatterns)
-            {
-                foreach (var fieldFreq in segmentPattern.Value.FieldFrequencies)
+                // For each field that might have components, delegate component analysis to plugin
+                foreach (var segmentPattern in patternsResult.Value.SegmentPatterns)
                 {
-                    if (fieldFreq.Value.ComponentPatterns?.Any() == true)
+                    foreach (var fieldFreq in segmentPattern.Value.FieldFrequencies)
                     {
-                        // Let the plugin determine and extract field values for component analysis
-                        // This avoids hardcoded parsing logic in core service
-                        var componentResult = await AnalyzeFieldComponents(
-                            messageList, fieldFreq.Key.ToString(), standard, plugin);
-                        
-                        if (componentResult.IsSuccess)
+                        if (fieldFreq.Value.ComponentPatterns?.Any() == true)
                         {
-                            componentPatterns[fieldFreq.Key.ToString()] = componentResult.Value;
+                            // Let the plugin determine and extract field values for component analysis
+                            // This avoids hardcoded parsing logic in core service
+                            var componentResult = await AnalyzeFieldComponents(
+                                messageList, fieldFreq.Key.ToString(), standard, plugin);
+                            
+                            if (componentResult.IsSuccess)
+                            {
+                                componentPatterns[fieldFreq.Key.ToString()] = componentResult.Value;
+                            }
                         }
                     }
                 }
-            }
 
-            _logger.LogInformation("Component pattern detection completed: {PatternCount} patterns detected",
-                componentPatterns.Count);
+                _logger.LogInformation("Component pattern detection completed: {PatternCount} patterns detected",
+                    componentPatterns.Count);
 
-            return Result<Dictionary<string, ComponentPattern>>.Success(componentPatterns);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error detecting component patterns for {Standard} {MessageType}", standard, messageType);
-            return Result<Dictionary<string, ComponentPattern>>.Failure($"Component pattern detection failed: {ex.Message}");
-        }
+                return Result<Dictionary<string, ComponentPattern>>.Success(componentPatterns);
+            },
+            "component pattern detection");
     }
 
     /// <inheritdoc />
