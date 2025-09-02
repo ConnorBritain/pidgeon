@@ -1,6 +1,6 @@
 # System.CommandLine API Research
 
-**Research Objective**: Determine the best stable version and API patterns for System.CommandLine to implement Segmint CLI v1  
+**Research Objective**: Determine the best stable version and API patterns for System.CommandLine to implement Pidgeon CLI v1  
 **Research Date**: 2025-08-26  
 **Criticality**: URGENT - CLI is mission-critical for user adoption  
 

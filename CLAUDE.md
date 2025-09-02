@@ -12,32 +12,32 @@
 
 ### **🚨 CRITICAL - Must Read for Every Session**
 1. **[`docs/pidgeon_feature_plan.md`](docs/pidgeon_feature_plan.md)** - **MASTER ROADMAP: Definitive stage-gate plan with success criteria**
-2. **[`docs/roadmap/INIT.md`](docs/roadmap/INIT.md)** - 90-day foundation roadmap with SACRED architectural principles
-3. **[`docs/LEDGER.md`](docs/LEDGER.md)** - Complete development decision log and rollback procedures
-4. **[`docs/agent_steering/test-philosophy.md`](docs/agent_steering/test-philosophy.md)** - Testing strategy and behavior-driven approach
-5. **[`docs/user_stories/BACKLOG.md`](docs/user_stories/BACKLOG.md)** - Prioritized user stories and MVP validation
+2. **[`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)** - **CURRENT PLAN: Foundation repair through P0 MVP delivery**
+3. **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)** - **ARCHITECTURAL SPEC: Four-domain architecture and implementation status**
+4. **[`docs/arch_reviews/PIDGEON_AR_FINAL.md`](docs/arch_reviews/PIDGEON_AR_FINAL.md)** - **FOUNDATION CONTEXT: Critical for executing repairs correctly**
+5. **[`docs/LEDGER.md`](docs/LEDGER.md)** - Complete development decision log and rollback procedures
+6. **[`docs/roadmap/INIT.md`](docs/roadmap/INIT.md)** - Sacred architectural principles and constraints
 
-### **Agent Steering Documentation (READ FIRST)**
-6. **[`docs/agent_steering/product.md`](docs/agent_steering/product.md)** - Product vision and Core+ strategy
-7. **[`docs/agent_steering/structure.md`](docs/agent_steering/structure.md)** - Clean architecture principles
-8. **[`docs/agent_steering/tech.md`](docs/agent_steering/tech.md)** - Technology stack and patterns
-9. **[`docs/agent_steering/agent-reflection.md`](docs/agent_steering/agent-reflection.md)** - Decision framework
-10. **[`docs/agent_steering/error-resolution-methodology.md`](docs/agent_steering/error-resolution-methodology.md)** - STOP-THINK-ACT error handling framework
+### **Agent Steering Documentation**
+7. **[`docs/agent_steering/product.md`](docs/agent_steering/product.md)** - Product vision and Core+ strategy
+8. **[`docs/agent_steering/structure.md`](docs/agent_steering/structure.md)** - Clean architecture principles
+9. **[`docs/agent_steering/tech.md`](docs/agent_steering/tech.md)** - Technology stack and patterns
+10. **[`docs/agent_steering/agent-reflection.md`](docs/agent_steering/agent-reflection.md)** - Decision framework
+11. **[`docs/agent_steering/error-resolution-methodology.md`](docs/agent_steering/error-resolution-methodology.md)** - STOP-THINK-ACT error handling framework
+12. **[`docs/agent_steering/test-philosophy.md`](docs/agent_steering/test-philosophy.md)** - Testing strategy and behavior-driven approach
 
-### **User-Centered Development (PRODUCT-FIRST)**
-11. **[`docs/user_stories/MVP_VALIDATION.md`](docs/user_stories/MVP_VALIDATION.md)** - Business model alignment and MVP validation
-12. **[`docs/user_stories/developer/core_stories.md`](docs/user_stories/developer/core_stories.md)** - Developer workflows and pain points
-13. **[`docs/user_stories/consultant/core_stories.md`](docs/user_stories/consultant/core_stories.md)** - Consultant engagement scenarios
-14. **[`docs/user_stories/informaticist/core_stories.md`](docs/user_stories/informaticist/core_stories.md)** - Healthcare IT operational needs
-15. **[`docs/user_stories/administrator/core_stories.md`](docs/user_stories/administrator/core_stories.md)** - Strategic and compliance requirements
+### **User-Centered Development**
+13. **[`docs/user_stories/BACKLOG.md`](docs/user_stories/BACKLOG.md)** - Prioritized user stories and MVP validation
+14. **[`docs/user_stories/MVP_VALIDATION.md`](docs/user_stories/MVP_VALIDATION.md)** - Business model alignment validation
+15. **[`docs/user_stories/developer/core_stories.md`](docs/user_stories/developer/core_stories.md)** - Developer workflows and pain points
+16. **[`docs/user_stories/consultant/core_stories.md`](docs/user_stories/consultant/core_stories.md)** - Consultant engagement scenarios
+17. **[`docs/user_stories/informaticist/core_stories.md`](docs/user_stories/informaticist/core_stories.md)** - Healthcare IT operational needs
+18. **[`docs/user_stories/administrator/core_stories.md`](docs/user_stories/administrator/core_stories.md)** - Strategic and compliance requirements
 
-### **Founding Strategy Documents**
-16. **[`docs/founding_plan/business_model.md`](docs/founding_plan/business_model.md)** - **Crystallized subscription-first revenue model**
-17. **[`docs/founding_plan/generation_considerations.md`](docs/founding_plan/generation_considerations.md)** - **Generation service architecture & AI integration**
-18. **[`docs/founding_plan/core_plus_strategy.md`](docs/founding_plan/core_plus_strategy.md)** - Original business model details
-19. **[`docs/founding_plan/1_founder.md`](docs/founding_plan/1_founder.md)** - Technical founder perspective
-20. **[`docs/founding_plan/2_consultant.md`](docs/founding_plan/2_consultant.md)** - Healthcare consultant insights
-21. **[`docs/founding_plan/3_investor.md`](docs/founding_plan/3_investor.md)** - Investor business case
+### **Business Strategy Documents**
+19. **[`docs/founding_plan/business_model.md`](docs/founding_plan/business_model.md)** - Crystallized subscription-first revenue model
+20. **[`docs/founding_plan/generation_considerations.md`](docs/founding_plan/generation_considerations.md)** - Generation service architecture & AI integration
+21. **[`docs/founding_plan/core_plus_strategy.md`](docs/founding_plan/core_plus_strategy.md)** - Original business model details
 
 ---
 

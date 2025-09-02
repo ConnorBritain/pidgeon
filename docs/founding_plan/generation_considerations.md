@@ -13,7 +13,7 @@
 
 Based on comprehensive research of founding documents, the generation service follows a **unified AI-enhanced approach** rather than separate projects. AI features are designed as premium tier enhancements within the Core+ business model.
 
-**Key Finding**: No explicit "Segmint.AI" separation found. Documents consistently reference AI as integrated features positioned as premium tier enhancement, not separate product.
+**Key Finding**: No explicit "Pidgeon.AI" separation found. Documents consistently reference AI as integrated features positioned as premium tier enhancement, not separate product.
 
 ### **Two-Tier Generation System**
 ```
@@ -46,7 +46,7 @@ Based on comprehensive research of founding documents, the generation service fo
 
 ### **Core Generation Interface**
 ```csharp
-namespace Segmint.Core.Generation {
+namespace Pidgeon.Core.Generation {
     public interface IGenerationService {
         Result<Patient> GeneratePatient(GenerationOptions options);
         Result<Medication> GenerateMedication(GenerationOptions options);  
@@ -77,7 +77,7 @@ namespace Segmint.Core.Generation {
 ### **Business Model Separation**
 ```csharp
 // ✅ Core (Free) - Always Available
-namespace Segmint.Core.Generation.Algorithmic {
+namespace Pidgeon.Core.Generation.Algorithmic {
     public class AlgorithmicGenerationService : IGenerationService {
         // Uses embedded datasets, no external dependencies
         // Deterministic with seeds for testing
@@ -86,7 +86,7 @@ namespace Segmint.Core.Generation.Algorithmic {
 }
 
 // ✅ Professional/Enterprise - Premium Features
-namespace Segmint.Core.Generation.AI {
+namespace Pidgeon.Core.Generation.AI {
     public class AIGenerationService : IGenerationService {
         // LLM integration with BYOK
         // Contextual relationships
@@ -101,7 +101,7 @@ namespace Segmint.Core.Generation.AI {
 
 ### **Core Generation Structure**
 ```
-src/Segmint.Core/Generation/
+src/Pidgeon.Core/Generation/
 ├── IGenerationService.cs
 ├── GenerationOptions.cs
 ├── GenerationResult.cs                    # Detailed results with metadata
@@ -379,10 +379,10 @@ We're not selling software access, we're selling **healthcare data intelligence*
 5. **End-to-end Test** (CLI → Domain → HL7 → File)
 
 **Files to Create**:
-- `src/Segmint.Core/Generation/IGenerationService.cs`
-- `src/Segmint.Core/Generation/GenerationOptions.cs`
-- `src/Segmint.Core/Generation/Algorithmic/AlgorithmicGenerationService.cs`
-- `src/Segmint.Core/Generation/Data/Core/Names.cs`
+- `src/Pidgeon.Core/Generation/IGenerationService.cs`
+- `src/Pidgeon.Core/Generation/GenerationOptions.cs`
+- `src/Pidgeon.Core/Generation/Algorithmic/AlgorithmicGenerationService.cs`
+- `src/Pidgeon.Core/Generation/Data/Core/Names.cs`
 
 ### **Phase 2: Rich Algorithmic Generation** (Next Sprint)  
 **Goal**: Professional-quality synthetic data without AI
@@ -488,6 +488,6 @@ We're not selling software access, we're selling **healthcare data intelligence*
 
 ---
 
-**Strategic Summary**: This generation service transforms Segmint from an HL7 tool into a **healthcare data intelligence platform**. The two-tier approach ensures immediate developer adoption while creating clear monetization through specialized datasets and AI enhancement. Success depends on delivering exceptional free tier value while making premium features obviously valuable for professional use cases.
+**Strategic Summary**: This generation service transforms Pidgeon from an HL7 tool into a **healthcare data intelligence platform**. The two-tier approach ensures immediate developer adoption while creating clear monetization through specialized datasets and AI enhancement. Success depends on delivering exceptional free tier value while making premium features obviously valuable for professional use cases.
 
 **Next Phase**: Refine free vs premium dataset balance, then begin Phase 1 implementation with minimal viable generation service.
