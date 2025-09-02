@@ -4,10 +4,9 @@
 
 using Pidgeon.Core;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
-using Pidgeon.Core.Infrastructure.Standards.Abstractions;
-using Pidgeon.Core.Infrastructure.Standards.Common;
-using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
-using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Application.Interfaces.Standards;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Common;
+using Pidgeon.Core.Application.Common;
 using System.Linq;
 
 namespace Pidgeon.Core.Domain.Messaging.HL7v2.Messages;

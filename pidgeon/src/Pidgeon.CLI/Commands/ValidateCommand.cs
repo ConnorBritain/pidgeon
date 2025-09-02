@@ -4,8 +4,8 @@
 
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Validation;
-using Pidgeon.Core.Infrastructure.Standards.Abstractions;
-using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Application.Interfaces.Standards;
+using Pidgeon.Core.Application.Common;
 using System.CommandLine;
 
 namespace Pidgeon.CLI.Commands;

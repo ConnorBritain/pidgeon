@@ -2,9 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Infrastructure.Standards.Abstractions;
+using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
-using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Application.Common;
 using Pidgeon.Core;
 
 namespace Pidgeon.Core.Infrastructure.Standards.Plugins.HL7.v23;

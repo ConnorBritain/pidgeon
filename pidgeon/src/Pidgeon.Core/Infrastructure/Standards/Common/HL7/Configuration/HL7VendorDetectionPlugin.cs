@@ -4,7 +4,7 @@
 
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Domain.Configuration.Services;
-using Pidgeon.Core.Infrastructure.Standards.Abstractions;
+using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Configuration.Entities;
 using System.Text.RegularExpressions;
 using ConfigMatchType = Pidgeon.Core.Domain.Configuration.Entities.MatchType;

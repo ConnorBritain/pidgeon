@@ -3,10 +3,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.DependencyInjection;
-using Pidgeon.Core.Infrastructure.Standards.Abstractions;
+using Pidgeon.Core.Application.Interfaces.Standards;
+using Pidgeon.Core.Infrastructure.Registry;
 using Pidgeon.Core.Services;
 using Pidgeon.Core.Domain.Configuration.Services;
-using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Application.Common;
 using Pidgeon.Core.Application.Interfaces.Validation;
 using Pidgeon.Core.Application.Services.Validation;
 using Pidgeon.Core.Adapters.Interfaces;

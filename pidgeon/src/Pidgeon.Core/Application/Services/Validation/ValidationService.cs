@@ -4,7 +4,7 @@
 
 using Pidgeon.Core;
 using Pidgeon.Core.Application.Interfaces.Validation;
-using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Application.Common;
 
 namespace Pidgeon.Core.Application.Services.Validation;
 

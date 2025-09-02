@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Common;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
 namespace Pidgeon.Core.Domain.Messaging.HL7v2.Segments;

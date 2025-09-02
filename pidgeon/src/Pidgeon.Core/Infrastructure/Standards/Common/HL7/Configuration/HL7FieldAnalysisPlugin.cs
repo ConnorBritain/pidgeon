@@ -4,7 +4,7 @@
 
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Adapters.Interfaces;
-using Pidgeon.Core.Infrastructure.Standards.Abstractions;
+using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Configuration.Entities;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 using Pidgeon.Core.Domain.Messaging;

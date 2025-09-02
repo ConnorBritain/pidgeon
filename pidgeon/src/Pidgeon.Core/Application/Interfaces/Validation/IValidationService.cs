@@ -3,7 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core;
-using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Application.Common;
 
 namespace Pidgeon.Core.Application.Interfaces.Validation;
 

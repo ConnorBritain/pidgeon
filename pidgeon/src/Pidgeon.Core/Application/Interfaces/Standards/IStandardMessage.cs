@@ -3,9 +3,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core;
-using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Application.Common;
 
-namespace Pidgeon.Core.Infrastructure.Standards.Abstractions;
+namespace Pidgeon.Core.Application.Interfaces.Standards;
 
 /// <summary>
 /// Represents a message in a healthcare standard.

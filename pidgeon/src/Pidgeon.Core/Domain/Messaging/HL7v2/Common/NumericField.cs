@@ -5,7 +5,7 @@
 using System.Globalization;
 using Pidgeon.Core;
 
-namespace Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.Common;
 
 /// <summary>
 /// Represents an HL7 Numeric (NM) field - decimal number data type.

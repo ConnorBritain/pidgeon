@@ -5,7 +5,7 @@
 using Pidgeon.Core;
 using Pidgeon.Core.Domain.Clinical.Entities;
 
-namespace Pidgeon.Core.Infrastructure.Standards.Abstractions;
+namespace Pidgeon.Core.Application.Interfaces.Standards;
 
 /// <summary>
 /// Factory interface for creating standard-specific healthcare messages.

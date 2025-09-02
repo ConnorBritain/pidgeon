@@ -3,7 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Clinical.Entities;
-using Pidgeon.Core.Infrastructure.Standards.Abstractions;
+using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core;
 
 namespace Pidgeon.Core.Standards.HL7v24Plugin;

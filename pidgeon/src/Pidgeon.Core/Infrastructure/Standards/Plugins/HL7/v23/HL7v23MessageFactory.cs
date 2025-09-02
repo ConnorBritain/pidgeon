@@ -6,8 +6,8 @@ using Pidgeon.Core.Domain.Clinical.Entities;
 using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
-using Pidgeon.Core.Infrastructure.Standards.Abstractions;
-using Pidgeon.Core.Standards.Common;
+using Pidgeon.Core.Application.Interfaces.Standards;
+using Pidgeon.Core.Application.Common;
 using Pidgeon.Core;
 
 namespace Pidgeon.Core.Infrastructure.Standards.Plugins.HL7.v23;

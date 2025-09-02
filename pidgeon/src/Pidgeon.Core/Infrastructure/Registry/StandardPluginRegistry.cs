@@ -3,9 +3,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
-using Pidgeon.Core.Infrastructure.Standards.Abstractions;
+using Pidgeon.Core.Application.Interfaces.Standards;
 
-namespace Pidgeon.Core.Standards.Common;
+namespace Pidgeon.Core.Infrastructure.Registry;
 
 /// <summary>
 /// Implementation of the standard plugin registry supporting both message generation

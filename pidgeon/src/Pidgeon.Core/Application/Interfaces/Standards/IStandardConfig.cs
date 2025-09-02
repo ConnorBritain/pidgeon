@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-namespace Pidgeon.Core.Infrastructure.Standards.Abstractions;
+namespace Pidgeon.Core.Application.Interfaces.Standards;
 
 /// <summary>
 /// Defines the contract for standard-specific configuration.

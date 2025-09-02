@@ -4,7 +4,7 @@
 
 using Pidgeon.Core;
 using Pidgeon.Core.Application.DTOs;
-using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+using Pidgeon.Core.Domain.Messaging.HL7v2.Common;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 
 namespace Pidgeon.Core.Domain.Messaging.HL7v2.Segments;

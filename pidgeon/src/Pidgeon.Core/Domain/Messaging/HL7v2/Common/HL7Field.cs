@@ -4,7 +4,7 @@
 
 using Pidgeon.Core;
 
-namespace Pidgeon.Core.Infrastructure.Standards.Common.HL7;
+namespace Pidgeon.Core.Domain.Messaging.HL7v2.Common;
 
 /// <summary>
 /// Represents a single HL7 field with type-safe value handling and validation.
