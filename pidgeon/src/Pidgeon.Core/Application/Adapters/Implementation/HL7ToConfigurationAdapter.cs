@@ -89,7 +89,7 @@ public class HL7ToConfigurationAdapter : IMessagingToConfigurationAdapter
                         Fields = new Dictionary<int, FieldFrequency>(),
                         FieldFrequencies = new Dictionary<int, FieldFrequency>(), // TODO: Remove duplicate in Phase 2
                         SegmentType = segmentId, // Use segment ID as type for now
-                        TotalOccurrences = totalSamples,
+                        TotalCount = totalSamples,
                         Confidence = 1.0, // Default confidence
                         SampleSize = totalSamples
                     };
@@ -226,13 +226,13 @@ public class HL7ToConfigurationAdapter : IMessagingToConfigurationAdapter
         {
             foreach (var fieldFreq in segmentPattern.FieldFrequencies)
             {
-                if (fieldFreq.Value.PopulationRate > 0.8) // Fields present in >80% of messages are considered required
+                if (fieldFreq.Value.Frequency > 0.8) // Fields present in >80% of messages are considered required
                 {
                     var fieldPath = $"{segmentPattern.SegmentId}.{fieldFreq.Key}";
                     requiredFields[fieldPath] = new FieldPattern
                     {
                         Path = fieldPath,
-                        PopulationRate = fieldFreq.Value.PopulationRate,
+                        Frequency = fieldFreq.Value.Frequency,
                         CommonValues = fieldFreq.Value.CommonValues?.Keys.ToList() ?? new List<string>(),
                         RegexPattern = null,
                         Cardinality = Cardinality.Required
@@ -252,13 +252,13 @@ public class HL7ToConfigurationAdapter : IMessagingToConfigurationAdapter
         {
             foreach (var fieldFreq in segmentPattern.FieldFrequencies)
             {
-                if (fieldFreq.Value.PopulationRate <= 0.8) // Fields present in ≤80% of messages are considered optional
+                if (fieldFreq.Value.Frequency <= 0.8) // Fields present in ≤80% of messages are considered optional
                 {
                     var fieldPath = $"{segmentPattern.SegmentId}.{fieldFreq.Key}";
                     optionalFields[fieldPath] = new FieldPattern
                     {
                         Path = fieldPath,
-                        PopulationRate = fieldFreq.Value.PopulationRate,
+                        Frequency = fieldFreq.Value.Frequency,
                         CommonValues = fieldFreq.Value.CommonValues?.Keys.ToList() ?? new List<string>(),
                         RegexPattern = null,
                         Cardinality = Cardinality.Optional
@@ -276,7 +276,7 @@ public class HL7ToConfigurationAdapter : IMessagingToConfigurationAdapter
             return 0.0;
 
         // Simple confidence calculation based on average population rates
-        var averagePopulation = fieldFrequencies.Values.Average(f => f.PopulationRate);
+        var averagePopulation = fieldFrequencies.Values.Average(f => f.Frequency);
         return Math.Min(averagePopulation + 0.1, 1.0); // Boost confidence slightly, cap at 1.0
     }
 

@@ -3,13 +3,14 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Text.Json.Serialization;
+using Pidgeon.Core.Domain.Configuration.Common;
 
 namespace Pidgeon.Core.Domain.Configuration.Entities;
 
 /// <summary>
 /// Metadata about configuration analysis and evolution tracking.
 /// </summary>
-public record ConfigurationMetadata
+public record ConfigurationMetadata : TemporalConfigurationBase
 {
     /// <summary>
     /// When this configuration was first created.
@@ -18,22 +19,10 @@ public record ConfigurationMetadata
     public DateTime FirstSeen { get; init; } = DateTime.UtcNow;
 
     /// <summary>
-    /// When this configuration was last updated.
-    /// </summary>
-    [JsonPropertyName("lastUpdated")]
-    public DateTime LastUpdated { get; init; } = DateTime.UtcNow;
-
-    /// <summary>
     /// Total number of messages sampled for this configuration.
     /// </summary>
     [JsonPropertyName("messagesSampled")]
     public int MessagesSampled { get; init; }
-
-    /// <summary>
-    /// Configuration version string (e.g., "1.0", "1.1").
-    /// </summary>
-    [JsonPropertyName("version")]
-    public string Version { get; init; } = "1.0";
 
     /// <summary>
     /// List of configuration changes over time.

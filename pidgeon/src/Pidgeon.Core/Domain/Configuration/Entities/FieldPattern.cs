@@ -19,10 +19,10 @@ public record FieldPattern
     public string Path { get; init; } = string.Empty;
 
     /// <summary>
-    /// Population rate indicating how often this field is used (0.0 to 1.0).
+    /// Frequency rate indicating how often this field is used (0.0 to 1.0).
     /// </summary>
-    [JsonPropertyName("populationRate")]
-    public double PopulationRate { get; init; }
+    [JsonPropertyName("frequency")]
+    public double Frequency { get; init; }
 
     /// <summary>
     /// Common values observed in this field.

@@ -36,10 +36,10 @@ public record MessagePattern
     public string Standard { get; init; } = string.Empty;
 
     /// <summary>
-    /// Total number of samples analyzed for this pattern.
+    /// Number of samples analyzed for this pattern.
     /// </summary>
-    [JsonPropertyName("totalSamples")]
-    public int TotalSamples { get; init; }
+    [JsonPropertyName("sampleSize")]
+    public int SampleSize { get; init; }
 
     /// <summary>
     /// Field frequency analysis for this message pattern.
@@ -119,7 +119,7 @@ public record MessagePattern
                             FieldIndex = existing.FieldIndex,
                             PopulatedCount = existing.PopulatedCount + fieldKvp.Value.PopulatedCount,
                             TotalCount = existing.TotalCount + fieldKvp.Value.TotalCount,
-                            PopulationRate = (double)(existing.PopulatedCount + fieldKvp.Value.PopulatedCount) / (existing.TotalCount + fieldKvp.Value.TotalCount),
+                            Frequency = (double)(existing.PopulatedCount + fieldKvp.Value.PopulatedCount) / (existing.TotalCount + fieldKvp.Value.TotalCount),
                             CommonValues = existing.CommonValues.Concat(fieldKvp.Value.CommonValues).GroupBy(x => x.Key).ToDictionary(g => g.Key, g => g.Sum(x => x.Value))
                         };
                     }

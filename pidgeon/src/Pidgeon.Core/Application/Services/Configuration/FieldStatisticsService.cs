@@ -41,7 +41,7 @@ internal class FieldStatisticsService : IFieldStatisticsService
             {
                 totalFields += segmentPattern.FieldFrequencies.Count;
                 populatedFields += segmentPattern.FieldFrequencies.Values
-                    .Count(f => f.PopulationRate > 0);
+                    .Count(f => f.Frequency > 0);
                 
                 if (segmentPattern.SampleSize > totalSampleSize)
                     totalSampleSize = segmentPattern.SampleSize;
@@ -89,7 +89,7 @@ internal class FieldStatisticsService : IFieldStatisticsService
                     .Sum(s => s.FieldFrequencies.Count);
                 var populatedFields = patterns.SegmentPatterns.Values
                     .SelectMany(s => s.FieldFrequencies.Values)
-                    .Count(f => f.PopulationRate > 0.5); // Consider >50% population as "covered"
+                    .Count(f => f.Frequency > 0.5); // Consider >50% population as "covered"
 
                 var coverage = totalFields > 0 ? (double)populatedFields / totalFields : 0.0;
                 
@@ -106,7 +106,7 @@ internal class FieldStatisticsService : IFieldStatisticsService
                 {
                     foreach (var fieldFreq in segmentPattern.FieldFrequencies)
                     {
-                        if (fieldFreq.Value.PopulationRate > 0.5)
+                        if (fieldFreq.Value.Frequency > 0.5)
                         {
                             actualFields.Add($"{segmentPattern.SegmentId}.{fieldFreq.Key}");
                         }
@@ -145,7 +145,7 @@ internal class FieldStatisticsService : IFieldStatisticsService
             // Factor 1: Field population consistency
             var populationRates = patterns.SegmentPatterns.Values
                 .SelectMany(s => s.FieldFrequencies.Values)
-                .Select(f => f.PopulationRate)
+                .Select(f => f.Frequency)
                 .Where(rate => rate > 0)
                 .ToList();
 
@@ -158,10 +158,10 @@ internal class FieldStatisticsService : IFieldStatisticsService
             // Factor 2: Required field coverage (assume fields with >80% population are required)
             var requiredFieldsCovered = patterns.SegmentPatterns.Values
                 .SelectMany(s => s.FieldFrequencies.Values)
-                .Count(f => f.PopulationRate > 0.8);
+                .Count(f => f.Frequency > 0.8);
             var totalRequiredFields = patterns.SegmentPatterns.Values
                 .SelectMany(s => s.FieldFrequencies.Values)
-                .Count(f => f.PopulationRate > 0);
+                .Count(f => f.Frequency > 0);
             
             if (totalRequiredFields > 0)
             {

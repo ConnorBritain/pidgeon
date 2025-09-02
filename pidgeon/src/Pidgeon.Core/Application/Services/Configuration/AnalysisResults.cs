@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Text.Json.Serialization;
+using Pidgeon.Core.Domain.Configuration.Common;
 
 namespace Pidgeon.Core.Application.Services.Configuration;
 
@@ -16,25 +17,22 @@ namespace Pidgeon.Core.Application.Services.Configuration;
 /// Complete configuration analysis result from any healthcare standard plugin.
 /// Universal format populated by HL7, FHIR, NCPDP, or other standard-specific plugins.
 /// </summary>
-public record AnalysisResult
+public record AnalysisResult : FullAnalysisBase
 {
     /// <summary>
     /// Healthcare standard analyzed (e.g., "HL7v23", "FHIR", "NCPDP").
-    /// Populated by the plugin based on the standard it handles.
     /// </summary>
     [JsonPropertyName("standard")]
     public string Standard { get; init; } = string.Empty;
 
     /// <summary>
     /// Message type analyzed (e.g., "ADT^A01", "Patient", "NewRx").
-    /// Standard-agnostic but context-appropriate based on the healthcare standard.
     /// </summary>
     [JsonPropertyName("messageType")]
     public string MessageType { get; init; } = string.Empty;
 
     /// <summary>
     /// Segment/resource/section analysis by type.
-    /// Universal format: HL7 uses segments, FHIR uses resources, NCPDP uses sections.
     /// </summary>
     [JsonPropertyName("segmentAnalysis")]
     public Dictionary<string, SegmentAnalysisResult> SegmentAnalysis { get; init; } = new();
@@ -50,24 +48,6 @@ public record AnalysisResult
     /// </summary>
     [JsonPropertyName("vendorDetection")]
     public VendorAnalysisResult VendorDetection { get; init; } = new();
-
-    /// <summary>
-    /// Configuration inference confidence (0.0 to 1.0).
-    /// </summary>
-    [JsonPropertyName("confidence")]
-    public double Confidence { get; init; }
-
-    /// <summary>
-    /// Number of messages/resources/transactions analyzed.
-    /// </summary>
-    [JsonPropertyName("sampleSize")]
-    public int SampleSize { get; init; }
-
-    /// <summary>
-    /// When this analysis was performed.
-    /// </summary>
-    [JsonPropertyName("analysisDate")]
-    public DateTime AnalysisDate { get; init; } = DateTime.UtcNow;
 }
 
 /// <summary>
@@ -335,7 +315,7 @@ public record FormatDeviationResult
 /// Field statistics analysis results.
 /// Universal format for any healthcare standard.
 /// </summary>
-public record FieldStatistics
+public record FieldStatistics : FullAnalysisBase
 {
     /// <summary>
     /// Total number of fields/elements analyzed.
@@ -368,20 +348,8 @@ public record FieldStatistics
     public List<string> MostCommonStructures { get; init; } = new();
 
     /// <summary>
-    /// When this analysis was performed.
-    /// </summary>
-    [JsonPropertyName("analysisDate")]
-    public DateTime AnalysisDate { get; init; } = DateTime.UtcNow;
-
-    /// <summary>
     /// Quality score for field patterns (0.0 to 1.0).
     /// </summary>
     [JsonPropertyName("qualityScore")]
     public double QualityScore { get; init; }
-
-    /// <summary>
-    /// Number of samples analyzed for these statistics.
-    /// </summary>
-    [JsonPropertyName("sampleSize")]
-    public int SampleSize { get; init; }
 }

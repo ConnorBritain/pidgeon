@@ -180,7 +180,7 @@ internal class MessagePatternAnalysisService : IMessagePatternAnalysisService
             var nullTolerance = new Dictionary<string, double>();
             foreach (var fieldFreq in frequencyResult.Value)
             {
-                var totalOccurrences = fieldFreq.Value.TotalOccurrences;
+                var totalOccurrences = fieldFreq.Value.TotalCount;
                 var populatedOccurrences = fieldFreq.Value.Frequency;
                 var nullOccurrences = totalOccurrences - populatedOccurrences;
                 
@@ -242,7 +242,7 @@ internal class MessagePatternAnalysisService : IMessagePatternAnalysisService
             {
                 Standard = standard,
                 MessageType = messageType,
-                TotalSamples = messageList.Count,
+                SampleSize = messageList.Count,
                 FieldFrequencies = frequencyResult.Value,
                 ComponentPatterns = componentResult.IsSuccess ? componentResult.Value : new Dictionary<string, ComponentPattern>(),
                 NullTolerance = nullToleranceResult.IsSuccess ? nullToleranceResult.Value.Values.FirstOrDefault() : 0.0,
@@ -303,7 +303,7 @@ internal class MessagePatternAnalysisService : IMessagePatternAnalysisService
             {
                 FieldType = fieldName,
                 ComponentFrequencies = new Dictionary<int, ComponentFrequency>(),
-                TotalSamples = messageList.Count,
+                SampleSize = messageList.Count,
                 StandardName = standard
             };
 

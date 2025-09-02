@@ -3,13 +3,13 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Text.Json.Serialization;
+using Pidgeon.Core.Domain.Configuration.Common;
 
 namespace Pidgeon.Core.Domain.Configuration.Entities;
 
 /// <summary>
 /// Represents a deviation from standard healthcare message format.
 /// Captures vendor-specific formatting choices and non-standard implementations.
-/// Renamed from "VendorQuirk" to use neutral terminology.
 /// </summary>
 public record FormatDeviation
 {
@@ -132,7 +132,7 @@ public enum DeviationSeverity
 /// <summary>
 /// Analysis of the impact of format deviations on system interoperability.
 /// </summary>
-public record DeviationImpactAnalysis
+public record DeviationImpactAnalysis : TemporalConfigurationBase
 {
     /// <summary>
     /// Overall impact score (0.0 = no impact, 1.0 = critical impact).
@@ -163,12 +163,6 @@ public record DeviationImpactAnalysis
     /// </summary>
     [JsonPropertyName("recommendations")]
     public List<string> Recommendations { get; init; } = new();
-
-    /// <summary>
-    /// Date when the impact analysis was performed.
-    /// </summary>
-    [JsonPropertyName("analysisDate")]
-    public DateTime AnalysisDate { get; init; } = DateTime.UtcNow;
 }
 
 /// <summary>
@@ -200,7 +194,7 @@ public enum InteroperabilityRisk
 /// <summary>
 /// Criteria used for vendor detection analysis.
 /// </summary>
-public record VendorDetectionCriteria
+public record VendorDetectionCriteria : VendorDetectionBase
 {
     /// <summary>
     /// Fields analyzed for vendor detection.
@@ -219,12 +213,6 @@ public record VendorDetectionCriteria
     /// </summary>
     [JsonPropertyName("confidenceThreshold")]
     public double ConfidenceThreshold { get; init; } = 0.7;
-
-    /// <summary>
-    /// Detection method used (MSH analysis, facility matching, etc.).
-    /// </summary>
-    [JsonPropertyName("detectionMethod")]
-    public string DetectionMethod { get; init; } = string.Empty;
 }
 
 /// <summary>
@@ -245,19 +233,19 @@ public record FieldStatistics
     public int ConsistentFields { get; init; }
 
     /// <summary>
-    /// Average field population rate across all fields.
+    /// Average field frequency rate across all fields.
     /// </summary>
-    [JsonPropertyName("averagePopulationRate")]
-    public double AveragePopulationRate { get; init; }
+    [JsonPropertyName("averageFrequency")]
+    public double AverageFrequency { get; init; }
 
     /// <summary>
-    /// Fields with highest population rates.
+    /// Fields with highest frequency rates.
     /// </summary>
     [JsonPropertyName("mostPopulatedFields")]
     public Dictionary<string, double> MostPopulatedFields { get; init; } = new();
 
     /// <summary>
-    /// Fields with lowest population rates.
+    /// Fields with lowest frequency rates.
     /// </summary>
     [JsonPropertyName("leastPopulatedFields")]
     public Dictionary<string, double> LeastPopulatedFields { get; init; } = new();
