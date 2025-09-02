@@ -189,6 +189,10 @@ public class HL7Parser
     private Result<MSHSegment> ParseMSHSegment(string mshString)
     {
         var msh = new MSHSegment();
+        
+        // Initialize fields first
+        msh.InitializeFields();
+        
         var result = msh.ParseHL7String(mshString);
         
         if (result.IsFailure)

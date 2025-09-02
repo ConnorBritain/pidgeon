@@ -125,4 +125,22 @@ public class HL7ParserTests
         Assert.Equal("ZZZ", result.Value.SegmentId);
         // Should create a GenericSegment for unknown types
     }
+
+    [Fact]
+    public void ADTMessage_ParseHL7String_ShouldWork()
+    {
+        // Arrange - Test ADTMessage parsing directly (bypassing HL7Parser)
+        var hl7Message = "MSH|^~\\&|Pidgeon|PidgeonCore|||20250826153540||ADT^A01|MSG123456|P|2.3|||||\r" +
+                        "PID|1||29010460||Lee^Lisa||20200711|F|||789 Park Dr^^Washington^GA^62778^US||(727) 268-7520||||||988-63-3391|||\r" +
+                        "PV1||E|Primary Care Clinic||||1773182582^Davis^Nancy^^^^^^|||||||||||||||||||||||||||||||||||||20250817000000|";
+        
+        var adtMessage = new ADTMessage();
+
+        // Act - Call ParseHL7String directly
+        var result = adtMessage.ParseHL7String(hl7Message);
+
+        // Assert
+        Assert.True(result.IsSuccess, result.IsFailure ? $"ADT parsing failed: {result.Error.Message}" : "");
+        Assert.Equal(3, adtMessage.Segments.Count);
+    }
 }
