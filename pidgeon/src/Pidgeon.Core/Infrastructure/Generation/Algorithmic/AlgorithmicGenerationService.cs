@@ -25,13 +25,30 @@ public class AlgorithmicGenerationService : IGenerationService
         _random = new Random();
     }
 
-    public Result<Patient> GeneratePatient(GenerationOptions options)
+    /// <summary>
+    /// Template method for executing generation operations with consistent error handling and seeding.
+    /// </summary>
+    private Result<T> ExecuteGeneration<T>(GenerationOptions options, int seedOffset, string entityType, Func<Random, T> generateFunc)
     {
         try
         {
             // Use seed for deterministic generation if provided
-            var random = options.Seed.HasValue ? new Random(options.Seed.Value) : _random;
+            var random = options.Seed.HasValue ? new Random(options.Seed.Value + seedOffset) : _random;
             
+            var result = generateFunc(random);
+            return Result<T>.Success(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to generate {EntityType}", entityType);
+            return Result<T>.Failure($"{char.ToUpper(entityType[0])}{entityType[1..]} generation failed: {ex.Message}");
+        }
+    }
+
+    public Result<Patient> GeneratePatient(GenerationOptions options)
+    {
+        return ExecuteGeneration(options, 0, "patient", (random) =>
+        {
             // Generate culturally-consistent name
             var (firstName, lastName, gender) = HealthcareNames.GenerateRandomName(random);
             
@@ -60,27 +77,20 @@ public class AlgorithmicGenerationService : IGenerationService
             _logger.LogDebug("Generated patient: {MRN} - {Name}, Age {Age}", 
                 mrn, $"{firstName} {lastName}", age);
             
-            return Result<Patient>.Success(patient);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to generate patient");
-            return Result<Patient>.Failure($"Patient generation failed: {ex.Message}");
-        }
+            return patient;
+        });
     }
 
     public Result<Medication> GenerateMedication(GenerationOptions options)
     {
-        try
+        return ExecuteGeneration(options, 0, "medication", (random) =>
         {
-            var random = options.Seed.HasValue ? new Random(options.Seed.Value) : _random;
-            
             // Get available medications for generation
             var availableMeds = GetAvailableMedications();
             
             if (!availableMeds.Any())
             {
-                return Result<Medication>.Failure("No medications available for specified patient type");
+                throw new InvalidOperationException("No medications available for specified patient type");
             }
 
             var medData = availableMeds[random.Next(availableMeds.Count)];
@@ -98,29 +108,22 @@ public class AlgorithmicGenerationService : IGenerationService
             _logger.LogDebug("Generated medication: {Name} ({Generic})", 
                 medication.Name, medication.GenericName);
                 
-            return Result<Medication>.Success(medication);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to generate medication");
-            return Result<Medication>.Failure($"Medication generation failed: {ex.Message}");
-        }
+            return medication;
+        });
     }
 
     public Result<Prescription> GeneratePrescription(GenerationOptions options)
     {
-        try
+        return ExecuteGeneration(options, 1000, "prescription", (random) =>
         {
             // Generate patient and medication for this prescription
             var patientResult = GeneratePatient(options);
             if (!patientResult.IsSuccess)
-                return Result<Prescription>.Failure($"Failed to generate patient: {patientResult.Error}");
+                throw new InvalidOperationException($"Failed to generate patient: {patientResult.Error}");
 
             var medicationResult = GenerateMedication(options);
             if (!medicationResult.IsSuccess)
-                return Result<Prescription>.Failure($"Failed to generate medication: {medicationResult.Error}");
-
-            var random = options.Seed.HasValue ? new Random(options.Seed.Value + 1000) : _random;
+                throw new InvalidOperationException($"Failed to generate medication: {medicationResult.Error}");
             
             var prescription = new Prescription
             {
@@ -136,24 +139,17 @@ public class AlgorithmicGenerationService : IGenerationService
             _logger.LogDebug("Generated prescription: {RxId} for {Patient}", 
                 prescription.Id, prescription.Patient.Name.DisplayName);
                 
-            return Result<Prescription>.Success(prescription);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to generate prescription");
-            return Result<Prescription>.Failure($"Prescription generation failed: {ex.Message}");
-        }
+            return prescription;
+        });
     }
 
     public Result<Encounter> GenerateEncounter(GenerationOptions options)
     {
-        try
+        return ExecuteGeneration(options, 2000, "encounter", (random) =>
         {
             var patientResult = GeneratePatient(options);
             if (!patientResult.IsSuccess)
-                return Result<Encounter>.Failure($"Failed to generate patient: {patientResult.Error}");
-
-            var random = options.Seed.HasValue ? new Random(options.Seed.Value + 2000) : _random;
+                throw new InvalidOperationException($"Failed to generate patient: {patientResult.Error}");
             
             var encounter = new Encounter
             {
@@ -170,13 +166,8 @@ public class AlgorithmicGenerationService : IGenerationService
             _logger.LogDebug("Generated encounter: {EncounterId} for {Patient}", 
                 encounter.Id, encounter.Patient.Name.DisplayName);
                 
-            return Result<Encounter>.Success(encounter);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to generate encounter");
-            return Result<Encounter>.Failure($"Encounter generation failed: {ex.Message}");
-        }
+            return encounter;
+        });
     }
 
     public GenerationServiceInfo GetServiceInfo()
