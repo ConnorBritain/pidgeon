@@ -11,13 +11,13 @@ namespace Pidgeon.CLI.Commands;
 /// <summary>
 /// Command for transforming messages between different healthcare standards.
 /// </summary>
-public class TransformCommand : BaseCommand
+public class TransformCommand : CommandBuilderBase
 {
     public TransformCommand(ILogger<TransformCommand> logger) : base(logger)
     {
     }
 
-    public Command CreateCommand()
+    public override Command CreateCommand()
     {
         var command = new Command("transform", "Transform messages between healthcare standards")
         {

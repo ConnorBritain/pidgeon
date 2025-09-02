@@ -16,13 +16,21 @@ public class NumericField : HL7Field<decimal?>
     /// <inheritdoc />
     public override string DataType => "NM";
 
+    /// <summary>
+    /// Initializes the NumericField with HL7 v2.3 standard max length.
+    /// </summary>
+    static NumericField()
+    {
+        // HL7 v2.3 standard for NM fields
+    }
+
     /// <inheritdoc />
-    public override int? MaxLength => 16; // HL7 v2.3 standard for NM fields
+    public override int? MaxLength { get; protected set; } = 16;
 
     /// <summary>
     /// Initializes a new instance of the NumericField class.
     /// </summary>
-    public NumericField()
+    public NumericField() : base()
     {
     }
 
@@ -30,9 +38,8 @@ public class NumericField : HL7Field<decimal?>
     /// Initializes a new instance of the NumericField class with a decimal value.
     /// </summary>
     /// <param name="value">The initial decimal value</param>
-    public NumericField(decimal? value)
+    public NumericField(decimal? value) : base(value)
     {
-        SetTypedValue(value);
     }
 
     /// <summary>
@@ -40,10 +47,8 @@ public class NumericField : HL7Field<decimal?>
     /// </summary>
     /// <param name="value">The initial decimal value</param>
     /// <param name="isRequired">Whether this field is required</param>
-    public NumericField(decimal? value, bool isRequired)
+    public NumericField(decimal? value, bool isRequired) : base(value, isRequired)
     {
-        IsRequired = isRequired;
-        SetTypedValue(value);
     }
 
     /// <summary>

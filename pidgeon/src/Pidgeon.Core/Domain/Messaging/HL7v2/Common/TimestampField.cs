@@ -17,12 +17,12 @@ public class TimestampField : HL7Field<DateTime?>
     public override string DataType => "TS";
 
     /// <inheritdoc />
-    public override int? MaxLength => 26; // YYYYMMDDHHMMSS.SSSS+ZZZZ
+    public override int? MaxLength { get; protected set; } = 26; // YYYYMMDDHHMMSS.SSSS+ZZZZ
 
     /// <summary>
     /// Initializes a new instance of the TimestampField class.
     /// </summary>
-    public TimestampField()
+    public TimestampField() : base()
     {
     }
 
@@ -30,9 +30,8 @@ public class TimestampField : HL7Field<DateTime?>
     /// Initializes a new instance of the TimestampField class with a DateTime value.
     /// </summary>
     /// <param name="value">The initial DateTime value</param>
-    public TimestampField(DateTime? value)
+    public TimestampField(DateTime? value) : base(value)
     {
-        SetTypedValue(value);
     }
 
     /// <summary>
@@ -40,10 +39,8 @@ public class TimestampField : HL7Field<DateTime?>
     /// </summary>
     /// <param name="value">The initial DateTime value</param>
     /// <param name="isRequired">Whether this field is required</param>
-    public TimestampField(DateTime? value, bool isRequired)
+    public TimestampField(DateTime? value, bool isRequired) : base(value, isRequired)
     {
-        IsRequired = isRequired;
-        SetTypedValue(value);
     }
 
     /// <summary>

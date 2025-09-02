@@ -15,13 +15,10 @@ public class StringField : HL7Field<string?>
     /// <inheritdoc />
     public override string DataType => "ST";
 
-    /// <inheritdoc />
-    public override int? MaxLength { get; }
-
     /// <summary>
     /// Initializes a new instance of the StringField class.
     /// </summary>
-    public StringField()
+    public StringField() : base()
     {
     }
 
@@ -29,9 +26,8 @@ public class StringField : HL7Field<string?>
     /// Initializes a new instance of the StringField class with a value.
     /// </summary>
     /// <param name="value">The initial string value</param>
-    public StringField(string? value)
+    public StringField(string? value) : base(value)
     {
-        SetTypedValue(value);
     }
 
     /// <summary>
@@ -40,11 +36,8 @@ public class StringField : HL7Field<string?>
     /// <param name="value">The initial string value</param>
     /// <param name="maxLength">Maximum allowed length</param>
     /// <param name="isRequired">Whether this field is required</param>
-    public StringField(string? value, int? maxLength, bool isRequired = false)
+    public StringField(string? value, int? maxLength, bool isRequired = false) : base(value, maxLength, isRequired)
     {
-        MaxLength = maxLength;
-        IsRequired = isRequired;
-        SetTypedValue(value);
     }
 
     /// <summary>

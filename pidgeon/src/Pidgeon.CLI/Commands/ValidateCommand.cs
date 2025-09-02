@@ -13,7 +13,7 @@ namespace Pidgeon.CLI.Commands;
 /// <summary>
 /// Command for validating healthcare messages.
 /// </summary>
-public class ValidateCommand : BaseCommand
+public class ValidateCommand : CommandBuilderBase
 {
     private readonly IValidationService _validationService;
 
@@ -25,84 +25,65 @@ public class ValidateCommand : BaseCommand
         _validationService = validationService;
     }
 
-    public Command CreateCommand()
+    public override Command CreateCommand()
     {
         var command = new Command("validate", "Validate healthcare messages against standards");
 
-        var fileOption = new Option<string>("--file")
-        {
-            Description = "Path to the message file to validate",
-            Required = true
-        };
-
+        var fileOption = CreateRequiredOption("--file", "Path to the message file to validate");
         var modeOption = new Option<ValidationMode>("--mode")
         {
             Description = "Validation mode (Strict, Compatibility, Lenient)",
             DefaultValueFactory = _ => ValidationMode.Strict
         };
-
-        var standardOption = new Option<string?>("--standard")
-        {
-            Description = "Specific standard to validate against (auto-detect if not specified)"
-        };
+        var standardOption = CreateNullableOption("--standard", "Specific standard to validate against (auto-detect if not specified)");
 
         command.Add(fileOption);
         command.Add(modeOption);
         command.Add(standardOption);
 
-        command.SetAction(async (ParseResult parseResult, CancellationToken cancellationToken) =>
+        SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            try
-            {
-                var file = parseResult.GetValue(fileOption);
-                var mode = parseResult.GetValue(modeOption);
-                var standard = parseResult.GetValue(standardOption);
+            var file = parseResult.GetValue(fileOption);
+            var mode = parseResult.GetValue(modeOption);
+            var standard = parseResult.GetValue(standardOption);
 
-                if (!File.Exists(file))
+            var fileCheck = ValidateFileExists(file!);
+            if (fileCheck != 0) return fileCheck;
+
+            Console.WriteLine($"Validating {file} with {mode} mode...");
+            
+            var content = await File.ReadAllTextAsync(file!, cancellationToken);
+            var result = await _validationService.ValidateAsync(content, mode, standard);
+            
+            if (result.IsSuccess)
+            {
+                var validation = result.Value;
+                if (validation.IsValid)
                 {
-                    System.Console.Error.WriteLine($"File not found: {file}");
+                    Console.WriteLine("Validation passed!");
+                    if (validation.Warnings.Any())
+                    {
+                        Console.WriteLine($"Warnings: {validation.Warnings.Count}");
+                        foreach (var warning in validation.Warnings)
+                        {
+                            Console.WriteLine($"{warning.Code}: {warning.Message}");
+                        }
+                    }
+                }
+                else
+                {
+                    Console.Error.WriteLine($"Validation failed with {validation.Errors.Count} error(s):");
+                    foreach (var error in validation.Errors)
+                    {
+                        Console.Error.WriteLine($"  {error.Code}: {error.Message}");
+                        if (!string.IsNullOrEmpty(error.Location))
+                            Console.WriteLine($"    Location: {error.Location}");
+                    }
                     return 1;
                 }
-
-                Console.WriteLine($"Validating {file} with {mode} mode...");
-                
-                var content = await File.ReadAllTextAsync(file, cancellationToken);
-                var result = await _validationService.ValidateAsync(content, mode, standard);
-                
-                if (result.IsSuccess)
-                {
-                    var validation = result.Value;
-                    if (validation.IsValid)
-                    {
-                        System.Console.WriteLine("Validation passed!");
-                        if (validation.Warnings.Any())
-                        {
-                            Console.WriteLine($"Warnings: {validation.Warnings.Count}");
-                            foreach (var warning in validation.Warnings)
-                            {
-                                System.Console.WriteLine($"{warning.Code}: {warning.Message}");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        System.Console.Error.WriteLine($"Validation failed with {validation.Errors.Count} error(s):");
-                        foreach (var error in validation.Errors)
-                        {
-                            System.Console.Error.WriteLine($"  {error.Code}: {error.Message}");
-                            if (!string.IsNullOrEmpty(error.Location))
-                                Console.WriteLine($"    Location: {error.Location}");
-                        }
-                        return 1;
-                    }
-                }
-                
-                return HandleResult(result);
             }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "validation");
-            }
+            
+            return HandleResult(result);
         });
 
         return command;

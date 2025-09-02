@@ -18,12 +18,12 @@ public class DateField : HL7Field<DateTime?>
     public override string DataType => "DT";
 
     /// <inheritdoc />
-    public override int? MaxLength => 8; // YYYYMMDD
+    public override int? MaxLength { get; protected set; } = 8; // YYYYMMDD
 
     /// <summary>
     /// Initializes a new instance of the DateField class.
     /// </summary>
-    public DateField()
+    public DateField() : base()
     {
     }
 
@@ -32,30 +32,17 @@ public class DateField : HL7Field<DateTime?>
     /// Only the date portion is used; time is ignored.
     /// </summary>
     /// <param name="value">The date value</param>
-    public DateField(DateTime? value)
+    public DateField(DateTime? value) : base(value)
     {
-        if (value.HasValue)
-        {
-            var setResult = SetValue(value.Value.ToString("yyyyMMdd"));
-            if (setResult.IsFailure)
-            {
-                // This should not happen with valid DateTime values
-                throw new ArgumentException($"Failed to set date value: {setResult.Error}");
-            }
-        }
     }
 
     /// <summary>
-    /// Initializes a new instance of the DateField class with an HL7 string value.
+    /// Initializes a new instance of the DateField class with constraints.
     /// </summary>
-    /// <param name="hl7Value">The HL7 date string (YYYYMMDD format)</param>
-    public DateField(string hl7Value)
+    /// <param name="value">The initial DateTime value</param>
+    /// <param name="isRequired">Whether this field is required</param>
+    public DateField(DateTime? value, bool isRequired) : base(value, isRequired)
     {
-        var setResult = SetValue(hl7Value);
-        if (setResult.IsFailure)
-        {
-            throw new ArgumentException($"Invalid HL7 date format: {setResult.Error}");
-        }
     }
 
     /// <summary>

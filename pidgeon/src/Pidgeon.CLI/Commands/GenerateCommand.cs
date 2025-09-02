@@ -11,7 +11,7 @@ namespace Pidgeon.CLI.Commands;
 /// <summary>
 /// Command for generating healthcare messages and synthetic test data.
 /// </summary>
-public class GenerateCommand : BaseCommand
+public class GenerateCommand : CommandBuilderBase
 {
     private readonly Pidgeon.Core.Services.IGenerationService _generationService;
 
@@ -23,39 +23,15 @@ public class GenerateCommand : BaseCommand
         _generationService = generationService;
     }
 
-    public Command CreateCommand()
+    public override Command CreateCommand()
     {
         var command = new Command("generate", "Generate healthcare messages and synthetic test data");
 
-        // Options using beta5 API
-        var typeOption = new Option<string>("--type")
-        {
-            Description = "Message type to generate (e.g., ADT, RDE, Patient)",
-            Required = true
-        };
-        
-        var standardOption = new Option<string>("--standard")
-        {
-            Description = "Healthcare standard (hl7, fhir, ncpdp)",
-            DefaultValueFactory = _ => "hl7"
-        };
-
-        var countOption = new Option<int>("--count")
-        {
-            Description = "Number of messages to generate",
-            DefaultValueFactory = _ => 1
-        };
-
-        var outputOption = new Option<string>("--output")
-        {
-            Description = "Output file path (optional, defaults to console)"
-        };
-
-        var formatOption = new Option<bool>("--format")
-        {
-            Description = "Format output for readability",
-            DefaultValueFactory = _ => false
-        };
+        var typeOption = CreateRequiredOption("--type", "Message type to generate (e.g., ADT, RDE, Patient)");
+        var standardOption = CreateOptionalOption("--standard", "Healthcare standard (hl7, fhir, ncpdp)", "hl7");
+        var countOption = CreateIntegerOption("--count", "Number of messages to generate", 1);
+        var outputOption = CreateNullableOption("--output", "Output file path (optional, defaults to console)");
+        var formatOption = CreateBooleanOption("--format", "Format output for readability");
 
         command.Add(typeOption);
         command.Add(standardOption);
@@ -63,57 +39,50 @@ public class GenerateCommand : BaseCommand
         command.Add(outputOption);
         command.Add(formatOption);
 
-        command.SetAction(async (ParseResult parseResult, CancellationToken cancellationToken) =>
+        SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            try
+            var type = parseResult.GetValue(typeOption);
+            var standard = parseResult.GetValue(standardOption);
+            var count = parseResult.GetValue(countOption);
+            var output = parseResult.GetValue(outputOption);
+            var format = parseResult.GetValue(formatOption);
+
+            // Validate required parameters (defensive programming)
+            if (string.IsNullOrWhiteSpace(type))
             {
-                var type = parseResult.GetValue(typeOption);
-                var standard = parseResult.GetValue(standardOption);
-                var count = parseResult.GetValue(countOption);
-                var output = parseResult.GetValue(outputOption);
-                var format = parseResult.GetValue(formatOption);
-
-                // Validate required parameters (defensive programming)
-                if (string.IsNullOrWhiteSpace(type))
-                {
-                    Logger.LogError("Message type is required but was not provided");
-                    return 1;
-                }
-                
-                if (string.IsNullOrWhiteSpace(standard))
-                {
-                    standard = "hl7"; // Default value is already set, but be explicit
-                }
-
-                Console.WriteLine($"Generating {count} {standard} {type} message(s)...");
-                
-                var options = new GenerationOptions(); // TODO: Set options based on parameters
-                var result = await _generationService.GenerateSyntheticDataAsync(standard!, type!, count, options);
-                
-                if (result.IsSuccess)
-                {
-                    if (!string.IsNullOrEmpty(output))
-                    {
-                        // Write to file
-                        await WriteToFileAsync(output, result.Value, format);
-                        System.Console.WriteLine($"Generated {count} message(s) and saved to {output}");
-                    }
-                    else
-                    {
-                        // Write to console
-                        WriteToConsole(result.Value, format);
-                        System.Console.WriteLine($"Generated {count} message(s)");
-                    }
-                    
-                    return 0;
-                }
-
-                return HandleResult(result);
+                Logger.LogError("Message type is required but was not provided");
+                return 1;
             }
-            catch (Exception ex)
+            
+            if (string.IsNullOrWhiteSpace(standard))
             {
-                return HandleException(ex, "message generation");
+                standard = "hl7"; // Default value is already set, but be explicit
             }
+
+            Console.WriteLine($"Generating {count} {standard} {type} message(s)...");
+            
+            var options = new GenerationOptions(); // TODO: Set options based on parameters
+            var result = await _generationService.GenerateSyntheticDataAsync(standard!, type!, count, options);
+            
+            if (result.IsSuccess)
+            {
+                if (!string.IsNullOrEmpty(output))
+                {
+                    // Write to file
+                    await WriteToFileAsync(output, result.Value, format);
+                    System.Console.WriteLine($"Generated {count} message(s) and saved to {output}");
+                }
+                else
+                {
+                    // Write to console
+                    WriteToConsole(result.Value, format);
+                    System.Console.WriteLine($"Generated {count} message(s)");
+                }
+                
+                return 0;
+            }
+
+            return HandleResult(result);
         });
 
         return command;

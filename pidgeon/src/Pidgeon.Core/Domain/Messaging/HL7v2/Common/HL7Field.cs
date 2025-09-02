@@ -35,7 +35,7 @@ public abstract class HL7Field
     /// <summary>
     /// Gets the maximum length allowed for this field type, if any.
     /// </summary>
-    public virtual int? MaxLength => null;
+    public virtual int? MaxLength { get; protected set; }
 
     /// <summary>
     /// Sets the value of this field from an HL7 string representation.
@@ -82,6 +82,7 @@ public abstract class HL7Field
 /// <summary>
 /// Generic base class for typed HL7 fields.
 /// Follows sacred Result<T> pattern for all validation and parsing operations.
+/// Provides consolidated constructor patterns to eliminate duplication.
 /// </summary>
 /// <typeparam name="T">The .NET type that represents this field's value</typeparam>
 public abstract class HL7Field<T> : HL7Field
@@ -95,6 +96,46 @@ public abstract class HL7Field<T> : HL7Field
     /// Gets the typed value of this field (alias for Value for backward compatibility).
     /// </summary>
     public T? TypedValue => Value;
+
+    /// <summary>
+    /// Initializes a new instance of the HL7Field with default settings.
+    /// </summary>
+    protected HL7Field()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the HL7Field with a value.
+    /// </summary>
+    /// <param name="value">The initial typed value</param>
+    protected HL7Field(T? value)
+    {
+        SetTypedValue(value);
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the HL7Field with value and constraints.
+    /// </summary>
+    /// <param name="value">The initial typed value</param>
+    /// <param name="isRequired">Whether this field is required</param>
+    protected HL7Field(T? value, bool isRequired)
+    {
+        IsRequired = isRequired;
+        SetTypedValue(value);
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the HL7Field with value and length constraints.
+    /// </summary>
+    /// <param name="value">The initial typed value</param>
+    /// <param name="maxLength">Maximum allowed length</param>
+    /// <param name="isRequired">Whether this field is required</param>
+    protected HL7Field(T? value, int? maxLength, bool isRequired)
+    {
+        IsRequired = isRequired;
+        MaxLength = maxLength;
+        SetTypedValue(value);
+    }
 
     /// <summary>
     /// Sets the typed value of this field and updates the raw HL7 representation.

@@ -11,13 +11,13 @@ namespace Pidgeon.CLI.Commands;
 /// <summary>
 /// Command for displaying information about Pidgeon and supported standards.
 /// </summary>
-public class InfoCommand : BaseCommand
+public class InfoCommand : CommandBuilderBase
 {
     public InfoCommand(ILogger<InfoCommand> logger) : base(logger)
     {
     }
 
-    public Command CreateCommand()
+    public override Command CreateCommand()
     {
         var command = new Command("info", "Display information about Pidgeon and supported standards");
 

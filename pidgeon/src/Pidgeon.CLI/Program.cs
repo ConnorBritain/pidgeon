@@ -6,8 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Pidgeon.CLI.Commands;
+using Pidgeon.CLI.Extensions;
 using Pidgeon.Core.Extensions;
 using System.CommandLine;
+using System.Reflection;
 
 namespace Pidgeon.CLI;
 
@@ -62,12 +64,8 @@ internal class Program
                 // Add Pidgeon Core services
                 services.AddPidgeonCore();
                 
-                // Add CLI-specific services
-                services.AddScoped<GenerateCommand>();
-                services.AddScoped<ValidateCommand>();
-                services.AddScoped<TransformCommand>();
-                services.AddScoped<ConfigCommand>();
-                services.AddScoped<InfoCommand>();
+                // Add CLI commands using convention-based registration
+                services.AddCliCommands();
                 
                 // Add console services
                 services.AddSingleton<IConsoleOutput, ConsoleOutput>();
@@ -93,12 +91,19 @@ internal class Program
         };
         rootCommand.Add(verboseOption);
 
-        // Add subcommands using beta5 API
-        rootCommand.Add(serviceProvider.GetRequiredService<GenerateCommand>().CreateCommand());
-        rootCommand.Add(serviceProvider.GetRequiredService<ValidateCommand>().CreateCommand());
-        rootCommand.Add(serviceProvider.GetRequiredService<TransformCommand>().CreateCommand());
-        rootCommand.Add(serviceProvider.GetRequiredService<ConfigCommand>().CreateCommand());
-        rootCommand.Add(serviceProvider.GetRequiredService<InfoCommand>().CreateCommand());
+        // Add subcommands using convention-based discovery
+        var assembly = typeof(Program).Assembly;
+        var commandTypes = assembly.GetTypes()
+            .Where(type => type.IsClass && 
+                          !type.IsAbstract && 
+                          type.IsSubclassOf(typeof(CommandBuilderBase)))
+            .ToList();
+        
+        foreach (var commandType in commandTypes)
+        {
+            var command = (CommandBuilderBase)serviceProvider.GetRequiredService(commandType);
+            rootCommand.Add(command.CreateCommand());
+        }
 
         return rootCommand;
     }
