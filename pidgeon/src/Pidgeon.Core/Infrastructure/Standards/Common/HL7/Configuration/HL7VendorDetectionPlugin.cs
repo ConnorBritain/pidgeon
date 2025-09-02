@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Services.Configuration;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Configuration.Entities;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7.Utilities;
 using System.Text.RegularExpressions;
 using ConfigMatchType = Pidgeon.Core.Domain.Configuration.Entities.MatchType;
 
@@ -20,13 +21,8 @@ internal class HL7VendorDetectionPlugin : IStandardVendorDetectionPlugin
 {
     private readonly ILogger<HL7VendorDetectionPlugin> _logger;
 
-    // HL7-specific message parsing patterns
+    // HL7-specific message parsing pattern for validation only
     private static readonly Regex MshSegmentPattern = new(@"^MSH\|", RegexOptions.Compiled);
-    private static readonly Regex SendingApplicationPattern = new(@"MSH\|[^|]*\|([^|]*)\|", RegexOptions.Compiled);
-    private static readonly Regex SendingFacilityPattern = new(@"MSH\|[^|]*\|[^|]*\|([^|]*)\|", RegexOptions.Compiled);
-    private static readonly Regex ReceivingApplicationPattern = new(@"MSH\|[^|]*\|[^|]*\|[^|]*\|([^|]*)\|", RegexOptions.Compiled);
-    private static readonly Regex ReceivingFacilityPattern = new(@"MSH\|[^|]*\|[^|]*\|[^|]*\|[^|]*\|([^|]*)\|", RegexOptions.Compiled);
-    private static readonly Regex MessageTypePattern = new(@"MSH\|[^|]*\|[^|]*\|[^|]*\|[^|]*\|[^|]*\|[^|]*\|[^|]*\|([^|]*)\|", RegexOptions.Compiled);
 
     public HL7VendorDetectionPlugin(ILogger<HL7VendorDetectionPlugin> logger)
     {
@@ -54,30 +50,27 @@ internal class HL7VendorDetectionPlugin : IStandardVendorDetectionPlugin
             if (!IsValidMessageFormat(message))
                 return Result<MessageHeaders>.Failure("Not a valid HL7 message - missing MSH segment");
 
-            var sendingAppMatch = SendingApplicationPattern.Match(message);
-            var sendingFacilityMatch = SendingFacilityPattern.Match(message);
-            var receivingAppMatch = ReceivingApplicationPattern.Match(message);
-            var receivingFacilityMatch = ReceivingFacilityPattern.Match(message);
-            var messageTypeMatch = MessageTypePattern.Match(message);
+            // Split message into segments for MshHeaderParser
+            var segments = message.Split('\r', '\n')
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .ToList();
+
+            // Use MshHeaderParser for consolidated field extraction
+            var mshFields = MshHeaderParser.ExtractAllHeaderFields(segments);
+            if (mshFields == null)
+                return Result<MessageHeaders>.Failure("Failed to extract MSH header fields");
+
+            // Extract message type from MSH.9 field (index 8)
+            var messageTypeValue = MshHeaderParser.ExtractMshField(segments, 8) ?? string.Empty;
 
             var headers = new MessageHeaders
             {
                 Standard = StandardName,
-                SendingApplication = sendingAppMatch.Success && sendingAppMatch.Groups.Count > 1 
-                    ? sendingAppMatch.Groups[1].Value.Trim() 
-                    : string.Empty,
-                SendingFacility = sendingFacilityMatch.Success && sendingFacilityMatch.Groups.Count > 1 
-                    ? sendingFacilityMatch.Groups[1].Value.Trim() 
-                    : string.Empty,
-                ReceivingApplication = receivingAppMatch.Success && receivingAppMatch.Groups.Count > 1 
-                    ? receivingAppMatch.Groups[1].Value.Trim() 
-                    : string.Empty,
-                ReceivingFacility = receivingFacilityMatch.Success && receivingFacilityMatch.Groups.Count > 1 
-                    ? receivingFacilityMatch.Groups[1].Value.Trim() 
-                    : string.Empty,
-                MessageType = messageTypeMatch.Success && messageTypeMatch.Groups.Count > 1 
-                    ? messageTypeMatch.Groups[1].Value.Trim() 
-                    : string.Empty
+                SendingApplication = mshFields.SendingApplication?.Trim() ?? string.Empty,
+                SendingFacility = mshFields.SendingFacility?.Trim() ?? string.Empty,
+                ReceivingApplication = mshFields.ReceivingApplication?.Trim() ?? string.Empty,
+                ReceivingFacility = mshFields.ReceivingFacility?.Trim() ?? string.Empty,
+                MessageType = messageTypeValue.Trim()
             };
 
             _logger.LogDebug("Extracted HL7 headers: SendingApp={SendingApp}, SendingFacility={SendingFacility}, MessageType={MessageType}",

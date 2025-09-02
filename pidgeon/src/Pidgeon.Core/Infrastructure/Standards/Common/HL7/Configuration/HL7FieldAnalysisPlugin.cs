@@ -8,6 +8,7 @@ using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Configuration.Entities;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 using Pidgeon.Core.Domain.Messaging;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7.Utilities;
 using System.Text.RegularExpressions;
 
 namespace Pidgeon.Core.Standards.Common.HL7.Configuration;
@@ -98,10 +99,10 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
             {
                 MessageType = new HL7MessageType { MessageCode = messageType, TriggerEvent = string.Empty },
                 Standard = "HL7v2",
-                Version = ExtractVersionId(segments) ?? "2.3",  // Default to 2.3 if not specified
-                MessageControlId = ExtractMessageControlId(segments),
-                SendingSystem = ExtractSendingSystem(segments),
-                ReceivingSystem = ExtractReceivingSystem(segments),
+                Version = MshHeaderParser.ExtractVersionId(segments) ?? "2.3",  // Default to 2.3 if not specified
+                MessageControlId = MshHeaderParser.ExtractMessageControlId(segments),
+                SendingSystem = MshHeaderParser.ExtractSendingSystem(segments),
+                ReceivingSystem = MshHeaderParser.ExtractReceivingSystem(segments),
                 Timestamp = DateTime.UtcNow,
                 Segments = ParseSegments(segments).Values.ToList()
             };
@@ -114,43 +115,6 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
             _logger.LogWarning(ex, "Failed to parse raw HL7 message");
             return null;
         }
-    }
-
-    private static string? ExtractMessageControlId(List<string> segments)
-    {
-        var mshSegment = segments.FirstOrDefault(s => s.StartsWith("MSH"));
-        if (mshSegment == null) return null;
-
-        var fields = mshSegment.Split('|');
-        return fields.Length > 9 ? fields[9] : null;
-    }
-
-    private static string? ExtractSendingSystem(List<string> segments)
-    {
-        var mshSegment = segments.FirstOrDefault(s => s.StartsWith("MSH"));
-        if (mshSegment == null) return null;
-
-        var fields = mshSegment.Split('|');
-        return fields.Length > 2 ? fields[2] : null;
-    }
-
-    private static string? ExtractReceivingSystem(List<string> segments)
-    {
-        var mshSegment = segments.FirstOrDefault(s => s.StartsWith("MSH"));
-        if (mshSegment == null) return null;
-
-        var fields = mshSegment.Split('|');
-        return fields.Length > 4 ? fields[4] : null;
-    }
-
-    private static string? ExtractVersionId(List<string> segments)
-    {
-        var mshSegment = segments.FirstOrDefault(s => s.StartsWith("MSH"));
-        if (mshSegment == null) return null;
-
-        var fields = mshSegment.Split('|');
-        // MSH.12 is the version field (field 11 in zero-based array after splitting)
-        return fields.Length > 11 && !string.IsNullOrWhiteSpace(fields[11]) ? fields[11] : null;
     }
 
     private static Dictionary<string, Domain.Messaging.HL7v2.Messages.HL7Segment> ParseSegments(List<string> segments)
