@@ -172,6 +172,9 @@ public class HL7Parser
             _ => new GenericSegment(segmentId)
         };
         
+        // Initialize fields first
+        segment.InitializeFields();
+        
         // Parse the segment
         var parseResult = segment.ParseHL7String(segmentString);
         if (parseResult.IsFailure)

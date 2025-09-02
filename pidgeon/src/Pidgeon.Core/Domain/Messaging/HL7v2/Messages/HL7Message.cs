@@ -46,8 +46,12 @@ public abstract class HL7Message : HealthcareMessage, IStandardMessage
     /// <returns>A segment instance or null if not supported</returns>
     protected virtual HL7Segment? CreateSegmentFromId(string segmentId)
     {
-        // Default implementation - override in concrete messages
-        return null;
+        // Support MSH segment in all HL7 messages
+        return segmentId switch
+        {
+            "MSH" => new MSHSegment(),
+            _ => null
+        };
     }
 
     /// <summary>
@@ -264,10 +268,45 @@ public abstract class HL7Message : HealthcareMessage, IStandardMessage
     /// <returns>A result indicating success or failure</returns>
     public virtual Result<HL7Message> ParseHL7String(string hl7Content)
     {
-        // TODO: Implement proper parsing that updates message state from hl7Content
-        // This should parse segments and populate the Segments dictionary
-        // For now, return success to allow compilation
-        return Result<HL7Message>.Success(this);
+        if (string.IsNullOrWhiteSpace(hl7Content))
+            return Error.Parsing("HL7 content is empty", "HL7Message");
+
+        try
+        {
+            // Split into segments
+            var segmentStrings = hl7Content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            
+            // Clear existing segments
+            Segments.Clear();
+            
+            // Parse each segment
+            foreach (var segmentString in segmentStrings)
+            {
+                if (string.IsNullOrWhiteSpace(segmentString)) continue;
+                
+                var segmentId = segmentString.Length >= 3 ? segmentString.Substring(0, 3) : "";
+                var segment = CreateSegmentFromId(segmentId);
+                
+                if (segment != null)
+                {
+                    // Initialize fields first
+                    segment.InitializeFields();
+                    
+                    // Parse the segment string
+                    var parseResult = segment.ParseHL7String(segmentString);
+                    if (parseResult.IsFailure)
+                        return Error.Parsing($"Failed to parse {segmentId} segment: {parseResult.Error.Message}", "HL7Message");
+                    
+                    AddSegment(segment);
+                }
+            }
+            
+            return Result<HL7Message>.Success(this);
+        }
+        catch (Exception ex)
+        {
+            return Error.Parsing($"Exception during message parsing: {ex.Message}\nStack Trace: {ex.StackTrace}", "HL7Message");
+        }
     }
 
     #endregion
@@ -509,10 +548,33 @@ public abstract class HL7Segment
     /// <returns>A result indicating success or failure</returns>
     public virtual Result<HL7Segment> ParseHL7String(string segmentString)
     {
-        // TODO: Implement proper segment parsing that populates fields from segmentString
-        // This should split by field separator and populate the _fields dictionary
-        // For now, return success to allow compilation
-        return Result<HL7Segment>.Success(this);
+        if (string.IsNullOrWhiteSpace(segmentString))
+            return Error.Parsing("Segment string is empty", "HL7Segment");
+
+        try
+        {
+            // Split by field separator (|)
+            var fieldValues = segmentString.Split('|');
+            
+            // First field is segment ID, skip it (start from index 1)
+            for (int i = 1; i < fieldValues.Length; i++)
+            {
+                var fieldPosition = i; // 1-based position matches HL7 standard
+                
+                if (_fields.TryGetValue(fieldPosition, out var field))
+                {
+                    var setResult = field.SetValue(fieldValues[i]);
+                    if (setResult.IsFailure)
+                        return Error.Parsing($"Failed to set field {fieldPosition}: {setResult.Error.Message}", "HL7Segment");
+                }
+            }
+            
+            return Result<HL7Segment>.Success(this);
+        }
+        catch (Exception ex)
+        {
+            return Error.Parsing($"Exception during segment parsing: {ex.Message}", "HL7Segment");
+        }
     }
 
     /// <summary>

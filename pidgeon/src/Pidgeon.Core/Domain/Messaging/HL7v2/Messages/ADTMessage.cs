@@ -172,6 +172,7 @@ public class ADTMessage : HL7Message
     {
         return segmentId switch
         {
+            "MSH" => new MSHSegment(),
             "PID" => new PIDSegment(),
             "PV1" => new PV1Segment(),
             _ => base.CreateSegmentFromId(segmentId)

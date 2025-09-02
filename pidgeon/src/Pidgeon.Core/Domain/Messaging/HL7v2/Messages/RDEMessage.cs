@@ -140,6 +140,7 @@ public class RDEMessage : HL7Message
     {
         return segmentId switch
         {
+            "MSH" => new MSHSegment(),
             "PID" => new PIDSegment(),
             "ORC" => new ORCSegment(),
             "RXE" => new RXESegment(),
