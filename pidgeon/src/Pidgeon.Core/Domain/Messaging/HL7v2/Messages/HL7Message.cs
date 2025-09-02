@@ -377,18 +377,21 @@ public record HL7MessageType
     /// Creates an HL7MessageType from a message type string.
     /// </summary>
     /// <param name="messageType">The message type (e.g., "ORM^O01")</param>
-    /// <returns>An HL7MessageType instance</returns>
-    public static HL7MessageType Parse(string messageType)
+    /// <returns>A result containing an HL7MessageType instance or validation error</returns>
+    public static Result<HL7MessageType> Parse(string messageType)
     {
+        if (string.IsNullOrWhiteSpace(messageType))
+            return Result<HL7MessageType>.Failure(Error.Validation("Message type cannot be null or empty", "MessageType"));
+
         var parts = messageType.Split('^');
         if (parts.Length != 2)
-            throw new ArgumentException($"Invalid HL7 message type format: {messageType}. Expected format: CODE^EVENT");
+            return Result<HL7MessageType>.Failure(Error.Validation($"Invalid HL7 message type format: {messageType}. Expected format: CODE^EVENT", "MessageType"));
 
-        return new HL7MessageType
+        return Result<HL7MessageType>.Success(new HL7MessageType
         {
             MessageCode = parts[0],
             TriggerEvent = parts[1]
-        };
+        });
     }
 
     /// <summary>

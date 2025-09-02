@@ -94,11 +94,11 @@ public record MessagePattern
     /// Combines frequencies and segment patterns.
     /// </summary>
     /// <param name="other">Other message pattern to merge</param>
-    /// <returns>Merged message pattern</returns>
-    public MessagePattern MergeWith(MessagePattern other)
+    /// <returns>A result containing merged message pattern or validation error</returns>
+    public Result<MessagePattern> MergeWith(MessagePattern other)
     {
         if (MessageType != other.MessageType)
-            throw new ArgumentException($"Cannot merge patterns of different message types: {MessageType} vs {other.MessageType}");
+            return Result<MessagePattern>.Failure(Error.Validation($"Cannot merge patterns of different message types: {MessageType} vs {other.MessageType}", "MessageType"));
 
         // Merge segment patterns
         var mergedSegmentPatterns = new Dictionary<string, SegmentPattern>(SegmentPatterns);
@@ -136,11 +136,11 @@ public record MessagePattern
             }
         }
 
-        return this with
+        return Result<MessagePattern>.Success(this with
         {
             Frequency = Frequency + other.Frequency,
             SegmentPatterns = mergedSegmentPatterns
-        };
+        });
     }
 }
 

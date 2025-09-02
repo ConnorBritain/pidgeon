@@ -29,20 +29,19 @@ public record ConfigurationAddress(
     /// Creates a ConfigurationAddress from a formatted string.
     /// </summary>
     /// <param name="addressString">String in format "Vendor-Standard-MessageType"</param>
-    /// <returns>Parsed ConfigurationAddress</returns>
-    /// <exception cref="ArgumentException">When format is invalid</exception>
-    public static ConfigurationAddress Parse(string addressString)
+    /// <returns>A result containing parsed ConfigurationAddress or validation error</returns>
+    public static Result<ConfigurationAddress> Parse(string addressString)
     {
         if (string.IsNullOrEmpty(addressString))
-            throw new ArgumentException("Address string cannot be null or empty", nameof(addressString));
+            return Result<ConfigurationAddress>.Failure(Error.Validation("Address string cannot be null or empty", "AddressString"));
 
         var parts = addressString.Split('-');
         if (parts.Length != 3)
-            throw new ArgumentException(
+            return Result<ConfigurationAddress>.Failure(Error.Validation(
                 "Address string must be in format 'Vendor-Standard-MessageType'", 
-                nameof(addressString));
+                "AddressString"));
 
-        return new ConfigurationAddress(parts[0], parts[1], parts[2]);
+        return Result<ConfigurationAddress>.Success(new ConfigurationAddress(parts[0], parts[1], parts[2]));
     }
 
     /// <summary>
@@ -58,15 +57,15 @@ public record ConfigurationAddress(
         if (string.IsNullOrEmpty(addressString))
             return false;
 
-        try
+        var parseResult = Parse(addressString);
+        if (parseResult.IsSuccess)
         {
-            address = Parse(addressString);
+            address = parseResult.Value;
             return true;
         }
-        catch
-        {
-            return false;
-        }
+        
+        address = null;
+        return false;
     }
 
     /// <summary>

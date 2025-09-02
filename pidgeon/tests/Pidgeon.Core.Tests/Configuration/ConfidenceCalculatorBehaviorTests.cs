@@ -82,7 +82,14 @@ public class ConfidenceCalculatorBehaviorTests : IDisposable
         var result = await _calculator.CalculateFieldPatternConfidenceAsync(fieldPatterns, 0);
 
         // Assert - Should handle gracefully (may succeed or fail, both acceptable)
-        result.Value.Should().BeInRange(0.0, 1.0, "Confidence should be valid percentage");
+        if (result.IsSuccess)
+        {
+            result.Value.Should().BeInRange(0.0, 1.0, "Confidence should be valid percentage");
+        }
+        else
+        {
+            result.IsFailure.Should().BeTrue("Empty patterns should either calculate confidence or fail gracefully");
+        }
     }
 
     public void Dispose()

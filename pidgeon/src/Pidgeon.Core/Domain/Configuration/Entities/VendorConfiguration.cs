@@ -89,10 +89,10 @@ public record VendorConfiguration
     /// </summary>
     /// <param name="other">Additional configuration data</param>
     /// <returns>Merged configuration</returns>
-    public VendorConfiguration MergeWith(VendorConfiguration other)
+    public Result<VendorConfiguration> MergeWith(VendorConfiguration other)
     {
         if (!Address.Matches(other.Address))
-            throw new ArgumentException("Cannot merge configurations with different addresses");
+            return Result<VendorConfiguration>.Failure(Error.Validation("Cannot merge configurations with different addresses", "Address"));
 
         // Merge message patterns
         var mergedPatterns = new Dictionary<string, MessagePattern>(MessagePatterns);
@@ -101,7 +101,10 @@ public record VendorConfiguration
             if (mergedPatterns.ContainsKey(kvp.Key))
             {
                 // Combine existing pattern with new data
-                mergedPatterns[kvp.Key] = mergedPatterns[kvp.Key].MergeWith(kvp.Value);
+                var mergeResult = mergedPatterns[kvp.Key].MergeWith(kvp.Value);
+                if (mergeResult.IsFailure)
+                    return Result<VendorConfiguration>.Failure($"Failed to merge pattern {kvp.Key}: {mergeResult.Error}");
+                mergedPatterns[kvp.Key] = mergeResult.Value;
             }
             else
             {
@@ -127,11 +130,11 @@ public record VendorConfiguration
             });
         }
 
-        return this with
+        return Result<VendorConfiguration>.Success(this with
         {
             MessagePatterns = mergedPatterns,
             Metadata = Metadata.WithUpdate(other.Metadata.MessagesSampled, newConfidence, changes)
-        };
+        });
     }
 
     /// <summary>

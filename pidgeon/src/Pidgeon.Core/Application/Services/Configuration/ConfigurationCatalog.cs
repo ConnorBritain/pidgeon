@@ -48,9 +48,12 @@ internal class ConfigurationCatalog : IConfigurationCatalog
                 if (_configurations.TryGetValue(address, out var existingConfiguration))
                 {
                     _logger.LogInformation("Merging with existing configuration for {Address}", address);
-                    var mergedConfiguration = existingConfiguration.MergeWith(newConfiguration);
-                    _configurations[address] = mergedConfiguration;
-                    return Result<VendorConfiguration>.Success(mergedConfiguration);
+                    var mergeResult = existingConfiguration.MergeWith(newConfiguration);
+                    if (mergeResult.IsFailure)
+                        return Result<VendorConfiguration>.Failure($"Failed to merge configuration: {mergeResult.Error}");
+                    
+                    _configurations[address] = mergeResult.Value;
+                    return Result<VendorConfiguration>.Success(mergeResult.Value);
                 }
                 else
                 {

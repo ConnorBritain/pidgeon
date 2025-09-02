@@ -304,7 +304,10 @@ public class GenericHL7Message : HL7Message
     public GenericHL7Message(string messageType)
     {
         // Parse the message type string into HL7MessageType format
-        MessageType = HL7MessageType.Parse(messageType);
+        var parseResult = HL7MessageType.Parse(messageType);
+        if (parseResult.IsFailure)
+            throw new ArgumentException($"Invalid message type: {parseResult.Error}");
+        MessageType = parseResult.Value;
     }
     
     public override HL7MessageType MessageType { get; set; }
