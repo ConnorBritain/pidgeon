@@ -9,7 +9,6 @@ namespace Pidgeon.Core.Domain.Messaging.HL7v2.Common;
 
 /// <summary>
 /// Represents an HL7 Numeric (NM) field - decimal number data type.
-/// Implements Result<T> pattern per sacred architectural principles.
 /// </summary>
 public class NumericField : HL7Field<decimal?>
 {
@@ -53,7 +52,6 @@ public class NumericField : HL7Field<decimal?>
 
     /// <summary>
     /// Parses the raw HL7 string into a decimal value.
-    /// Uses Result<T> pattern per sacred architectural principles.
     /// Supports standard numeric formats including integers and decimals.
     /// </summary>
     /// <param name="hl7Value">The HL7-formatted numeric string</param>

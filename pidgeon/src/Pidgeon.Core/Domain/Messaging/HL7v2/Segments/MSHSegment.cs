@@ -34,55 +34,30 @@ public class MSHSegment : HL7Segment
     public StringField ApplicationAcknowledgmentType => GetField<StringField>(15)!;
     public StringField CountryCode => GetField<StringField>(16)!;
 
-    public override void InitializeFields()
+    /// <summary>
+    /// Defines the fields for the MSH segment.
+    /// </summary>
+    protected override IEnumerable<SegmentFieldDefinition> GetFieldDefinitions()
     {
-        // MSH.1 - Encoding Characters (Required)
-        AddField(new StringField("^~\\&", 4, true));
-
-        // MSH.2 - Sending Application
-        AddField(StringField.Optional(180));
-
-        // MSH.3 - Sending Facility
-        AddField(StringField.Optional(180));
-
-        // MSH.4 - Receiving Application
-        AddField(StringField.Optional(180));
-
-        // MSH.5 - Receiving Facility
-        AddField(StringField.Optional(180));
-
-        // MSH.6 - Date/Time of Message (Required)
-        AddField(new TimestampField(DateTime.UtcNow));
-
-        // MSH.7 - Security
-        AddField(StringField.Optional(40));
-
-        // MSH.8 - Message Type (Required)
-        AddField(StringField.Required(7));
-
-        // MSH.9 - Message Control ID (Required)
-        AddField(StringField.Required(20));
-
-        // MSH.10 - Processing ID (Required)
-        AddField(new StringField("P", 1, true)); // Default to Production
-
-        // MSH.11 - Version ID (Required)
-        AddField(new StringField("2.3", 5, true)); // HL7 v2.3
-
-        // MSH.12 - Sequence Number
-        AddField(new NumericField());
-
-        // MSH.13 - Continuation Pointer
-        AddField(StringField.Optional(180));
-
-        // MSH.14 - Accept Acknowledgment Type
-        AddField(StringField.Optional(2));
-
-        // MSH.15 - Application Acknowledgment Type
-        AddField(StringField.Optional(2));
-
-        // MSH.16 - Country Code
-        AddField(StringField.Optional(2));
+        return new[]
+        {
+            SegmentFieldDefinition.StringWithDefault(1, "Encoding Characters", "^~\\&", 4, true),    // MSH.1
+            SegmentFieldDefinition.OptionalString(2, "Sending Application", 180),                    // MSH.2
+            SegmentFieldDefinition.OptionalString(3, "Sending Facility", 180),                       // MSH.3
+            SegmentFieldDefinition.OptionalString(4, "Receiving Application", 180),                  // MSH.4
+            SegmentFieldDefinition.OptionalString(5, "Receiving Facility", 180),                     // MSH.5
+            SegmentFieldDefinition.TimestampNow(6, "Date/Time of Message", true),                    // MSH.6
+            SegmentFieldDefinition.OptionalString(7, "Security", 40),                                // MSH.7
+            SegmentFieldDefinition.RequiredString(8, "Message Type", 7),                             // MSH.8
+            SegmentFieldDefinition.RequiredString(9, "Message Control ID", 20),                      // MSH.9
+            SegmentFieldDefinition.StringWithDefault(10, "Processing ID", "P", 1, true),             // MSH.10
+            SegmentFieldDefinition.StringWithDefault(11, "Version ID", "2.3", 5, true),              // MSH.11
+            SegmentFieldDefinition.Numeric(12, "Sequence Number"),                                   // MSH.12
+            SegmentFieldDefinition.OptionalString(13, "Continuation Pointer", 180),                  // MSH.13
+            SegmentFieldDefinition.OptionalString(14, "Accept Acknowledgment Type", 2),              // MSH.14
+            SegmentFieldDefinition.OptionalString(15, "Application Acknowledgment Type", 2),         // MSH.15
+            SegmentFieldDefinition.OptionalString(16, "Country Code", 2)                             // MSH.16
+        };
     }
 
     /// <summary>

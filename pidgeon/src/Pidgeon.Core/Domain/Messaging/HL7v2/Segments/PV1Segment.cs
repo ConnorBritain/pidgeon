@@ -43,79 +43,48 @@ public class PV1Segment : HL7Segment
     public TimestampField AdmitDateTime => GetField<TimestampField>(44)!;
     public TimestampField DischargeDateTime => GetField<TimestampField>(45)!;
 
-    public override void InitializeFields()
+    /// <summary>
+    /// Defines the fields for the PV1 segment.
+    /// </summary>
+    protected override IEnumerable<SegmentFieldDefinition> GetFieldDefinitions()
     {
-        // PV1.1 - Set ID (Optional)
-        AddField(StringField.Optional(4));
-
-        // PV1.2 - Patient Class (Required) - I=Inpatient, O=Outpatient, E=Emergency, etc.
-        AddField(StringField.Required(1));
-
-        // PV1.3 - Assigned Patient Location (Optional) - Point of care^Room^Bed^Facility
-        AddField(StringField.Optional(80));
-
-        // PV1.4 - Admission Type (Optional) - A=Accident, E=Emergency, L=Labor, etc.
-        AddField(StringField.Optional(2));
-
-        // PV1.5 - Preadmit Number (Optional)
-        AddField(StringField.Optional(250));
-
-        // PV1.6 - Prior Patient Location (Optional)
-        AddField(StringField.Optional(80));
-
-        // PV1.7 - Attending Doctor (Optional) - ID^Last^First^Middle^Suffix^Prefix^Degree
-        AddField(StringField.Optional(250));
-
-        // PV1.8 - Referring Doctor (Optional)
-        AddField(StringField.Optional(250));
-
-        // PV1.9 - Consulting Doctor (Optional)
-        AddField(StringField.Optional(250));
-
-        // PV1.10 - Hospital Service (Optional)
-        AddField(StringField.Optional(3));
-
-        // PV1.11 - Temporary Location (Optional)
-        AddField(StringField.Optional(80));
-
-        // PV1.12 - Preadmit Test Indicator (Optional)
-        AddField(StringField.Optional(2));
-
-        // PV1.13 - Re-admission Indicator (Optional)
-        AddField(StringField.Optional(2));
-
-        // PV1.14 - Admit Source (Optional)
-        AddField(StringField.Optional(6));
-
-        // PV1.15 - Ambulatory Status (Optional)
-        AddField(StringField.Optional(2));
-
-        // PV1.16 - VIP Indicator (Optional)
-        AddField(StringField.Optional(2));
-
-        // PV1.17 - Admitting Doctor (Optional)
-        AddField(StringField.Optional(250));
-
-        // PV1.18 - Patient Type (Optional)
-        AddField(StringField.Optional(2));
-
-        // PV1.19 - Visit Number (Optional)
-        AddField(StringField.Optional(250));
-
-        // PV1.20 - Financial Class (Optional)
-        AddField(StringField.Optional(50));
+        var definitions = new List<SegmentFieldDefinition>
+        {
+            SegmentFieldDefinition.OptionalString(1, "Set ID", 4),                           // PV1.1
+            SegmentFieldDefinition.RequiredString(2, "Patient Class", 1),                    // PV1.2 (I=Inpatient, O=Outpatient, E=Emergency)
+            SegmentFieldDefinition.OptionalString(3, "Assigned Patient Location", 80),       // PV1.3
+            SegmentFieldDefinition.OptionalString(4, "Admission Type", 2),                   // PV1.4
+            SegmentFieldDefinition.OptionalString(5, "Preadmit Number", 250),                // PV1.5
+            SegmentFieldDefinition.OptionalString(6, "Prior Patient Location", 80),          // PV1.6
+            SegmentFieldDefinition.OptionalString(7, "Attending Doctor", 250),               // PV1.7
+            SegmentFieldDefinition.OptionalString(8, "Referring Doctor", 250),               // PV1.8
+            SegmentFieldDefinition.OptionalString(9, "Consulting Doctor", 250),              // PV1.9
+            SegmentFieldDefinition.OptionalString(10, "Hospital Service", 3),                // PV1.10
+            SegmentFieldDefinition.OptionalString(11, "Temporary Location", 80),             // PV1.11
+            SegmentFieldDefinition.OptionalString(12, "Preadmit Test Indicator", 2),         // PV1.12
+            SegmentFieldDefinition.OptionalString(13, "Re-admission Indicator", 2),          // PV1.13
+            SegmentFieldDefinition.OptionalString(14, "Admit Source", 6),                    // PV1.14
+            SegmentFieldDefinition.OptionalString(15, "Ambulatory Status", 2),               // PV1.15
+            SegmentFieldDefinition.OptionalString(16, "VIP Indicator", 2),                   // PV1.16
+            SegmentFieldDefinition.OptionalString(17, "Admitting Doctor", 250),              // PV1.17
+            SegmentFieldDefinition.OptionalString(18, "Patient Type", 2),                    // PV1.18
+            SegmentFieldDefinition.OptionalString(19, "Visit Number", 250),                  // PV1.19
+            SegmentFieldDefinition.OptionalString(20, "Financial Class", 50)                 // PV1.20
+        };
 
         // Add empty fields 21-43 to maintain proper field positioning
         for (int i = 21; i <= 43; i++)
         {
-            AddField(StringField.Optional(250));
+            definitions.Add(SegmentFieldDefinition.OptionalString(i, $"Reserved Field {i}", 250));
         }
 
-        // PV1.44 - Admit Date/Time (Optional)
-        AddField(new TimestampField());
+        // PV1.44 - Admit Date/Time
+        definitions.Add(SegmentFieldDefinition.Timestamp(44, "Admit Date/Time"));
+        
+        // PV1.45 - Discharge Date/Time
+        definitions.Add(SegmentFieldDefinition.Timestamp(45, "Discharge Date/Time"));
 
-        // PV1.45 - Discharge Date/Time (Optional)  
-        AddField(new TimestampField());
+        return definitions;
     }
 
     /// <summary>

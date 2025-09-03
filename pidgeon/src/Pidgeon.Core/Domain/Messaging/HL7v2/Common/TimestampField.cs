@@ -9,7 +9,6 @@ namespace Pidgeon.Core.Domain.Messaging.HL7v2.Common;
 
 /// <summary>
 /// Represents an HL7 Timestamp (TS) field - date/time data type.
-/// Implements Result<T> pattern per sacred architectural principles.
 /// </summary>
 public class TimestampField : HL7Field<DateTime?>
 {
@@ -45,7 +44,6 @@ public class TimestampField : HL7Field<DateTime?>
 
     /// <summary>
     /// Parses the raw HL7 string into a DateTime value.
-    /// Uses Result<T> pattern per sacred architectural principles.
     /// Supports HL7 timestamp formats: YYYY, YYYYMM, YYYYMMDD, YYYYMMDDHHMM, YYYYMMDDHHMMSS, etc.
     /// </summary>
     /// <param name="hl7Value">The HL7-formatted timestamp string</param>

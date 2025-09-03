@@ -18,43 +18,26 @@ public class ORCSegment : HL7Segment
     public override string SegmentId => "ORC";
     public override string DisplayName => "Common Order";
 
-    public override void InitializeFields()
+    /// <summary>
+    /// Defines the fields for the ORC segment.
+    /// </summary>
+    protected override IEnumerable<SegmentFieldDefinition> GetFieldDefinitions()
     {
-        // ORC.1 - Order Control (Required)
-        AddField(new StringField("NW", 2, true)); // NW = New order
-
-        // ORC.2 - Placer Order Number
-        AddField(StringField.Optional(22));
-
-        // ORC.3 - Filler Order Number  
-        AddField(StringField.Optional(22));
-
-        // ORC.4 - Placer Group Number
-        AddField(StringField.Optional(22));
-
-        // ORC.5 - Order Status
-        AddField(StringField.Optional(2));
-
-        // ORC.6 - Response Flag
-        AddField(StringField.Optional(1));
-
-        // ORC.7 - Quantity/Timing
-        AddField(StringField.Optional(200));
-
-        // ORC.8 - Parent
-        AddField(StringField.Optional(200));
-
-        // ORC.9 - Date/Time of Transaction
-        AddField(new TimestampField(DateTime.UtcNow));
-
-        // ORC.10 - Entered By
-        AddField(StringField.Optional(80));
-
-        // ORC.11 - Verified By
-        AddField(StringField.Optional(80));
-
-        // ORC.12 - Ordering Provider
-        AddField(StringField.Optional(80));
+        return new[]
+        {
+            SegmentFieldDefinition.StringWithDefault(1, "Order Control", "NW", 2, true),   // ORC.1 (NW = New order)
+            SegmentFieldDefinition.OptionalString(2, "Placer Order Number", 22),            // ORC.2
+            SegmentFieldDefinition.OptionalString(3, "Filler Order Number", 22),            // ORC.3
+            SegmentFieldDefinition.OptionalString(4, "Placer Group Number", 22),            // ORC.4
+            SegmentFieldDefinition.OptionalString(5, "Order Status", 2),                    // ORC.5
+            SegmentFieldDefinition.OptionalString(6, "Response Flag", 1),                   // ORC.6
+            SegmentFieldDefinition.OptionalString(7, "Quantity/Timing", 200),               // ORC.7
+            SegmentFieldDefinition.OptionalString(8, "Parent", 200),                        // ORC.8
+            SegmentFieldDefinition.TimestampNow(9, "Date/Time of Transaction"),             // ORC.9
+            SegmentFieldDefinition.OptionalString(10, "Entered By", 80),                    // ORC.10
+            SegmentFieldDefinition.OptionalString(11, "Verified By", 80),                   // ORC.11
+            SegmentFieldDefinition.OptionalString(12, "Ordering Provider", 80)              // ORC.12
+        };
     }
 
     /// <summary>

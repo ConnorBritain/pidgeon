@@ -27,52 +27,29 @@ public class RXESegment : HL7Segment
     public StringField GiveDosageForm => GetField<StringField>(6)!;
     public StringField ProviderInstructions => GetField<StringField>(7)!;
 
-    public override void InitializeFields()
+    /// <summary>
+    /// Defines the fields for the RXE segment.
+    /// </summary>
+    protected override IEnumerable<SegmentFieldDefinition> GetFieldDefinitions()
     {
-        // RXE.1 - Quantity/Timing
-        AddField(StringField.Optional(200));
-
-        // RXE.2 - Give Code (Required) - Drug identifier
-        AddField(StringField.Required(100));
-
-        // RXE.3 - Give Amount - Min
-        AddField(new NumericField());
-
-        // RXE.4 - Give Amount - Max  
-        AddField(new NumericField());
-
-        // RXE.5 - Give Units
-        AddField(StringField.Optional(60));
-
-        // RXE.6 - Give Dosage Form
-        AddField(StringField.Optional(60));
-
-        // RXE.7 - Provider's Administration Instructions
-        AddField(StringField.Optional(200));
-
-        // RXE.8 - Deliver-to Location
-        AddField(StringField.Optional(200));
-
-        // RXE.9 - Substitution Status
-        AddField(StringField.Optional(1));
-
-        // RXE.10 - Dispense Amount
-        AddField(new NumericField());
-
-        // RXE.11 - Dispense Units
-        AddField(StringField.Optional(60));
-
-        // RXE.12 - Number of Refills
-        AddField(new NumericField());
-
-        // RXE.13 - Ordering Provider's DEA Number
-        AddField(StringField.Optional(60));
-
-        // RXE.14 - Pharmacist/Treatment Supplier's Verifier ID
-        AddField(StringField.Optional(60));
-
-        // RXE.15 - Prescription Number
-        AddField(StringField.Optional(20));
+        return new[]
+        {
+            SegmentFieldDefinition.OptionalString(1, "Quantity/Timing", 200),                        // RXE.1
+            SegmentFieldDefinition.RequiredString(2, "Give Code", 100),                              // RXE.2 (Drug identifier)
+            SegmentFieldDefinition.Numeric(3, "Give Amount - Min"),                                  // RXE.3
+            SegmentFieldDefinition.Numeric(4, "Give Amount - Max"),                                  // RXE.4
+            SegmentFieldDefinition.OptionalString(5, "Give Units", 60),                              // RXE.5
+            SegmentFieldDefinition.OptionalString(6, "Give Dosage Form", 60),                        // RXE.6
+            SegmentFieldDefinition.OptionalString(7, "Provider's Administration Instructions", 200),  // RXE.7
+            SegmentFieldDefinition.OptionalString(8, "Deliver-to Location", 200),                    // RXE.8
+            SegmentFieldDefinition.OptionalString(9, "Substitution Status", 1),                      // RXE.9
+            SegmentFieldDefinition.Numeric(10, "Dispense Amount"),                                   // RXE.10
+            SegmentFieldDefinition.OptionalString(11, "Dispense Units", 60),                         // RXE.11
+            SegmentFieldDefinition.Numeric(12, "Number of Refills"),                                 // RXE.12
+            SegmentFieldDefinition.OptionalString(13, "Ordering Provider's DEA Number", 60),         // RXE.13
+            SegmentFieldDefinition.OptionalString(14, "Pharmacist/Treatment Supplier's Verifier ID", 60), // RXE.14
+            SegmentFieldDefinition.OptionalString(15, "Prescription Number", 20)                     // RXE.15
+        };
     }
 
     /// <summary>

@@ -10,9 +10,8 @@ namespace Pidgeon.Core.Standards.Common.HL7.Configuration;
 
 /// <summary>
 /// Universal HL7 configuration analysis plugin.
-/// Thin orchestration layer that coordinates specialized domain services
-/// for HL7-specific configuration analysis workflows across all HL7v2 versions.
-/// Follows sacred principle: Plugin orchestrates, services implement.
+/// Coordinates specialized domain services for HL7-specific configuration analysis 
+/// workflows across all HL7v2 versions.
 /// </summary>
 internal class HL7ConfigurationPlugin : IConfigurationPlugin
 {

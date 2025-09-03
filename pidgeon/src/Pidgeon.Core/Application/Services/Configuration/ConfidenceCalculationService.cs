@@ -10,8 +10,8 @@ using Pidgeon.Core.Application.Services.Configuration;
 namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
-/// Standard-agnostic confidence calculator that delegates to standard-specific plugins.
-/// Follows sacred principle: Plugin architecture with no hardcoded standard logic.
+/// Calculates confidence scores for vendor configurations and field patterns 
+/// using pluggable standard-specific analysis.
 /// </summary>
 internal class ConfidenceCalculationService : IConfidenceCalculationService
 {

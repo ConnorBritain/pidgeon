@@ -158,30 +158,36 @@ public class PIDSegment : HL7Segment
     /// </summary>
     public StringField EthnicGroup { get; set; } = new();
 
-    public override void InitializeFields()
+    /// <summary>
+    /// Defines the fields for the PID segment.
+    /// </summary>
+    protected override IEnumerable<SegmentFieldDefinition> GetFieldDefinitions()
     {
-        AddField(SetId);                      // PID.1
-        AddField(ExternalPatientId);          // PID.2
-        AddField(PatientId);                  // PID.3
-        AddField(AlternatePatientId);         // PID.4
-        AddField(PatientName);                // PID.5
-        AddField(MothersMaidenName);          // PID.6
-        AddField(DateOfBirth);                // PID.7
-        AddField(Sex);                        // PID.8
-        AddField(PatientAlias);               // PID.9
-        AddField(Race);                       // PID.10
-        AddField(PatientAddress);             // PID.11
-        AddField(CountyCode);                 // PID.12
-        AddField(HomePhone);                  // PID.13
-        AddField(BusinessPhone);              // PID.14
-        AddField(PrimaryLanguage);            // PID.15
-        AddField(MaritalStatus);              // PID.16
-        AddField(Religion);                   // PID.17
-        AddField(AccountNumber);              // PID.18
-        AddField(SocialSecurityNumber);       // PID.19
-        AddField(DriversLicenseNumber);       // PID.20
-        AddField(MothersIdentifier);          // PID.21
-        AddField(EthnicGroup);                // PID.22
+        return new[]
+        {
+            SegmentFieldDefinition.Numeric(1, "Set ID", false),                     // PID.1
+            SegmentFieldDefinition.OptionalString(2, "External Patient ID", 20),    // PID.2
+            SegmentFieldDefinition.RequiredString(3, "Patient ID", 20),            // PID.3
+            SegmentFieldDefinition.OptionalString(4, "Alternate Patient ID", 20),  // PID.4
+            new SegmentFieldDefinition(5, "Patient Name", () => PatientName, true), // PID.5 (PersonNameField)
+            SegmentFieldDefinition.OptionalString(6, "Mother's Maiden Name", 250), // PID.6
+            new SegmentFieldDefinition(7, "Date of Birth", () => DateOfBirth),     // PID.7 (DateField)
+            SegmentFieldDefinition.OptionalString(8, "Sex", 1),                    // PID.8
+            SegmentFieldDefinition.OptionalString(9, "Patient Alias", 250),        // PID.9
+            SegmentFieldDefinition.OptionalString(10, "Race", 250),                // PID.10
+            new SegmentFieldDefinition(11, "Patient Address", () => PatientAddress), // PID.11 (AddressField)
+            SegmentFieldDefinition.OptionalString(12, "County Code", 4),           // PID.12
+            SegmentFieldDefinition.OptionalString(13, "Home Phone", 250),          // PID.13
+            SegmentFieldDefinition.OptionalString(14, "Business Phone", 250),      // PID.14
+            SegmentFieldDefinition.OptionalString(15, "Primary Language", 250),    // PID.15
+            SegmentFieldDefinition.OptionalString(16, "Marital Status", 250),      // PID.16
+            SegmentFieldDefinition.OptionalString(17, "Religion", 250),            // PID.17
+            SegmentFieldDefinition.OptionalString(18, "Account Number", 250),      // PID.18
+            SegmentFieldDefinition.OptionalString(19, "Social Security Number", 16), // PID.19
+            SegmentFieldDefinition.OptionalString(20, "Driver's License Number", 250), // PID.20
+            SegmentFieldDefinition.OptionalString(21, "Mother's Identifier", 250), // PID.21
+            SegmentFieldDefinition.OptionalString(22, "Ethnic Group", 250)         // PID.22
+        };
     }
 
     /// <summary>

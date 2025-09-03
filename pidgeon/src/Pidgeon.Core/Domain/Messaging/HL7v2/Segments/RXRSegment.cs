@@ -22,19 +22,18 @@ public class RXRSegment : HL7Segment
     public StringField AdministrationDevice => GetField<StringField>(3)!;
     public StringField AdministrationMethod => GetField<StringField>(4)!;
 
-    public override void InitializeFields()
+    /// <summary>
+    /// Defines the fields for the RXR segment.
+    /// </summary>
+    protected override IEnumerable<SegmentFieldDefinition> GetFieldDefinitions()
     {
-        // RXR.1 - Route (Required)
-        AddField(StringField.Required(60));
-
-        // RXR.2 - Site
-        AddField(StringField.Optional(60));
-
-        // RXR.3 - Administration Device
-        AddField(StringField.Optional(60));
-
-        // RXR.4 - Administration Method
-        AddField(StringField.Optional(60));
+        return new[]
+        {
+            SegmentFieldDefinition.RequiredString(1, "Route", 60),                  // RXR.1
+            SegmentFieldDefinition.OptionalString(2, "Site", 60),                   // RXR.2
+            SegmentFieldDefinition.OptionalString(3, "Administration Device", 60),   // RXR.3
+            SegmentFieldDefinition.OptionalString(4, "Administration Method", 60)    // RXR.4
+        };
     }
 
     /// <summary>

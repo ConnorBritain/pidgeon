@@ -56,7 +56,6 @@ public abstract class HL7Field
 
     /// <summary>
     /// Validates this field according to HL7 specifications and field-specific rules.
-    /// Uses Result<T> pattern per sacred architectural principles.
     /// </summary>
     /// <returns>A result indicating whether the field is valid</returns>
     public virtual Result<HL7Field> Validate()
@@ -139,7 +138,6 @@ public abstract class HL7Field<T> : HL7Field
 
     /// <summary>
     /// Sets the typed value of this field and updates the raw HL7 representation.
-    /// Uses Result<T> pattern per sacred architectural principles.
     /// </summary>
     /// <param name="value">The typed value to set</param>
     /// <returns>A result indicating success or validation errors</returns>
@@ -168,7 +166,6 @@ public abstract class HL7Field<T> : HL7Field
 
     /// <inheritdoc />
     /// <remarks>
-    /// Uses Result<T> pattern throughout per sacred architectural principles.
     /// No exceptions thrown for business logic control flow.
     /// </remarks>
     public override Result<HL7Field> SetValue(string? value)

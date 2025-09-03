@@ -9,7 +9,6 @@ namespace Pidgeon.Core.Domain.Messaging.HL7v2.Common;
 
 /// <summary>
 /// Represents an HL7 Date (DT) field - date-only data type.
-/// Implements Result<T> pattern per sacred architectural principles.
 /// Format: YYYYMMDD (8 digits, no separators)
 /// </summary>
 public class DateField : HL7Field<DateTime?>

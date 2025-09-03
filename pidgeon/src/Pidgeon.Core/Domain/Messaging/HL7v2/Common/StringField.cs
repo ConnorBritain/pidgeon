@@ -8,7 +8,6 @@ namespace Pidgeon.Core.Domain.Messaging.HL7v2.Common;
 
 /// <summary>
 /// Represents an HL7 String (ST) field - basic string data type.
-/// Implements Result<T> pattern per sacred architectural principles.
 /// </summary>
 public class StringField : HL7Field<string?>
 {
@@ -41,8 +40,7 @@ public class StringField : HL7Field<string?>
     }
 
     /// <summary>
-    /// Parses the raw HL7 string into a string value.
-    /// Uses Result<T> pattern per sacred architectural principles.
+    /// Parses the raw HL7 string into a string value with validation.
     /// </summary>
     /// <param name="hl7Value">The HL7-formatted string</param>
     /// <returns>Result containing the parsed string or error</returns>

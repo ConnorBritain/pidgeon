@@ -8,7 +8,7 @@ using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 
-namespace Pidgeon.Core.Standards.HL7v24Plugin;
+namespace Pidgeon.Core.Infrastructure.Standards.Plugins.HL7.v24;
 
 /// <summary>
 /// Message factory implementation for HL7 v2.4 standard.

@@ -4,28 +4,21 @@
 
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core;
-using Pidgeon.Core.Standards.HL7v24Plugin;
 using Pidgeon.Core.Application.Common;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 
-namespace Pidgeon.Core.Standards.HL7v24Plugin;
+namespace Pidgeon.Core.Infrastructure.Standards.Plugins.HL7.v24;
 
 /// <summary>
 /// HL7 v2.4 standard plugin implementation.
 /// Handles v2.4-specific parsing, validation, and serialization logic.
 /// </summary>
-public class HL7v24Plugin : IStandardPlugin
+public class HL7v24Plugin : HL7PluginBase
 {
-    /// <inheritdoc />
-    public string StandardName => "HL7";
-
-    /// <inheritdoc />
-    public Version StandardVersion => new(2, 4);
-
-    /// <inheritdoc />
-    public string Description => "HL7 v2.4 healthcare messaging standard support";
-
-    /// <inheritdoc />
-    public IReadOnlyList<string> SupportedMessageTypes => new[]
+    public override Version StandardVersion => new(2, 4);
+    public override string Description => "HL7 v2.4 healthcare messaging standard support";
+    
+    public override IReadOnlyList<string> SupportedMessageTypes => new[]
     {
         "ADT", // Admit/Discharge/Transfer
         "ORM", // Order Entry
@@ -36,40 +29,32 @@ public class HL7v24Plugin : IStandardPlugin
         "RSP"  // Response to Query
     }.AsReadOnly();
 
-    /// <summary>
-    /// Gets the message factory for creating HL7 v2.4 messages.
-    /// </summary>
-    public IStandardMessageFactory MessageFactory => new HL7v24MessageFactory(this);
+    public override IStandardMessageFactory MessageFactory => new HL7v24MessageFactory(this);
 
-    /// <inheritdoc />
-    public Result<IStandardMessage> CreateMessage(string messageType)
+    public override Result<IStandardMessage> CreateMessage(string messageType)
     {
         // TODO: Implement message creation based on messageType
         return Result<IStandardMessage>.Failure($"Message creation for type '{messageType}' not yet implemented in HL7v24Plugin");
     }
 
-    /// <inheritdoc />
-    public IStandardValidator GetValidator()
+    public override IStandardValidator GetValidator()
     {
         return new HL7v24Validator();
     }
 
-    /// <inheritdoc />
-    public Result<IStandardConfig> LoadConfiguration(string configPath)
+    public override Result<IStandardConfig> LoadConfiguration(string configPath)
     {
         // TODO: Load HL7 v2.4 specific configuration
         return Result<IStandardConfig>.Failure($"Configuration loading not yet implemented in HL7v24Plugin");
     }
 
-    /// <inheritdoc />
-    public Result<IStandardMessage> ParseMessage(string messageContent)
+    public override Result<IStandardMessage> ParseMessage(string messageContent)
     {
         // TODO: Parse HL7 v2.4 message content
         return Result<IStandardMessage>.Failure($"Message parsing not yet implemented in HL7v24Plugin");
     }
 
-    /// <inheritdoc />
-    public bool CanHandle(string messageContent)
+    public override bool CanHandle(string messageContent)
     {
         // Basic HL7 v2.4 detection - messages start with MSH
         if (string.IsNullOrWhiteSpace(messageContent))
@@ -83,12 +68,11 @@ public class HL7v24Plugin : IStandardPlugin
 /// <summary>
 /// Validator implementation for HL7 v2.4 messages.
 /// </summary>
-public class HL7v24Validator : IStandardValidator
+public class HL7v24Validator : HL7ValidatorBase
 {
-    public string StandardName => "HL7";
-    public Version StandardVersion => new(2, 4);
+    public override Version StandardVersion => new(2, 4);
 
-    public Result<ValidationResult> ValidateMessage(string messageContent, ValidationMode validationMode = ValidationMode.Strict)
+    public override Result<ValidationResult> ValidateMessage(string messageContent, ValidationMode validationMode = ValidationMode.Strict)
     {
         var plugin = new HL7v24Plugin();
         
@@ -197,7 +181,7 @@ public class HL7v24Validator : IStandardValidator
         return Result<ValidationResult>.Success(result);
     }
 
-    public Result<ValidationResult> ValidateMessage(IStandardMessage message, ValidationMode validationMode = ValidationMode.Strict)
+    public override Result<ValidationResult> ValidateMessage(IStandardMessage message, ValidationMode validationMode = ValidationMode.Strict)
     {
         if (message == null)
             return Error.Create("NULL_MESSAGE", "Message cannot be null", "HL7v24Validator");
@@ -205,34 +189,49 @@ public class HL7v24Validator : IStandardValidator
         return message.Validate(validationMode);
     }
 
-    public IReadOnlyList<ValidationRuleInfo> GetValidationRules()
+    /// <summary>
+    /// Validates HL7 v2.4 version-specific rules while maintaining Result<T> pattern.
+    /// </summary>
+    protected override Result<List<ValidationError>> ValidateVersionSpecific(string messageContent, ValidationMode validationMode)
+    {
+        var errors = new List<ValidationError>();
+        
+        try
+        {
+            var firstLine = messageContent.Split('\n', '\r')[0];
+            var fields = firstLine.Split('|');
+            
+            // Validate version field (MSH.12) - v2.4 specific
+            if (fields.Length > 12)
+            {
+                var versionField = fields[12];
+                if (!string.IsNullOrWhiteSpace(versionField) && !versionField.StartsWith("2.4"))
+                {
+                    var severity = validationMode == ValidationMode.Strict ? ValidationSeverity.Error : ValidationSeverity.Warning;
+                    errors.Add(new ValidationError
+                    {
+                        Code = "HL7v24_VERSION_MISMATCH",
+                        Message = $"MSH.12 indicates version '{versionField}', expected v2.4",
+                        Severity = severity
+                    });
+                }
+            }
+            
+            return Result<List<ValidationError>>.Success(errors);
+        }
+        catch (Exception ex)
+        {
+            return Error.Create("V24_VALIDATION_ERROR", $"Error during v2.4-specific validation: {ex.Message}", "HL7v24Validator");
+        }
+    }
+
+    /// <summary>
+    /// Gets HL7 v2.4 version-specific validation rules.
+    /// </summary>
+    protected override IReadOnlyList<ValidationRuleInfo> GetVersionSpecificValidationRules()
     {
         return new[]
         {
-            new ValidationRuleInfo
-            {
-                Id = "HL7v24_MSH_REQUIRED",
-                Name = "MSH Segment Required",
-                Description = "All HL7 v2.4 messages must start with an MSH segment",
-                Category = "Structure",
-                Severity = ValidationSeverity.Error
-            },
-            new ValidationRuleInfo
-            {
-                Id = "HL7v24_MESSAGE_TYPE",
-                Name = "Valid Message Type",
-                Description = "MSH.9 must contain a valid HL7 v2.4 message type",
-                Category = "Content",
-                Severity = ValidationSeverity.Error
-            },
-            new ValidationRuleInfo
-            {
-                Id = "HL7v24_REQUIRED_FIELDS",
-                Name = "Required Fields",
-                Description = "Required MSH fields must not be empty",
-                Category = "Content",
-                Severity = ValidationSeverity.Error
-            },
             new ValidationRuleInfo
             {
                 Id = "HL7v24_VERSION_CHECK",
@@ -243,4 +242,5 @@ public class HL7v24Validator : IStandardValidator
             }
         };
     }
+
 }

@@ -517,12 +517,32 @@ public abstract class HL7Segment
     }
 
     /// <summary>
+    /// Gets the field definitions for this segment type.
+    /// Override in concrete segments to define segment-specific fields.
+    /// </summary>
+    /// <returns>Collection of field definitions</returns>
+    protected virtual IEnumerable<SegmentFieldDefinition> GetFieldDefinitions()
+    {
+        // Default returns empty - override in concrete segments
+        return Enumerable.Empty<SegmentFieldDefinition>();
+    }
+
+    /// <summary>
     /// Initializes fields for this segment with default values.
     /// Override in concrete segments to set up required fields.
     /// </summary>
     public virtual void InitializeFields()
     {
-        // Default implementation - override in concrete segments
+        // Use declarative field definitions if available
+        var fieldDefinitions = GetFieldDefinitions();
+        if (fieldDefinitions.Any())
+        {
+            foreach (var definition in fieldDefinitions)
+            {
+                AddField(definition.Position, definition.CreateField());
+            }
+        }
+        // Otherwise default implementation - override in concrete segments for custom logic
     }
 
     /// <summary>

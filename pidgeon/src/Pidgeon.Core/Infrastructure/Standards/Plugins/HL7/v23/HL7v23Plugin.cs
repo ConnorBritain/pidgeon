@@ -6,6 +6,7 @@ using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 using Pidgeon.Core.Application.Common;
 using Pidgeon.Core;
+using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 
 namespace Pidgeon.Core.Infrastructure.Standards.Plugins.HL7.v23;
 
@@ -13,30 +14,29 @@ namespace Pidgeon.Core.Infrastructure.Standards.Plugins.HL7.v23;
 /// Plugin implementation for HL7 v2.3 standard.
 /// Provides support for ADT, RDE, ORM, and other HL7 v2.3 message types.
 /// </summary>
-public class HL7v23Plugin : IStandardPlugin
+public class HL7v23Plugin : HL7PluginBase
 {
-    public string StandardName => "HL7";
-    public Version StandardVersion => new(2, 3);
-    public string Description => "HL7 v2.3 message processing with support for ADT, RDE, ORM, and other common message types";
+    public override Version StandardVersion => new(2, 3);
+    public override string Description => "HL7 v2.3 message processing with support for ADT, RDE, ORM, and other common message types";
 
     private static readonly string[] _supportedMessageTypes = new[]
     {
         "ADT", "RDE", "RDS", "ORM", "ORR", "ACK"
     };
 
-    public IReadOnlyList<string> SupportedMessageTypes => _supportedMessageTypes;
+    public override IReadOnlyList<string> SupportedMessageTypes => _supportedMessageTypes;
 
     /// <summary>
     /// Gets the message factory for creating HL7 v2.3 messages.
     /// </summary>
-    public IStandardMessageFactory MessageFactory => new HL7v23MessageFactory(this);
+    public override IStandardMessageFactory MessageFactory => new HL7v23MessageFactory(this);
 
     /// <summary>
     /// Creates a message builder for the specified message type.
     /// </summary>
     /// <param name="messageType">The type of message to create (e.g., "ADT", "RDE")</param>
     /// <returns>A result containing the message builder or an error</returns>
-    public Result<IStandardMessage> CreateMessage(string messageType)
+    public override Result<IStandardMessage> CreateMessage(string messageType)
     {
         if (string.IsNullOrWhiteSpace(messageType))
             return Error.Create("INVALID_MESSAGE_TYPE", "Message type cannot be empty", "HL7v23Plugin");
@@ -72,7 +72,7 @@ public class HL7v23Plugin : IStandardPlugin
     /// Gets the validator for HL7 v2.3 messages.
     /// </summary>
     /// <returns>A validator instance for HL7 v2.3</returns>
-    public IStandardValidator GetValidator()
+    public override IStandardValidator GetValidator()
     {
         return new HL7v23Validator();
     }
@@ -82,7 +82,7 @@ public class HL7v23Plugin : IStandardPlugin
     /// </summary>
     /// <param name="configPath">Path to the configuration file</param>
     /// <returns>A result containing the configuration or an error</returns>
-    public Result<IStandardConfig> LoadConfiguration(string configPath)
+    public override Result<IStandardConfig> LoadConfiguration(string configPath)
     {
         try
         {
@@ -102,7 +102,7 @@ public class HL7v23Plugin : IStandardPlugin
     /// </summary>
     /// <param name="messageContent">The HL7 message string</param>
     /// <returns>A result containing the parsed message or an error</returns>
-    public Result<IStandardMessage> ParseMessage(string messageContent)
+    public override Result<IStandardMessage> ParseMessage(string messageContent)
     {
         if (string.IsNullOrWhiteSpace(messageContent))
             return Error.Parsing("Message content cannot be empty", "HL7v23Plugin");
@@ -141,7 +141,7 @@ public class HL7v23Plugin : IStandardPlugin
     /// </summary>
     /// <param name="messageContent">The message content to examine</param>
     /// <returns>True if this plugin can handle the message, false otherwise</returns>
-    public bool CanHandle(string messageContent)
+    public override bool CanHandle(string messageContent)
     {
         if (string.IsNullOrWhiteSpace(messageContent))
             return false;
