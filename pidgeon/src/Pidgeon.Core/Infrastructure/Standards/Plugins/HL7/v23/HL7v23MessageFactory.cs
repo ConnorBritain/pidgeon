@@ -2,7 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-using Pidgeon.Core.Domain.Clinical.Entities;
 using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
@@ -28,7 +27,7 @@ public class HL7v23MessageFactory : IStandardMessageFactory
     /// <summary>
     /// Creates an HL7 ADT^A01 (Patient Admission) message.
     /// </summary>
-    public Result<IStandardMessage> CreatePatientAdmission(Patient patient, MessageOptions? options = null)
+    public Result<IStandardMessage> CreatePatientAdmission(PatientDto patient, MessageOptions? options = null)
     {
         try
         {
@@ -61,7 +60,7 @@ public class HL7v23MessageFactory : IStandardMessageFactory
             }
 
             // Populate PID segment from patient
-            var pidResult = message.PID.PopulateFromPatient(patient.ToDto());
+            var pidResult = message.PID.PopulateFromPatient(patient);
             if (pidResult.IsFailure)
                 return Error.Create("ADT_PATIENT_POPULATION_FAILED",
                     $"Failed to populate patient information: {pidResult.Error.Message}", "HL7v23MessageFactory");
@@ -77,7 +76,7 @@ public class HL7v23MessageFactory : IStandardMessageFactory
     /// <summary>
     /// Creates an HL7 ADT^A03 (Patient Discharge) message.
     /// </summary>
-    public Result<IStandardMessage> CreatePatientDischarge(Patient patient, Encounter encounter, MessageOptions? options = null)
+    public Result<IStandardMessage> CreatePatientDischarge(PatientDto patient, EncounterDto encounter, MessageOptions? options = null)
     {
         var result = CreatePatientAdmission(patient, options);
         if (result.IsSuccess && result.Value is ADTMessage adtMessage)
@@ -88,7 +87,7 @@ public class HL7v23MessageFactory : IStandardMessageFactory
             // Populate PV1 segment from encounter
             if (adtMessage.PV1 != null)
             {
-                var pv1 = PV1Segment.Create(encounter.ToDto());
+                var pv1 = PV1Segment.Create(encounter);
                 adtMessage.Segments.RemoveAll(s => s is PV1Segment);
                 adtMessage.AddSegment(pv1);
             }
@@ -99,28 +98,32 @@ public class HL7v23MessageFactory : IStandardMessageFactory
     /// <summary>
     /// Creates an HL7 RDE^O11 (Pharmacy/Treatment Encoded Order) message.
     /// </summary>
-    public Result<IStandardMessage> CreatePrescription(Prescription prescription, MessageOptions? options = null)
+    public Result<IStandardMessage> CreatePrescription(PrescriptionDto prescription, MessageOptions? options = null)
     {
         try
         {
-            var rdeResult = _plugin.CreateMessage("RDE");
+            var sendingApp = options?.SendingApplication ?? GetDefaultSendingApp();
+            var receivingApp = options?.ReceivingApplication ?? "UNKNOWN";
+            
+            var rdeResult = RDEMessage.CreatePharmacyOrder(
+                prescription,
+                sendingApplication: sendingApp,
+                sendingFacility: options?.SendingFacility,
+                receivingApplication: receivingApp,
+                receivingFacility: options?.ReceivingFacility);
+                
             if (rdeResult.IsFailure)
-                return rdeResult;
+                return Result<IStandardMessage>.Failure(rdeResult.Error);
 
-            var message = rdeResult.Value as RDEMessage;
-            if (message == null)
-                return Error.Create("RDE_CREATION_FAILED", "Created message is not an RDEMessage", "HL7v23MessageFactory");
+            var message = rdeResult.Value;
 
-            // Configure message properties from plugin
+            // Configure message properties from plugin and options
             message.MessageControlId = options?.MessageControlId ?? Guid.NewGuid().ToString();
             message.Timestamp = options?.Timestamp ?? DateTime.UtcNow;
-            message.SendingSystem = options?.SendingApplication ?? GetDefaultSendingApp();
-            message.ReceivingSystem = options?.ReceivingApplication ?? "UNKNOWN";
+            message.SendingSystem = sendingApp;
+            message.ReceivingSystem = receivingApp;
             message.Standard = _plugin.StandardName;
             message.Version = _plugin.StandardVersion.ToString();
-
-            // TODO: Implement prescription population logic
-            // This would populate RXE, RXR, PID segments from prescription data
 
             return Result<IStandardMessage>.Success(message);
         }
@@ -135,9 +138,11 @@ public class HL7v23MessageFactory : IStandardMessageFactory
     /// </summary>
     public Result<IStandardMessage> CreateLabOrder(object order, MessageOptions? options = null)
     {
-        // TODO: Implement lab order message creation
-        // This would create ORM^O01 messages with OBR segments
-        return Error.Create("NOT_IMPLEMENTED", "Lab order creation not yet implemented for HL7v23", "HL7v23MessageFactory");
+        // Lab order creation requires LabOrder domain entity which doesn't exist yet
+        // This would create ORM^O01 messages with OBR segments when domain entity is available
+        return Error.Create("DOMAIN_ENTITY_MISSING", 
+            "Lab order creation requires LabOrder domain entity - not yet implemented in clinical domain", 
+            "HL7v23MessageFactory");
     }
 
     /// <summary>
@@ -145,9 +150,11 @@ public class HL7v23MessageFactory : IStandardMessageFactory
     /// </summary>
     public Result<IStandardMessage> CreateLabResult(object result, MessageOptions? options = null)
     {
-        // TODO: Implement lab result message creation  
-        // This would create ORU^R01 messages with OBX segments
-        return Error.Create("NOT_IMPLEMENTED", "Lab result creation not yet implemented for HL7v23", "HL7v23MessageFactory");
+        // Lab result creation requires LabResult domain entity which doesn't exist yet
+        // This would create ORU^R01 messages with OBX segments when domain entity is available
+        return Error.Create("DOMAIN_ENTITY_MISSING", 
+            "Lab result creation requires LabResult domain entity - not yet implemented in clinical domain", 
+            "HL7v23MessageFactory");
     }
 
     /// <summary>

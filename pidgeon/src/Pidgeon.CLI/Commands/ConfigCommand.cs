@@ -15,12 +15,20 @@ namespace Pidgeon.CLI.Commands;
 /// </summary>
 public class ConfigCommand : CommandBuilderBase
 {
-    private readonly IConfigurationCatalog _configCatalog;
+    private readonly IConfigurationAnalyzer _analyzer;
+    private readonly IConfigurationQuery _query;
+    private readonly IConfigurationAnalytics _analytics;
 
-    public ConfigCommand(ILogger<ConfigCommand> logger, IConfigurationCatalog configCatalog) 
+    public ConfigCommand(
+        ILogger<ConfigCommand> logger, 
+        IConfigurationAnalyzer analyzer,
+        IConfigurationQuery query,
+        IConfigurationAnalytics analytics) 
         : base(logger)
     {
-        _configCatalog = configCatalog;
+        _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
+        _query = query ?? throw new ArgumentNullException(nameof(query));
+        _analytics = analytics ?? throw new ArgumentNullException(nameof(analytics));
     }
 
     public override Command CreateCommand()
@@ -72,7 +80,7 @@ public class ConfigCommand : CommandBuilderBase
             var address = new ConfigurationAddress(vendor, standard, messageType);
             Console.WriteLine($"Analyzing {messagesResult.Value.Count} messages for {address}...");
 
-            var result = await _configCatalog.AnalyzeMessagesAsync(messagesResult.Value, address);
+            var result = await _analyzer.AnalyzeMessagesAsync(messagesResult.Value, address);
             if (result.IsFailure)
             {
                 Console.WriteLine($"Analysis failed: {result.Error}");
@@ -113,11 +121,11 @@ public class ConfigCommand : CommandBuilderBase
             Result<IReadOnlyList<VendorConfiguration>> result;
 
             if (!string.IsNullOrEmpty(vendor))
-                result = await _configCatalog.GetByVendorAsync(vendor);
+                result = await _query.GetByVendorAsync(vendor);
             else if (!string.IsNullOrEmpty(standard))
-                result = await _configCatalog.GetByStandardAsync(standard);
+                result = await _query.GetByStandardAsync(standard);
             else
-                result = await _configCatalog.ListAllAsync();
+                result = await _query.ListAllAsync();
 
             if (result.IsFailure)
             {
@@ -166,7 +174,7 @@ public class ConfigCommand : CommandBuilderBase
                 return 1;
             }
 
-            var result = await _configCatalog.GetConfigurationAsync(address);
+            var result = await _query.GetConfigurationAsync(address);
 
             if (result.IsFailure)
             {
@@ -210,7 +218,7 @@ public class ConfigCommand : CommandBuilderBase
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            var result = await _configCatalog.GetStatisticsAsync();
+            var result = await _analytics.GetStatisticsAsync();
 
             if (result.IsFailure)
             {

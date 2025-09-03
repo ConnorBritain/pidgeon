@@ -5,6 +5,7 @@
 using Pidgeon.Core.Domain.Clinical.Entities;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Standards;
+using Pidgeon.Core.Application.DTOs;
 
 namespace Pidgeon.Core.Services;
 
@@ -67,10 +68,30 @@ internal class GenerationService : IGenerationService
         var plugin = _pluginRegistry.GetPlugin(standard);
         if (plugin != null)
         {
-            // TODO: Plugin should accept domain objects and create standard messages
-            // This requires updating IStandardPlugin interface to support domain-to-message mapping
-            // For now, return NotImplemented to avoid architectural violations
-            return Result<string>.Failure($"Plugin-based generation not yet implemented for standard: {standard}");
+            var messageOptions = new MessageOptions
+            {
+                Timestamp = DateTime.UtcNow,
+                SendingApplication = "PIDGEON",
+                ReceivingApplication = "UNKNOWN"
+            };
+
+            var admissionResult = plugin.MessageFactory.CreatePatientAdmission(patient.ToDto(), messageOptions);
+            if (admissionResult.IsSuccess)
+            {
+                var serializationResult = admissionResult.Value.Serialize();
+                if (serializationResult.IsSuccess)
+                {
+                    return Result<string>.Success(serializationResult.Value);
+                }
+                else
+                {
+                    return Result<string>.Failure($"Failed to serialize patient message: {serializationResult.Error}");
+                }
+            }
+            else
+            {
+                return Result<string>.Failure($"Failed to create patient admission message: {admissionResult.Error}");
+            }
         }
         
         // Fallback to human-readable for unsupported standards
@@ -99,10 +120,30 @@ internal class GenerationService : IGenerationService
         var plugin = _pluginRegistry.GetPlugin(standard);
         if (plugin != null)
         {
-            // TODO: Plugin should accept domain objects and create standard messages
-            // This requires updating IStandardPlugin interface to support domain-to-message mapping
-            // For now, return NotImplemented to avoid architectural violations
-            return Result<string>.Failure($"Plugin-based generation not yet implemented for standard: {standard}");
+            var messageOptions = new MessageOptions
+            {
+                Timestamp = DateTime.UtcNow,
+                SendingApplication = "PIDGEON",
+                ReceivingApplication = "UNKNOWN"
+            };
+
+            var prescriptionMessageResult = plugin.MessageFactory.CreatePrescription(prescription.ToDto(), messageOptions);
+            if (prescriptionMessageResult.IsSuccess)
+            {
+                var serializationResult = prescriptionMessageResult.Value.Serialize();
+                if (serializationResult.IsSuccess)
+                {
+                    return Result<string>.Success(serializationResult.Value);
+                }
+                else
+                {
+                    return Result<string>.Failure($"Failed to serialize prescription message: {serializationResult.Error}");
+                }
+            }
+            else
+            {
+                return Result<string>.Failure($"Failed to create prescription message: {prescriptionMessageResult.Error}");
+            }
         }
         
         // Fallback to human-readable for unsupported standards
@@ -121,10 +162,30 @@ internal class GenerationService : IGenerationService
         var plugin = _pluginRegistry.GetPlugin(standard);
         if (plugin != null)
         {
-            // TODO: Plugin should accept domain objects and create standard messages
-            // This requires updating IStandardPlugin interface to support domain-to-message mapping
-            // For now, return NotImplemented to avoid architectural violations
-            return Result<string>.Failure($"Plugin-based generation not yet implemented for standard: {standard}");
+            var messageOptions = new MessageOptions
+            {
+                Timestamp = DateTime.UtcNow,
+                SendingApplication = "PIDGEON",
+                ReceivingApplication = "UNKNOWN"
+            };
+
+            var admissionResult = plugin.MessageFactory.CreatePatientAdmission(encounter.Patient.ToDto(), messageOptions);
+            if (admissionResult.IsSuccess)
+            {
+                var serializationResult = admissionResult.Value.Serialize();
+                if (serializationResult.IsSuccess)
+                {
+                    return Result<string>.Success(serializationResult.Value);
+                }
+                else
+                {
+                    return Result<string>.Failure($"Failed to serialize encounter message: {serializationResult.Error}");
+                }
+            }
+            else
+            {
+                return Result<string>.Failure($"Failed to create encounter message: {admissionResult.Error}");
+            }
         }
         
         // Fallback to human-readable for unsupported standards

@@ -89,58 +89,6 @@ public record MessagePattern
     [JsonPropertyName("optionalSegments")]
     public List<string> OptionalSegments { get; init; } = new();
 
-    /// <summary>
-    /// Merges this message pattern with another pattern of the same type.
-    /// Combines frequencies and segment patterns.
-    /// </summary>
-    /// <param name="other">Other message pattern to merge</param>
-    /// <returns>A result containing merged message pattern or validation error</returns>
-    public Result<MessagePattern> MergeWith(MessagePattern other)
-    {
-        if (MessageType != other.MessageType)
-            return Result<MessagePattern>.Failure(Error.Validation($"Cannot merge patterns of different message types: {MessageType} vs {other.MessageType}", "MessageType"));
-
-        // Merge segment patterns
-        var mergedSegmentPatterns = new Dictionary<string, SegmentPattern>(SegmentPatterns);
-        foreach (var kvp in other.SegmentPatterns)
-        {
-            if (mergedSegmentPatterns.ContainsKey(kvp.Key))
-            {
-                // Merge field frequencies by combining dictionaries
-                var mergedFields = new Dictionary<int, FieldFrequency>(mergedSegmentPatterns[kvp.Key].Fields);
-                foreach (var fieldKvp in kvp.Value.Fields)
-                {
-                    if (mergedFields.ContainsKey(fieldKvp.Key))
-                    {
-                        // Merge field frequencies by adding counts
-                        var existing = mergedFields[fieldKvp.Key];
-                        mergedFields[fieldKvp.Key] = new FieldFrequency
-                        {
-                            FieldIndex = existing.FieldIndex,
-                            PopulatedCount = existing.PopulatedCount + fieldKvp.Value.PopulatedCount,
-                            TotalCount = existing.TotalCount + fieldKvp.Value.TotalCount,
-                            Frequency = (double)(existing.PopulatedCount + fieldKvp.Value.PopulatedCount) / (existing.TotalCount + fieldKvp.Value.TotalCount),
-                            CommonValues = existing.CommonValues.Concat(fieldKvp.Value.CommonValues).GroupBy(x => x.Key).ToDictionary(g => g.Key, g => g.Sum(x => x.Value))
-                        };
-                    }
-                    else
-                    {
-                        mergedFields[fieldKvp.Key] = fieldKvp.Value;
-                    }
-                }
-                mergedSegmentPatterns[kvp.Key] = kvp.Value with { Fields = mergedFields };
-            }
-            else
-            {
-                mergedSegmentPatterns[kvp.Key] = kvp.Value;
-            }
-        }
-
-        return Result<MessagePattern>.Success(this with
-        {
-            Frequency = Frequency + other.Frequency,
-            SegmentPatterns = mergedSegmentPatterns
-        });
-    }
+    // TODO: Remove this method - merge logic moved to IMessagePatternMergeService for SRP compliance
 }
 

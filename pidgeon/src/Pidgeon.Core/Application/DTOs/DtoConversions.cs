@@ -124,4 +124,60 @@ public static class DtoConversions
             _ => EncounterTypeDto.Outpatient
         };
     }
+    
+    public static PrescriptionDto ToDto(this Prescription prescription)
+    {
+        return new PrescriptionDto
+        {
+            Id = prescription.Id,
+            Patient = prescription.Patient.ToDto(),
+            Medication = prescription.Medication.ToDto(),
+            Dosage = prescription.Dosage.ToDto(),
+            Prescriber = prescription.Prescriber.ToDto(),
+            Instructions = prescription.Instructions,
+            DatePrescribed = prescription.DatePrescribed,
+            RefillsAllowed = prescription.Dosage.Refills ?? 0,
+            QuantityPrescribed = prescription.Dosage.Quantity ?? 0
+        };
+    }
+    
+    public static MedicationDto ToDto(this Medication medication)
+    {
+        return new MedicationDto
+        {
+            GenericName = medication.GenericName ?? medication.Name,
+            BrandName = medication.Name,
+            NdcCode = medication.NdcCode,
+            DisplayName = medication.DisplayName,
+            DosageForm = medication.DosageForm?.ToDto(),
+            Strength = medication.Strength
+        };
+    }
+    
+    public static DosageDto ToDto(this DosageInstructions dosage)
+    {
+        return new DosageDto
+        {
+            Dose = dosage.Dose,
+            DoseUnit = dosage.DoseUnit,
+            Frequency = dosage.Frequency,
+            Route = dosage.Route.ToString()
+        };
+    }
+    
+    public static DosageFormDto ToDto(this DosageForm dosageForm)
+    {
+        return dosageForm switch
+        {
+            DosageForm.Tablet => DosageFormDto.Tablet,
+            DosageForm.Capsule => DosageFormDto.Capsule,
+            DosageForm.Liquid => DosageFormDto.Liquid,
+            DosageForm.Injectable => DosageFormDto.Injection,
+            DosageForm.Topical or DosageForm.Cream or DosageForm.Ointment => DosageFormDto.Cream,
+            DosageForm.Patch => DosageFormDto.Patch,
+            DosageForm.Inhaler => DosageFormDto.Inhaler,
+            DosageForm.Suppository => DosageFormDto.Suppository,
+            _ => DosageFormDto.Other
+        };
+    }
 }

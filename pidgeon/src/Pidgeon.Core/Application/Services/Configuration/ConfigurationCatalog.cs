@@ -11,7 +11,7 @@ namespace Pidgeon.Core.Application.Services.Configuration;
 /// In-memory implementation of configuration catalog for Phase 1A.
 /// This will be extended with persistent storage and plugin architecture in Phase 1B.
 /// </summary>
-internal class ConfigurationCatalog : IConfigurationCatalog
+internal class ConfigurationCatalog : IConfigurationAnalyzer, IConfigurationQuery, IConfigurationRepository, IConfigurationComparator, IConfigurationAnalytics
 {
     private readonly IConfigurationInferenceService _inferenceService;
     private readonly ILogger<ConfigurationCatalog> _logger;
@@ -219,12 +219,75 @@ internal class ConfigurationCatalog : IConfigurationCatalog
         }
     }
 
-    public Task<Result<ConfigurationValidationResult>> ValidateMessageAsync(
+    public async Task<Result<ConfigurationValidationResult>> ValidateMessageAsync(
         string message,
         ConfigurationAddress address)
     {
-        // TODO: Implement message validation in Phase 1B
-        return Task.FromResult(Result<ConfigurationValidationResult>.Failure(
-            "Message validation not yet implemented"));
+        try
+        {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                return Result<ConfigurationValidationResult>.Success(
+                    ConfigurationValidationResult.Failure(new[] { "Message content cannot be empty" }));
+            }
+
+            // Get the vendor configuration for this address
+            var configResult = await GetConfigurationAsync(address);
+            if (configResult.IsFailure)
+            {
+                return Result<ConfigurationValidationResult>.Success(
+                    ConfigurationValidationResult.Failure(new[] { $"Configuration not found for address: {address}" }));
+            }
+
+            var configuration = configResult.Value;
+            if (configuration == null)
+            {
+                return Result<ConfigurationValidationResult>.Success(
+                    ConfigurationValidationResult.Failure(new[] { $"No configuration available for address: {address}" }));
+            }
+
+            // Validate against the detected vendor patterns
+            var errors = new List<string>();
+            var warnings = new List<string>();
+            double confidenceScore = configuration.Metadata.Confidence;
+
+            // Check if message type matches expected patterns
+            var expectedMessageTypes = configuration.MessagePatterns.Keys;
+            if (expectedMessageTypes.Any())
+            {
+                var messageContainsExpectedType = expectedMessageTypes.Any(msgType => 
+                    message.Contains(msgType) || message.StartsWith($"MSH|") && message.Contains(msgType));
+                
+                if (!messageContainsExpectedType)
+                {
+                    warnings.Add($"Message does not match expected types: {string.Join(", ", expectedMessageTypes)}");
+                    confidenceScore *= 0.8; // Reduce confidence for unexpected message type
+                }
+            }
+
+            // Check format deviations
+            if (configuration.FormatDeviations.Any())
+            {
+                warnings.Add($"Configuration has {configuration.FormatDeviations.Count} known format deviations");
+                confidenceScore *= 0.9; // Slight confidence reduction for known deviations
+            }
+
+            // Validate minimum confidence threshold
+            if (configuration.Metadata.Confidence < 0.7)
+            {
+                warnings.Add($"Configuration confidence is low: {configuration.Metadata.Confidence:P1}");
+            }
+
+            var result = errors.Count == 0 
+                ? ConfigurationValidationResult.Success(confidenceScore)
+                : ConfigurationValidationResult.Failure(errors, warnings);
+
+            return Result<ConfigurationValidationResult>.Success(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error validating message against configuration {Address}", address);
+            return Result<ConfigurationValidationResult>.Failure($"Validation failed: {ex.Message}");
+        }
     }
 }

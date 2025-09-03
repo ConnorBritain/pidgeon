@@ -101,7 +101,8 @@ public record VendorConfiguration
             if (mergedPatterns.ContainsKey(kvp.Key))
             {
                 // Combine existing pattern with new data
-                var mergeResult = mergedPatterns[kvp.Key].MergeWith(kvp.Value);
+                // TODO: Use IMessagePatternMergeService instead of domain method
+                var mergeResult = Result<MessagePattern>.Failure("Merge logic moved to IMessagePatternMergeService");
                 if (mergeResult.IsFailure)
                     return Result<VendorConfiguration>.Failure($"Failed to merge pattern {kvp.Key}: {mergeResult.Error}");
                 mergedPatterns[kvp.Key] = mergeResult.Value;

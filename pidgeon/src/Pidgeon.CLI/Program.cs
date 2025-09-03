@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Pidgeon.CLI.Commands;
 using Pidgeon.CLI.Extensions;
+using Pidgeon.CLI.Output;
 using Pidgeon.Core.Extensions;
 using System.CommandLine;
 using System.Reflection;
@@ -106,76 +107,5 @@ internal class Program
         }
 
         return rootCommand;
-    }
-}
-
-/// <summary>
-/// Interface for console output operations.
-/// </summary>
-public interface IConsoleOutput
-{
-    /// <summary>
-    /// Writes a line to the console.
-    /// </summary>
-    /// <param name="message">The message to write</param>
-    void WriteLine(string message);
-
-    /// <summary>
-    /// Writes a line to the console with the specified color.
-    /// </summary>
-    /// <param name="message">The message to write</param>
-    /// <param name="color">The console color to use</param>
-    void WriteLine(string message, ConsoleColor color);
-
-    /// <summary>
-    /// Writes an error message to the console.
-    /// </summary>
-    /// <param name="message">The error message</param>
-    void WriteError(string message);
-
-    /// <summary>
-    /// Writes a warning message to the console.
-    /// </summary>
-    /// <param name="message">The warning message</param>
-    void WriteWarning(string message);
-
-    /// <summary>
-    /// Writes a success message to the console.
-    /// </summary>
-    /// <param name="message">The success message</param>
-    void WriteSuccess(string message);
-}
-
-/// <summary>
-/// Implementation of console output operations.
-/// </summary>
-internal class ConsoleOutput : IConsoleOutput
-{
-    public void WriteLine(string message)
-    {
-        Console.WriteLine(message);
-    }
-
-    public void WriteLine(string message, ConsoleColor color)
-    {
-        var originalColor = Console.ForegroundColor;
-        Console.ForegroundColor = color;
-        Console.WriteLine(message);
-        Console.ForegroundColor = originalColor;
-    }
-
-    public void WriteError(string message)
-    {
-        WriteLine($"ERROR: {message}", ConsoleColor.Red);
-    }
-
-    public void WriteWarning(string message)
-    {
-        WriteLine($"WARNING: {message}", ConsoleColor.Yellow);
-    }
-
-    public void WriteSuccess(string message)
-    {
-        WriteLine($"SUCCESS: {message}", ConsoleColor.Green);
     }
 }

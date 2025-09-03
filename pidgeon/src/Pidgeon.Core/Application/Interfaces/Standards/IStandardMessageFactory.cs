@@ -3,7 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core;
-using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core.Application.DTOs;
 
 namespace Pidgeon.Core.Application.Interfaces.Standards;
 
@@ -19,7 +19,7 @@ public interface IStandardMessageFactory
     /// <param name="patient">The patient being admitted</param>
     /// <param name="options">Optional message configuration</param>
     /// <returns>A result containing the admission message or error</returns>
-    Result<IStandardMessage> CreatePatientAdmission(Patient patient, MessageOptions? options = null);
+    Result<IStandardMessage> CreatePatientAdmission(PatientDto patient, MessageOptions? options = null);
 
     /// <summary>
     /// Creates a patient discharge message (HL7 ADT^A03, FHIR Encounter end, etc.).
@@ -28,7 +28,7 @@ public interface IStandardMessageFactory
     /// <param name="encounter">The encounter being closed</param>
     /// <param name="options">Optional message configuration</param>
     /// <returns>A result containing the discharge message or error</returns>
-    Result<IStandardMessage> CreatePatientDischarge(Patient patient, Encounter encounter, MessageOptions? options = null);
+    Result<IStandardMessage> CreatePatientDischarge(PatientDto patient, EncounterDto encounter, MessageOptions? options = null);
 
     /// <summary>
     /// Creates a prescription message (HL7 RDE^O11, FHIR MedicationRequest, NCPDP NewRx).
@@ -36,7 +36,7 @@ public interface IStandardMessageFactory
     /// <param name="prescription">The prescription to transmit</param>
     /// <param name="options">Optional message configuration</param>
     /// <returns>A result containing the prescription message or error</returns>
-    Result<IStandardMessage> CreatePrescription(Prescription prescription, MessageOptions? options = null);
+    Result<IStandardMessage> CreatePrescription(PrescriptionDto prescription, MessageOptions? options = null);
 
     /// <summary>
     /// Creates a lab order message (HL7 ORM^O01, FHIR ServiceRequest).

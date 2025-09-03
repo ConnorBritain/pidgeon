@@ -17,16 +17,22 @@ internal class MessagePatternAnalysisService : PluginAccessorBase<MessagePattern
 {
     private readonly IFieldPatternAnalysisService _fieldAnalyzer;
     private readonly IConfidenceCalculationService _confidenceCalculator;
+    private readonly INullValueToleranceAnalysisService _nullToleranceAnalyzer;
+    private readonly MessagePatternAnalysisOrchestrator _orchestrator;
 
     public MessagePatternAnalysisService(
         IStandardPluginRegistry pluginRegistry,
         IFieldPatternAnalysisService fieldAnalyzer,
         IConfidenceCalculationService confidenceCalculator,
+        INullValueToleranceAnalysisService nullToleranceAnalyzer,
+        MessagePatternAnalysisOrchestrator orchestrator,
         ILogger<MessagePatternAnalysisService> logger)
         : base(pluginRegistry, logger)
     {
         _fieldAnalyzer = fieldAnalyzer ?? throw new ArgumentNullException(nameof(fieldAnalyzer));
         _confidenceCalculator = confidenceCalculator ?? throw new ArgumentNullException(nameof(confidenceCalculator));
+        _nullToleranceAnalyzer = nullToleranceAnalyzer ?? throw new ArgumentNullException(nameof(nullToleranceAnalyzer));
+        _orchestrator = orchestrator ?? throw new ArgumentNullException(nameof(orchestrator));
     }
 
     /// <inheritdoc />
@@ -159,27 +165,13 @@ internal class MessagePatternAnalysisService : PluginAccessorBase<MessagePattern
             _logger.LogInformation("Analyzing null value tolerance for {MessageCount} {Standard} {MessageType} messages",
                 messageList.Count, standard, messageType);
 
-            // Use field frequency analysis (which delegates to plugins) to calculate null tolerance
+            // Get field frequency analysis (delegates to plugins)
             var frequencyResult = await AnalyzeFieldFrequencyAsync(messageList, standard, messageType);
             if (frequencyResult.IsFailure)
                 return Result<Dictionary<string, double>>.Failure($"Field frequency analysis failed: {frequencyResult.Error}");
 
-            // Standard-agnostic null tolerance calculation
-            var nullTolerance = new Dictionary<string, double>();
-            foreach (var fieldFreq in frequencyResult.Value)
-            {
-                var totalOccurrences = fieldFreq.Value.TotalCount;
-                var populatedOccurrences = fieldFreq.Value.Frequency;
-                var nullOccurrences = totalOccurrences - populatedOccurrences;
-                
-                var tolerance = totalOccurrences > 0 ? (double)nullOccurrences / totalOccurrences : 0.0;
-                nullTolerance[fieldFreq.Key] = tolerance;
-            }
-
-            _logger.LogInformation("Null value tolerance analysis completed for {FieldCount} fields",
-                nullTolerance.Count);
-
-            return Result<Dictionary<string, double>>.Success(nullTolerance);
+            // Delegate null tolerance calculation to specialized service
+            return _nullToleranceAnalyzer.CalculateNullTolerance(frequencyResult.Value);
         }
         catch (Exception ex)
         {
@@ -194,61 +186,8 @@ internal class MessagePatternAnalysisService : PluginAccessorBase<MessagePattern
         string standard,
         string messageType)
     {
-        try
-        {
-            var messageList = messages.ToList();
-            _logger.LogInformation("Performing comprehensive pattern analysis for {MessageCount} {Standard} {MessageType} messages",
-                messageList.Count, standard, messageType);
-
-            // Step 1: Field frequency analysis (delegates to plugins)
-            var frequencyResult = await AnalyzeFieldFrequencyAsync(messageList, standard, messageType);
-            if (frequencyResult.IsFailure)
-                return Result<MessagePattern>.Failure($"Field frequency analysis failed: {frequencyResult.Error}");
-
-            // Step 2: Component pattern detection (delegates to plugins)
-            var componentResult = await DetectComponentPatternsAsync(messageList, standard, messageType);
-            if (componentResult.IsFailure)
-                _logger.LogWarning("Component pattern detection failed: {Error}", componentResult.Error);
-
-            // Step 3: Null value tolerance analysis (standard-agnostic calculation)
-            var nullToleranceResult = await AnalyzeNullValueToleranceAsync(messageList, standard, messageType);
-            if (nullToleranceResult.IsFailure)
-                _logger.LogWarning("Null tolerance analysis failed: {Error}", nullToleranceResult.Error);
-
-            // Step 4: Get field patterns for confidence calculation (delegates to plugins)
-            var patternsResult = await _fieldAnalyzer.AnalyzeAsync(messageList, standard, messageType);
-            if (patternsResult.IsFailure)
-                return Result<MessagePattern>.Failure($"Field pattern analysis failed: {patternsResult.Error}");
-
-            // Step 5: Calculate confidence score (delegates to plugins)
-            var confidenceResult = await CalculateConfidenceScoreAsync(patternsResult.Value, messageList.Count, standard);
-            if (confidenceResult.IsFailure)
-                _logger.LogWarning("Confidence calculation failed: {Error}", confidenceResult.Error);
-
-            // Combine all results into comprehensive pattern - standard-agnostic assembly
-            var messagePattern = new MessagePattern
-            {
-                Standard = standard,
-                MessageType = messageType,
-                SampleSize = messageList.Count,
-                FieldFrequencies = frequencyResult.Value,
-                ComponentPatterns = componentResult.IsSuccess ? componentResult.Value : new Dictionary<string, ComponentPattern>(),
-                NullTolerance = nullToleranceResult.IsSuccess ? nullToleranceResult.Value.Values.FirstOrDefault() : 0.0,
-                Confidence = confidenceResult.IsSuccess ? confidenceResult.Value : 0.5,
-                AnalysisDate = DateTime.UtcNow,
-                SegmentPatterns = patternsResult.Value.SegmentPatterns
-            };
-
-            _logger.LogInformation("Comprehensive pattern analysis completed with {Confidence:P1} confidence",
-                messagePattern.Confidence);
-
-            return Result<MessagePattern>.Success(messagePattern);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error performing comprehensive pattern analysis for {Standard} {MessageType}", standard, messageType);
-            return Result<MessagePattern>.Failure($"Comprehensive analysis failed: {ex.Message}");
-        }
+        // Delegate comprehensive analysis orchestration to specialized orchestrator
+        return await _orchestrator.PerformComprehensiveAnalysisAsync(messages, standard, messageType);
     }
 
     #region Private Helper Methods - Standard Agnostic Only
