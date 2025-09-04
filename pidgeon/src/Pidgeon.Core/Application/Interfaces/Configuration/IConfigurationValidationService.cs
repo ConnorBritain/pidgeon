@@ -5,7 +5,7 @@
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Application.Services.Configuration;
+namespace Pidgeon.Core.Application.Interfaces.Configuration;
 
 /// <summary>
 /// Configuration validation service.

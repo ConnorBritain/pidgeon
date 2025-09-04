@@ -4,7 +4,7 @@
 
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Application.Services.Configuration;
+namespace Pidgeon.Core.Application.Interfaces.Configuration;
 
 /// <summary>
 /// Interface for standard-specific configuration analysis plugins.

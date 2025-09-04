@@ -4,7 +4,7 @@
 
 using Pidgeon.Core.Domain.Configuration.Entities;
 
-namespace Pidgeon.Core.Application.Services.Configuration;
+namespace Pidgeon.Core.Application.Interfaces.Configuration;
 
 /// <summary>
 /// Repository for loading and managing vendor detection patterns.

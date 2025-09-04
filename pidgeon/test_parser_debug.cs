@@ -1,3 +1,4 @@
+// This is a debug test file, should use proper namespaces
 using Pidgeon.Core.Infrastructure.Standards.Common.HL7;
 
 var hl7Message = "MSH|^~\\&|Pidgeon|PidgeonCore|||20250826153540||ADT^A01|MSG123456|P|2.3|||||\r" +

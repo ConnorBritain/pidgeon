@@ -20,7 +20,7 @@ public class GenericHL7Segment : HL7Segment
     /// <summary>
     /// Raw field values for this segment.
     /// </summary>
-    public string[] Fields { get; set; } = Array.Empty<string>();
+    public new string[] Fields { get; set; } = Array.Empty<string>();
     
     /// <summary>
     /// Number of fields in this segment.

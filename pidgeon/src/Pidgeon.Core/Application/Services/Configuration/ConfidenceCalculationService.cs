@@ -5,7 +5,7 @@
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Configuration.Entities;
-using Pidgeon.Core.Application.Services.Configuration;
+using Pidgeon.Core.Application.Interfaces.Configuration;
 
 namespace Pidgeon.Core.Application.Services.Configuration;
 

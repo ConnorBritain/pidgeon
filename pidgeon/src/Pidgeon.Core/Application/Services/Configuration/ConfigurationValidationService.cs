@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Application.Interfaces.Standards;
+using Pidgeon.Core.Application.Interfaces.Configuration;
 using Pidgeon.Core.Domain.Configuration.Entities;
 
 namespace Pidgeon.Core.Application.Services.Configuration;
