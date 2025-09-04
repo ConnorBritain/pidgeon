@@ -183,17 +183,17 @@ internal class FieldPatternAnalysisService : PluginAccessorBase<FieldPatternAnal
     }
 
     /// <inheritdoc />
-    public async Task<Result<FieldStatistics>> CalculateStatisticsAsync(FieldPatterns patterns)
+    public async Task<Result<Application.Services.Configuration.FieldStatistics>> CalculateStatisticsAsync(FieldPatterns patterns)
     {
         if (patterns == null)
-            return Result<FieldStatistics>.Failure("Patterns cannot be null");
+            return Result<Application.Services.Configuration.FieldStatistics>.Failure("Patterns cannot be null");
 
         // Get standard from the patterns object
         var standard = patterns.Standard;
         if (string.IsNullOrWhiteSpace(standard))
         {
             _logger.LogWarning("No standard specified in field patterns, cannot calculate statistics");
-            return Result<FieldStatistics>.Failure("Standard must be specified in field patterns for statistics calculation");
+            return Result<Application.Services.Configuration.FieldStatistics>.Failure("Standard must be specified in field patterns for statistics calculation");
         }
 
         return await ExecutePluginOperationAsync(

@@ -59,6 +59,6 @@ public interface IFieldPatternAnalysisService
     /// </summary>
     /// <param name="patterns">Field patterns to calculate statistics for</param>
     /// <returns>Result containing statistical analysis of field patterns</returns>
-    Task<Result<FieldStatistics>> CalculateStatisticsAsync(FieldPatterns patterns);
+    Task<Result<Application.Services.Configuration.FieldStatistics>> CalculateStatisticsAsync(FieldPatterns patterns);
 }
 

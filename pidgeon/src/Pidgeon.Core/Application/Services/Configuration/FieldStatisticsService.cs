@@ -22,13 +22,13 @@ internal class FieldStatisticsService : IFieldStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<Result<FieldStatistics>> CalculateFieldStatisticsAsync(FieldPatterns patterns)
+    public async Task<Result<Application.Services.Configuration.FieldStatistics>> CalculateFieldStatisticsAsync(FieldPatterns patterns)
     {
         try
         {
             if (patterns == null)
             {
-                return Result<FieldStatistics>.Failure("Field patterns cannot be null");
+                return Result<Application.Services.Configuration.FieldStatistics>.Failure("Field patterns cannot be null");
             }
 
             _logger.LogDebug("Calculating field statistics for {Standard} {MessageType}",
@@ -50,21 +50,21 @@ internal class FieldStatisticsService : IFieldStatisticsService
 
             var qualityScore = totalFields > 0 ? (double)populatedFields / totalFields : 0.0;
 
-            var statistics = new FieldStatistics
+            var statistics = new Application.Services.Configuration.FieldStatistics
             {
                 TotalFields = totalFields,
                 PopulatedFields = populatedFields,
-                QualityScore = qualityScore,
+                DataQualityScore = qualityScore,
                 SampleSize = totalSampleSize
             };
 
             await Task.CompletedTask;
-            return Result<FieldStatistics>.Success(statistics);
+            return Result<Application.Services.Configuration.FieldStatistics>.Success(statistics);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error calculating field statistics");
-            return Result<FieldStatistics>.Failure($"Failed to calculate statistics: {ex.Message}");
+            return Result<Application.Services.Configuration.FieldStatistics>.Failure($"Failed to calculate statistics: {ex.Message}");
         }
     }
 
