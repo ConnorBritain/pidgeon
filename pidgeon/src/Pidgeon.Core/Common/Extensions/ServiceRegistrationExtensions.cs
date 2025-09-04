@@ -72,6 +72,7 @@ public static class ServiceRegistrationExtensions
     /// <summary>
     /// Registers services that follow the interface/implementation convention.
     /// Finds classes that implement interfaces with matching names (e.g., MessageService implements IMessageService).
+    /// Enhanced to handle multi-interface services automatically.
     /// </summary>
     private static void RegisterServicesByConvention(IServiceCollection services, Assembly assembly)
     {
@@ -91,6 +92,21 @@ public static class ServiceRegistrationExtensions
             if (primaryInterface != null)
             {
                 services.AddScoped(primaryInterface, serviceType);
+            }
+            
+            // Handle multi-interface services (e.g., ConfigurationCatalog implementing IConfigurationAnalyzer, IConfigurationQuery, etc.)
+            if (serviceType.Name.EndsWith("Catalog") || serviceType.Name.EndsWith("Repository") || serviceType.Name.EndsWith("Manager"))
+            {
+                var applicationInterfaces = serviceType.GetInterfaces()
+                    .Where(i => i.Namespace?.Contains("Application.Interfaces") == true &&
+                               i.Name.StartsWith("I") &&
+                               i.Name != $"I{serviceType.Name}") // Skip the primary interface already registered
+                    .ToList();
+                    
+                foreach (var interfaceType in applicationInterfaces)
+                {
+                    services.AddScoped(interfaceType, serviceType);
+                }
             }
         }
     }

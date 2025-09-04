@@ -4,6 +4,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Pidgeon.Core.Application.Services.Configuration;
+using Pidgeon.Core.Application.Interfaces.Configuration;
 using Pidgeon.Core.Extensions;
 using Xunit;
 using FluentAssertions;
