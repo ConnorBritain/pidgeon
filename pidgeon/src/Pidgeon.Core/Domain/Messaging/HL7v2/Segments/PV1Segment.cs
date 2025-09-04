@@ -6,6 +6,7 @@ using Pidgeon.Core;
 using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Common;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
+using Pidgeon.Core.Common.Constants;
 
 namespace Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 
@@ -217,7 +218,7 @@ public class PV1Segment : HL7Segment
             facility ?? ""
         };
 
-        var location = string.Join(ComponentSeparator, locationParts);
+        var location = string.Join(HL7Constants.ComponentSeparator.ToString(), locationParts);
         var result = AssignedPatientLocation.SetValue(location);
         
         if (result.IsFailure)
@@ -242,7 +243,7 @@ public class PV1Segment : HL7Segment
             
         if (!string.IsNullOrEmpty(attendingDoc))
         {
-            var docParts = attendingDoc.Split(ComponentSeparator);
+            var docParts = attendingDoc.Split(HL7Constants.ComponentSeparator);
             if (docParts.Length >= 3 && !string.IsNullOrEmpty(docParts[2]))
                 displayParts.Add($"Attending: Dr. {docParts[2]} {docParts[1]}");
         }

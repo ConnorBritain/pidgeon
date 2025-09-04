@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Pidgeon.Core.Domain.Configuration.Entities;
+using Pidgeon.Core.Application.Common;
 
 namespace Pidgeon.Core.Application.Interfaces.Configuration;
 
@@ -70,26 +71,6 @@ public interface IConfigurationValidator
     Task<Result<ConfigurationComparison>> CompareConfigurationsAsync(
         VendorConfiguration fromConfiguration,
         VendorConfiguration toConfiguration);
-}
-
-/// <summary>
-/// Enumeration of validation modes for message validation.
-/// </summary>
-public enum ValidationMode
-{
-    /// <summary>
-    /// Strict validation against healthcare standard specification.
-    /// Zero tolerance for deviations from the standard.
-    /// Used for: Standards testing, compliance verification.
-    /// </summary>
-    Strict,
-
-    /// <summary>
-    /// Compatibility validation using vendor configuration patterns.
-    /// Liberal acceptance with warnings for deviations.
-    /// Used for: Real-world interface validation, production systems.
-    /// </summary>
-    Compatibility
 }
 
 /// <summary>

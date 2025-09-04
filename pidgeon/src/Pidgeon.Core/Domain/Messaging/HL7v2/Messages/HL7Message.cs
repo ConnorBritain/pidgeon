@@ -7,6 +7,7 @@ using Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Common;
 using Pidgeon.Core.Application.Common;
+using Pidgeon.Core.Common.Constants;
 using System.Linq;
 
 namespace Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
@@ -319,27 +320,27 @@ public record HL7EncodingChars
     /// <summary>
     /// Field separator (usually |).
     /// </summary>
-    public char FieldSeparator { get; init; } = '|';
+    public char FieldSeparator { get; init; } = HL7Constants.FieldSeparator;
 
     /// <summary>
     /// Component separator (usually ^).
     /// </summary>
-    public char ComponentSeparator { get; init; } = '^';
+    public char ComponentSeparator { get; init; } = HL7Constants.ComponentSeparator;
 
     /// <summary>
     /// Repetition separator (usually ~).
     /// </summary>
-    public char RepetitionSeparator { get; init; } = '~';
+    public char RepetitionSeparator { get; init; } = HL7Constants.RepetitionSeparator;
 
     /// <summary>
     /// Escape character (usually \).
     /// </summary>
-    public char EscapeCharacter { get; init; } = '\\';
+    public char EscapeCharacter { get; init; } = HL7Constants.EscapeCharacter;
 
     /// <summary>
     /// Subcomponent separator (usually &).
     /// </summary>
-    public char SubcomponentSeparator { get; init; } = '&';
+    public char SubcomponentSeparator { get; init; } = HL7Constants.SubcomponentSeparator;
 
     /// <summary>
     /// Standard HL7 encoding characters.
@@ -412,21 +413,6 @@ public record HL7MessageType
 /// </summary>
 public abstract class HL7Segment
 {
-    /// <summary>
-    /// HL7 field separator (standard is |).
-    /// </summary>
-    protected const string FieldSeparator = "|";
-    
-    /// <summary>
-    /// HL7 component separator (standard is ^).
-    /// </summary>
-    protected const string ComponentSeparator = "^";
-    
-    /// <summary>
-    /// HL7 repetition separator (standard is ~).
-    /// </summary>
-    protected const string RepetitionSeparator = "~";
-    
     /// <summary>
     /// Gets the segment ID (e.g., "MSH", "PID", "OBR").
     /// </summary>

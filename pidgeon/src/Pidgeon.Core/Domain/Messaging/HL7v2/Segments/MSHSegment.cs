@@ -4,6 +4,7 @@
 
 using Pidgeon.Core.Domain.Messaging.HL7v2.Common;
 using Pidgeon.Core.Domain.Messaging.HL7v2.Messages;
+using Pidgeon.Core.Common.Constants;
 
 namespace Pidgeon.Core.Domain.Messaging.HL7v2.Segments;
 
@@ -156,7 +157,7 @@ public class MSHSegment : HL7Segment
     public override string ToHL7String()
     {
         // MSH is special - the field separator comes right after MSH
-        var parts = new List<string> { SegmentId + FieldSeparator };
+        var parts = new List<string> { SegmentId + HL7Constants.FieldSeparator };
         
         // Add all fields
         foreach (var field in Fields)
@@ -165,7 +166,7 @@ public class MSHSegment : HL7Segment
         }
 
         // Join with field separator, but first element already has it
-        return parts[0] + string.Join(FieldSeparator, parts.Skip(1));
+        return parts[0] + string.Join(HL7Constants.FieldSeparator.ToString(), parts.Skip(1));
     }
 
 
@@ -179,7 +180,7 @@ public class MSHSegment : HL7Segment
         if (string.IsNullOrEmpty(messageType))
             return null;
 
-        var parts = messageType.Split(ComponentSeparator);
+        var parts = messageType.Split(HL7Constants.ComponentSeparator);
         if (parts.Length >= 2)
         {
             return (parts[0], parts[1]);
