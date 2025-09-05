@@ -4,7 +4,7 @@
 
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Pidgeon.Core.Generation.Algorithmic;
+using Pidgeon.Core.Application.Services.Generation;
 using Pidgeon.Core.Generation;
 using Pidgeon.Core.Domain.Clinical.Entities;
 using Xunit;
@@ -12,17 +12,17 @@ using Xunit;
 namespace Pidgeon.Core.Tests.Generation;
 
 /// <summary>
-/// Tests for AlgorithmicGenerationService focusing on healthcare data safety and template method pattern.
+/// Tests for GenerationService focusing on healthcare data safety and template method pattern.
 /// Verifies deterministic generation, realistic healthcare data, and consolidated error handling patterns.
 /// </summary>
 public class AlgorithmicGenerationServiceTests
 {
-    private readonly AlgorithmicGenerationService _service;
+    private readonly GenerationService _service;
     private readonly GenerationOptions _defaultOptions;
 
     public AlgorithmicGenerationServiceTests()
     {
-        _service = new AlgorithmicGenerationService(NullLogger<AlgorithmicGenerationService>.Instance);
+        _service = new GenerationService(NullLogger<GenerationService>.Instance);
         _defaultOptions = new GenerationOptions();
     }
 

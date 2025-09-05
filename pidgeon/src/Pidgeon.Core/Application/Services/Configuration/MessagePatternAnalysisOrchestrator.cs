@@ -13,7 +13,7 @@ namespace Pidgeon.Core.Application.Services.Configuration;
 /// Coordinates between different analysis services without implementing analysis logic itself.
 /// Follows Single Responsibility Principle by focusing solely on orchestration.
 /// </summary>
-internal class MessagePatternAnalysisOrchestrator
+internal class MessagePatternAnalysisOrchestrator : IMessagePatternAnalysisOrchestrator
 {
     private readonly IFieldPatternAnalysisService _fieldAnalyzer;
     private readonly IConfidenceCalculationService _confidenceCalculator;

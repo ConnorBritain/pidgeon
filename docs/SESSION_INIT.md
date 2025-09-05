@@ -14,6 +14,7 @@
 3. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI structure for P0 development
 4. **`docs/DEVELOPMENT.md`** - Current status (foundation complete) and P0 features
 5. **`docs/RULES.md`** - Sacred architectural principles (still enforced)
+6. **`docs/dev_scratchpads/P0_SCRATCHPAD.md`** - **[P0 PHASE]** Current development notes and progress
 
 ### **Step 2: Assess Current State** ⭐
 **Commands**:

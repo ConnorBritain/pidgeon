@@ -79,7 +79,7 @@ public static class ServiceRegistrationExtensions
         var serviceTypes = assembly.GetTypes()
             .Where(type => type.IsClass && 
                           !type.IsAbstract && 
-                          type.Name.EndsWith("Service") &&
+                          (type.Name.EndsWith("Service") || type.Name.EndsWith("Catalog") || type.Name.EndsWith("Repository") || type.Name.EndsWith("Manager") || type.Name.EndsWith("Orchestrator")) &&
                           type.Namespace?.Contains("Application.Services") == true)
             .ToList();
 
@@ -95,16 +95,21 @@ public static class ServiceRegistrationExtensions
             }
             
             // Handle multi-interface services (e.g., ConfigurationCatalog implementing IConfigurationAnalyzer, IConfigurationQuery, etc.)
-            if (serviceType.Name.EndsWith("Catalog") || serviceType.Name.EndsWith("Repository") || serviceType.Name.EndsWith("Manager"))
+            if (serviceType.Name.EndsWith("Catalog") || serviceType.Name.EndsWith("Repository") || serviceType.Name.EndsWith("Manager") || serviceType.Name.EndsWith("Orchestrator"))
             {
                 var applicationInterfaces = serviceType.GetInterfaces()
                     .Where(i => i.Namespace?.Contains("Application.Interfaces") == true &&
-                               i.Name.StartsWith("I") &&
-                               i.Name != $"I{serviceType.Name}") // Skip the primary interface already registered
+                               i.Name.StartsWith("I"))
                     .ToList();
                     
                 foreach (var interfaceType in applicationInterfaces)
                 {
+                    // Only skip if the primary interface was actually registered
+                    if (interfaceType.Name == $"I{serviceType.Name}" && primaryInterface != null)
+                    {
+                        continue; // Skip because already registered above
+                    }
+                    
                     services.AddScoped(interfaceType, serviceType);
                 }
             }

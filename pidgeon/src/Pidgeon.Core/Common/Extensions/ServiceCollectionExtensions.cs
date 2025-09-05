@@ -5,6 +5,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Infrastructure.Registry;
+using Pidgeon.Core.Application.Services.Generation;
+using Pidgeon.Core.Generation;
 
 namespace Pidgeon.Core.Extensions;
 

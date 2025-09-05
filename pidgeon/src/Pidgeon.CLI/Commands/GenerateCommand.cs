@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
+using Pidgeon.Core.Application.Interfaces.Generation;
 using Pidgeon.Core.Generation;
 using System.CommandLine;
 
@@ -13,14 +14,14 @@ namespace Pidgeon.CLI.Commands;
 /// </summary>
 public class GenerateCommand : CommandBuilderBase
 {
-    private readonly Pidgeon.Core.Services.IGenerationService _generationService;
+    private readonly IMessageGenerationService _messageGenerationService;
 
     public GenerateCommand(
         ILogger<GenerateCommand> logger,
-        Pidgeon.Core.Services.IGenerationService generationService) 
+        IMessageGenerationService messageGenerationService) 
         : base(logger)
     {
-        _generationService = generationService;
+        _messageGenerationService = messageGenerationService;
     }
 
     public override Command CreateCommand()
@@ -62,7 +63,7 @@ public class GenerateCommand : CommandBuilderBase
             Console.WriteLine($"Generating {count} {standard} {type} message(s)...");
             
             var options = new GenerationOptions(); // TODO: Set options based on parameters
-            var result = await _generationService.GenerateSyntheticDataAsync(standard!, type!, count, options);
+            var result = await _messageGenerationService.GenerateSyntheticDataAsync(standard!, type!, count, options);
             
             if (result.IsSuccess)
             {

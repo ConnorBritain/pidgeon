@@ -19,14 +19,14 @@ internal class MessagePatternAnalysisService : PluginAccessorBase<MessagePattern
     private readonly IFieldPatternAnalysisService _fieldAnalyzer;
     private readonly IConfidenceCalculationService _confidenceCalculator;
     private readonly INullValueToleranceAnalysisService _nullToleranceAnalyzer;
-    private readonly MessagePatternAnalysisOrchestrator _orchestrator;
+    private readonly IMessagePatternAnalysisOrchestrator _orchestrator;
 
     public MessagePatternAnalysisService(
         IStandardPluginRegistry pluginRegistry,
         IFieldPatternAnalysisService fieldAnalyzer,
         IConfidenceCalculationService confidenceCalculator,
         INullValueToleranceAnalysisService nullToleranceAnalyzer,
-        MessagePatternAnalysisOrchestrator orchestrator,
+        IMessagePatternAnalysisOrchestrator orchestrator,
         ILogger<MessagePatternAnalysisService> logger)
         : base(pluginRegistry, logger)
     {

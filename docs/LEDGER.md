@@ -147,6 +147,129 @@ P0 feature development was planned as 6 parallel features over 6 weeks. Strategi
 
 ---
 
+## **ENTRY 20250905-002: Dependency Injection Architecture Fix**
+**Date**: September 5, 2025  
+**Decision Type**: Architectural Correction  
+**Impact**: Critical - fixes CLI startup and enforces clean architecture principles  
+
+### **Context**
+During P0 Generation Engine development, encountered CLI startup failure:
+```
+Unable to resolve service for type 'MessagePatternAnalysisOrchestrator' while attempting to activate 'MessagePatternAnalysisService'
+```
+
+**Root Cause Analysis**:
+- `MessagePatternAnalysisService` was directly depending on concrete `MessagePatternAnalysisOrchestrator` class
+- Violated "Dependency Injection Throughout" sacred principle from INIT.md
+- Convention-based service registration only handles interface dependencies
+- Created architecture inconsistency with DI container expectations
+
+### **Decision: Create Missing Interface and Fix Architecture**
+
+#### **Solution Applied**
+```csharp
+// ❌ Before: Concrete dependency violating DI principles
+public MessagePatternAnalysisService(
+    MessagePatternAnalysisOrchestrator orchestrator)  // Concrete class!
+
+// ✅ After: Proper interface dependency following sacred principles
+public MessagePatternAnalysisService(
+    IMessagePatternAnalysisOrchestrator orchestrator)  // Interface dependency!
+```
+
+#### **Implementation Steps**
+1. Created `IMessagePatternAnalysisOrchestrator` interface
+2. Updated `MessagePatternAnalysisOrchestrator` to implement interface
+3. Updated `MessagePatternAnalysisService` to depend on interface
+4. Convention-based registration now works: `MessagePatternAnalysisOrchestrator` → `IMessagePatternAnalysisOrchestrator`
+
+### **Alternative Approaches Rejected**
+- **Manual Registration**: Would violate RULES.md prohibition on "service registration explosion"
+- **Rename Class**: Would create confusion about class purpose
+- **Static Utility**: Would break orchestration pattern and lose DI benefits
+- **Factory Pattern**: Would add unnecessary complexity for simple dependency
+
+### **Benefits**
+- ✅ **Follows Sacred Principles**: Maintains "Dependency Injection Throughout" from INIT.md
+- ✅ **No Registration Explosion**: Uses existing convention-based registration
+- ✅ **Testability**: Interface enables proper unit testing and mocking
+- ✅ **SOLID Compliance**: Dependency Inversion Principle properly applied
+- ✅ **Architecture Consistency**: All services now use interface dependencies
+
+### **Implementation Status**
+- ✅ Interface created: `IMessagePatternAnalysisOrchestrator`
+- ✅ Implementation updated: `MessagePatternAnalysisOrchestrator : IMessagePatternAnalysisOrchestrator`
+- 🔄 Dependency update: `MessagePatternAnalysisService` constructor (in progress)
+- ⏳ CLI validation: Test CLI startup with proper DI resolution
+
+**Dependencies**: P0 Generation Engine development blocked until complete  
+**Rollback**: Remove interface, revert to concrete dependency (not recommended - violates architecture)
+
+---
+
+## **LEDGER-006: Generation Service Naming Convention & Strategy Pattern**
+
+**Date**: September 5, 2025  
+**Decision Type**: Architectural Pattern Resolution  
+**Impact**: High - establishes P0 Generation Engine architecture and naming conventions  
+
+### **Context**
+During P0 Generation Engine development, discovered interface duplication issue:
+- `Pidgeon.Core.Generation.IGenerationService` (Domain) - generates clinical entities
+- `Pidgeon.Core.Application.Interfaces.Generation.IGenerationService` (Application) - generates message strings
+- `AlgorithmicGenerationService` - implements domain interface but doesn't follow naming convention
+- Service registration failing due to naming convention mismatch
+
+**Problem**: Auto-registration expects `IGenerationService` → `GenerationService`, but we had `IGenerationService` → `AlgorithmicGenerationService`
+
+### **Decision: Strategy Pattern with Convention-Compliant Naming**
+
+#### **Final Architecture** 
+```csharp
+// Domain Layer - Clinical Entity Generation
+IGenerationService → GenerationService (orchestrator with internal strategy)
+  ├── AlgorithmicGenerationStrategy (free tier - deterministic)
+  └── AIGenerationStrategy (paid tiers - intelligent)
+
+// Application Layer - Message String Generation  
+IMessageGenerationService → MessageGenerationService
+  └── Uses domain GenerationService as dependency
+```
+
+#### **Strategy Selection Logic**
+```csharp
+public class GenerationService : IGenerationService {
+    public Result<Patient> GeneratePatient(GenerationOptions options) {
+        var strategy = options.UseAI ? _aiStrategy : _algorithmicStrategy;
+        return strategy.GeneratePatient(options);
+    }
+}
+```
+
+### **Implementation Changes**
+1. **Renamed Interface**: `IGenerationService` → `IMessageGenerationService` (Application layer)
+2. **Renamed Service**: `GenerationService` → `MessageGenerationService` (Application layer) 
+3. **Renamed Service**: `AlgorithmicGenerationService` → `GenerationService` (Domain layer)
+4. **Architecture**: Strategy pattern inside domain GenerationService for Algorithmic vs AI modes
+
+### **Benefits**
+- ✅ **Convention compliance**: Auto-registration works (`IGenerationService` → `GenerationService`)
+- ✅ **Clean separation**: Domain generates entities, Application generates messages
+- ✅ **Future-proof**: Easy to add AI strategy without interface changes
+- ✅ **Tier enforcement**: Generation strategy controlled by `GenerationOptions.UseAI`
+- ✅ **Single responsibility**: Each service has one clear purpose
+
+### **Rollback Procedure**
+1. Revert `GenerationService` → `AlgorithmicGenerationService`
+2. Revert `IMessageGenerationService` → `IGenerationService` 
+3. Revert `MessageGenerationService` → `GenerationService`
+4. Add explicit registration for `AlgorithmicGenerationService`
+
+**Dependencies**: P0 Generation Engine architecture foundation  
+**Next**: Complete Option A implementation with strategy pattern
+
+---
+
 **LEDGER Principles**:
 1. **Every significant decision gets documented**
 2. **Rollback procedures are mandatory for architectural changes**
