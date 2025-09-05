@@ -14,7 +14,7 @@
 3. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI structure for P0 development
 4. **`docs/DEVELOPMENT.md`** - Current status (foundation complete) and P0 features
 5. **`docs/RULES.md`** - Sacred architectural principles (still enforced)
-6. **`docs/dev_scratchpads/P0_SCRATCHPAD.md`** - **[P0 PHASE]** Current development notes and progress
+6. **`docs/dev_scratchpads/P0_SCRATCHPAD.md`** - **[P0 PHASE]** Current sprint progress and CLI UX breakthrough
 
 ### **Step 2: Assess Current State** ⭐
 **Commands**:
@@ -26,11 +26,12 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 
 ### **Step 3: Validate Understanding** ⭐
 **Confirm you understand**:
-- **Current Phase**: P0 MVP development (foundation complete at 100/100 health)
-- **North Star**: "Realistic scenario testing without PHI compliance nightmare"
+- **Current Phase**: P0 MVP development - Generation Engine implementation (architecture complete)
+- **North Star**: "Realistic scenario testing without PHI compliance nightmare"  
+- **CLI UX Breakthrough**: Smart inference pattern `pidgeon generate ADT^A01` (standard inferred from message type)
 - **P0 Features**: 6 core features in embryonic development sequence (generate→deident→validate→config→workflow→diff)
 - **CLI-First**: One engine, two frontends strategy with Free/Pro/Enterprise gating
-- **Architecture**: Four-domain model with plugin architecture (fully implemented)
+- **Architecture**: Four-domain model + strategy pattern for generation modes (procedural/AI)
 - **Error Protocol**: STOP-THINK-ACT methodology still mandatory
 
 ---
@@ -39,14 +40,17 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 *Last Updated: September 5, 2025*
 
 ### **Project Status**
-- **Phase**: P0 MVP Development (foundation rehabilitation complete)
-- **Health Score**: 100/100 (Perfect architectural foundation)
-- **Build Status**: ✅ Clean (0 errors, 43 tests passing)
-- **P0 MVP Status**: ✅ READY for feature development
+- **Phase**: P0 MVP Development - Generation Engine implementation (architecture/UX design complete)
+- **Health Score**: 100/100 (Perfect architectural foundation + CLI UX pattern defined)
+- **Build Status**: ✅ Clean (0 errors, dependency injection working)
+- **P0 MVP Status**: ✅ READY for smart inference CLI implementation
 
 ### **P0 Embryonic Development Plan (8 weeks)**
 **Rationale**: Compound growth sequence where each feature builds on previous intelligence
 1. **Weeks 1-2**: Generation Engine (foundational heartbeat - creates test data supply)
+   - **CURRENT SPRINT**: Smart CLI inference implementation
+   - **Target Pattern**: `pidgeon generate ADT^A01 --count 10 --mode procedural`
+   - **Architecture**: Ready (DI working, strategy pattern foundation complete)
 2. **Week 3**: De-identification (major differentiation - unlocks real data segment)  
 3. **Week 4**: Validation Engine (quality control - creates feedback loops)
 4. **Week 5**: Vendor Pattern Detection (network effects - builds proprietary intelligence)

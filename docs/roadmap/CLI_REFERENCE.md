@@ -13,8 +13,11 @@
 pidgeon --version
 pidgeon completion zsh >> ~/.zshrc  # Shell completion
 
-# Generate your first message
-pidgeon generate message --type ADT^A01
+# Generate your first message (smart inference - standard detected from message type)
+pidgeon generate ADT^A01
+
+# Generate FHIR resources (inference works across all standards)
+pidgeon generate Patient --count 10 --format ndjson
 
 # Validate a message
 pidgeon validate --file message.hl7 --mode compatibility
@@ -37,8 +40,8 @@ USAGE
   pidgeon [command] [subcommand] [options]
 
 CORE COMMANDS
-  generate         Generate synthetic messages or bundles (HL7 v2, FHIR R4, basic NCPDP)
-  validate         Validate messages/resources against base specs (Strict) or real-world (Compatibility)
+  generate         Generate synthetic messages/resources with smart standard inference (HL7 v2, FHIR R4, NCPDP)
+  validate         Validate messages/resources against base specs (Strict) or real-world (Compatibility)  
   deident          De-identify real messages/resources (on-device), preserving referential integrity
   diff             Compare two messages/resources or folders; highlight field-level changes; suggest fixes [Pro]
   workflow         Create/run multi-step scenarios (e.g., admit→lab→rx) with checklists & artifacts [Pro]
@@ -76,14 +79,18 @@ ENV VARS
 ### **Command Examples**
 
 ```bash
-# Quick start: generate one HL7 ADT and print to console
-pidgeon generate message --type ADT^A01
+# Quick start: generate HL7 ADT (standard inferred from message type)
+pidgeon generate ADT^A01
 
-# Generate 10 lab results (HL7 ORU) to a file
-pidgeon generate message --type ORU^R01 --count 10 --output labs.hl7
+# Generate 10 lab results with smart inference 
+pidgeon generate ORU^R01 --count 10 --output labs.hl7
 
-# Generate a FHIR R4 Observation bundle (ndjson for bulk)
-pidgeon generate bundle --standard fhir --resource Observation --count 100 --format ndjson -o obs.ndjson
+# Generate FHIR resources (inference detects FHIR from resource name)
+pidgeon generate Patient --count 100 --format ndjson --output patients.ndjson
+pidgeon generate Observation --count 50 --output labs.fhir
+
+# NCPDP transactions (inference works across all standards)
+pidgeon generate NewRx --count 10 --vendor epic
 
 # Validate with strict rules vs real-world compatibility
 pidgeon validate --file labs.hl7 --mode strict
@@ -108,36 +115,57 @@ pidgeon config analyze --samples ./inbox --save epic_er.json
 
 ### **pidgeon generate**
 
-Generate synthetic messages or resource bundles.
+Generate synthetic messages or resource bundles with smart standard inference.
 
 ```
 USAGE
-  pidgeon generate <message|bundle> [options]
+  pidgeon generate <message-type> [options]
+  pidgeon generate [standard] <message-type> [options]    # Explicit standard override
 
-SUBCOMMANDS
-  message   Generate a single message/resource type repeatedly
-  bundle    Generate a multi-resource FHIR Bundle or multi-message HL7 batch
+SMART INFERENCE
+  Standard automatically detected from message type:
+  HL7:    ADT^A01, ORU^R01, RDE^O11, ORM^O01, etc. (Message^Trigger pattern)
+  FHIR:   Patient, Observation, MedicationRequest, Bundle, etc. (Resource names)
+  NCPDP:  NewRx, RxFill, CancelRx, etc. (Transaction types)
+
+EXPLICIT STANDARD (when needed)
+  hl7     Force HL7 v2 generation (rarely needed - inference works)
+  fhir    Force FHIR R4 generation (rarely needed - inference works)
+  ncpdp   Force NCPDP generation (rarely needed - inference works)
 
 COMMON OPTIONS
-  -t, --type <name>            HL7: ADT^A01|ORU^R01|RDE^O11 ...   FHIR: Patient|Observation|MedicationRequest ...
   -n, --count <int>            Number to generate (default: 1)
       --seed <int>             Deterministic seed for reproducible data
       --vendor <name>          Apply vendor pattern (e.g., epic|cerner|meditech or custom file)
       --profile <path>         Use a saved config/profile JSON for shaping fields
       --fields <path>          Field template (JSONPath overrides)
-      --format <fmt>           auto|hl7|json|ndjson (default: auto)
+      --format <fmt>           auto|hl7|json|ndjson (default: auto, inferred from message type)
   -o,  --output <path>         File/folder for output (default: stdout for single, ./out for multiple)
 
-AI MODES (gated)
+GENERATION MODES (tier-gated)
       --mode procedural        Deterministic generator (default; Free)
       --mode local-ai          Use local model for realistic variations [Pro]
       --mode api-ai            Use cloud completion endpoint [Pro/Ent]
       --model <name>           Model selector (e.g., llama-local, gpt-4o-mini) [Pro/Ent]
 
-EXAMPLES
-  pidgeon generate message --type ADT^A01
-  pidgeon generate message --standard fhir --type Observation --count 50 -o obs.ndjson --format ndjson
-  pidgeon generate bundle --standard fhir --kind message --header ADT --entries Patient,Encounter
+EXAMPLES - SMART INFERENCE (RECOMMENDED)
+  # HL7 Messages (inferred from Message^Trigger pattern)
+  pidgeon generate ADT^A01
+  pidgeon generate ADT^A01 --count 10 --output admissions.hl7
+  pidgeon generate ORU^R01 --count 50 --mode local-ai
+  
+  # FHIR Resources (inferred from resource name)
+  pidgeon generate Patient --count 100 --format ndjson
+  pidgeon generate Observation --count 50 --output labs.fhir
+  pidgeon generate Bundle --entries Patient,Encounter
+  
+  # NCPDP Transactions (inferred from transaction type)
+  pidgeon generate NewRx --count 10 --vendor epic
+
+EXAMPLES - EXPLICIT STANDARD (edge cases)
+  pidgeon generate hl7 ADT^A01                           # Same as: pidgeon generate ADT^A01
+  pidgeon generate fhir Patient --count 10               # Same as: pidgeon generate Patient --count 10
+  pidgeon generate ncpdp NewRx --output prescriptions/   # Same as: pidgeon generate NewRx --output prescriptions/
 ```
 
 ### **pidgeon validate**
