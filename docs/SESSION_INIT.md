@@ -9,9 +9,9 @@
 
 ### **Step 1: Read Core Rules & Current Roadmap** ⭐
 **Command**: Read these documents in order:
-1. **`docs/roadmap/features/pidgeon_feature_plan.md`** - Master P0-P2 roadmap with success criteria
+1. **`docs/roadmap/PIDGEON_ROADMAP.md`** - Master P0-P2 roadmap with success criteria
 2. **`docs/roadmap/features/NORTHSTAR.md`** - North star vision and product focus
-3. **`docs/roadmap/features/cli_baseline.md`** - Complete CLI structure for P0 development
+3. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI structure for P0 development
 4. **`docs/DEVELOPMENT.md`** - Current status (foundation complete) and P0 features
 5. **`docs/RULES.md`** - Sacred architectural principles (still enforced)
 
@@ -27,7 +27,7 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 **Confirm you understand**:
 - **Current Phase**: P0 MVP development (foundation complete at 100/100 health)
 - **North Star**: "Realistic scenario testing without PHI compliance nightmare"
-- **P0 Features**: 6 core features including de-identification, workflow wizard, diff+triage
+- **P0 Features**: 6 core features in embryonic development sequence (generate→deident→validate→config→workflow→diff)
 - **CLI-First**: One engine, two frontends strategy with Free/Pro/Enterprise gating
 - **Architecture**: Four-domain model with plugin architecture (fully implemented)
 - **Error Protocol**: STOP-THINK-ACT methodology still mandatory
@@ -43,12 +43,14 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 - **Build Status**: ✅ Clean (0 errors, 43 tests passing)
 - **P0 MVP Status**: ✅ READY for feature development
 
-### **P0 Development Plan (6 weeks)**
-1. **Weeks 1-2**: Core engines (generate, validate) + CLI interface
-2. **Week 3**: De-identification engine (NEW core differentiator)
-3. **Week 4**: Vendor pattern detection & configuration management
-4. **Week 5**: Workflow Wizard (Pro feature)
-5. **Week 6**: Diff + AI Triage (Pro feature)
+### **P0 Embryonic Development Plan (8 weeks)**
+**Rationale**: Compound growth sequence where each feature builds on previous intelligence
+1. **Weeks 1-2**: Generation Engine (foundational heartbeat - creates test data supply)
+2. **Week 3**: De-identification (major differentiation - unlocks real data segment)  
+3. **Week 4**: Validation Engine (quality control - creates feedback loops)
+4. **Week 5**: Vendor Pattern Detection (network effects - builds proprietary intelligence)
+5. **Week 6**: Workflow Wizard [Pro] (natural revenue conversion using compound intelligence)
+6. **Weeks 7-8**: Diff + AI Triage [Pro] (advanced troubleshooting - ultimate compound feature)
 
 ### **Business Context**
 - **North Star**: "Realistic scenario testing without PHI compliance nightmare"

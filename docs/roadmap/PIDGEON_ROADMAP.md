@@ -26,14 +26,22 @@
 
 ---
 
-## 🎯 **P0 — MVP Foundation (Weeks 1-6)**
-**Duration**: 6 weeks  
+## 🎯 **P0 — MVP Foundation (Weeks 1-8)**
+**Duration**: 8 weeks  
 **Goal**: Prove core value hypothesis with essential features for daily use  
-**Strategy**: CLI-first approach with clear Free/Pro/Enterprise feature gating
+**Strategy**: Embryonic development sequence for maximum compound growth
 
-### **P0 Core Features (Must Ship)**
+### **🧬 Embryonic Development Sequence**
+**Rationale**: Like biological development, the order matters. Each "organ" builds on previous ones, creating compound intelligence rather than scattered features.
 
-#### **1. Healthcare Message Generation Engine** 🆓
+**CLI-First Foundation**: All engines built CLI-first with GUI components layered progressively
+**Network Effects**: Later features benefit from data/intelligence created by earlier features
+**Revenue Progression**: Free features build comprehensive value → natural Pro conversion
+
+### **P0 Embryonic Development Sequence**
+
+#### **Weeks 1-2: Healthcare Message Generation Engine** 🆓 **[Foundational Heartbeat]**
+**Sequence Rationale**: Creates the "blood supply" (test data) that feeds all other systems. Gets users in the door immediately with daily-use value.
 **User Story**: "As a developer, I need realistic HL7/FHIR test messages so I can test integration logic daily"
 
 **Features**:
@@ -58,7 +66,8 @@ pidgeon generate bundle --standard fhir --resource Observation --count 100 -o ob
 
 **Technical Dependencies**: Domain.Clinical → Domain.Messaging transformation complete
 
-#### **2. Message Validation Engine** 🆓
+#### **Week 4: Message Validation Engine** 🆓 **[Quality Control System]**
+**Sequence Rationale**: Works on both synthetic AND de-identified data. Creates feedback loops that improve generation. Natural workflow progression.
 **User Story**: "As a developer, I need to know exactly why vendor messages fail validation so I can fix issues quickly"
 
 **Features**:
@@ -81,7 +90,8 @@ pidgeon validate --file labs.hl7 --mode compatibility --report validation.html
 
 **Technical Dependencies**: HL7Parser improvements, error reporting enhancement
 
-#### **3. On-Premises De-identification** 🆓 **[NEW CORE FEATURE]**
+#### **Week 3: On-Premises De-identification** 🆓 **[Major Differentiation]**
+**Sequence Rationale**: Unlocks "real data" user segment. Creates immune system that proves we handle complexity safely. No competitor offers this.
 **User Story**: "Import real messages, replace identifiers while preserving scenario integrity"
 
 **Features**:
@@ -105,7 +115,8 @@ pidgeon deident --in msg.hl7 --out msg_safe.hl7 --salt "team-seed" --preview
 
 **Technical Dependencies**: New de-identification service, PHI detection algorithms
 
-#### **4. Vendor Pattern Detection** 🆓
+#### **Week 5: Vendor Pattern Detection** 🆓 **[Network Effects Engine]**
+**Sequence Rationale**: Benefits from ALL previous data creation. Uses synthetic + de-identified + validation patterns to create proprietary vendor intelligence.
 **User Story**: "As a consultant, I need to quickly understand vendor-specific patterns so I can configure interfaces correctly"
 
 **Features**:
@@ -131,7 +142,8 @@ pidgeon config diff --left v1.json --right v2.json
 
 **Technical Dependencies**: Domain.Configuration intelligence, plugin architecture for vendor logic
 
-#### **5. Workflow Wizard** 🔒 **[Pro]**
+#### **Week 6: Workflow Wizard** 🔒 **[Pro] [Natural Revenue Conversion]**
+**Sequence Rationale**: Uses compound intelligence from all previous systems. Natural upgrade trigger - free features prove value, workflow creates scale need.
 **User Story**: "Guided flow for creating multi-step test scenarios with validation checklists"
 
 **Features**:
@@ -157,7 +169,8 @@ pidgeon workflow show --name admit_scenario_01
 
 **Technical Dependencies**: Clinical domain relationship modeling, workflow engine
 
-#### **6. Diff + AI Triage** 🔒 **[Pro]**
+#### **Weeks 7-8: Diff + AI Triage** 🔒 **[Pro] [Advanced Troubleshooting]**
+**Sequence Rationale**: Ultimate compound feature using maximum intelligence. Premium value with clear ROI. Enterprise collaboration lead-in.
 **User Story**: "Visual diff of message problems for troubleshooting in minutes, not hours"
 
 **Features**:
@@ -181,6 +194,32 @@ pidgeon diff --left old.hl7 --right new.hl7 --ignore MSH-7,PV1.44
 - Clear visual diff for both technical and non-technical users
 
 **Technical Dependencies**: Enhanced error reporting, GenericHL7Message implementation, AI integration
+
+### **🖥️ CLI/GUI Development Timeline**
+
+#### **Weeks 1-5: CLI-First Development**
+**Strategy**: Build all engines with CLI interfaces first for immediate developer adoption
+- **Week 1-2**: CLI generate commands with rich output formatting
+- **Week 3**: CLI deident with progress reporting and preview modes
+- **Week 4**: CLI validate with detailed error reporting and HTML output
+- **Week 5**: CLI config with pattern analysis and diff visualization
+
+#### **Week 6: GUI Foundation + Workflow Wizard**
+**Strategy**: First GUI component for Pro feature differentiation
+- **Workflow Wizard GUI**: Interactive scenario builder (Pro feature)
+- **CLI Integration**: GUI operations export equivalent CLI commands
+- **Foundation**: Basic GUI framework for future components
+
+#### **Weeks 7-8: GUI Diff Interface**
+**Strategy**: Visual diff interface for advanced troubleshooting
+- **Visual Diff**: Side-by-side message comparison with highlighting
+- **AI Integration**: In-GUI suggestions and explanations
+- **CLI Symmetry**: GUI diff operations generate CLI equivalents
+
+#### **Post-P0: Full GUI Expansion**
+- **Message Studio**: Visual message editor (P1 feature)
+- **Dashboard**: Usage analytics and project management
+- **Team Features**: Collaboration interfaces for Enterprise
 
 ### **💰 P0 Business Model Implementation**
 - **🆓 CLI Core (Free)**: All core features (generate, validate, deident, config) with basic datasets

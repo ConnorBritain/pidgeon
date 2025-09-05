@@ -25,15 +25,23 @@
 
 ---
 
-## 🎯 **P0 — MVP Foundation (Weeks 1-6)**
-**Duration**: 6 weeks  
-**Goal**: Prove value to design partners; deliver essential daily-use workflows  
-**Strategy**: CLI-first approach with clear Free/Pro/Enterprise feature gating
+## 🎯 **P0 — MVP Foundation (Weeks 1-8)**
+**Duration**: 8 weeks  
+**Goal**: Prove value to design partners through embryonic development sequence  
+**Strategy**: Compound growth through sequential feature development
 
-### **P0 Core Features**
+### **🧬 Embryonic Development Philosophy**
+**Critical Insight**: Like biological development, the sequence of feature development is as important as the features themselves. Each "organ" builds on the intelligence created by previous ones, creating compound value rather than scattered capabilities.
 
-#### **1. Healthcare Message Generation Engine** 🆓
-**User Story**: "Generate realistic HL7/FHIR test messages for daily integration testing"  
+**Network Effects Strategy**: Later features benefit from data and intelligence patterns created by earlier features, creating a competitive moat that grows stronger with each user.
+
+**CLI-GUI Harmonization**: CLI-first development with GUI components added progressively for Pro features and visual workflows.
+
+### **P0 Embryonic Development Sequence**
+
+#### **Weeks 1-2: Healthcare Message Generation Engine** 🆓 **[Foundational Heartbeat]**
+**User Story**: "Generate realistic HL7/FHIR test messages for daily integration testing"
+**Sequence Rationale**: Creates the foundational "blood supply" of test data that feeds all other systems. Immediate user value and viral sharing potential.  
 **Scope**:
 - HL7 v2.3: ADT, ORU, RDE/RXO/RXR message types
 - FHIR R4: Patient, Encounter, Observation, Medication, MedicationRequest
@@ -48,8 +56,9 @@ pidgeon generate message --type ORU^R01 --count 10 --output labs.hl7
 pidgeon generate bundle --standard fhir --resource Observation --count 100 -o obs.ndjson
 ```
 
-#### **2. Message Validation Engine** 🆓
-**User Story**: "Understand exactly why vendor messages fail validation for quick fixes"  
+#### **Week 4: Message Validation Engine** 🆓 **[Quality Control System]**
+**User Story**: "Understand exactly why vendor messages fail validation for quick fixes"
+**Sequence Rationale**: Works on both synthetic AND de-identified data. Creates feedback loops that improve generation engine. Natural workflow progression for users.  
 **Scope**:
 - HL7 v2 parser handling real-world vendor quirks
 - Validation modes: Strict (compliance) vs Compatibility (vendor reality)
@@ -62,8 +71,9 @@ pidgeon validate --file labs.hl7 --mode strict
 pidgeon validate --file labs.hl7 --mode compatibility --report validation.html
 ```
 
-#### **3. On-Premises De-identification** 🆓 **NEW**
-**User Story**: "Import real messages, replace identifiers while preserving scenario integrity"  
+#### **Week 3: On-Premises De-identification** 🆓 **[Major Differentiation]**
+**User Story**: "Import real messages, replace identifiers while preserving scenario integrity"
+**Sequence Rationale**: Major competitive differentiator. Unlocks consultant/informaticist segment with real messages. Proves we can handle complexity safely.  
 **Scope**:
 - Deterministic ID remapping (consistent across messages)
 - Date shifting with configurable offsets
@@ -76,8 +86,9 @@ pidgeon deident --in ./samples --out ./synthetic --date-shift 30d
 pidgeon deident --in msg.hl7 --out msg_safe.hl7 --salt "team-seed" --preview
 ```
 
-#### **4. Vendor Pattern Detection** 🆓
-**User Story**: "Quickly understand vendor-specific patterns for correct interface configuration"  
+#### **Week 5: Vendor Pattern Detection** 🆓 **[Network Effects Engine]**
+**User Story**: "Quickly understand vendor-specific patterns for correct interface configuration"
+**Sequence Rationale**: Benefits from ALL previous data creation (synthetic + de-identified + validation patterns). Creates proprietary vendor intelligence.  
 **Scope**:
 - Pattern inference from sample messages
 - Auto-generate vendor-specific validation rules
@@ -91,8 +102,9 @@ pidgeon config use --name epic_er.json
 pidgeon config list
 ```
 
-#### **5. Workflow Wizard** 🔒 **[Pro]**
-**User Story**: "Guided flow for creating multi-step test scenarios with validation checklists"  
+#### **Week 6: Workflow Wizard** 🔒 **[Pro] [Natural Revenue Conversion]**
+**User Story**: "Guided flow for creating multi-step test scenarios with validation checklists"
+**Sequence Rationale**: Uses compound intelligence from all previous systems. Natural upgrade trigger - free features prove value, workflow creates scale need.  
 **Scope**:
 - Interactive wizard: base patient → scenario selection → vendor config
 - Step-by-step prompts or scenario file input
@@ -106,8 +118,9 @@ pidgeon workflow run --file scenarios/admit_lab_rx.yml
 pidgeon workflow list
 ```
 
-#### **6. Diff + AI Triage** 🔒 **[Pro]**
-**User Story**: "Visual diff of message problems for troubleshooting in minutes, not hours"  
+#### **Weeks 7-8: Diff + AI Triage** 🔒 **[Pro] [Advanced Troubleshooting]**
+**User Story**: "Visual diff of message problems for troubleshooting in minutes, not hours"
+**Sequence Rationale**: Ultimate compound feature using maximum intelligence stack. Premium value with clear ROI. Sets up Enterprise collaboration needs.  
 **Scope**:
 - Side-by-side field-level comparison
 - HL7 field-aware, FHIR JSON tree diff
