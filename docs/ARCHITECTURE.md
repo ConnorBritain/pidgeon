@@ -91,6 +91,96 @@ namespace Pidgeon.Core.Domain {
 
 ---
 
+## 🎯 **P0 Feature Architecture**
+
+### **New Core Features**
+
+#### **3. On-Premises De-identification (NEW)**
+```csharp
+// Core differentiator - safe test data without PHI
+namespace Pidgeon.Core.Services {
+    public interface IDeidentificationService {
+        Task<DeidentificationResult> ProcessAsync(
+            IEnumerable<string> messages,
+            DeidentificationOptions options
+        );
+    }
+}
+
+public record DeidentificationOptions {
+    public string Salt { get; init; } = string.Empty;
+    public TimeSpan DateShift { get; init; }
+    public string[] PreserveFields { get; init; } = Array.Empty<string>();
+    public bool PreserveCrossMessageConsistency { get; init; } = true;
+}
+```
+
+### **Pro Features (Subscription)**
+
+#### **5. Workflow Wizard** 🔒 **[Pro]**
+```csharp
+// Guided multi-step scenario creation
+namespace Pidgeon.CLI.Commands {
+    public class WorkflowCommand : ICommand {
+        public async Task<int> ExecuteAsync(
+            WorkflowAction action, // wizard|run|list|show
+            string? scenarioFile = null
+        );
+    }
+}
+```
+
+#### **6. Diff + AI Triage** 🔒 **[Pro]**
+```csharp
+// Field-level comparison with AI suggestions
+namespace Pidgeon.Core.Services {
+    public interface IDiffService {
+        Task<DiffResult> CompareAsync(
+            string baseline,
+            string candidate,
+            DiffOptions options
+        );
+    }
+}
+```
+
+---
+
+## 🖥️ **CLI-GUI Harmonization Architecture**
+*Reference: `docs/roadmap/features/cli_gui_harmonization.md`*
+
+### **One Engine, Two Frontends**
+```csharp
+// Shared business logic layer
+namespace Pidgeon.Core.Services {
+    // All business logic here - no duplication between CLI/GUI
+    public interface IGenerationService { }
+    public interface IValidationService { }
+    public interface IDeidentificationService { }
+}
+
+// CLI frontend
+namespace Pidgeon.CLI {
+    public class GenerateCommand : ICommand {
+        public GenerateCommand(IGenerationService generator) { }
+    }
+}
+
+// GUI frontend (future)
+namespace Pidgeon.GUI {
+    public class GenerateViewModel {
+        public GenerateViewModel(IGenerationService generator) { }
+    }
+}
+```
+
+### **Export/Import Symmetry**
+- **CLI → GUI**: Reports, configs, scenarios all have GUI viewers
+- **GUI → CLI**: Every GUI operation exports equivalent CLI command
+- **Consistent Mental Model**: `pidgeon generate` = GUI "Generate Messages" panel
+
+---
+
 ## 🔌 **Plugin Architecture**
 
 ### **Core Orchestration Pattern**
@@ -372,6 +462,57 @@ Healthcare Response ← Clinical Domain ← Domain Adapter ← Messaging Domain 
 
 ---
 
-**Architecture Status**: Foundation strong with critical violations requiring immediate attention. Post-foundation cleanup will result in production-ready, scalable healthcare interoperability platform.
+---
 
-**Next Steps**: Complete domain boundary repair, eliminate code duplication, implement P0-blocking features. Architecture will then support rapid feature development and scaling.
+## 💰 **Business Model Architecture Integration**
+
+### **CLI-GUI Harmony Strategy**
+*Reference: `docs/roadmap/features/cli_gui_harmonization.md`*
+
+#### **Feature Gating Architecture**
+```csharp
+// CLI commands check subscription tier before execution
+namespace Pidgeon.CLI.Infrastructure {
+    public interface ISubscriptionService {
+        Task<SubscriptionTier> GetCurrentTierAsync();
+        Task<bool> HasAccessAsync(Feature feature);
+    }
+}
+
+public enum SubscriptionTier {
+    Free,         // CLI core features
+    Professional, // Workflow, Diff, AI modes
+    Enterprise    // Team features, SSO, private AI
+}
+```
+
+#### **Free Tier - CLI Core**
+```bash
+# All P0 core features available via CLI
+pidgeon generate message --type ADT^A01 --count 10
+pidgeon validate --file labs.hl7 --mode compatibility
+pidgeon deident --in ./samples --out ./synthetic --date-shift 30d
+pidgeon config analyze --samples ./inbox --save epic.json
+```
+
+#### **Professional Tier ($29/mo)**
+```bash
+# Advanced features with [Pro] gating
+pidgeon workflow wizard  # Interactive scenario creation
+pidgeon diff --left envA --right envB --report diff.html
+pidgeon generate --mode local-ai  # Enhanced realistic data
+```
+
+#### **Enterprise Tier ($199/seat)**
+```bash
+# Team and governance features
+pidgeon login --sso  # Enterprise SSO integration
+pidgeon account --workspace team-alpha  # Team workspaces
+pidgeon generate --mode private-ai  # Custom models
+```
+
+---
+
+**Architecture Status**: Foundation complete (100/100 health). Ready for P0 MVP development with perfect architectural foundation supporting CLI-first approach and future GUI integration.
+
+**Next Steps**: Implement P0 features following CLI-first strategy with clear Free/Pro/Enterprise gating. Architecture supports rapid feature development and scaling to enterprise teams.

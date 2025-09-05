@@ -7,12 +7,13 @@
 
 ## 🚨 **MANDATORY INITIALIZATION SEQUENCE**
 
-### **Step 1: Read Core Rules & Context** ⭐
+### **Step 1: Read Core Rules & Current Roadmap** ⭐
 **Command**: Read these documents in order:
-1. **`docs/RULES.md`** - Sacred principles, anti-patterns, validation rules
-2. **`docs/arch_reviews/ARCH_FIX.md`** - Current rehabilitation roadmap with specific tasks
-3. **`docs/arch_reviews/ARCH_FIX_SCRATCHPAD.md`** - Real-time progress tracking and current fix status
-4. **`docs/DEVELOPMENT.md`** - Strategic direction and P0 feature priorities
+1. **`docs/roadmap/features/pidgeon_feature_plan.md`** - Master P0-P2 roadmap with success criteria
+2. **`docs/roadmap/features/NORTHSTAR.md`** - North star vision and product focus
+3. **`docs/roadmap/features/cli_baseline.md`** - Complete CLI structure for P0 development
+4. **`docs/DEVELOPMENT.md`** - Current status (foundation complete) and P0 features
+5. **`docs/RULES.md`** - Sacred architectural principles (still enforced)
 
 ### **Step 2: Assess Current State** ⭐
 **Commands**:
@@ -24,64 +25,74 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 
 ### **Step 3: Validate Understanding** ⭐
 **Confirm you understand**:
-- **Current Phase**: Foundation rehabilitation (Week 1-3 of ARCH_FIX.md)
-- **Blocker Status**: P0 domain violations must be fixed before any feature work
-- **Architecture**: Four-domain model with plugin architecture
-- **Error Protocol**: STOP-THINK-ACT methodology is mandatory
+- **Current Phase**: P0 MVP development (foundation complete at 100/100 health)
+- **North Star**: "Realistic scenario testing without PHI compliance nightmare"
+- **P0 Features**: 6 core features including de-identification, workflow wizard, diff+triage
+- **CLI-First**: One engine, two frontends strategy with Free/Pro/Enterprise gating
+- **Architecture**: Four-domain model with plugin architecture (fully implemented)
+- **Error Protocol**: STOP-THINK-ACT methodology still mandatory
 
 ---
 
 ## 📊 **CURRENT STATE SUMMARY**
-*Last Updated: September 2, 2025*
+*Last Updated: September 5, 2025*
 
 ### **Project Status**
-- **Phase**: Architectural rehabilitation sprint (Week 1 of 3-4)
-- **Health Score**: 87/100 (Strong foundation with critical violations)
-- **Build Status**: ✅ Clean (0 errors, 0 warnings)
-- **P0 MVP Status**: ❌ BLOCKED by architectural violations
+- **Phase**: P0 MVP Development (foundation rehabilitation complete)
+- **Health Score**: 100/100 (Perfect architectural foundation)
+- **Build Status**: ✅ Clean (0 errors, 43 tests passing)
+- **P0 MVP Status**: ✅ READY for feature development
 
-### **Critical Path**
-1. **CURRENT PRIORITY**: P0 domain boundary violations (21 files)
-2. **Next Week**: Code duplication patterns (600+ duplicate lines)
-3. **Week 3**: P0-blocking TODOs and validation
-4. **Gate to P0**: Health score >95/100, foundation ready
+### **P0 Development Plan (6 weeks)**
+1. **Weeks 1-2**: Core engines (generate, validate) + CLI interface
+2. **Week 3**: De-identification engine (NEW core differentiator)
+3. **Week 4**: Vendor pattern detection & configuration management
+4. **Week 5**: Workflow Wizard (Pro feature)
+5. **Week 6**: Diff + AI Triage (Pro feature)
 
 ### **Business Context**
-- **Model**: Core+ (Free algorithmic core + Paid AI/GUI/Cloud)
+- **North Star**: "Realistic scenario testing without PHI compliance nightmare"
+- **Model**: CLI-first with GUI harmony (Free CLI + Pro/Enterprise features)
 - **Target Users**: Healthcare developers, consultants, informaticists, administrators
-- **Mission**: AI-augmented universal healthcare standards platform (HL7, FHIR, NCPDP)
+- **Mission**: Transform healthcare testing through synthetic data & de-identification
 
 ---
 
 ## 🎯 **IMMEDIATE ACTION GUIDANCE**
 
 ### **If User Asks for Feature Work**:
-**Response**: "I need to fix critical architectural violations first. We have 21 domain boundary violations blocking P0 development. Would you like me to start with those?"
+**Response**: "Foundation is complete! We're ready for P0 development. Which P0 feature should we work on: generate, validate, deident, config, workflow, or diff?"
 
 ### **If User Reports Errors**:
 **Response**: Follow STOP-THINK-ACT protocol from `docs/RULES.md`. Don't fix immediately - analyze first.
 
-### **If User Wants Architecture Changes**:
-**Response**: Reference `docs/roadmap/INIT.md` sacred principles. Propose changes that align with four-domain architecture.
+### **If User Wants CLI Commands**:
+**Response**: Reference `docs/roadmap/features/cli_baseline.md` for exact command structure. Implement with clear Free/Pro gating.
 
 ### **If User Wants New Standards Support**:
 **Response**: Implement as plugin following existing HL7v23Plugin pattern. Never modify core services.
+
+### **If User Wants GUI Features**:
+**Response**: Follow CLI-GUI harmonization strategy - one engine, two frontends. GUI operations export CLI equivalents.
 
 ---
 
 ## 📚 **ESSENTIAL READING LIST**
 
 ### **🚨 CRITICAL - Read Every Session**
-1. **`docs/RULES.md`** - Development rules and sacred principles
-2. **`docs/arch_reviews/ARCH_FIX.md`** - Current rehabilitation tasks
-3. **`docs/arch_reviews/ARCH_FIX_SCRATCHPAD.md`** - Real-time progress and current status
-4. **`docs/DEVELOPMENT.md`** - Strategic roadmap and P0 features
+1. **`docs/roadmap/PIDGEON_ROADMAP.md`** - Complete P0-P2 roadmap with all success metrics
+2. **`docs/roadmap/features/NORTHSTAR.md`** - Core value proposition and user focus
+3. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI command structure and examples
+4. **`docs/DEVELOPMENT.md`** - Current status and P0 development plan
+5. **`docs/RULES.md`** - Sacred architectural principles and error handling
 
 ### **🔍 REFERENCE - Read When Relevant**
-4. **`docs/roadmap/INIT.md`** - Sacred architectural principles (for architecture questions)
-5. **`docs/agent_steering/error-resolution-methodology.md`** - Error handling protocol
-6. **`docs/ARCHITECTURE.md`** - Four-domain architecture details
-7. **`docs/LEDGER.md`** - Decision history and rollback procedures
+6. **`docs/roadmap/features/cli_gui_harmonization.md`** - Platform strategy for CLI+GUI
+7. **`docs/roadmap/INIT.md`** - Sacred architectural principles (for architecture questions)
+8. **`docs/ARCHITECTURE.md`** - Four-domain architecture + P0 feature architecture
+9. **`docs/agent_steering/error-resolution-methodology.md`** - STOP-THINK-ACT protocol
+10. **`docs/LEDGER.md`** - Recent development decisions and rollback procedures
+11. **`docs/_archive/`** - Historical documents (foundation work, old roadmaps)
 
 ### **📋 USER STORIES - Read for Feature Work**
 8. **`docs/user_stories/BACKLOG.md`** - P0 feature validation and priority
@@ -95,17 +106,18 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 ## 🚀 **PRODUCTIVITY PATTERNS**
 
 ### **Session Start Checklist**
-- [ ] Read RULES.md (understand constraints)
-- [ ] Read ARCH_FIX.md (understand current priorities)
+- [ ] Read PIDGEON_ROADMAP.md (complete P0-P2 roadmap)
+- [ ] Read NORTHSTAR.md (understand core value proposition)
 - [ ] Check git status (understand working state)
-- [ ] Identify current sprint week (Week 1/2/3 of rehabilitation)
-- [ ] Confirm task alignment with current phase
+- [ ] Identify P0 feature priorities (6 features over 6 weeks)
+- [ ] Confirm task alignment with CLI-first development approach
 
 ### **Before Any Code Changes**
-- [ ] Validate against `docs/RULES.md` principles
-- [ ] Check if task is P0-priority in `docs/arch_reviews/ARCH_FIX.md`
-- [ ] Ensure no architectural violations will be introduced
+- [ ] Validate against `docs/RULES.md` principles (still enforced)
+- [ ] Check CLI command structure in `CLI_REFERENCE.md`
+- [ ] Ensure Free/Pro/Enterprise feature gating is correct
 - [ ] Plan testing approach per healthcare scenarios
+- [ ] Verify one-engine-two-frontends pattern compliance
 
 ### **Error Handling Protocol**
 - [ ] STOP: Don't immediately fix
@@ -145,18 +157,20 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 ## 🎯 **SUCCESS CRITERIA FOR INITIALIZATION**
 
 ### **Agent is Ready When They Can Answer**:
-- "What's the current development phase?" → *Foundation rehabilitation week X*
-- "What blocks P0 development?" → *21 domain boundary violations*  
+- "What's the current development phase?" → *P0 MVP development (foundation complete)*
+- "What's our north star?" → *Realistic scenario testing without PHI compliance nightmare*  
+- "What are the P0 core features?" → *6 features: generate, validate, deident, config, workflow, diff*
 - "How do I handle errors?" → *STOP-THINK-ACT methodology*
 - "Can I add HL7-specific logic to core services?" → *No, use plugin delegation*
-- "What's our business model?" → *Core+ with free core and subscription tiers*
+- "What's our CLI-GUI strategy?" → *One engine, two frontends with export/import symmetry*
 
 ### **Agent Can Begin Work When**:
-- [ ] Understands current priorities from ARCH_FIX.md
-- [ ] Knows sacred principles from RULES.md
-- [ ] Recognizes anti-patterns to avoid
-- [ ] Can validate architectural compliance
-- [ ] Follows error resolution methodology
+- [ ] Understands P0 feature roadmap from pidgeon_feature_plan.md
+- [ ] Knows sacred architectural principles from RULES.md (still enforced)
+- [ ] Understands CLI command structure from cli_baseline.md
+- [ ] Can identify Free vs Pro vs Enterprise feature boundaries
+- [ ] Follows CLI-GUI harmonization strategy
+- [ ] Follows STOP-THINK-ACT error resolution methodology
 
 ---
 
@@ -169,19 +183,32 @@ Read docs/SESSION_INIT.md, follow its initialization protocol, then tell me what
 
 ### **Status Check Commands**
 ```bash
-# Architecture health check
-grep -c "TODO:\|FIXME:" src/**/*.cs
+# Technical debt check (should be <20 items)
+find pidgeon -name "*.cs" -exec grep -l "TODO:\|FIXME:" {} \; | wc -l
 
-# Domain violation check  
-grep -r "using.*Clinical" src/Pidgeon.Core/Domain/Messaging/
+# P0 feature progress check
+ls pidgeon/Pidgeon.CLI/Commands/  # Check CLI commands implemented
 
 # Current git state
 git status && git log --oneline -3
+
+# Build health check
+dotnet build --no-restore  # Should be clean
 ```
 
 ### **Ready-to-Work Confirmation**
 **Agent should respond with**:
-"Ready! We're in architectural rehabilitation Week X. Current priority is [specific P0 task from ARCH_FIX.md]. Shall I begin with [specific action]?"
+```
+✅ Initialization Complete
+
+Current State:
+- Phase: P0 MVP Development (Week X of 6)
+- Health: 100/100 (Foundation complete)
+- Priority: [Current P0 feature - generate/validate/deident/config/workflow/diff]
+
+Ready to work on: [Specific CLI command or feature implementation]
+Shall I proceed?
+```
 
 ---
 

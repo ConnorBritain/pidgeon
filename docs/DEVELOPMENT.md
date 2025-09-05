@@ -1,219 +1,247 @@
-# Pidgeon Development Plan - Current Status & Next Steps
-**Version**: 2.0  
-**Updated**: September 1, 2025  
-**Status**: Authoritative development roadmap  
-**Scope**: Foundation repair through P0 MVP delivery
+# Pidgeon Development Plan - Aligned Feature Roadmap
+**Version**: 3.0  
+**Updated**: September 5, 2025  
+**Status**: Definitive roadmap aligned with feature vision  
+**North Star**: Realistic scenario testing without the legal/compliance nightmare of using real patient data
 
 ---
 
-## 🚨 **CRITICAL: Current Status**
+## 🎯 **Current Status - Foundation Complete**
 
-### **🔍 Architectural Review Context**
-**ESSENTIAL READING**: The foundation work detailed below is based on comprehensive architectural analysis:
-- **[`docs/arch_reviews/PIDGEON_AR_FINAL.md`](arch_reviews/PIDGEON_AR_FINAL.md)** - Complete findings across 5 review phases
-- **[`docs/arch_reviews/ar_082925/`](arch_reviews/ar_082925/)** - Detailed analysis logs with specific file:line references
-- **[`docs/LEDGER.md`](LEDGER.md)** - Historical decisions that created current technical debt
+### **Architectural Health**
+**Health Score**: **100/100** - All rehabilitation complete ✅  
+**Build Status**: Clean (0 errors, 43 tests passing) ✅  
+**P0 Readiness**: **READY** - Foundation issues resolved ✅  
 
-**⚠️ CRITICAL**: These documents contain the exact file locations, line numbers, and root cause analysis needed to execute foundation repairs correctly. Do NOT proceed with domain boundary fixes without referencing the specific violations documented in the architectural review.
+### **Completed Foundation Work** 
+✅ All P0-P4 architectural priorities completed (Sept 4, 2025)
+✅ Domain boundary violations: 0 (was 21)
+✅ Infrastructure dependencies: 0 (was 20)  
+✅ Code duplication: <2% (was 15%)
+✅ Critical FIXMEs: 0 (was 4)
+✅ Professional code standards applied
 
-### **Foundation Health Assessment**
-**Architectural Health Score**: **87/100** - Strong foundation with critical violations  
-**P0 Readiness**: ❌ **NOT READY** - Foundation work required first  
-**Required Work**: **97-145 hours** (realistic: 3.25 weeks) before P0 development
-
-**Evidence Base**: Assessment based on systematic review of 131/146 files (90% manual coverage) across 5 comprehensive phases of architectural analysis.
-
-### **Build Status**
-✅ **Clean Build**: 0 compilation errors, 0 warnings  
-✅ **Tests Passing**: Core functionality validated  
-✅ **Plugin Architecture**: Sophisticated implementation working  
-❌ **Domain Boundaries**: 21 critical violations (see PIDGEON_AR_FINAL.md Section 4.1)
-❌ **Code Duplication**: 600+ duplicate lines identified (see PIDGEON_AR_FINAL.md Section 4.4)
+**Ready for P0 MVP Development** with perfect architectural foundation
 
 ---
 
-## 📋 **Phase 0: Foundation Repair (Weeks 1-3)**
-**Goal**: Achieve 95/100 architectural health before P0 development  
-**Duration**: 3-4 weeks  
-**Team Focus**: Architecture, code quality, technical debt elimination
-
-### **Week 1: Critical Domain Fixes**
-**Duration**: 40 hours  
-**Priority**: CRITICAL - P0 blocking
-
-#### **Domain Boundary Violations (Days 1-3)**
-**Reference**: [`PIDGEON_AR_FINAL.md` Sections 4.1-4.2](arch_reviews/PIDGEON_AR_FINAL.md) for complete violation analysis
-
-- **Move HL7Field Types**: Infrastructure → Domain.Messaging.HL7v2.Common
-- **Remove Infrastructure Dependencies**: Fix 12 files importing Infrastructure.Standards.Common.HL7
-- **Create Clinical→Messaging Adapters**: Replace 21 direct imports with proper adapters
-- **Files to Fix** (documented in PIDGEON_AR_FINAL.md):
-  - `PIDSegment.cs:5` → Clinical.Entities
-  - `ORCSegment.cs:5` → Clinical.Entities  
-  - `RXESegment.cs:5` → Clinical.Entities
-  - `PV1Segment.cs:5` → Clinical.Entities
-  - `ADTMessage.cs:5` → Clinical.Entities
-  - `RDEMessage.cs:5` → Clinical.Entities
-
-**Root Cause**: Clean Architecture reorganization (ARCH-024) broke plugin access patterns without completing adapter implementations.
-
-#### **Critical FIXME Resolution (Days 4-5)**
-**Reference**: [`PIDGEON_AR_FINAL.md` Section 4.3](arch_reviews/PIDGEON_AR_FINAL.md) for complete FIXME analysis
-
-- **FieldPatternAnalyzer.cs**: Lines 91, 141, 189 - adapter integration failures
-- **ConfidenceCalculator.cs**: Line 249 - coverage calculation broken
-- **GenerationService.cs**: Lines 70, 102, 124 - plugin delegation TODOs
-- **HL7Message.cs**: Lines 267, 512 - parsing implementation TODOs
-- **GenericHL7Message.cs**: Lines 27, 36 - debug format support TODOs
-
-**Root Cause**: Architectural migrations left incomplete when domain boundaries were reorganized.
-
-**Week 1 Success Criteria**:
-- ✅ Zero domain boundary violations
-- ✅ Zero infrastructure dependencies in domain
-- ✅ All P0-blocking TODOs completed
-- ✅ Domain architecture score >90/100
-
-### **Week 2: Code Duplication Elimination**
-**Duration**: 35-45 hours  
-**Priority**: HIGH - Technical debt cleanup
-
-#### **Critical DRY Violations (Days 1-3)**
-**Reference**: [`PIDGEON_AR_FINAL.md` Section 4.4](arch_reviews/PIDGEON_AR_FINAL.md) for complete duplication analysis
-
-- **Constructor Trinity Pattern**: Create HL7Field<T> base class eliminating 8+ constructor duplications
-- **CLI Command Pattern**: Extract common command creation pattern (saves 300+ lines from ConfigCommand.cs)
-- **Service Registration**: Implement registration conventions (eliminates 22+ duplications)
-
-#### **Additional DRY Patterns (Days 4-5)**
-**Reference**: [`QUALITY_ANALYSIS.md`](arch_reviews/ar_082925/QUALITY_ANALYSIS.md) for detailed pattern locations
-
-- **CE/CWE Data Types**: Extract common base class patterns (70+ lines)
-- **MSH Field Extraction**: Consolidate 4 identical parsing methods in HL7FieldAnalysisPlugin
-- **Plugin Structure**: Implement proper HL7v24Plugin from v23 base (currently exact copy with TODOs)
-- **Configuration Properties**: Address JsonPropertyName duplication patterns in FieldFrequency.cs
-
-**Week 2 Success Criteria**:
-- ✅ <200 duplicate lines remaining (from 600+)
-- ✅ Constructor patterns consolidated  
-- ✅ CLI command duplication eliminated
-- ✅ Service registration standardized
-
-### **Week 3: Professional Code Standards**
-**Duration**: 20-25 hours  
-**Priority**: MEDIUM - Code quality enhancement
-
-#### **Meta-Commentary Cleanup (Days 1-2)**
-- Remove "ELIMINATES TECHNICAL DEBT" comments
-- Replace development artifacts with professional documentation
-- Standardize XML documentation across services
-
-#### **Final Quality Pass (Days 3-5)**
-- Address remaining non-blocking TODOs
-- Validate architectural compliance
-- Performance optimization verification
-- Security review completion
-
-**Week 3 Success Criteria**:
-- ✅ Zero meta-commentary artifacts
-- ✅ Professional documentation standards
-- ✅ Overall architectural health >95/100
-- ✅ Performance targets validated
-
----
-
-## 🎯 **P0 MVP Development (Weeks 4-9)**
-**Goal**: Deliver 5 core features with 100+ active users  
+## 🎯 **P0 — MVP Foundation (Weeks 1-6)**
 **Duration**: 6 weeks  
-**Strategy**: User adoption through free core, validate Professional tier conversion
+**Goal**: Prove value to design partners; deliver essential daily-use workflows  
+**Strategy**: CLI-first approach with clear Free/Pro/Enterprise feature gating
 
-### **P0 Core Features (Must Ship)**
+### **P0 Core Features**
 
-#### **1. Healthcare Message Generation Engine (Week 4)**
-**User Story**: "Generate realistic HL7/FHIR test messages for daily integration testing"
-- ✅ HL7 v2.3: ADT, ORM, RDE, ORU message types
-- ✅ FHIR R4: Patient, Encounter, Observation, Medication, MedicationRequest
-- ✅ NCPDP SCRIPT: NewRx, Refill, Cancel basics
-- ✅ Deterministic generation with seed support
-- ✅ Healthcare realism: 25 medications, 50 names, age-appropriate conditions
+#### **1. Healthcare Message Generation Engine** 🆓
+**User Story**: "Generate realistic HL7/FHIR test messages for daily integration testing"  
+**Scope**:
+- HL7 v2.3: ADT, ORU, RDE/RXO/RXR message types
+- FHIR R4: Patient, Encounter, Observation, Medication, MedicationRequest
+- NCPDP SCRIPT: NewRx, Refill, Cancel (basic)
+- Deterministic generation with seed support
+- 25 medications, 50 names, age-appropriate conditions
 
-**Success Criteria**:
-- Generate 1,000 unique patient scenarios without repetition
-- Messages pass vendor validation 95% of time
-- <50ms generation time per message
-- Support for both random and deterministic modes
+**CLI Commands**:
+```bash
+pidgeon generate message --type ADT^A01
+pidgeon generate message --type ORU^R01 --count 10 --output labs.hl7
+pidgeon generate bundle --standard fhir --resource Observation --count 100 -o obs.ndjson
+```
 
-#### **2. Message Validation Engine (Week 5)**  
-**User Story**: "Understand exactly why vendor messages fail validation for quick fixes"
-- ✅ HL7 v2 parser handling real-world vendor quirks
-- ✅ Validation modes: Strict (compliance) vs Compatibility (vendor reality)
-- ✅ Field-level errors with specific paths and suggested fixes
-- ✅ Segment analysis for missing/unexpected fields
+#### **2. Message Validation Engine** 🆓
+**User Story**: "Understand exactly why vendor messages fail validation for quick fixes"  
+**Scope**:
+- HL7 v2 parser handling real-world vendor quirks
+- Validation modes: Strict (compliance) vs Compatibility (vendor reality)
+- Field-level errors with specific paths and fixes
+- Segment analysis for missing/unexpected fields
 
-**Success Criteria**:
-- Parse 99% of real-world vendor messages without crashing
-- Generate actionable error messages (not just "invalid HL7")
-- Validation time <20ms per message
-- Support Epic, Cerner, AllScripts message patterns
+**CLI Commands**:
+```bash
+pidgeon validate --file labs.hl7 --mode strict
+pidgeon validate --file labs.hl7 --mode compatibility --report validation.html
+```
 
-#### **3. Vendor Pattern Detection (Week 6)**
-**User Story**: "Quickly understand vendor-specific patterns for correct interface configuration"
-- ✅ Pattern inference from sample message analysis
-- ✅ Auto-generate vendor-specific validation rules
-- ✅ Pre-built Epic, Cerner, AllScripts profiles
-- ✅ Pattern library for saving and reusing configurations
+#### **3. On-Premises De-identification** 🆓 **NEW**
+**User Story**: "Import real messages, replace identifiers while preserving scenario integrity"  
+**Scope**:
+- Deterministic ID remapping (consistent across messages)
+- Date shifting with configurable offsets
+- Cross-message consistency preservation
+- Fully on-prem, optional lightweight local models
 
-**Success Criteria**:
-- Identify vendor from 5 sample messages with 80% confidence
-- Generate configuration profiles improving validation accuracy by 40%
-- Detect pattern changes (vendor updates) automatically
-- Support 10+ major EHR vendor patterns
+**CLI Commands**:
+```bash
+pidgeon deident --in ./samples --out ./synthetic --date-shift 30d
+pidgeon deident --in msg.hl7 --out msg_safe.hl7 --salt "team-seed" --preview
+```
 
-#### **4. Format Error Debugging (Week 7)**
-**User Story**: "Visual diff of message problems for troubleshooting in minutes, not hours"
-- ✅ Side-by-side visual comparison of expected vs actual message structure
-- ✅ Field highlighting with color-coded differences and explanations
-- ✅ Parsing insights showing exactly where and why parser failed
-- ✅ Fix suggestions based on common error patterns
+#### **4. Vendor Pattern Detection** 🆓
+**User Story**: "Quickly understand vendor-specific patterns for correct interface configuration"  
+**Scope**:
+- Pattern inference from sample messages
+- Auto-generate vendor-specific validation rules
+- Pre-built Epic, Cerner, AllScripts, Meditech profiles
+- Pattern library for saving configurations
 
-**Success Criteria**:
-- Reduce troubleshooting time from hours to <10 minutes
-- 90% of users can fix issues without external help
-- Support HL7 and FHIR message debugging
-- Clear visual diff for both technical and non-technical users
+**CLI Commands**:
+```bash
+pidgeon config analyze --samples ./inbox --save epic_er.json
+pidgeon config use --name epic_er.json
+pidgeon config list
+```
 
-#### **5. Synthetic Test Dataset Generation (Week 8)**
-**User Story**: "Coordinated test datasets for longitudinal patient scenarios without PHI"
-- ✅ Patient cohorts with families, related encounters, medication histories
-- ✅ Scenario templates for common workflows (admission → lab → discharge)
-- ✅ Edge cases: boundary conditions, error scenarios, unusual combinations
-- ✅ Consistency: cross-message patient/encounter ID linking
+#### **5. Workflow Wizard** 🔒 **[Pro]**
+**User Story**: "Guided flow for creating multi-step test scenarios with validation checklists"  
+**Scope**:
+- Interactive wizard: base patient → scenario selection → vendor config
+- Step-by-step prompts or scenario file input
+- Output validation checklists
+- Common workflows: admit → lab → discharge
 
-**Success Criteria**:
-- Generate realistic 30-day patient journey scenarios
-- Support 10 common healthcare workflow scenarios
-- Zero PHI exposure (all synthetic data)
-- Coordinated IDs across message types
+**CLI Commands**:
+```bash
+pidgeon workflow wizard  # Interactive guided setup
+pidgeon workflow run --file scenarios/admit_lab_rx.yml
+pidgeon workflow list
+```
 
-### **P0 Success Gates**
+#### **6. Diff + AI Triage** 🔒 **[Pro]**
+**User Story**: "Visual diff of message problems for troubleshooting in minutes, not hours"  
+**Scope**:
+- Side-by-side field-level comparison
+- HL7 field-aware, FHIR JSON tree diff
+- AI-powered "why it broke" suggestions
+- Confidence scores on suggested fixes
 
-#### **Technical Gates**
-- **Performance**: 95% uptime, <50ms response times maintained
-- **Quality**: Zero P0-blocking bugs, comprehensive error handling
-- **Security**: Synthetic data only, no PHI exposure risk
-- **Scalability**: Support 100+ concurrent users without degradation
+**CLI Commands**:
+```bash
+pidgeon diff --left ./envA --right ./envB --report diff.html
+pidgeon diff --left old.hl7 --right new.hl7 --ignore MSH-7,PV1.44
+```
 
-#### **User Adoption Gates**
-- **Week 6**: 25+ active users providing feedback
-- **Week 7**: 50+ users with 60%+ weekly engagement  
-- **Week 8**: 75+ users with first Professional tier trials
-- **Week 9**: 100+ users with 20% trying Professional features
+### **P0 Packaging & Business Model**
+- **CLI Core**: Always free, unlimited procedural generation
+- **Community GUI**: Free with capped messages (100/day)
+- **Pro ($29/mo)**: Workflow Wizard, Diff+Triage, local AI models, unlimited generation
+- **Enterprise ($199/seat)**: SSO, audit logs, private models, advanced profiles
 
-#### **Business Validation Gates**
-- **Design Partners**: 3+ organizations completing end-to-end workflows
-- **User Feedback**: NPS >50 with specific improvement suggestions
-- **Conversion Signal**: 20%+ of users hitting free tier limits
-- **Market Validation**: 5+ inbound inquiries from user referrals
+### **P0 Success Metrics**
+- **Week 2**: 25+ active users providing feedback
+- **Week 4**: 50+ users with 60% weekly engagement
+- **Week 6**: 100+ users, 20% trying Pro features
+- **Technical**: <50ms generation, <20ms validation, 99% uptime
+
+---
+
+## 📨 **P1 — Market Expansion (Months 2-4)**
+**Duration**: 12 weeks  
+**Goal**: Lock in early logos, expand FHIR reach, build stickiness  
+**Strategy**: Add configuration intelligence and broader standards support
+
+### **P1 Expansion Features**
+
+#### **1. Configuration Manager v1** 🔒 **[Pro]**
+**User Story**: "Track vendor configuration changes over time to prevent interface breakages"  
+**Scope**:
+- Infer specifications from message traffic
+- Version control with diff visualization
+- Library of validated patterns
+- Change detection and alerts
+
+**CLI Commands**:
+```bash
+pidgeon config analyze --samples ./traffic --save v2.json
+pidgeon config diff --left v1.json --right v2.json
+```
+
+#### **2. Vendor Spec Guide + Trust Hub** 🔒 **[Pro/Ent]**
+**User Story**: "Centralized vendor documentation with compliance verification"  
+**Scope**:
+- Upload vendor specifications
+- Annotate validation rule checks
+- Link errors to spec clauses
+- Shareable attested profiles
+
+#### **3. FHIR R4 Expansion** 🆓
+**User Story**: "Comprehensive FHIR test data for modern API integrations"  
+**Scope**:
+- Extended resources: Practitioner, Organization, Location
+- Clinical resources: AllergyIntolerance, Condition, Procedure
+- DiagnosticReport, ServiceRequest resources
+- FHIR search test harness
+
+#### **4. Message Studio v1** 🔒 **[Pro]**
+**User Story**: "Visual interface to create test messages without learning syntax"  
+**Scope**:
+- Natural language → message generation
+- Structured editor with field hints
+- GUI complement to CLI
+- Template library
+
+#### **5. Standards-Tuned Chatbot** 🔒 **[Pro]**
+**User Story**: "AI assistance for understanding complex messages"  
+**Scope**:
+- "Explain this message" functionality
+- HL7 ↔ FHIR field mapping
+- Read-only analysis mode
+- Healthcare context awareness
+
+#### **6. Targeted Packs**
+- **Mirth Migration Pack** ($199 add-on): Regression testing for Mirth upgrades
+- **Redox Pre-flight Pack** (Enterprise): Network API testing scenarios
+
+### **P1 Success Metrics**
+- **Users**: 500+ active (5x growth from P0)
+- **Revenue**: $15K+ MRR, 25% from Professional tier
+- **Partners**: 5+ case studies from design partners
+- **Technical**: 1,000+ concurrent users, 99% uptime
+
+## 🚀 **P2 — Defensible Moats & Scale (Months 4-9)**
+**Duration**: 24 weeks  
+**Goal**: Become indispensable enterprise quality layer  
+**Strategy**: Build competitive advantages that can't be easily replicated
+
+### **P2 Platform Differentiation**
+
+#### **1. Cross-Standard Transforms (GA)** 🆕 **[Enterprise]**
+**User Story**: "Seamless data transformation between HL7, FHIR, and NCPDP"  
+**Scope**:
+- Bidirectional HL7 ↔ FHIR ↔ NCPDP conversions
+- Terminology integration: LOINC, RxNorm, SNOMED
+- Semantic preservation with data loss detection
+- Custom mapping rules
+
+#### **2. Team & Governance** 🆕 **[Enterprise]**
+**User Story**: "Team governance tools for large healthcare IT organizations"  
+**Scope**:
+- Project workspaces with isolated environments
+- Role-based access: Admin, Lead, Developer, Viewer
+- SSO integration: SAML, OAuth, LDAP
+- Approval workflows and audit trails
+
+#### **3. Profiles at Scale** 🆕 **[Enterprise Premium]**
+**User Story**: "Comprehensive Implementation Guide validation matrix"  
+**Scope**:
+- Full IG/profile validation matrix
+- Cached terminology services (VSAC, THO)
+- Sub-100ms validation for complex profiles
+- Automated compliance reporting
+
+#### **4. Trust Hub v2 & Marketplace**
+**User Story**: "Monetize vendor expertise through content marketplace"  
+**Scope**:
+- Shareable vendor packs and consultancy blueprints
+- Revenue-sharing ecosystem (70/30 split)
+- Community-driven quality ratings
+- Trust scoring and certifications
+
+### **P2 Success Metrics**
+- **Scale**: 1,000+ Enterprise users, 10,000+ total
+- **Revenue**: $100K+ MRR, 60% from Enterprise
+- **Market**: Top 3 healthcare interop platforms
+- **Partnerships**: 5+ official EHR vendor relationships
+- **Network**: 500+ marketplace contributions
 
 ---
 
@@ -322,8 +350,8 @@
 
 ---
 
-**Development Status**: Foundation repair is critical path. Once architectural health >95/100 achieved, P0 development can proceed rapidly with high confidence in delivery timeline and user adoption targets.
+**Development Status**: Foundation complete (100/100 health). Ready for P0 MVP development with clear feature roadmap and CLI-GUI harmonization strategy.
 
-**Next Actions**: Begin Week 1 domain boundary repair immediately. All other development blocked until foundation health restored.
+**Next Actions**: Begin P0 feature development with CLI-first approach. Prioritize core engines and de-identification for immediate user value.
 
-**Success Definition**: P0 MVP delivered on schedule with 100+ engaged users, 20%+ Professional conversion signal, and scalable foundation for rapid P1 development.
+**Success Definition**: P0 MVP with 6 core features delivered in 6 weeks, 100+ engaged users, 20% Pro conversion, and validated roadmap for P1-P2 expansion.

@@ -1,22 +1,24 @@
 # Pidgeon Healthcare Interoperability Platform - Agent Context
 
-## 🎯 **Strategic Direction: Core+ Architecture & Multi-Standard Excellence**
+## 🎯 **Strategic Direction: Safe Healthcare Testing Without PHI**
 
-**Status**: Building clean architecture from day one with Core+ business model  
-**Mission**: AI-augmented universal healthcare standards platform (HL7, FHIR, NCPDP)
-**Approach**: Domain-driven design with plugin architecture for scale without refactoring
+**North Star**: "Realistic scenario testing without the legal/compliance nightmare of using real patient data"  
+**Status**: Foundation complete (100/100 health) - Ready for P0 MVP development  
+**Mission**: Transform healthcare integration testing through synthetic data, de-identification, and AI-assisted debugging  
+**Approach**: CLI-first with complementary GUI, plugin architecture, Free/Pro/Enterprise tiers
 
 ---
 
 ## 📋 **Essential Context Documents**
 
 ### **🚨 CRITICAL - Must Read for Every Session**
-1. **[`docs/pidgeon_feature_plan.md`](docs/pidgeon_feature_plan.md)** - **MASTER ROADMAP: Definitive stage-gate plan with success criteria**
-2. **[`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)** - **CURRENT PLAN: Foundation repair through P0 MVP delivery**
-3. **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)** - **ARCHITECTURAL SPEC: Four-domain architecture and implementation status**
-4. **[`docs/arch_reviews/PIDGEON_AR_FINAL.md`](docs/arch_reviews/PIDGEON_AR_FINAL.md)** - **FOUNDATION CONTEXT: Critical for executing repairs correctly**
-5. **[`docs/LEDGER.md`](docs/LEDGER.md)** - Complete development decision log and rollback procedures
-6. **[`docs/roadmap/INIT.md`](docs/roadmap/INIT.md)** - Sacred architectural principles and constraints
+1. **[`docs/roadmap/PIDGEON_ROADMAP.md`](docs/roadmap/PIDGEON_ROADMAP.md)** - **MASTER ROADMAP: Complete P0-P2 plan with all details**
+2. **[`docs/roadmap/features/NORTHSTAR.md`](docs/roadmap/features/NORTHSTAR.md)** - **PRODUCT VISION: Core value proposition and user focus**
+3. **[`docs/roadmap/CLI_REFERENCE.md`](docs/roadmap/CLI_REFERENCE.md)** - **CLI GUIDE: Complete command structure and examples**
+4. **[`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)** - **CURRENT STATUS: Foundation complete, P0 feature development ready**
+5. **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)** - **ARCHITECTURAL SPEC: Four-domain architecture + P0 features**
+6. **[`docs/roadmap/features/cli_gui_harmonization.md`](docs/roadmap/features/cli_gui_harmonization.md)** - **PLATFORM STRATEGY: One engine, two frontends approach**
+7. **[`docs/LEDGER.md`](docs/LEDGER.md)** - Recent development decisions and rollback procedures
 
 ### **Agent Steering Documentation**
 7. **[`docs/agent_steering/product.md`](docs/agent_steering/product.md)** - Product vision and Core+ strategy
@@ -133,47 +135,49 @@ public Result<Message> ProcessMessage(string input)
 
 ---
 
-## 🎯 **Core+ Business Model** 
-*See [`docs/founding_plan/business_model.md`](docs/founding_plan/business_model.md) for complete details*
+## 💰 **Updated Business Model - CLI + GUI Harmony**
 
-### **🆓 FREE CORE (MPL 2.0)**
-- **Algorithmic Generation**: 25 medications, 50 names (70% common case coverage)
-- **HL7 v2.3**: Complete engine with all message types  
-- **FHIR R4**: Basic resources (Patient, Observation, MedicationRequest)
-- **NCPDP SCRIPT**: Basic messages (NewRx, Refill, Cancel)
-- **CLI Interface**: Full command-line functionality
-- **Deterministic Testing**: Seeds for reproducible generation
+### **🆓 CLI CORE (Always Free)**
+- **All 6 P0 features** with procedural generation mode
+- **Full HL7/FHIR/NCPDP** standards engines  
+- **De-identification** engine (on-premises)
+- **Vendor pattern detection** with basic profiles
+- **25 medications, 50 names** - covers 70% of test cases
 
-### **💼 SUBSCRIPTION TIERS (Primary Revenue)**
-- **Professional ($29/month)**: Live datasets, AI enhancement (BYOK), cloud API
-- **Professional + Vendor Templates ($49/month)**: Epic/Cerner specific formatting  
-- **Team ($99/month)**: Collaboration features, team management, priority support
-- **Enterprise ($199/month per seat)**: Unlimited AI, custom datasets, SSO
+### **🔒 PROFESSIONAL TIER ($29/month)**
+- **Workflow Wizard**: Guided multi-step scenario creation
+- **Diff + AI Triage**: Field-level comparison with AI suggestions  
+- **Local AI Models**: Enhanced realistic data generation
+- **Enhanced Datasets**: More medications, edge cases
+- **HTML Reports**: Validation and diff reporting
 
-### **🎁 ONE-TIME RESCUE OFFER ($299 - Downsell Only)**  
-- **Desktop GUI**: Full-featured application
-- **"B-Level" Datasets**: 150+ medications (static, 6+ months old)
-- **Batch Processing**: CSV export, bulk generation
-- **No Subscriptions**: Offline-focused, community support only
+### **🆕 ENTERPRISE TIER ($199/seat)**
+- **Team Workspaces**: Projects, roles, SSO integration
+- **Audit Trails**: Complete governance and compliance
+- **Private AI Models**: Custom healthcare model hosting
+- **Advanced Profiles**: Full IG validation matrix
+- **Unlimited Usage**: No generation or validation limits
 
 ---
 
-## 🎯 **MVP-FOCUSED DEVELOPMENT (PRODUCT-001)**
+## 🎯 **P0 MVP DEVELOPMENT - READY FOR FEATURE WORK**
 
-> **CRITICAL**: All development must prioritize validated user stories. Reference `docs/user_stories/BACKLOG.md` for P0 features.
+> **STATUS**: Foundation complete (100/100 health) - Ready for P0 feature development
 
-### **P0 MVP Features (Build These First)**
-1. **Message Generation** - All user types need realistic test messages daily
-2. **Message Validation** - Critical for quality assurance and debugging  
-3. **Vendor Pattern Detection** - Our unique differentiator from generic tools
-4. **Format Error Debugging** - Reduces troubleshooting time by 75%
-5. **Synthetic Test Data** - Safe testing without PHI exposure
+### **P0 Core Features (6 weeks)**
+1. **Message Generation Engine** 🆓 - HL7/FHIR/NCPDP with deterministic seeds
+2. **Message Validation Engine** 🆓 - Strict vs Compatibility modes, field-level errors
+3. **On-Premises De-identification** 🆓 - **NEW**: Safe test data from real messages
+4. **Vendor Pattern Detection** 🆓 - Epic/Cerner/Meditech configuration inference
+5. **Workflow Wizard** 🔒 **[Pro]** - Guided multi-step scenarios (admit→lab→discharge)
+6. **Diff + AI Triage** 🔒 **[Pro]** - Field-level comparison with AI suggestions
 
-### **User-First Development Principle**
-- **Check User Stories First**: Every feature must map to validated user stories
-- **80/20 Rule**: Focus on P0 features that provide 80% of user value
-- **Business Model Alignment**: Verify features align with Core/Professional/Enterprise tiers
-- **User Workflow Support**: Ensure features fit real healthcare workflows
+### **CLI-First Development Approach**
+- **Primary Interface**: CLI commands for all core functionality
+- **Feature Gating**: Clear Free/Pro/Enterprise markers in help text
+- **GUI Complement**: One engine, two frontends strategy
+- **Export/Import Symmetry**: CLI artifacts viewable in GUI, GUI operations export to CLI
+- **Growth Path**: Free CLI → Pro features → Enterprise collaboration
 
 ---
 
@@ -333,55 +337,36 @@ All key documents updated to reflect Four-Domain Architecture (August 27, 2025):
 
 ---
 
-## 📝 **Code Marker Standards for Technical Debt Tracking**
+## 📝 **P0 Feature Development Guidelines**
 
-### **MANDATORY: Use Markers for Identified Issues**
-When making sweeping changes, architectural migrations, or identifying problems, **ALWAYS add markers** for future tracking:
+### **CLI Command Structure** 
+*Follow [`docs/roadmap/features/cli_baseline.md`](docs/roadmap/features/cli_baseline.md) exactly*
 
-```csharp
-// TODO: Description of what needs to be implemented/fixed
-// FIXME: Description of broken/problematic code that needs repair  
-// HACK: Description of temporary workaround that needs proper solution
-// BUG: Description of defect that needs fixing
+```bash
+# Core Commands (Free)
+pidgeon generate message --type ADT^A01 --count 10
+pidgeon validate --file labs.hl7 --mode compatibility  
+pidgeon deident --in ./samples --out ./synthetic --date-shift 30d
+pidgeon config analyze --samples ./inbox --save epic_er.json
+
+# Pro Commands (Gated)
+pidgeon workflow wizard  # Interactive guided scenarios
+pidgeon diff --left ./envA --right ./envB --report diff.html
 ```
 
-### **When to Add Markers**:
-1. **During major refactoring** - Mark incomplete implementations
-2. **Interface changes** - Mark methods that need updating downstream
-3. **Domain migrations** - Mark cross-domain dependencies to resolve
-4. **Service relocations** - Mark services in wrong architectural locations
-5. **Plugin modifications** - Mark plugin responsibilities that should move to adapters
-6. **Pattern violations** - Mark code that violates sacred architectural principles
+### **Feature Implementation Priorities**
+1. **Week 1-2**: Core engines (generate, validate) with CLI interface
+2. **Week 3**: De-identification engine (new core feature)
+3. **Week 4**: Vendor pattern detection and config management
+4. **Week 5**: Workflow Wizard (Pro feature)
+5. **Week 6**: Diff + AI Triage (Pro feature)
 
-### **Marker Examples**:
-```csharp
-public class ExampleService : IExampleService {
-    // TODO: Implement proper Result<T> pattern instead of throwing exceptions
-    public void ProcessData(string input) {
-        throw new NotImplementedException();
-    }
-    
-    // FIXME: This creates dependency on multiple domains - violates single-domain rule
-    private readonly IConfigurationService _config;
-    private readonly ITransformationService _transform;
-    
-    // HACK: Hard-coded HL7 logic in core service - should be in plugin
-    if (messageType.StartsWith("ADT")) { /* ... */ }
-    
-    // BUG: Null reference possible if fieldPatterns.SegmentPatterns is empty
-    return fieldPatterns.SegmentPatterns.First().Value;
-}
-```
-
-### **Tracking and Resolution**:
-- Use `grep -r "TODO:\|FIXME:\|HACK:\|BUG:" .` to find all markers
-- Include marker count in technical debt assessments  
-- Remove markers only when properly resolved, not just commented out
-- Include marker context in architectural decision documentation
-
-This ensures **comprehensive tracking** during major changes and prevents issues from being forgotten during fast development cycles.
-
-**No competing architectural ideologies remain in documentation.**
+### **CLI-GUI Harmonization Rules**
+- **One Engine**: All business logic in Core services, CLI/GUI are frontends
+- **Export Symmetry**: GUI operations export CLI commands
+- **Import Symmetry**: CLI artifacts (reports, configs) viewable in GUI
+- **Consistent Mental Model**: `pidgeon generate` = GUI "Generate Messages" panel
+- **Feature Gating**: Pro/Enterprise markers visible in CLI help
 
 ---
 

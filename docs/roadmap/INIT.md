@@ -210,27 +210,25 @@ This ensures architectural coherence while allowing pragmatic flexibility when t
 
 ---
 
-## 📅 **90-Day Development Roadmap**
+## 📅 **Current Development Plan - Post Foundation**
 
-### **Week 1-2: Foundation Architecture**
-**Objective**: Establish unshakeable technical foundation
+### **Foundation Complete ✅** 
+**Status**: All architectural rehabilitation finished (September 2025)
 
-**Technical Founder + Healthcare Consultant Lead**:
-
-#### **Core Architecture Setup**
-- [x] **.NET 8 solution structure** with proper project separation
-- [x] **Domain model design** for Patient, Medication, Provider, Encounter
-- [x] **Plugin architecture foundation** with IStandardPlugin interface
-- [x] **Dependency injection setup** throughout entire solution
+#### **Completed Architecture**
+- [x] **.NET 8 solution structure** with four-domain separation
+- [x] **Domain models** for Patient, Medication, Provider, Encounter complete
+- [x] **Plugin architecture** implemented with HL7v23, FHIR, NCPDP plugins
+- [x] **Dependency injection** throughout entire solution
 - [x] **Result<T> implementation** with comprehensive error types
+- [x] **100/100 architectural health** achieved
 
-#### **HL7 v2.3 Engine (Core)**
-- [x] **HL7Field abstract base** with validation and encoding
-- [x] **HL7Segment abstract base** with field management
-- [x] **HL7Message abstract base** with segment orchestration
-- [x] **Core field types**: StringField, NumericField, DateField, TimestampField
-- [x] **Essential segments**: MSH (complete)
-- [ ] **Next priority segments**: PID, ADT^A01, RDE^O01
+#### **Standards Engines (Complete)**
+- [x] **HL7 v2.3 Engine**: Full ADT, ORU, RDE message support
+- [x] **FHIR R4 Engine**: Patient, Observation, MedicationRequest resources  
+- [x] **NCPDP Engine**: Basic NewRx, Refill, Cancel support
+- [x] **Plugin Architecture**: All standards implemented as plugins
+- [x] **Cross-standard Generation**: Same domain data → multiple formats
 
 #### **Domain Model Extensions (Post-Foundation)**
 > **Note**: Current domain models (Patient, Medication, Prescription, Provider, Encounter) provide 90% pharmacy workflow coverage. After foundation validation, extend with:
@@ -247,41 +245,48 @@ This ensures architectural coherence while allowing pragmatic flexibility when t
   - May integrate with existing Address model or require separate entity
 - [ ] **Order** - General order concept beyond prescriptions (labs, imaging, procedures)
 
+### **P0 MVP Development (Current Focus - 6 weeks)**
+**Objective**: Deliver 6 core features proving value to design partners
+
+#### **P0 Core Features**
+1. **Message Generation Engine** 🆓 - Deterministic HL7/FHIR/NCPDP generation
+2. **Message Validation Engine** 🆓 - Strict vs Compatibility modes
+3. **On-Premises De-identification** 🆓 - **NEW**: Safe test data from real messages
+4. **Vendor Pattern Detection** 🆓 - Epic/Cerner/Meditech configuration inference
+5. **Workflow Wizard** 🔒 **[Pro]** - Guided multi-step scenarios
+6. **Diff + AI Triage** 🔒 **[Pro]** - Field-level comparison with AI suggestions
+
+#### **CLI-First Implementation**
+**Reference**: `docs/roadmap/features/cli_baseline.md` for exact command structure
+- [x] **Core Commands**: generate, validate, deident, config
+- [ ] **Pro Commands**: workflow, diff (with proper feature gating)
+- [ ] **Platform Commands**: login, account, open (GUI integration)
+- [ ] **Tool Commands**: faker, samples, convert utilities
+
 **Success Criteria**:
-- Generate valid HL7 ADT^A01 message programmatically  
-- Generate valid HL7 RDE^O01 message programmatically
-- Parse existing HL7 message into domain objects
-- Zero compilation errors, 90%+ test coverage
+- All 6 P0 features working via CLI
+- Free/Pro/Enterprise feature gating implemented
+- 100+ active users by end of 6 weeks
+- 20% trying Pro features
 
 ---
 
-### **Week 3-4: Configuration Intelligence Foundation**
-**Objective**: Implement core differentiator - configuration inference
+### **P1 — Market Expansion (Months 2-4)**
+**Objective**: Lock in early logos, expand FHIR reach, build stickiness
 
-**Healthcare Consultant + Technical Founder Lead**:
-
-#### **Message Analysis Engine**
-- [ ] **Pattern recognition system** for field population analysis
-- [ ] **Statistical confidence scoring** for inferred patterns
-- [ ] **Vendor signature detection** (MSH.3, MSH.4 analysis)
-- [ ] **Composite field structure analysis** (XPN, XAD, CE components)
-
-#### **Configuration Management**
-- [ ] **VendorConfiguration model** with JSON serialization
-- [ ] **Configuration storage/retrieval** with file-based backend
-- [ ] **Configuration validation** against sample messages
-- [ ] **Baseline vendor templates** (Epic, Cerner, basic patterns)
-
-#### **Validation Modes**
-- [ ] **Strict mode validator** (exact HL7 v2.3 spec compliance)
-- [ ] **Compatibility mode validator** (liberal acceptance with warnings)
-- [ ] **Configuration-aware validation** (validate against vendor patterns)
-- [ ] **Deviation reporting** with confidence scores
+#### **P1 Expansion Features**
+- [ ] **Configuration Manager v1** 🔒 **[Pro]** - Traffic analysis, version control, pattern library
+- [ ] **Vendor Spec Guide + Trust Hub** 🔒 **[Pro/Ent]** - Upload specs, compliance linking
+- [ ] **FHIR R4 Expansion** 🆓 - Extended resources, search harness
+- [ ] **Message Studio v1** 🔒 **[Pro]** - Natural language → message generation
+- [ ] **Standards-Tuned Chatbot** 🔒 **[Pro]** - "Explain this message", HL7↔FHIR mapping
+- [ ] **Industry Packs** - Mirth Migration ($199 add-on), Redox Pre-flight
 
 **Success Criteria**:
-- Analyze 100 Epic HL7 messages and generate vendor configuration
-- Validate new Epic message against inferred config with 95%+ accuracy
-- Detect when message deviates from expected Epic patterns
+- 500+ active users (5x growth from P0)
+- $15K+ MRR with 25%+ from Professional tier
+- 5+ case studies from design partners
+- 1,000+ concurrent users, 99% uptime
 
 ---
 
