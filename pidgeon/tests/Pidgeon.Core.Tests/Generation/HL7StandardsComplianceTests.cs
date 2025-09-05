@@ -322,7 +322,7 @@ public class HL7StandardsComplianceTests
         Assert.True(int.TryParse(fields[1], out var setId) && setId > 0, "OBR.1 must be positive integer");
         
         // OBR.4 - Universal Service Identifier (required)
-        Assert.False(string.IsNullOrWhiteSpace(fields[3]), "OBR.4 Universal Service Identifier is required");
+        Assert.False(string.IsNullOrWhiteSpace(fields[4]), "OBR.4 Universal Service Identifier is required");
     }
 
     private static void ValidateHL7v23_OBX_Segment(string message)

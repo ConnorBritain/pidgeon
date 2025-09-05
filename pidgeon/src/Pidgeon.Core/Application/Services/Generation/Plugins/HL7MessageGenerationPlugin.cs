@@ -251,9 +251,9 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
         // Use standards-compliant HL7 v2.3 message factory
         return messageType switch
         {
-            "ADT^A01" => _hl7MessageFactory.GenerateADT_A01(patient, encounter),
-            "ADT^A08" => _hl7MessageFactory.GenerateADT_A08(patient, encounter),
-            "ADT^A03" => _hl7MessageFactory.GenerateADT_A03(patient, encounter),
+            "ADT^A01" => _hl7MessageFactory.GenerateADT_A01(patient, encounter, options),
+            "ADT^A08" => _hl7MessageFactory.GenerateADT_A08(patient, encounter, options),
+            "ADT^A03" => _hl7MessageFactory.GenerateADT_A03(patient, encounter, options),
             _ => Result<string>.Failure($"ADT message type {messageType} not yet implemented")
         };
     }
@@ -289,7 +289,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
         
         return messageType switch
         {
-            "ORU^R01" => _hl7MessageFactory.GenerateORU_R01(patient, observation),
+            "ORU^R01" => _hl7MessageFactory.GenerateORU_R01(patient, observation, options),
             _ => Result<string>.Failure($"ORU message type {messageType} not yet implemented")
         };
     }
@@ -308,7 +308,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
         
         return messageType switch
         {
-            "RDE^O11" => _hl7MessageFactory.GenerateRDE_O11(prescription.Patient, prescription),
+            "RDE^O11" => _hl7MessageFactory.GenerateRDE_O11(prescription.Patient, prescription, options),
             _ => Result<string>.Failure($"RDE message type {messageType} not yet implemented")
         };
     }
@@ -472,14 +472,15 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
         return new ObservationResult
         {
             Id = testId,
-            TestName = selectedTest.Name,
-            TestCode = selectedTest.Code,
+            ObservationDescription = selectedTest.Name,
+            ObservationCode = selectedTest.Code,
             Value = selectedTest.Value,
             Units = selectedTest.Units,
             ReferenceRange = selectedTest.Range,
-            Status = "F", // Final
-            CollectionTime = DateTime.Now.AddHours(-random.Next(1, 48)),
-            OrderingProvider = new Provider 
+            ResultStatus = "F", // Final
+            ObservationDateTime = DateTime.Now.AddHours(-random.Next(1, 48)),
+            CodingSystem = "LN", // LOINC coding system
+            Provider = new Provider 
             { 
                 Id = $"DOC{random.Next(100, 999)}", 
                 Name = new PersonName { Given = "John", Family = "Smith" },

@@ -50,21 +50,6 @@ public interface IHL7MessageFactory
     Result<string> GenerateORM_O01(Patient patient, Order order, GenerationOptions options);
 }
 
-/// <summary>
-/// Represents an observation result for lab reporting.
-/// </summary>
-public record ObservationResult
-{
-    public required string Id { get; init; }
-    public required string TestName { get; init; }
-    public required string TestCode { get; init; }
-    public required string Value { get; init; }
-    public required string Units { get; init; }
-    public string? ReferenceRange { get; init; }
-    public string? Status { get; init; } = "F"; // F=Final
-    public DateTime? CollectionTime { get; init; }
-    public Provider? OrderingProvider { get; init; }
-}
 
 /// <summary>
 /// Represents a clinical order for order management messages.

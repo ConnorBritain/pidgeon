@@ -9,6 +9,8 @@ using Pidgeon.Core.Generation;
 using Pidgeon.Core.Generation.Types;
 using Pidgeon.Core.Domain.Clinical.Entities;
 using Pidgeon.Core.Infrastructure.Standards.HL7.v23;
+using Pidgeon.Core.Infrastructure.Standards.HL7.v23.Segments;
+using Pidgeon.Core.Infrastructure.Standards.HL7.v23.MessageComposers;
 using Microsoft.Extensions.Logging;
 
 namespace Pidgeon.Core.Tests.Generation;
@@ -125,23 +127,52 @@ internal static class TestHelpers
         var mock = new Mock<IHL7MessageFactory>();
         
         // Use the real factory implementation for proper testing
-        var loggerMock = new Mock<ILogger<HL7v23MessageFactory>>();
-        var realFactory = new HL7v23MessageFactory(loggerMock.Object);
+        var factoryLoggerMock = new Mock<ILogger<HL7v23MessageFactory>>();
+        var composerLoggerMock = new Mock<ILogger<HL7v23MessageComposer>>();
         
-        mock.Setup(x => x.GenerateADT_A01(It.IsAny<Patient>(), It.IsAny<Encounter>()))
-            .Returns((Patient p, Encounter e) => realFactory.GenerateADT_A01(p, e));
+        // Create segment builders
+        var mshBuilder = new MSHSegmentBuilder();
+        var pidBuilder = new PIDSegmentBuilder();
+        var evnBuilder = new EVNSegmentBuilder();
+        var pv1Builder = new PV1SegmentBuilder();
+        var obrBuilder = new OBRSegmentBuilder();
+        var obxBuilder = new OBXSegmentBuilder();
+        var orcBuilder = new ORCSegmentBuilder();
+        var rxeBuilder = new RXESegmentBuilder();
+        
+        // Create message composers
+        var adtComposerLoggerMock = new Mock<ILogger<ADTMessageComposer>>();
+        var adtComposer = new ADTMessageComposer(mshBuilder, pidBuilder, evnBuilder, pv1Builder, adtComposerLoggerMock.Object);
+        
+        var oruComposerLoggerMock = new Mock<ILogger<ORUMessageComposer>>();
+        var oruComposer = new ORUMessageComposer(mshBuilder, pidBuilder, obrBuilder, obxBuilder, oruComposerLoggerMock.Object);
+        
+        var rdeComposerLoggerMock = new Mock<ILogger<RDEMessageComposer>>();
+        var rdeComposer = new RDEMessageComposer(mshBuilder, pidBuilder, orcBuilder, rxeBuilder, rdeComposerLoggerMock.Object);
+        
+        // Create main composer with message composers
+        var composer = new HL7v23MessageComposer(adtComposer, oruComposer, rdeComposer, composerLoggerMock.Object);
+        
+        // Create factory with composer
+        var realFactory = new HL7v23MessageFactory(factoryLoggerMock.Object, composer);
+        
+        mock.Setup(x => x.GenerateADT_A01(It.IsAny<Patient>(), It.IsAny<Encounter>(), It.IsAny<GenerationOptions>()))
+            .Returns((Patient p, Encounter e, GenerationOptions opts) => realFactory.GenerateADT_A01(p, e, opts));
             
-        mock.Setup(x => x.GenerateADT_A08(It.IsAny<Patient>(), It.IsAny<Encounter>()))
-            .Returns((Patient p, Encounter e) => realFactory.GenerateADT_A08(p, e));
+        mock.Setup(x => x.GenerateADT_A08(It.IsAny<Patient>(), It.IsAny<Encounter>(), It.IsAny<GenerationOptions>()))
+            .Returns((Patient p, Encounter e, GenerationOptions opts) => realFactory.GenerateADT_A08(p, e, opts));
             
-        mock.Setup(x => x.GenerateADT_A03(It.IsAny<Patient>(), It.IsAny<Encounter>()))
-            .Returns((Patient p, Encounter e) => realFactory.GenerateADT_A03(p, e));
+        mock.Setup(x => x.GenerateADT_A03(It.IsAny<Patient>(), It.IsAny<Encounter>(), It.IsAny<GenerationOptions>()))
+            .Returns((Patient p, Encounter e, GenerationOptions opts) => realFactory.GenerateADT_A03(p, e, opts));
             
-        mock.Setup(x => x.GenerateORU_R01(It.IsAny<Patient>(), It.IsAny<ObservationResult>()))
-            .Returns((Patient p, ObservationResult o) => realFactory.GenerateORU_R01(p, o));
+        mock.Setup(x => x.GenerateORU_R01(It.IsAny<Patient>(), It.IsAny<ObservationResult>(), It.IsAny<GenerationOptions>()))
+            .Returns((Patient p, ObservationResult o, GenerationOptions opts) => realFactory.GenerateORU_R01(p, o, opts));
             
-        mock.Setup(x => x.GenerateRDE_O11(It.IsAny<Patient>(), It.IsAny<Prescription>()))
-            .Returns((Patient p, Prescription pr) => realFactory.GenerateRDE_O11(p, pr));
+        mock.Setup(x => x.GenerateRDE_O11(It.IsAny<Patient>(), It.IsAny<Prescription>(), It.IsAny<GenerationOptions>()))
+            .Returns((Patient p, Prescription pr, GenerationOptions opts) => realFactory.GenerateRDE_O11(p, pr, opts));
+            
+        mock.Setup(x => x.GenerateORM_O01(It.IsAny<Patient>(), It.IsAny<Order>(), It.IsAny<GenerationOptions>()))
+            .Returns((Patient p, Order o, GenerationOptions opts) => realFactory.GenerateORM_O01(p, o, opts));
         
         return mock;
     }
