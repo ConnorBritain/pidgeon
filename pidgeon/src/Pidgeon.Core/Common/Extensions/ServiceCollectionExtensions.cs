@@ -7,6 +7,7 @@ using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Infrastructure.Registry;
 using Pidgeon.Core.Application.Services.Generation;
 using Pidgeon.Core.Generation;
+using Pidgeon.Core.Infrastructure.Standards.HL7.v23;
 
 namespace Pidgeon.Core.Extensions;
 
@@ -34,6 +35,9 @@ public static class ServiceCollectionExtensions
         
         // Register message generation plugins
         services.AddMessageGenerationPlugins();
+        
+        // Register HL7 v2.3 message factory
+        services.AddScoped<IHL7MessageFactory, HL7v23MessageFactory>();
         
         return services;
     }

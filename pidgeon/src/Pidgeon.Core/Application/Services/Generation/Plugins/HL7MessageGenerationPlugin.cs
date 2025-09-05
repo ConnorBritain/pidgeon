@@ -8,6 +8,7 @@ using Pidgeon.Core.Application.DTOs;
 using Pidgeon.Core.Generation;
 using Pidgeon.Core.Standards;
 using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core.Infrastructure.Standards.HL7.v23;
 
 namespace Pidgeon.Core.Application.Services.Generation.Plugins;
 
@@ -19,15 +20,18 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
 {
     private readonly Pidgeon.Core.Generation.IGenerationService _domainGenerationService;
     private readonly IStandardPluginRegistry _pluginRegistry;
+    private readonly IHL7MessageFactory _hl7MessageFactory;
 
     public string StandardName => "hl7";
 
     public HL7MessageGenerationPlugin(
         Pidgeon.Core.Generation.IGenerationService domainGenerationService,
-        IStandardPluginRegistry pluginRegistry)
+        IStandardPluginRegistry pluginRegistry,
+        IHL7MessageFactory hl7MessageFactory)
     {
         _domainGenerationService = domainGenerationService;
         _pluginRegistry = pluginRegistry;
+        _hl7MessageFactory = hl7MessageFactory;
     }
 
     /// <summary>
@@ -244,18 +248,14 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
         if (patient == null)
             return Result<string>.Failure("Patient generation failed for ADT message");
 
-        // Use plugin registry for proper HL7 message factory
-        var plugin = _pluginRegistry.GetPlugin("hl7");
-        if (plugin != null)
+        // Use standards-compliant HL7 v2.3 message factory
+        return messageType switch
         {
-            var messageOptions = CreateMessageOptions();
-            
-            // FIXME: Temporary fallback for HL7 factory null reference - will be replaced once factory is fixed
-            var hl7Message = GenerateHL7AdmissionFallback(patient, messageType);
-            return Result<string>.Success(hl7Message);
-        }
-        
-        return Result<string>.Failure("HL7 plugin not found in registry");
+            "ADT^A01" => _hl7MessageFactory.GenerateADT_A01(patient, encounter),
+            "ADT^A08" => _hl7MessageFactory.GenerateADT_A08(patient, encounter),
+            "ADT^A03" => _hl7MessageFactory.GenerateADT_A03(patient, encounter),
+            _ => Result<string>.Failure($"ADT message type {messageType} not yet implemented")
+        };
     }
 
     /// <summary>
@@ -283,11 +283,15 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
             return Result<string>.Failure(patientResult.Error);
             
         var patient = patientResult.Value;
-        var labTests = new[] { "Complete Blood Count (CBC)", "Basic Metabolic Panel (BMP)", "Lipid Panel", "Thyroid Stimulating Hormone (TSH)", "Hemoglobin A1c" };
-        var random = new Random(options.Seed ?? Environment.TickCount);
-        var testName = labTests[random.Next(labTests.Length)];
         
-        return Result<string>.Success($"ORU Message: {testName} results for {patient.Name.DisplayName} - Status: FINAL ({messageType})");
+        // Generate realistic observation result
+        var observation = GenerateObservationResult(options);
+        
+        return messageType switch
+        {
+            "ORU^R01" => _hl7MessageFactory.GenerateORU_R01(patient, observation),
+            _ => Result<string>.Failure($"ORU message type {messageType} not yet implemented")
+        };
     }
 
     /// <summary>
@@ -302,24 +306,11 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
             
         var prescription = prescriptionResult.Value;
         
-        // Try to use proper HL7 plugin first
-        var plugin = _pluginRegistry.GetPlugin("hl7");
-        if (plugin != null)
+        return messageType switch
         {
-            var messageOptions = CreateMessageOptions();
-            var prescriptionMessageResult = plugin.MessageFactory.CreatePrescription(prescription.ToDto(), messageOptions);
-            if (prescriptionMessageResult.IsSuccess)
-            {
-                var serializationResult = prescriptionMessageResult.Value.Serialize();
-                if (serializationResult.IsSuccess)
-                {
-                    return Result<string>.Success(serializationResult.Value);
-                }
-            }
-        }
-        
-        // Fallback to descriptive message
-        return Result<string>.Success($"RDE Message: Pharmacy order - {prescription.Medication.DisplayName} {prescription.Dosage.Dose} {prescription.Dosage.DoseUnit} {prescription.Dosage.Frequency} for {prescription.Patient.Name.DisplayName} ({messageType})");
+            "RDE^O11" => _hl7MessageFactory.GenerateRDE_O11(prescription.Patient, prescription),
+            _ => Result<string>.Failure($"RDE message type {messageType} not yet implemented")
+        };
     }
 
     /// <summary>
@@ -455,16 +446,45 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
         };
     }
 
-    // FIXME: Temporary fallback for HL7 factory null reference - will be replaced once factory is fixed
-    private static string GenerateHL7AdmissionFallback(Patient patient, string messageType)
+    /// <summary>
+    /// Generates realistic observation result for lab testing scenarios.
+    /// Used by ORU message generation to create clinically relevant test data.
+    /// </summary>
+    private ObservationResult GenerateObservationResult(GenerationOptions options)
     {
-        var now = DateTime.Now;
-        var controlId = Guid.NewGuid().ToString("N")[..10].ToUpperInvariant();
+        var random = new Random(options.Seed ?? Environment.TickCount);
         
-        var msh = $"MSH|^~\\&|PIDGEON|FACILITY|RECEIVER|FACILITY|{now:yyyyMMddHHmmss}||{messageType}|{controlId}|P|2.4";
-        var pid = $"PID|1||{patient.MedicalRecordNumber ?? "12345"}||{patient.Name.Family}^{patient.Name.Given}||{patient.BirthDate:yyyyMMdd}|{(patient.Gender?.ToString() ?? "U")[0]}";
-        var pv1 = $"PV1|1|I|ICU^101^1||||||DOC123^SMITH^JOHN||||||A|||||||||||||||||||||||{now:yyyyMMddHHmmss}";
+        // Common lab tests with realistic values
+        var labTests = new[]
+        {
+            new { Name = "Complete Blood Count", Code = "CBC", Value = "WBC: 7.2, RBC: 4.5, Hgb: 14.1, Hct: 42.3", Units = "K/uL", Range = "4.0-11.0" },
+            new { Name = "Basic Metabolic Panel", Code = "BMP", Value = "Na: 138, K: 4.2, Cl: 102, CO2: 24", Units = "mmol/L", Range = "135-145" },
+            new { Name = "Lipid Panel", Code = "LIPID", Value = "Total: 180, HDL: 45, LDL: 110, Trig: 125", Units = "mg/dL", Range = "<200" },
+            new { Name = "Hemoglobin A1c", Code = "HBA1C", Value = "6.8", Units = "%", Range = "<7.0" },
+            new { Name = "Thyroid Stimulating Hormone", Code = "TSH", Value = "2.4", Units = "mIU/L", Range = "0.4-4.0" },
+            new { Name = "Creatinine", Code = "CREAT", Value = "1.1", Units = "mg/dL", Range = "0.6-1.3" },
+            new { Name = "Glucose", Code = "GLUC", Value = "95", Units = "mg/dL", Range = "70-99" }
+        };
+
+        var selectedTest = labTests[random.Next(labTests.Length)];
+        var testId = $"LAB{random.Next(10000, 99999)}";
         
-        return $"{msh}\r\n{pid}\r\n{pv1}";
+        return new ObservationResult
+        {
+            Id = testId,
+            TestName = selectedTest.Name,
+            TestCode = selectedTest.Code,
+            Value = selectedTest.Value,
+            Units = selectedTest.Units,
+            ReferenceRange = selectedTest.Range,
+            Status = "F", // Final
+            CollectionTime = DateTime.Now.AddHours(-random.Next(1, 48)),
+            OrderingProvider = new Provider 
+            { 
+                Id = $"DOC{random.Next(100, 999)}", 
+                Name = new PersonName { Given = "John", Family = "Smith" },
+                Degree = "MD"
+            }
+        };
     }
 }
