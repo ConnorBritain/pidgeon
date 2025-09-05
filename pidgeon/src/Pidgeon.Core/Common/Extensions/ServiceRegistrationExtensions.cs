@@ -70,6 +70,42 @@ public static class ServiceRegistrationExtensions
     }
 
     /// <summary>
+    /// Registers all message generation plugins using convention-based discovery.
+    /// Scans for IMessageGenerationPlugin implementations and registers them automatically.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddMessageGenerationPlugins(this IServiceCollection services)
+    {
+        var coreAssembly = Assembly.GetAssembly(typeof(ServiceRegistrationExtensions))!;
+        
+        // Find all message generation plugin types by convention
+        var generationPluginTypes = coreAssembly.GetTypes()
+            .Where(type => type.IsClass && 
+                          !type.IsAbstract && 
+                          type.Name.EndsWith("MessageGenerationPlugin") &&
+                          type.Namespace?.Contains("Generation.Plugins") == true)
+            .ToList();
+
+        foreach (var pluginType in generationPluginTypes)
+        {
+            // Register the concrete plugin
+            services.AddScoped(pluginType);
+            
+            // Register as IMessageGenerationPlugin interface
+            var generationInterface = pluginType.GetInterfaces()
+                .FirstOrDefault(i => i.Name == "IMessageGenerationPlugin");
+                
+            if (generationInterface != null)
+            {
+                services.AddScoped(generationInterface, provider => provider.GetRequiredService(pluginType));
+            }
+        }
+        
+        return services;
+    }
+
+    /// <summary>
     /// Registers services that follow the interface/implementation convention.
     /// Finds classes that implement interfaces with matching names (e.g., MessageService implements IMessageService).
     /// Enhanced to handle multi-interface services automatically.

@@ -168,6 +168,11 @@ internal class GenerationService : IGenerationService
         });
     }
 
+    public Result<Provider> GenerateProvider(GenerationOptions options)
+    {
+        return ExecuteGeneration(options, 3000, "provider", GenerateProvider);
+    }
+
     public GenerationServiceInfo GetServiceInfo()
     {
         return new GenerationServiceInfo

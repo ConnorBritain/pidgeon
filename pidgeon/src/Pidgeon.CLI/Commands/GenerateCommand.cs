@@ -3,6 +3,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
+using Pidgeon.Core;
+using Pidgeon.Core.Application.Services.Generation;
 using Pidgeon.Core.Application.Interfaces.Generation;
 using Pidgeon.Core.Generation;
 using System.CommandLine;
@@ -26,70 +28,133 @@ public class GenerateCommand : CommandBuilderBase
 
     public override Command CreateCommand()
     {
-        var command = new Command("generate", "Generate healthcare messages and synthetic test data");
+        var command = new Command("generate", "Generate synthetic messages/resources with smart standard inference");
 
-        var typeOption = CreateRequiredOption("--type", "Message type to generate (e.g., ADT, RDE, Patient)");
-        var standardOption = CreateOptionalOption("--standard", "Healthcare standard (hl7, fhir, ncpdp)", "hl7");
+        // Positional arguments for smart inference: pidgeon generate <message-type> or pidgeon generate <standard> <message-type>
+        var messageTypeArg = new Argument<string[]>("args")
+        {
+            Description = "Message type (e.g., ADT^A01, Patient, NewRx) or explicit standard + message type",
+            Arity = ArgumentArity.OneOrMore
+        };
+        
+        // Options
         var countOption = CreateIntegerOption("--count", "Number of messages to generate", 1);
         var outputOption = CreateNullableOption("--output", "Output file path (optional, defaults to console)");
-        var formatOption = CreateBooleanOption("--format", "Format output for readability");
+        var formatOption = CreateOptionalOption("--format", "Output format: auto|hl7|json|ndjson", "auto");
+        var modeOption = CreateOptionalOption("--mode", "Generation mode: procedural|local-ai|api-ai", "procedural");
+        var seedOption = CreateNullableOption("--seed", "Deterministic seed for reproducible data");
+        var vendorOption = CreateNullableOption("--vendor", "Apply vendor pattern (e.g., epic, cerner, meditech)");
 
-        command.Add(typeOption);
-        command.Add(standardOption);
+        command.Add(messageTypeArg);
         command.Add(countOption);
         command.Add(outputOption);
         command.Add(formatOption);
+        command.Add(modeOption);
+        command.Add(seedOption);
+        command.Add(vendorOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            var type = parseResult.GetValue(typeOption);
-            var standard = parseResult.GetValue(standardOption);
-            var count = parseResult.GetValue(countOption);
-            var output = parseResult.GetValue(outputOption);
-            var format = parseResult.GetValue(formatOption);
-
-            // Validate required parameters (defensive programming)
-            if (string.IsNullOrWhiteSpace(type))
+            try
             {
-                Logger.LogError("Message type is required but was not provided");
-                return 1;
-            }
-            
-            if (string.IsNullOrWhiteSpace(standard))
-            {
-                standard = "hl7"; // Default value is already set, but be explicit
-            }
-
-            Console.WriteLine($"Generating {count} {standard} {type} message(s)...");
-            
-            var options = new GenerationOptions(); // TODO: Set options based on parameters
-            var result = await _messageGenerationService.GenerateSyntheticDataAsync(standard!, type!, count, options);
-            
-            if (result.IsSuccess)
-            {
-                if (!string.IsNullOrEmpty(output))
+                // Parse smart inference arguments
+                var args = parseResult.GetValue(messageTypeArg) ?? Array.Empty<string>();
+                if (args.Length == 0)
                 {
-                    // Write to file
-                    await WriteToFileAsync(output, result.Value, format);
-                    System.Console.WriteLine($"Generated {count} message(s) and saved to {output}");
+                    Logger.LogError("Message type is required. Usage: pidgeon generate <message-type> or pidgeon generate <standard> <message-type>");
+                    Console.WriteLine("Examples:");
+                    Console.WriteLine("  pidgeon generate ADT^A01");
+                    Console.WriteLine("  pidgeon generate Patient --count 10");
+                    Console.WriteLine("  pidgeon generate hl7 ADT^A01");
+                    return 1;
+                }
+
+                var parsingResult = SmartCommandParser.Parse(args);
+                if (parsingResult.IsFailure)
+                {
+                    Logger.LogError(parsingResult.Error.Message);
+                    Console.WriteLine($"❌ {parsingResult.Error.Message}");
+                    Console.WriteLine("Examples:");
+                    Console.WriteLine("  pidgeon generate ADT^A01");
+                    Console.WriteLine("  pidgeon generate Patient --count 10");
+                    Console.WriteLine("  pidgeon generate hl7 ADT^A01");
+                    return 1;
+                }
+                
+                var request = parsingResult.Value;
+
+                var count = parseResult.GetValue(countOption);
+                var output = parseResult.GetValue(outputOption);
+                var format = parseResult.GetValue(formatOption);
+                var mode = parseResult.GetValue(modeOption);
+                var seedStr = parseResult.GetValue(seedOption);
+                int? seed = null;
+                if (!string.IsNullOrEmpty(seedStr) && int.TryParse(seedStr, out var parsedSeed))
+                {
+                    seed = parsedSeed;
+                }
+                var vendor = parseResult.GetValue(vendorOption);
+
+                // Validate Pro features if needed
+                if ((mode == "local-ai" || mode == "api-ai") && !IsProFeatureAvailable())
+                {
+                    Console.WriteLine("AI generation modes require Pidgeon Pro. Using procedural mode.");
+                    Console.WriteLine("Upgrade at: pidgeon login --pro");
+                    mode = "procedural";
+                }
+
+                Console.WriteLine($"Generating {count} {request.Standard.ToUpperInvariant()} {request.MessageType} message(s)...");
+                if (request.ExplicitStandardProvided)
+                {
+                    Console.WriteLine($"Standard: {request.Standard} (explicit)");
                 }
                 else
                 {
-                    // Write to console
-                    WriteToConsole(result.Value, format);
-                    System.Console.WriteLine($"Generated {count} message(s)");
+                    Console.WriteLine($"Standard: {request.Standard} (inferred from message type)");
+                }
+            
+                var options = new GenerationOptions
+                {
+                    UseAI = mode != "procedural",
+                    Seed = seed,
+                    // TODO: Map vendor string to VendorProfile enum
+                    VendorProfile = null
+                };
+                
+                var result = await _messageGenerationService.GenerateSyntheticDataAsync(request.Standard, request.MessageType, count, options);
+            
+                if (result.IsSuccess)
+                {
+                    if (!string.IsNullOrEmpty(output))
+                    {
+                        // Write to file
+                        await WriteToFileAsync(output, result.Value, format!);
+                        Console.WriteLine($"✅ Generated {count} {request.MessageType} message(s) and saved to {output}");
+                    }
+                    else
+                    {
+                        // Write to console  
+                        WriteToConsole(result.Value, format!);
+                        Console.WriteLine($"✅ Generated {count} {request.MessageType} message(s)");
+                    }
+                    
+                    return 0;
                 }
                 
-                return 0;
+                return HandleResult(result);
             }
-
-            return HandleResult(result);
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Unexpected error during message generation");
+                Console.WriteLine($"❌ Error: {ex.Message}");
+                return 1;
+            }
         });
 
         return command;
     }
 
-    private async Task WriteToFileAsync(string filePath, IReadOnlyList<string> messages, bool format)
+    private async Task WriteToFileAsync(string filePath, IReadOnlyList<string> messages, string format)
     {
         var content = string.Join(Environment.NewLine + Environment.NewLine, messages);
         await File.WriteAllTextAsync(filePath, content);
@@ -97,11 +162,11 @@ public class GenerateCommand : CommandBuilderBase
         Logger.LogInformation("Generated messages written to {FilePath}", filePath);
     }
 
-    private void WriteToConsole(IReadOnlyList<string> messages, bool format)
+    private void WriteToConsole(IReadOnlyList<string> messages, string format)
     {
         foreach (var message in messages)
         {
-            if (format)
+            if (format != "auto")
             {
                 // Add some formatting for readability
                 Console.WriteLine(new string('-', 50));
@@ -109,11 +174,22 @@ public class GenerateCommand : CommandBuilderBase
             
             Console.WriteLine(message);
             
-            if (format && messages.Count > 1)
+            if (format != "auto" && messages.Count > 1)
             {
                 Console.WriteLine(new string('-', 50));
                 Console.WriteLine();
             }
         }
+    }
+
+    /// <summary>
+    /// Checks if Pro features are available for the current user.
+    /// TODO: Implement actual license checking logic.
+    /// </summary>
+    private static bool IsProFeatureAvailable()
+    {
+        // TODO: Replace with actual license validation
+        // For now, return false to demonstrate feature gating
+        return false;
     }
 }

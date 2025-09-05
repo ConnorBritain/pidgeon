@@ -42,6 +42,13 @@ public interface IGenerationService
     Result<Encounter> GenerateEncounter(GenerationOptions options);
 
     /// <summary>
+    /// Generates a synthetic healthcare provider with realistic credentials and specialties.
+    /// </summary>
+    /// <param name="options">Generation configuration including provider type and facility</param>
+    /// <returns>A result containing the generated provider or error information</returns>
+    Result<Provider> GenerateProvider(GenerationOptions options);
+
+    /// <summary>
     /// Gets metadata about the generation service capabilities and current tier.
     /// </summary>
     /// <returns>Service metadata including available features and limitations</returns>

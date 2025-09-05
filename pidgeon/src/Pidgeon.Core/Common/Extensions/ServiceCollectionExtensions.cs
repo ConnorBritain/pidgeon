@@ -32,6 +32,9 @@ public static class ServiceCollectionExtensions
         // Register standard-specific configuration plugins
         services.AddStandardConfigurationPlugins();
         
+        // Register message generation plugins
+        services.AddMessageGenerationPlugins();
+        
         return services;
     }
 

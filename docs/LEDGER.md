@@ -1,3 +1,133 @@
+**Date**: September 5, 2025  
+**Decision Type**: Message Generation Architecture  
+**Impact**: Critical - affects P0 Generation Engine and plugin pattern
+
+## **LEDGER-007: Plugin-Segregated Message Generation Architecture**
+
+### **Context**
+During P0 Generation Engine implementation, faced architectural decision for handling 80+ healthcare message types:
+- **Current**: Giant switch statement in MessageGenerationService (SRP violation)
+- **Option A**: Handler pattern with artificial domain boundaries (ClinicalHandler, PharmacyHandler)
+- **Option B**: Plugin-segregated switches (each standard handles its own types)
+
+### **Analysis: Why Handler Pattern Failed**
+```csharp
+// Forced artificial boundaries
+ClinicalMessageHandler: ["PATIENT", "ADT^A01", "ALLERGY", "CONDITION"]
+// ^ These have completely different generation logic!
+
+PharmacyMessageHandler: ["PRESCRIPTION", "RDE^O11", "NEWRX"]  
+// ^ These are the same concept across different standards
+```
+
+**Problems**: 
+- Healthcare message types don't group by business domain
+- They group by clinical workflow (admit→order→result→discharge)
+- Artificial boundaries lose workflow coupling
+- Complexity of both patterns without benefits
+
+### **Decision: Plugin-Segregated Architecture**
+
+**Principle**: Each healthcare standard plugin owns its message type universe and generation logic.
+
+#### **Architecture**
+```csharp
+// Thin coordinator - no business logic
+MessageGenerationService.GenerateSyntheticDataAsync()
+{
+    var plugin = _pluginRegistry.GetPlugin(standard);
+    return await plugin.GenerateMessage(messageType, count, options);
+}
+
+// Each plugin handles focused switch
+HL7v24Plugin.GenerateMessage("ADT^A01") 
+{
+    return messageType.ExtractBase() switch {
+        "ADT" => CreatePatientAdmission(),  // HL7-specific logic
+        "ORM" => CreateOrder(),
+        "ORU" => CreateResult(), 
+        _ => Result.Failure($"HL7 doesn't support {messageType}")
+    }
+}
+
+FHIRPlugin.GenerateMessage("Patient")
+{
+    return messageType switch {
+        "Patient" => CreatePatient(),        // FHIR-specific logic
+        "Observation" => CreateObservation(),
+        _ => Result.Failure($"FHIR doesn't support {messageType}")
+    }
+}
+```
+
+#### **Benefits**
+1. **Healthcare Standards Are Finite**: Total universe ~215 message types across 3 standards
+2. **Switch Pattern Appropriate**: Compile-time completeness matters for healthcare
+3. **Performance Optimal**: O(1) switch table for tight generation loops
+4. **Workflow Coupling Preserved**: Clinical sequences stay together
+5. **Standard-Specific Intelligence**: Better error messages and format suggestions
+6. **Plugin Architecture Compliance**: Aligns with RULES.md plugin delegation
+
+#### **CLI Inference Enhanced**
+```bash
+# Standard-specific error messages
+pidgeon generate XYZ^123  # Inferred as HL7
+❌ HL7 standard doesn't support: XYZ^123
+   Available: ADT^A01, ORU^R01, RDE^O11...
+
+# Cross-standard intelligence  
+pidgeon generate patient  # Sent to HL7 plugin
+❌ HL7 doesn't have 'patient'. Did you mean 'ADT^A01'?
+
+pidgeon generate adt^a01  # Sent to FHIR plugin
+❌ FHIR doesn't use HL7 format. Did you mean 'Patient'?
+```
+
+### **Implementation Plan**
+1. **Phase 1**: Fix current HL7 null reference bug
+2. **Phase 2**: Refactor to plugin-segregated pattern
+3. **Phase 3**: Add standard-specific intelligence
+
+### **Rollback Procedure**
+If plugin-segregated approach causes issues:
+1. Revert to current switch-based MessageGenerationService
+2. Keep smart inference layer (MessageTypeRegistry + SmartCommandParser)
+3. Address SRP violation through internal method extraction
+
+**Status**: ✅ Implementation complete - Plugin-segregated architecture successfully deployed
+
+### **Implementation Results**
+- ✅ **Plugin Architecture**: IMessageGenerationPlugin interface with 3 standard implementations
+- ✅ **Smart Inference**: CLI correctly identifies HL7 from ADT^A01 message type
+- ✅ **Clean Delegation**: MessageGenerationService refactored to pure plugin orchestration
+- ✅ **Domain Completeness**: Fixed Provider generation interface violation (ARCH-024 compliance)
+- ✅ **Convention-Based DI**: Automatic plugin registration working for all implementations
+- ✅ **Healthcare Accuracy**: Generated realistic HL7 ADT^A01 with proper patient demographics
+
+### **CLI Validation Test**
+```bash
+dotnet run --project src/Pidgeon.CLI/ -- generate ADT^A01 --count 1
+✅ Generated 1 ADT^A01 message(s)
+MSH|^~\&|PIDGEON|FACILITY|RECEIVER|FACILITY|20250905014153||ADT^A01|7E549652DB|P|2.4
+PID|1||56324501||Clark^Keisha||19640428|F
+PV1|1|I|ICU^101^1||||||DOC123^SMITH^JOHN||||||A|||||||||||||||||||||||20250905014153
+```
+
+### **Files Created/Modified**
+- `Infrastructure/Generation/Plugins/IMessageGenerationPlugin.cs` - Plugin contract interface
+- `Infrastructure/Generation/Plugins/HL7MessageGenerationPlugin.cs` - HL7-specific implementation  
+- `Infrastructure/Generation/Plugins/FHIRMessageGenerationPlugin.cs` - FHIR resource implementation
+- `Infrastructure/Generation/Plugins/NCPDPMessageGenerationPlugin.cs` - Pharmacy workflow implementation
+- `Application/Services/Generation/MessageGenerationService.cs` - Refactored to plugin delegation
+- `Generation/IGenerationService.cs` - Added missing GenerateProvider method
+- `Application/Services/Generation/GenerationService.cs` - Exposed Provider generation
+- `Infrastructure/ServiceRegistrationExtensions.cs` - Convention-based plugin registration
+
+**Next Phase**: Ready for P0.2 De-identification Engine development (Week 3 of embryonic sequence)
+
+---
+
+## **LEDGER-006: Strategy Pattern for Generation Services** 
 **Date**: September 2, 2025  
 **Decision Type**: Architectural Foundation  
 **Impact**: Critical - affects all standard adapters and domain boundaries  

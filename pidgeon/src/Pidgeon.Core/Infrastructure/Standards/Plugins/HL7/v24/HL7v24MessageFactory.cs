@@ -62,6 +62,16 @@ public class HL7v24MessageFactory : IStandardMessageFactory
             }
 
             // Populate PID segment from patient DTO
+            if (message.PID == null)
+            {
+                return Error.Create("ADT_CREATION_FAILED", "PID segment was not initialized in ADT message", "HL7v24MessageFactory");
+            }
+            
+            if (patient == null)
+            {
+                return Error.Create("ADT_CREATION_FAILED", "Patient DTO is null", "HL7v24MessageFactory");
+            }
+            
             var pidResult = message.PID.PopulateFromPatient(patient);
             if (pidResult.IsFailure)
                 return Error.Create("ADT_PATIENT_POPULATION_FAILED",
