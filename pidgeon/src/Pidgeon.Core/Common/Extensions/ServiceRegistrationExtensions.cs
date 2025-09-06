@@ -122,7 +122,7 @@ public static class ServiceRegistrationExtensions
         var deidentTypes = coreAssembly.GetTypes()
             .Where(type => type.IsClass && 
                           !type.IsAbstract && 
-                          type.Name.Contains("DeIdentif") &&
+                          (type.Name.Contains("DeIdentif") || type.Name.Contains("PhiPattern") || type.Name.Contains("SafeHarbor")) &&
                           type.Namespace?.Contains("Infrastructure.Standards") == true)
             .ToList();
 
@@ -130,6 +130,20 @@ public static class ServiceRegistrationExtensions
         {
             // Register the concrete de-identifier
             services.AddScoped(deidentType);
+        }
+        
+        // Find all infrastructure message composers and related services
+        var infrastructureTypes = coreAssembly.GetTypes()
+            .Where(type => type.IsClass && 
+                          !type.IsAbstract && 
+                          (type.Name.EndsWith("MessageComposer") || type.Name.EndsWith("SegmentBuilder")) &&
+                          type.Namespace?.Contains("Infrastructure.Standards") == true)
+            .ToList();
+
+        foreach (var infrastructureType in infrastructureTypes)
+        {
+            // Register the concrete infrastructure service
+            services.AddScoped(infrastructureType);
         }
         
         // Register services that don't have interfaces (internal helpers)
@@ -159,7 +173,7 @@ public static class ServiceRegistrationExtensions
         var serviceTypes = assembly.GetTypes()
             .Where(type => type.IsClass && 
                           !type.IsAbstract && 
-                          (type.Name.EndsWith("Service") || type.Name.EndsWith("Catalog") || type.Name.EndsWith("Repository") || type.Name.EndsWith("Manager") || type.Name.EndsWith("Orchestrator")) &&
+                          (type.Name.EndsWith("Service") || type.Name.EndsWith("Catalog") || type.Name.EndsWith("Repository") || type.Name.EndsWith("Manager") || type.Name.EndsWith("Orchestrator") || type.Name.EndsWith("Engine") || type.Name.EndsWith("Detector")) &&
                           type.Namespace?.Contains("Application.Services") == true)
             .ToList();
 
