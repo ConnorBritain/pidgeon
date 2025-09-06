@@ -203,12 +203,72 @@ public Result<Message> ProcessMessage(string input)
 - **ACT**: Make minimal, principled changes that address the root cause
 - **AVOID**: Trial-and-error fixes, compound changes, band-aid solutions
 
+### **📌 TODO/FIXME Pattern - Professional Placeholder Implementation**
+**MANDATORY**: When encountering implementation challenges, use TODO/FIXME markers instead of hacks:
+
+#### **When to Use TODO/FIXME Instead of Hacks:**
+- **Missing dependencies**: Use placeholder implementations with TODO markers
+- **Complex logic not yet designed**: Return simple defaults with FIXME notes
+- **Cross-cutting concerns**: Mark with TODO rather than violating architecture
+- **Performance optimizations needed**: Simple implementation with TODO for optimization
+- **External integrations pending**: Mock responses with TODO for real implementation
+
+#### **TODO/FIXME Best Practices:**
+```csharp
+// ✅ GOOD: Clear TODO with simple placeholder
+public async Task<Result<PhiDetectionResult>> DetectPhiAsync(string message)
+{
+    await Task.Yield();
+    
+    // TODO: Implement actual PHI detection using pattern matching and NLP
+    // TODO: Integrate with infrastructure PHI detection plugins
+    var result = new PhiDetectionResult
+    {
+        DetectedPhi = Array.Empty<PhiDetectionItem>(),
+        OverallConfidence = 0.95,
+        Statistics = new PhiDetectionStatistics
+        {
+            TotalFieldsScanned = 0, // TODO: Track actual fields scanned
+            PotentialPhiFound = 0,   // TODO: Count detected PHI items
+            PhiByType = new Dictionary<IdentifierType, int>(),
+            ScanTime = TimeSpan.Zero
+        }
+    };
+    
+    return Result<PhiDetectionResult>.Success(result);
+}
+
+// ❌ BAD: Hacky workaround that violates architecture
+public async Task<Result<PhiDetectionResult>> DetectPhiAsync(string message)
+{
+    // HACK: Just regex for SSN pattern, ignore everything else
+    var ssnPattern = @"\d{3}-\d{2}-\d{4}";
+    var matches = Regex.Matches(message, ssnPattern);
+    
+    // Faking statistics to make it compile
+    var fakeStats = new PhiDetectionStatistics
+    {
+        TotalFieldsScanned = message.Length / 50, // Random calculation
+        PotentialPhiFound = matches.Count * 3,     // Multiply by arbitrary number
+        // ... more hacks
+    };
+}
+```
+
+#### **TODO/FIXME Documentation Requirements:**
+1. **Be specific** about what needs implementation
+2. **Reference tickets/issues** if they exist
+3. **Indicate priority** (Critical, High, Medium, Low)
+4. **Describe the proper solution** briefly
+5. **Never leave vague TODOs** like "// TODO: Fix this"
+
 ### **When Creating New Features:**
 1. **Start with domain model** - What's the healthcare concept?
 2. **Create standard adapters** - How does each standard serialize it?
 3. **Register plugins** - Add to DI container
 4. **Write behavior tests first** - Healthcare scenarios, not code coverage
 5. **Use Result<T>** - No exceptions for business logic control flow
+6. **Use TODO/FIXME markers** - Never hack around problems or violate architecture
 
 ### **When Adding New Standards:**
 1. Create new namespace: `Pidgeon.Core.Standards.{Standard}`

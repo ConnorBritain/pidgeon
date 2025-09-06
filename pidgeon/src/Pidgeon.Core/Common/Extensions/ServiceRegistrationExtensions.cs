@@ -29,6 +29,9 @@ public static class ServiceRegistrationExtensions
         // Register adapters by convention
         RegisterAdaptersByConvention(services, coreAssembly);
         
+        // Register de-identification services
+        services.AddDeIdentificationServices();
+        
         return services;
     }
 
@@ -100,6 +103,47 @@ public static class ServiceRegistrationExtensions
             {
                 services.AddScoped(generationInterface, provider => provider.GetRequiredService(pluginType));
             }
+        }
+        
+        return services;
+    }
+
+    /// <summary>
+    /// Registers all de-identification services using convention-based discovery.
+    /// Scans for de-identification implementations and registers them automatically.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddDeIdentificationServices(this IServiceCollection services)
+    {
+        var coreAssembly = Assembly.GetAssembly(typeof(ServiceRegistrationExtensions))!;
+        
+        // Find all de-identification service types by convention
+        var deidentTypes = coreAssembly.GetTypes()
+            .Where(type => type.IsClass && 
+                          !type.IsAbstract && 
+                          type.Name.Contains("DeIdentif") &&
+                          type.Namespace?.Contains("Infrastructure.Standards") == true)
+            .ToList();
+
+        foreach (var deidentType in deidentTypes)
+        {
+            // Register the concrete de-identifier
+            services.AddScoped(deidentType);
+        }
+        
+        // Register services that don't have interfaces (internal helpers)
+        var helperTypes = new[] 
+        { 
+            typeof(Application.Services.DeIdentification.ConsistencyManager),
+            typeof(Application.Services.DeIdentification.ComplianceValidationService),
+            typeof(Application.Services.DeIdentification.AuditReportService),
+            typeof(Application.Services.DeIdentification.ResourceEstimationService)
+        };
+        
+        foreach (var helperType in helperTypes)
+        {
+            services.AddScoped(helperType);
         }
         
         return services;

@@ -306,3 +306,118 @@ public enum WarningSeverity
     High,
     Critical
 }
+
+/// <summary>
+/// Result of analyzing content for PHI patterns and distribution.
+/// </summary>
+public record PhiAnalysisResult
+{
+    /// <summary>
+    /// Detected message format (HL7, FHIR, etc.).
+    /// </summary>
+    public required string MessageFormat { get; init; }
+
+    /// <summary>
+    /// PHI items identified during analysis.
+    /// </summary>
+    public required IReadOnlyList<PhiDetectionItem> DetectedFields { get; init; }
+
+    /// <summary>
+    /// Total number of fields analyzed in the content.
+    /// </summary>
+    public required int TotalFieldsAnalyzed { get; init; }
+
+    /// <summary>
+    /// Number of fields containing potential PHI.
+    /// </summary>
+    public required int PhiFieldsFound { get; init; }
+
+    /// <summary>
+    /// Overall risk assessment based on PHI types found.
+    /// </summary>
+    public required string OverallRiskAssessment { get; init; }
+}
+
+/// <summary>
+/// Result of batch consistency validation operations.
+/// </summary>
+public record BatchConsistencyResult
+{
+    /// <summary>
+    /// Whether all messages in the batch maintain consistency.
+    /// </summary>
+    public required bool IsConsistent { get; init; }
+
+    /// <summary>
+    /// Number of messages processed in the batch.
+    /// </summary>
+    public required int TotalMessages { get; init; }
+
+    /// <summary>
+    /// Number of unique patient identifiers found.
+    /// </summary>
+    public required int UniquePatientIds { get; init; }
+
+    /// <summary>
+    /// Consistency violations found during validation.
+    /// </summary>
+    public required IReadOnlyList<ConsistencyViolation> Violations { get; init; }
+
+    /// <summary>
+    /// Time taken to complete the consistency check.
+    /// </summary>
+    public required TimeSpan ProcessingTime { get; init; }
+}
+
+/// <summary>
+/// Individual consistency violation found during batch processing.
+/// </summary>
+public record ConsistencyViolation
+{
+    /// <summary>
+    /// Type of consistency violation detected.
+    /// </summary>
+    public required string ViolationType { get; init; }
+
+    /// <summary>
+    /// Patient identifier involved in the violation.
+    /// </summary>
+    public required string PatientId { get; init; }
+
+    /// <summary>
+    /// Description of the consistency issue.
+    /// </summary>
+    public required string Description { get; init; }
+
+    /// <summary>
+    /// Message indices where the violation was found.
+    /// </summary>
+    public required IReadOnlyList<int> AffectedMessageIndices { get; init; }
+}
+
+/// <summary>
+/// Result of consistency validation operations.
+/// </summary>
+public record ConsistencyValidationResult
+{
+    /// <summary>
+    /// Whether the consistency validation passed.
+    /// </summary>
+    public required bool IsValid { get; init; }
+
+    /// <summary>
+    /// Consistency violations found.
+    /// </summary>
+    public required IReadOnlyList<ConsistencyViolation> Violations { get; init; }
+
+    /// <summary>
+    /// Number of ID mappings validated.
+    /// </summary>
+    public required int ValidatedMappings { get; init; }
+
+    /// <summary>
+    /// Overall confidence in the consistency check.
+    /// </summary>
+    public required double ConfidenceScore { get; init; }
+}
+

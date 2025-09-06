@@ -131,7 +131,7 @@ if (input == null) throw new ArgumentNullException(nameof(input));
 
 ## 🚧 **TECHNICAL DEBT MARKERS**
 
-### **MANDATORY: Use Markers for Issues**
+### **MANDATORY: Use Markers Instead of Hacks**
 ```csharp
 // TODO: Description of what needs to be implemented/fixed
 // FIXME: Description of broken/problematic code that needs repair  
@@ -144,6 +144,33 @@ if (input == null) throw new ArgumentNullException(nameof(input));
 2. **Interface changes** - Mark methods needing downstream updates
 3. **Domain migrations** - Mark cross-domain dependencies to resolve
 4. **Pattern violations** - Mark code violating sacred architectural principles
+5. **Missing implementations** - Use placeholders with TODO instead of hacks
+
+### **TODO/FIXME Over Hacks Principle**:
+```csharp
+// ✅ CORRECT: Professional placeholder with clear TODO
+public Result<DeIdentificationContext> CreateContext(DeIdentificationOptions options)
+{
+    var context = new DeIdentificationContext
+    {
+        Salt = options.Salt ?? Guid.NewGuid().ToString(),
+        DateShift = options.DateShift ?? TimeSpan.Zero
+        // TODO: Initialize ID mappings from persistence if available
+        // TODO: Load custom field mappings from configuration
+    };
+    return Result<DeIdentificationContext>.Success(context);
+}
+
+// ❌ FORBIDDEN: Hacky workaround that violates principles
+public Result<DeIdentificationContext> CreateContext(DeIdentificationOptions options)
+{
+    // HACK: Just hardcode some values to make it compile
+    dynamic context = new ExpandoObject();
+    context.Salt = "hardcoded-salt";
+    context.DateShift = 30; // Random number of days
+    return Result<DeIdentificationContext>.Success((DeIdentificationContext)context);
+}
+```
 
 ### **Tracking**: Use `grep -r "TODO:\|FIXME:\|HACK:\|BUG:" .` to find all markers
 
