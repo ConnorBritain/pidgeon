@@ -175,6 +175,75 @@ public record DeIdentificationContext
         
         return $"{user}@{domain}";
     }
+
+    // Helper methods for statistics tracking
+
+    /// <summary>
+    /// Gets the current ID mappings as a read-only dictionary.
+    /// </summary>
+    public IReadOnlyDictionary<string, string> GetIdMappings() => IdMap;
+
+    /// <summary>
+    /// Gets the count of processed identifiers.
+    /// </summary>
+    public int GetProcessedIdentifierCount() => ProcessedIdentifiers.Count;
+
+    /// <summary>
+    /// Gets the count of identifiers by type from audit trail.
+    /// </summary>
+    public IReadOnlyDictionary<IdentifierType, int> GetIdentifiersByType()
+    {
+        return AuditTrail.Values
+            .GroupBy(action => action.IdentifierType)
+            .ToDictionary(group => group.Key, group => group.Count());
+    }
+
+    /// <summary>
+    /// Gets the count of modified fields (all audit trail entries).
+    /// </summary>
+    public int GetModifiedFieldCount() => AuditTrail.Count;
+
+    /// <summary>
+    /// Gets the count of shifted dates from audit trail.
+    /// </summary>
+    public int GetShiftedDateCount()
+    {
+        return AuditTrail.Values.Count(action => action.Action == "SHIFT");
+    }
+
+    /// <summary>
+    /// Gets the count of unique subjects processed.
+    /// For now, approximated by counting unique patient-related identifiers.
+    /// </summary>
+    public int GetUniqueSubjectCount()
+    {
+        return AuditTrail.Values
+            .Where(action => action.IdentifierType == IdentifierType.PatientName || 
+                           action.IdentifierType == IdentifierType.MedicalRecordNumber)
+            .Select(action => action.OriginalValue)
+            .Distinct()
+            .Count();
+    }
+
+    /// <summary>
+    /// Gets the audit trail as a read-only dictionary for compliance reporting.
+    /// </summary>
+    public IReadOnlyDictionary<string, DeIdentificationAction> GetAuditTrail() => AuditTrail;
+
+    /// <summary>
+    /// Records a date shift operation in the audit trail.
+    /// </summary>
+    public void RecordDateShift(string originalDate, string shiftedDate)
+    {
+        AuditTrail[$"DATE:{originalDate}"] = new DeIdentificationAction
+        {
+            OriginalValue = originalDate,
+            SyntheticValue = shiftedDate,
+            IdentifierType = IdentifierType.Other,
+            Action = "SHIFT",
+            Timestamp = DateTime.UtcNow
+        };
+    }
 }
 
 /// <summary>

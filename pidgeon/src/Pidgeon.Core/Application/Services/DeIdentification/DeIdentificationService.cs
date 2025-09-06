@@ -63,17 +63,17 @@ internal class DeIdentificationService : IDeIdentificationService
         var deidentificationResult = new DeIdentificationResult
         {
             DeIdentifiedMessages = deidentifiedMessages,
-            IdMappings = new Dictionary<string, string>(), // TODO: Implement ID mapping tracking
+            IdMappings = context.GetIdMappings(),
             Statistics = new DeIdentificationStatistics
             {
                 TotalMessages = deidentifiedMessages.Count,
-                TotalIdentifiersProcessed = 0, // TODO: Track processed identifiers
-                IdentifiersByType = new Dictionary<IdentifierType, int>(),
-                FieldsModified = 0, // TODO: Track modified fields
-                DatesShifted = 0, // TODO: Track shifted dates
+                TotalIdentifiersProcessed = context.GetProcessedIdentifierCount(),
+                IdentifiersByType = context.GetIdentifiersByType(),
+                FieldsModified = context.GetModifiedFieldCount(),
+                DatesShifted = context.GetShiftedDateCount(),
                 AverageProcessingTimeMs = processingTime.TotalMilliseconds / Math.Max(1, deidentifiedMessages.Count),
                 TotalProcessingTime = processingTime,
-                UniqueSubjects = 0 // TODO: Track unique subjects
+                UniqueSubjects = context.GetUniqueSubjectCount()
             },
             Compliance = new ComplianceVerification
             {
@@ -88,7 +88,8 @@ internal class DeIdentificationService : IDeIdentificationService
                 Options = options,
                 StandardsProcessed = new[] { "HL7 v2.3" },
                 ProcessingMode = "Batch"
-            }
+            },
+            AuditTrail = context.GetAuditTrail()
         };
 
         return Result<DeIdentificationResult>.Success(deidentificationResult);
