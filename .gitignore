@@ -21,4 +21,7 @@
 *.userprefs
 
 # Test outputs
-segmint/tests/message_outputs/
+pidgeon/tests/message_outputs/
+
+# Temp files
+/tmp/

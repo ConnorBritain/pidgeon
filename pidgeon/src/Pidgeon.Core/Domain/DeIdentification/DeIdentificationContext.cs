@@ -124,13 +124,13 @@ public record DeIdentificationContext
 
     private static string GenerateSyntheticName(string base64)
     {
-        // Use hash to select from predefined name lists for deterministic but realistic names
-        var hash = Math.Abs(base64.GetHashCode());
+        // Use deterministic hash to select from predefined name lists for consistent results
+        var deterministicHash = GetDeterministicHash(base64);
         var surnames = new[] { "SMITH", "JOHNSON", "WILLIAMS", "BROWN", "JONES", "GARCIA", "MILLER", "DAVIS", "RODRIGUEZ", "MARTINEZ" };
         var givenNames = new[] { "JAMES", "MARY", "JOHN", "PATRICIA", "ROBERT", "JENNIFER", "MICHAEL", "LINDA", "WILLIAM", "ELIZABETH" };
         
-        var surname = surnames[hash % surnames.Length];
-        var givenName = givenNames[(hash / surnames.Length) % givenNames.Length];
+        var surname = surnames[deterministicHash % (uint)surnames.Length];
+        var givenName = givenNames[(deterministicHash >> 8) % (uint)givenNames.Length];
         
         return $"{surname}^{givenName}";
     }
@@ -138,42 +138,58 @@ public record DeIdentificationContext
     private static string GenerateSyntheticSSN(string base64)
     {
         // Generate valid SSN format but with invalid area numbers to avoid real SSN conflicts
-        var hash = Math.Abs(base64.GetHashCode());
+        var hash = GetDeterministicHash(base64);
         var area = 900 + (hash % 99);  // 900-999 are invalid SSN area numbers
-        var group = 1 + (hash % 99);
-        var serial = 1 + (hash % 9999);
+        var group = 1 + ((hash >> 8) % 99);
+        var serial = 1 + ((hash >> 16) % 9999);
         return $"{area:D3}{group:D2}{serial:D4}";
     }
 
     private static string GenerateSyntheticPhone(string base64)
     {
         // Generate phone with 555 area code (reserved for fictional use)
-        var hash = Math.Abs(base64.GetHashCode());
+        var hash = GetDeterministicHash(base64);
         var exchange = 100 + (hash % 800);  // Valid exchange codes
-        var number = 1000 + (hash % 9000);
+        var number = 1000 + ((hash >> 10) % 9000);
         return $"555{exchange:D3}{number:D4}";
     }
 
     private static string GenerateSyntheticAddress(string base64)
     {
-        var hash = Math.Abs(base64.GetHashCode());
+        var hash = GetDeterministicHash(base64);
         var streetNumbers = new[] { "123", "456", "789", "101", "202", "303", "404", "505" };
         var streetNames = new[] { "MAIN ST", "ELM AVE", "OAK RD", "PINE BLVD", "MAPLE DR", "CEDAR LN", "PARK WAY", "FIRST ST" };
         
-        var streetNumber = streetNumbers[hash % streetNumbers.Length];
-        var streetName = streetNames[(hash / streetNumbers.Length) % streetNames.Length];
+        var streetNumber = streetNumbers[hash % (uint)streetNumbers.Length];
+        var streetName = streetNames[(hash >> 8) % (uint)streetNames.Length];
         
         return $"{streetNumber} {streetName}";
     }
 
     private static string GenerateSyntheticEmail(string base64)
     {
-        var hash = Math.Abs(base64.GetHashCode());
+        var hash = GetDeterministicHash(base64);
         var domains = new[] { "example.com", "test.org", "sample.net", "demo.edu", "fake.gov" };
-        var domain = domains[hash % domains.Length];
+        var domain = domains[hash % (uint)domains.Length];
         var user = base64.Substring(0, 8).ToLower().Replace("/", "").Replace("+", "");
         
         return $"{user}@{domain}";
+    }
+
+    /// <summary>
+    /// Generates a deterministic hash from string input using FNV-1a algorithm.
+    /// Unlike .NET's GetHashCode(), this is guaranteed to be consistent across runs.
+    /// </summary>
+    private static uint GetDeterministicHash(string input)
+    {
+        // FNV-1a hash algorithm for consistent hashing
+        uint hash = 2166136261u; // FNV offset basis
+        foreach (byte b in System.Text.Encoding.UTF8.GetBytes(input))
+        {
+            hash ^= b;
+            hash *= 16777619u; // FNV prime
+        }
+        return hash;
     }
 
     // Helper methods for statistics tracking
