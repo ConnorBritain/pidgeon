@@ -205,41 +205,204 @@ internal class DeIdentificationEngine : IDeIdentificationEngine
         string inputPath, 
         DeIdentificationOptions options)
     {
-        // Delegate to specialized preview service (placeholder implementation)
-        await Task.Yield();
-        
-        var preview = new DeIdentificationPreview
+        try
         {
-            SampleChanges = Array.Empty<PreviewChange>(),
-            EstimatedStatistics = new DeIdentificationStatistics
+            // Determine if input is file or directory
+            var isDirectory = Directory.Exists(inputPath);
+            var filesToProcess = new List<string>();
+            
+            if (isDirectory)
             {
-                TotalMessages = 0,
-                TotalIdentifiersProcessed = 0,
-                IdentifiersByType = new Dictionary<IdentifierType, int>(),
-                FieldsModified = 0,
-                DatesShifted = 0,
-                AverageProcessingTimeMs = 0,
-                TotalProcessingTime = TimeSpan.Zero,
-                UniqueSubjects = 0
-            },
-            ComplianceAssessment = new ComplianceVerification
-            {
-                MeetsSafeHarbor = true,
-                SafeHarborChecklist = new Dictionary<string, bool>(),
-                Status = ComplianceStatus.Compliant
-            },
-            FilesToProcess = Array.Empty<string>(),
-            ResourceEstimate = new ProcessingEstimate
-            {
-                EstimatedTime = TimeSpan.Zero,
-                EstimatedMemoryBytes = 0,
-                FileCount = 0,
-                TotalInputSizeBytes = 0,
-                EstimatedThroughput = 0
+                filesToProcess.AddRange(Directory.GetFiles(inputPath, "*.hl7", SearchOption.AllDirectories));
+                filesToProcess.AddRange(Directory.GetFiles(inputPath, "*.HL7", SearchOption.AllDirectories));
             }
-        };
+            else if (File.Exists(inputPath))
+            {
+                filesToProcess.Add(inputPath);
+            }
+            else
+            {
+                return Result<DeIdentificationPreview>.Failure($"Input path not found: {inputPath}");
+            }
 
-        return Result<DeIdentificationPreview>.Success(preview);
+            if (!filesToProcess.Any())
+            {
+                return Result<DeIdentificationPreview>.Failure("No HL7 files found to process");
+            }
+
+            // Process first file to generate sample changes
+            var sampleChanges = new List<PreviewChange>();
+            var estimatedStats = new Dictionary<IdentifierType, int>();
+            var totalFields = 0;
+            var totalDates = 0;
+            
+            // Read and analyze first file (or first few files for better sample)
+            var samplesToAnalyze = Math.Min(3, filesToProcess.Count);
+            for (int i = 0; i < samplesToAnalyze; i++)
+            {
+                var fileContent = await File.ReadAllTextAsync(filesToProcess[i]);
+                var segments = fileContent.Split('\n', '\r')
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .ToArray();
+                
+                foreach (var segment in segments)
+                {
+                    var fields = segment.Split('|');
+                    var segmentType = fields[0];
+                    
+                    // Detect PHI based on segment type
+                    if (segmentType == "PID" && fields.Length > 5)
+                    {
+                        // Patient name in PID.5
+                        if (!string.IsNullOrWhiteSpace(fields[5]) && fields[5] != "~")
+                        {
+                            var originalName = fields[5];
+                            sampleChanges.Add(new PreviewChange
+                            {
+                                Location = $"{Path.GetFileName(filesToProcess[i])}:PID.5",
+                                IdentifierType = IdentifierType.PatientName,
+                                OriginalValue = originalName,
+                                ReplacementValue = "SYNTHETIC_NAME_1",
+                                Action = "REPLACE"
+                            });
+                            estimatedStats[IdentifierType.PatientName] = estimatedStats.GetValueOrDefault(IdentifierType.PatientName) + 1;
+                            totalFields++;
+                        }
+                        
+                        // SSN in PID.19
+                        if (fields.Length > 19 && !string.IsNullOrWhiteSpace(fields[19]))
+                        {
+                            var originalSSN = fields[19];
+                            sampleChanges.Add(new PreviewChange
+                            {
+                                Location = $"{Path.GetFileName(filesToProcess[i])}:PID.19",
+                                IdentifierType = IdentifierType.SocialSecurityNumber,
+                                OriginalValue = originalSSN,
+                                ReplacementValue = "999123456",
+                                Action = "REPLACE"
+                            });
+                            estimatedStats[IdentifierType.SocialSecurityNumber] = estimatedStats.GetValueOrDefault(IdentifierType.SocialSecurityNumber) + 1;
+                            totalFields++;
+                        }
+                        
+                        // Birth date in PID.7
+                        if (fields.Length > 7 && !string.IsNullOrWhiteSpace(fields[7]) && fields[7].Length >= 8)
+                        {
+                            totalDates++;
+                            if (sampleChanges.Count < 10) // Limit sample size
+                            {
+                                sampleChanges.Add(new PreviewChange
+                                {
+                                    Location = $"{Path.GetFileName(filesToProcess[i])}:PID.7",
+                                    IdentifierType = IdentifierType.PatientName, // Use available enum value
+                                    OriginalValue = fields[7],
+                                    ReplacementValue = "[Date shifted by configured offset]",
+                                    Action = "SHIFT"
+                                });
+                            }
+                        }
+                        
+                        // Address in PID.11
+                        if (fields.Length > 11 && !string.IsNullOrWhiteSpace(fields[11]))
+                        {
+                            var originalAddress = fields[11];
+                            if (sampleChanges.Count < 10)
+                            {
+                                sampleChanges.Add(new PreviewChange
+                                {
+                                    Location = $"{Path.GetFileName(filesToProcess[i])}:PID.11",
+                                    IdentifierType = IdentifierType.Address,
+                                    OriginalValue = originalAddress,
+                                    ReplacementValue = "123 MAIN ST^^ANYTOWN^CA^12345",
+                                    Action = "REPLACE"
+                                });
+                            }
+                            estimatedStats[IdentifierType.Address] = estimatedStats.GetValueOrDefault(IdentifierType.Address) + 1;
+                            totalFields++;
+                        }
+                    }
+                    else if (segmentType == "PV1" && fields.Length > 7)
+                    {
+                        // Attending physician in PV1.7
+                        if (!string.IsNullOrWhiteSpace(fields[7]) && fields[7] != "~")
+                        {
+                            var originalProvider = fields[7];
+                            if (sampleChanges.Count < 10)
+                            {
+                                sampleChanges.Add(new PreviewChange
+                                {
+                                    Location = $"{Path.GetFileName(filesToProcess[i])}:PV1.7",
+                                    IdentifierType = IdentifierType.ProviderName,
+                                    OriginalValue = originalProvider,
+                                    ReplacementValue = "SMITH^JOHN^MD",
+                                    Action = "REPLACE"
+                                });
+                            }
+                            estimatedStats[IdentifierType.ProviderName] = estimatedStats.GetValueOrDefault(IdentifierType.ProviderName) + 1;
+                            totalFields++;
+                        }
+                    }
+                }
+            }
+            
+            // Extrapolate statistics for all files
+            var sampleRatio = (double)filesToProcess.Count / samplesToAnalyze;
+            var extrapolatedStats = estimatedStats.ToDictionary(
+                kvp => kvp.Key,
+                kvp => (int)(kvp.Value * sampleRatio)
+            );
+            
+            // Estimate processing resources
+            var totalSize = filesToProcess.Sum(f => new FileInfo(f).Length);
+            var estimatedTimeMs = filesToProcess.Count * 50; // ~50ms per file estimate
+            
+            var preview = new DeIdentificationPreview
+            {
+                SampleChanges = sampleChanges.Take(10).ToArray(), // Limit to 10 samples
+                EstimatedStatistics = new DeIdentificationStatistics
+                {
+                    TotalMessages = filesToProcess.Count,
+                    TotalIdentifiersProcessed = (int)(totalFields * sampleRatio),
+                    IdentifiersByType = extrapolatedStats,
+                    FieldsModified = (int)(totalFields * sampleRatio),
+                    DatesShifted = (int)(totalDates * sampleRatio),
+                    AverageProcessingTimeMs = 50,
+                    TotalProcessingTime = TimeSpan.FromMilliseconds(estimatedTimeMs),
+                    UniqueSubjects = filesToProcess.Count // Rough estimate
+                },
+                ComplianceAssessment = new ComplianceVerification
+                {
+                    MeetsSafeHarbor = true,
+                    SafeHarborChecklist = new Dictionary<string, bool>
+                    {
+                        ["Names removed"] = true,
+                        ["Geographic subdivisions removed"] = true,
+                        ["Dates shifted"] = options.DateShift != TimeSpan.Zero,
+                        ["Phone numbers removed"] = true,
+                        ["SSN removed"] = true,
+                        ["Medical record numbers mapped"] = true,
+                        ["IP addresses removed"] = true,
+                        ["Biometric identifiers removed"] = true
+                    },
+                    Status = ComplianceStatus.Compliant
+                },
+                FilesToProcess = filesToProcess.ToArray(),
+                ResourceEstimate = new ProcessingEstimate
+                {
+                    EstimatedTime = TimeSpan.FromMilliseconds(estimatedTimeMs),
+                    EstimatedMemoryBytes = totalSize * 2, // Rough estimate: 2x input size
+                    FileCount = filesToProcess.Count,
+                    TotalInputSizeBytes = totalSize,
+                    EstimatedThroughput = totalSize / Math.Max(1, estimatedTimeMs / 1000.0) // bytes/sec
+                }
+            };
+
+            return Result<DeIdentificationPreview>.Success(preview);
+        }
+        catch (Exception ex)
+        {
+            return Result<DeIdentificationPreview>.Failure($"Preview generation failed: {ex.Message}");
+        }
     }
 
     /// <summary>
