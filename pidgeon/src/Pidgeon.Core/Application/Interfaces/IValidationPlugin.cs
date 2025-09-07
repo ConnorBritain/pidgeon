@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Pidgeon.Core.Domain.Validation;
-using Pidgeon.Core.Utilities;
 
 namespace Pidgeon.Core.Application.Interfaces;
 
