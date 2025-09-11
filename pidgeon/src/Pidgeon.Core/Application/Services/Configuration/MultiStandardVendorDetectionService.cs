@@ -14,7 +14,7 @@ namespace Pidgeon.Core.Application.Services.Configuration;
 /// across HL7, FHIR, NCPDP, and other healthcare standards.
 /// Provides unified vendor detection interface while delegating to standard-specific plugins.
 /// </summary>
-internal class MultiStandardVendorDetectionService : IVendorDetectionService
+internal class MultiStandardVendorDetectionService : IMultiStandardVendorDetectionService
 {
     private readonly IStandardVendorPluginRegistry _pluginRegistry;
     private readonly ILogger<MultiStandardVendorDetectionService> _logger;
@@ -317,5 +317,181 @@ internal class MultiStandardVendorDetectionService : IVendorDetectionService
             _logger.LogError(ex, "Error getting vendor configurations for standard {Standard}", standard);
             return Result<IReadOnlyList<VendorConfiguration>>.Failure($"Failed to get configurations: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// Detects vendor signature from message headers and identifying fields.
+    /// </summary>
+    public async Task<Result<VendorSignature>> DetectFromHeadersAsync(MessageHeaders messageHeaders)
+    {
+        if (messageHeaders == null)
+            return Result<VendorSignature>.Failure("Message headers cannot be null");
+
+        try
+        {
+            var plugin = _pluginRegistry.GetPluginForStandard(messageHeaders.Standard.ToLowerInvariant());
+            if (plugin == null)
+            {
+                return Result<VendorSignature>.Failure($"No plugin registered for standard: {messageHeaders.Standard}");
+            }
+
+            // Create vendor signature from headers
+            var signature = new VendorSignature
+            {
+                Name = DetermineVendorName(messageHeaders.SendingApplication),
+                Version = ExtractVersion(messageHeaders.SendingApplication),
+                Confidence = 0.85, // Default confidence for header-based detection
+                SendingApplication = messageHeaders.SendingApplication,
+                SendingFacility = messageHeaders.SendingFacility,
+                DetectedTimestamp = DateTime.UtcNow,
+                DetectionMethod = "Header-based detection"
+            };
+
+            return Result<VendorSignature>.Success(signature);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error detecting vendor from headers");
+            return Result<VendorSignature>.Failure($"Vendor detection from headers failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Attempts to detect vendor signature from raw message content.
+    /// </summary>
+    public async Task<Result<VendorSignature>> DetectFromMessageAsync(string message, string standard)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+            return Result<VendorSignature>.Failure("Message content cannot be empty");
+        
+        if (string.IsNullOrWhiteSpace(standard))
+            return Result<VendorSignature>.Failure("Standard cannot be empty");
+
+        try
+        {
+            var plugin = _pluginRegistry.GetPluginForStandard(standard.ToLowerInvariant());
+            if (plugin == null)
+            {
+                return Result<VendorSignature>.Failure($"No plugin registered for standard: {standard}");
+            }
+
+            if (!plugin.CanAnalyze(message))
+            {
+                return Result<VendorSignature>.Failure($"Plugin for {standard} cannot analyze this message");
+            }
+
+            // Extract headers using plugin-specific logic (simplified for now)
+            var headers = ExtractHeadersFromMessage(message, standard);
+            
+            return await DetectFromHeadersAsync(headers);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error detecting vendor from message");
+            return Result<VendorSignature>.Failure($"Vendor detection from message failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Gets all available vendor detection patterns for a given standard.
+    /// </summary>
+    public async Task<Result<IReadOnlyList<VendorDetectionPattern>>> GetPatternsForStandardAsync(string standard)
+    {
+        if (string.IsNullOrWhiteSpace(standard))
+            return Result<IReadOnlyList<VendorDetectionPattern>>.Failure("Standard cannot be empty");
+
+        try
+        {
+            var plugin = _pluginRegistry.GetPluginForStandard(standard.ToLowerInvariant());
+            if (plugin == null)
+            {
+                return Result<IReadOnlyList<VendorDetectionPattern>>.Failure($"No plugin registered for standard: {standard}");
+            }
+
+            // Get baseline patterns from the plugin
+            var patterns = GetBaselinePatterns(standard);
+            return Result<IReadOnlyList<VendorDetectionPattern>>.Success(patterns);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting patterns for standard {Standard}", standard);
+            return Result<IReadOnlyList<VendorDetectionPattern>>.Failure($"Failed to get patterns: {ex.Message}");
+        }
+    }
+
+    private string DetermineVendorName(string sendingApplication)
+    {
+        if (string.IsNullOrEmpty(sendingApplication))
+            return "Unknown";
+
+        var appLower = sendingApplication.ToLowerInvariant();
+        
+        // Common vendor patterns
+        if (appLower.Contains("epic")) return "Epic";
+        if (appLower.Contains("cerner") || appLower.Contains("millennium")) return "Cerner";
+        if (appLower.Contains("allscripts")) return "AllScripts";
+        if (appLower.Contains("meditech")) return "Meditech";
+        if (appLower.Contains("athena")) return "AthenaHealth";
+        if (appLower.Contains("nextgen")) return "NextGen";
+        
+        // If no pattern matches, use the application name itself
+        return sendingApplication.Split('|', '^', '~')[0];
+    }
+
+    private string ExtractVersion(string sendingApplication)
+    {
+        if (string.IsNullOrEmpty(sendingApplication))
+            return "1.0";
+
+        // Look for version patterns like v2.5, 2.5.1, etc.
+        var versionMatch = System.Text.RegularExpressions.Regex.Match(sendingApplication, @"v?(\d+(?:\.\d+)*)");
+        return versionMatch.Success ? versionMatch.Groups[1].Value : "1.0";
+    }
+
+    private MessageHeaders ExtractHeadersFromMessage(string message, string standard)
+    {
+        // Simplified header extraction - in real implementation, use plugin-specific logic
+        var headers = new MessageHeaders
+        {
+            Standard = standard,
+            MessageType = "Unknown",
+            SendingApplication = "Unknown",
+            SendingFacility = "Unknown",
+            ReceivingApplication = "Unknown",
+            ReceivingFacility = "Unknown"
+        };
+
+        // For HL7, extract from MSH segment
+        if (standard.ToLowerInvariant().StartsWith("hl7") && message.StartsWith("MSH"))
+        {
+            var segments = message.Split('\r', '\n');
+            var mshSegment = segments.FirstOrDefault(s => s.StartsWith("MSH"));
+            if (!string.IsNullOrEmpty(mshSegment))
+            {
+                var fields = mshSegment.Split('|');
+                if (fields.Length > 8)
+                {
+                    headers = headers with
+                    {
+                        SendingApplication = fields[2],
+                        SendingFacility = fields[3],
+                        ReceivingApplication = fields[4],
+                        ReceivingFacility = fields[5],
+                        MessageType = fields.Length > 8 ? fields[8] : "Unknown"
+                    };
+                }
+            }
+        }
+
+        return headers;
+    }
+
+    private IReadOnlyList<VendorDetectionPattern> GetBaselinePatterns(string standard)
+    {
+        // FIXME: Load patterns from JSON configuration files in vendor/ directory
+        // Should match the VendorDetectionPattern schema with DetectionRules
+        // These patterns should be loaded from files like: vendor/epic.json, vendor/cerner.json, etc.
+        // For now, return empty list as patterns should come from plugins
+        return new List<VendorDetectionPattern>();
     }
 }

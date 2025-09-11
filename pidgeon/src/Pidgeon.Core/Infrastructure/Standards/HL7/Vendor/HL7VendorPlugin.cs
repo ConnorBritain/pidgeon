@@ -8,7 +8,7 @@ using Pidgeon.Core.Domain.Configuration.Entities;
 using Pidgeon.Core.Generation;
 using System.Text.RegularExpressions;
 
-namespace Pidgeon.Infrastructure.Standards.HL7.Vendor;
+namespace Pidgeon.Core.Infrastructure.Standards.HL7.Vendor;
 
 /// <summary>
 /// HL7-specific vendor pattern analysis and detection plugin.
@@ -103,7 +103,7 @@ internal class HL7VendorPlugin : IStandardVendorPlugin
                         {
                             MessageType = messageType,
                             Frequency = 0,
-                            ExampleMessages = new List<string>()
+                            Standard = Standard
                         };
                     }
                     messageTypes[messageType] = messageTypes[messageType] with { Frequency = messageTypes[messageType].Frequency + 1 };
@@ -135,13 +135,13 @@ internal class HL7VendorPlugin : IStandardVendorPlugin
                 MessageType: messageTypes.Keys.FirstOrDefault() ?? "Unknown"
             );
 
-            // Create field patterns
+            // Create field patterns using actual structure
             var fieldPatternsEntity = new FieldPatterns
             {
-                MSH = CreateFieldFrequencyMap(fieldPatterns, "MSH"),
-                PID = CreateFieldFrequencyMap(fieldPatterns, "PID"),
-                PV1 = CreateFieldFrequencyMap(fieldPatterns, "PV1"),
-                MessageTypes = messageTypes.Keys.ToHashSet()
+                Standard = Standard,
+                MessageType = messageTypes.Keys.FirstOrDefault() ?? "Unknown",
+                SegmentPatterns = CreateSegmentPatterns(fieldPatterns),
+                Confidence = confidence
             };
 
             var vendorConfig = VendorConfiguration.Create(
@@ -194,17 +194,17 @@ internal class HL7VendorPlugin : IStandardVendorPlugin
             }
 
             // Compare application names (30% weight)
-            if (string.Equals(messageSignature.ApplicationName, configSignature.ApplicationName, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(messageSignature.SendingApplication, configSignature.SendingApplication, StringComparison.OrdinalIgnoreCase))
             {
                 confidence += 0.3;
             }
 
             // Compare facility patterns (20% weight)
-            if (!string.IsNullOrEmpty(messageSignature.FacilityName) && 
-                !string.IsNullOrEmpty(configSignature.FacilityName))
+            if (!string.IsNullOrEmpty(messageSignature.SendingFacility) && 
+                !string.IsNullOrEmpty(configSignature.SendingFacility))
             {
-                if (messageSignature.FacilityName.Contains(configSignature.FacilityName, StringComparison.OrdinalIgnoreCase) ||
-                    configSignature.FacilityName.Contains(messageSignature.FacilityName, StringComparison.OrdinalIgnoreCase))
+                if (messageSignature.SendingFacility.Contains(configSignature.SendingFacility, StringComparison.OrdinalIgnoreCase) ||
+                    configSignature.SendingFacility.Contains(messageSignature.SendingFacility, StringComparison.OrdinalIgnoreCase))
                 {
                     confidence += 0.2;
                 }
@@ -298,14 +298,9 @@ internal class HL7VendorPlugin : IStandardVendorPlugin
         }
 
         var isValid = !issues.Any();
-        var result = new ConfigurationValidationResult
-        {
-            IsValid = isValid,
-            ErrorMessages = issues,
-            WarningMessages = new List<string>(),
-            Standard = Standard,
-            ValidationDate = DateTime.UtcNow
-        };
+        var result = isValid 
+            ? ConfigurationValidationResult.Success(0.95)
+            : ConfigurationValidationResult.Failure(issues);
 
         return await Task.FromResult(Result<ConfigurationValidationResult>.Success(result));
     }
@@ -315,11 +310,15 @@ internal class HL7VendorPlugin : IStandardVendorPlugin
     {
         try
         {
+            // FIXME: Replace hardcoded configurations with JSON file loading
+            // Should load from vendor/ directory: vendor/hl7/epic.json, vendor/hl7/cerner.json, etc.
+            // Each JSON file should match VendorDetectionPattern schema with DetectionRules
+            // This allows runtime configuration updates without code changes
             var configurations = new List<VendorConfiguration>
             {
-                CreateEpicConfiguration(),
-                CreateCernerConfiguration(),
-                CreateAllScriptsConfiguration()
+                CreateEpicConfiguration(),     // FIXME: Load from vendor/hl7/epic.json
+                CreateCernerConfiguration(),   // FIXME: Load from vendor/hl7/cerner.json  
+                CreateAllScriptsConfiguration() // FIXME: Load from vendor/hl7/allscripts.json
             };
 
             return await Task.FromResult(Result<IReadOnlyList<VendorConfiguration>>.Success(configurations));
@@ -349,8 +348,8 @@ internal class HL7VendorPlugin : IStandardVendorPlugin
             var signature = new VendorSignature
             {
                 Name = vendorName,
-                ApplicationName = application,
-                FacilityName = facility,
+                SendingApplication = application,
+                SendingFacility = facility,
                 Version = version,
                 Confidence = CalculateSignatureConfidence(application, facility)
             };
@@ -448,7 +447,11 @@ internal class HL7VendorPlugin : IStandardVendorPlugin
             .Where(kvp => kvp.Key.StartsWith($"{segmentType}."))
             .ToDictionary(
                 kvp => int.Parse(kvp.Key.Split('.')[1]),
-                kvp => new FieldFrequency { Count = kvp.Value, Percentage = 1.0 } // TODO: Calculate actual percentage
+                kvp => new FieldFrequency 
+                { 
+                    FieldName = kvp.Key,
+                    FieldIndex = int.Parse(kvp.Key.Split('.')[1])
+                }
             );
 
         return segmentFields;
@@ -466,9 +469,9 @@ internal class HL7VendorPlugin : IStandardVendorPlugin
             {
                 reasons.Add($"Vendor name match: {sig.Name}");
             }
-            if (string.Equals(sig.ApplicationName, vendor.Signature.ApplicationName, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(sig.SendingApplication, vendor.Signature.SendingApplication, StringComparison.OrdinalIgnoreCase))
             {
-                reasons.Add($"Application name match: {sig.ApplicationName}");
+                reasons.Add($"Application name match: {sig.SendingApplication}");
             }
         }
 
@@ -488,20 +491,31 @@ internal class HL7VendorPlugin : IStandardVendorPlugin
         var signature = new VendorSignature
         {
             Name = "Epic",
-            ApplicationName = "EPIC",
-            FacilityName = "EPIC_PROD",
+            SendingApplication = "EPIC",
+            SendingFacility = "EPIC_PROD",
             Version = "2.3",
             Confidence = 0.9
         };
 
+        var mshSegment = new SegmentPattern
+        {
+            SegmentId = "MSH",
+            SegmentType = "MSH",
+            Fields = new Dictionary<int, FieldFrequency>
+            {
+                [3] = new FieldFrequency { FieldName = "MSH.3", FieldIndex = 3 },
+                [4] = new FieldFrequency { FieldName = "MSH.4", FieldIndex = 4 }
+            }
+        };
+
         var fieldPatterns = new FieldPatterns
         {
-            MSH = new Dictionary<int, FieldFrequency>
+            Standard = Standard,
+            MessageType = "ADT^A01",
+            SegmentPatterns = new Dictionary<string, SegmentPattern>
             {
-                [3] = new FieldFrequency { Count = 100, Percentage = 1.0 },
-                [4] = new FieldFrequency { Count = 100, Percentage = 1.0 }
-            },
-            MessageTypes = new HashSet<string> { "ADT^A01", "ADT^A08", "ORM^O01" }
+                ["MSH"] = mshSegment
+            }
         };
 
         return VendorConfiguration.Create(address, signature, fieldPatterns, new Dictionary<string, MessagePattern>(), 0.9, 100);
@@ -513,20 +527,31 @@ internal class HL7VendorPlugin : IStandardVendorPlugin
         var signature = new VendorSignature
         {
             Name = "Cerner",
-            ApplicationName = "CERNER",
-            FacilityName = "MILLENNIUM",
+            SendingApplication = "CERNER",
+            SendingFacility = "MILLENNIUM",
             Version = "2.5",
             Confidence = 0.9
         };
 
+        var mshSegment = new SegmentPattern
+        {
+            SegmentId = "MSH",
+            SegmentType = "MSH",
+            Fields = new Dictionary<int, FieldFrequency>
+            {
+                [3] = new FieldFrequency { FieldName = "MSH.3", FieldIndex = 3 },
+                [4] = new FieldFrequency { FieldName = "MSH.4", FieldIndex = 4 }
+            }
+        };
+
         var fieldPatterns = new FieldPatterns
         {
-            MSH = new Dictionary<int, FieldFrequency>
+            Standard = Standard,
+            MessageType = "ADT^A01",
+            SegmentPatterns = new Dictionary<string, SegmentPattern>
             {
-                [3] = new FieldFrequency { Count = 100, Percentage = 1.0 },
-                [4] = new FieldFrequency { Count = 100, Percentage = 1.0 }
-            },
-            MessageTypes = new HashSet<string> { "ADT^A01", "ADT^A08", "ORU^R01" }
+                ["MSH"] = mshSegment
+            }
         };
 
         return VendorConfiguration.Create(address, signature, fieldPatterns, new Dictionary<string, MessagePattern>(), 0.9, 100);
@@ -538,23 +563,76 @@ internal class HL7VendorPlugin : IStandardVendorPlugin
         var signature = new VendorSignature
         {
             Name = "AllScripts",
-            ApplicationName = "ALLSCRIPTS",
-            FacilityName = "SUNRISE",
+            SendingApplication = "ALLSCRIPTS",
+            SendingFacility = "SUNRISE",
             Version = "2.4",
             Confidence = 0.85
         };
 
+        var mshSegment = new SegmentPattern
+        {
+            SegmentId = "MSH",
+            SegmentType = "MSH",
+            Fields = new Dictionary<int, FieldFrequency>
+            {
+                [3] = new FieldFrequency { FieldName = "MSH.3", FieldIndex = 3 },
+                [4] = new FieldFrequency { FieldName = "MSH.4", FieldIndex = 4 }
+            }
+        };
+
         var fieldPatterns = new FieldPatterns
         {
-            MSH = new Dictionary<int, FieldFrequency>
+            Standard = Standard,
+            MessageType = "ADT^A01",
+            SegmentPatterns = new Dictionary<string, SegmentPattern>
             {
-                [3] = new FieldFrequency { Count = 100, Percentage = 1.0 },
-                [4] = new FieldFrequency { Count = 100, Percentage = 1.0 }
-            },
-            MessageTypes = new HashSet<string> { "ADT^A01", "ORM^O01", "ORU^R01" }
+                ["MSH"] = mshSegment
+            }
         };
 
         return VendorConfiguration.Create(address, signature, fieldPatterns, new Dictionary<string, MessagePattern>(), 0.85, 100);
+    }
+
+    private Dictionary<string, SegmentPattern> CreateSegmentPatterns(Dictionary<string, int> fieldPatterns)
+    {
+        var segmentPatterns = new Dictionary<string, SegmentPattern>();
+        
+        // Group field patterns by segment
+        var segmentGroups = fieldPatterns
+            .Where(kvp => kvp.Key.Contains('.'))
+            .GroupBy(kvp => kvp.Key.Split('.')[0])
+            .ToList();
+        
+        foreach (var group in segmentGroups)
+        {
+            var segmentId = group.Key;
+            var fieldFrequencies = new Dictionary<int, FieldFrequency>();
+            
+            foreach (var field in group)
+            {
+                var fieldNumStr = field.Key.Split('.').Length > 1 ? field.Key.Split('.')[1] : "0";
+                if (int.TryParse(fieldNumStr, out var fieldNum))
+                {
+                    fieldFrequencies[fieldNum] = new FieldFrequency
+                    {
+                        FieldName = $"{segmentId}.{fieldNum}",
+                        FieldIndex = fieldNum
+                    };
+                }
+            }
+            
+            if (fieldFrequencies.Any())
+            {
+                segmentPatterns[segmentId] = new SegmentPattern
+                {
+                    SegmentId = segmentId,
+                    SegmentType = segmentId,
+                    Fields = fieldFrequencies
+                };
+            }
+        }
+        
+        return segmentPatterns;
     }
 
     #endregion

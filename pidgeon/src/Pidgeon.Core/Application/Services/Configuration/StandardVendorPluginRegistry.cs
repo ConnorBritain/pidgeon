@@ -4,221 +4,117 @@
 
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Configuration;
-using System.Collections.Concurrent;
 
 namespace Pidgeon.Core.Application.Services.Configuration;
 
 /// <summary>
 /// Registry for managing standard-specific vendor plugins.
-/// Provides unified access to vendor intelligence across HL7, FHIR, NCPDP, and other standards.
-/// Thread-safe implementation supporting dynamic plugin registration.
+/// Provides unified access to vendor intelligence across all healthcare standards.
 /// </summary>
 internal class StandardVendorPluginRegistry : IStandardVendorPluginRegistry
 {
-    private readonly ConcurrentDictionary<string, IStandardVendorPlugin> _pluginsByStandard = new();
-    private readonly ConcurrentBag<IStandardVendorPlugin> _allPlugins = new();
+    private readonly List<IStandardVendorPlugin> _plugins;
     private readonly ILogger<StandardVendorPluginRegistry> _logger;
 
-    public StandardVendorPluginRegistry(ILogger<StandardVendorPluginRegistry> logger)
+    public StandardVendorPluginRegistry(
+        IEnumerable<IStandardVendorPlugin> plugins,
+        ILogger<StandardVendorPluginRegistry> logger)
     {
+        _plugins = plugins.ToList();
         _logger = logger;
+        
+        _logger.LogInformation("Initialized StandardVendorPluginRegistry with {PluginCount} plugins", _plugins.Count);
     }
 
-    /// <inheritdoc />
     public void RegisterPlugin(IStandardVendorPlugin plugin)
     {
         if (plugin == null)
             throw new ArgumentNullException(nameof(plugin));
 
-        if (string.IsNullOrWhiteSpace(plugin.Standard))
-            throw new ArgumentException("Plugin must specify a standard", nameof(plugin));
-
-        var standard = plugin.Standard.ToUpperInvariant();
-        
-        if (_pluginsByStandard.TryAdd(standard, plugin))
+        if (!_plugins.Contains(plugin))
         {
-            _allPlugins.Add(plugin);
-            _logger.LogInformation("Registered vendor plugin for standard {Standard}: {DisplayName} (Priority: {Priority})", 
-                plugin.Standard, plugin.DisplayName, plugin.Priority);
-        }
-        else
-        {
-            _logger.LogWarning("Plugin for standard {Standard} already registered, skipping duplicate", plugin.Standard);
+            _plugins.Add(plugin);
+            _logger.LogDebug("Registered vendor plugin for standard: {Standard}", plugin.Standard);
         }
     }
 
-    /// <inheritdoc />
     public IReadOnlyList<IStandardVendorPlugin> GetAllPlugins()
     {
-        return _allPlugins.ToList();
+        return _plugins.AsReadOnly();
     }
 
-    /// <inheritdoc />
     public IReadOnlyList<IStandardVendorPlugin> GetPluginsForMessage(string messageContent)
     {
         if (string.IsNullOrWhiteSpace(messageContent))
-            return Array.Empty<IStandardVendorPlugin>();
+            return new List<IStandardVendorPlugin>();
 
-        var compatiblePlugins = new List<IStandardVendorPlugin>();
+        var compatiblePlugins = new List<(IStandardVendorPlugin Plugin, int Priority)>();
 
-        foreach (var plugin in _allPlugins)
+        foreach (var plugin in _plugins)
         {
-            try
+            if (plugin.CanAnalyze(messageContent))
             {
-                if (plugin.CanAnalyze(messageContent))
-                {
-                    compatiblePlugins.Add(plugin);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Error checking if plugin {Standard} can analyze message", plugin.Standard);
+                // Assign priority based on standard (HL7 gets higher priority for pipe-delimited messages)
+                var priority = GetStandardPriority(plugin.Standard, messageContent);
+                compatiblePlugins.Add((plugin, priority));
             }
         }
 
-        // Order by priority (highest first), then by standard name for deterministic ordering
-        var orderedPlugins = compatiblePlugins
+        return compatiblePlugins
             .OrderByDescending(p => p.Priority)
-            .ThenBy(p => p.Standard)
+            .Select(p => p.Plugin)
             .ToList();
-
-        _logger.LogDebug("Found {PluginCount} compatible plugins for message: {Standards}", 
-            orderedPlugins.Count, string.Join(", ", orderedPlugins.Select(p => p.Standard)));
-
-        return orderedPlugins;
     }
 
-    /// <inheritdoc />
     public IStandardVendorPlugin? GetPluginForStandard(string standard)
     {
         if (string.IsNullOrWhiteSpace(standard))
             return null;
 
-        var standardKey = standard.ToUpperInvariant();
-        
-        // Direct match first
-        if (_pluginsByStandard.TryGetValue(standardKey, out var plugin))
-        {
-            return plugin;
-        }
-
-        // Try partial matching for version-specific standards
-        // e.g., "HL7" should match "HL7V23", "HL7V25", etc.
-        foreach (var (key, candidate) in _pluginsByStandard)
-        {
-            if (key.StartsWith(standardKey, StringComparison.OrdinalIgnoreCase) ||
-                standardKey.StartsWith(key, StringComparison.OrdinalIgnoreCase))
-            {
-                _logger.LogDebug("Found partial match for standard '{Standard}': {ActualStandard}", 
-                    standard, candidate.Standard);
-                return candidate;
-            }
-        }
-
-        _logger.LogDebug("No plugin found for standard '{Standard}'", standard);
-        return null;
+        var standardLower = standard.ToLowerInvariant();
+        return _plugins.FirstOrDefault(p => p.Standard.ToLowerInvariant() == standardLower);
     }
 
-    /// <inheritdoc />
     public IReadOnlyList<IStandardVendorPlugin> GetPluginsForStandardFamily(string standardFamily)
     {
         if (string.IsNullOrWhiteSpace(standardFamily))
-            return Array.Empty<IStandardVendorPlugin>();
+            return new List<IStandardVendorPlugin>();
 
-        var familyKey = standardFamily.ToUpperInvariant();
-        var familyPlugins = new List<IStandardVendorPlugin>();
+        var familyLower = standardFamily.ToLowerInvariant();
+        return _plugins
+            .Where(p => p.Standard.ToLowerInvariant().StartsWith(familyLower))
+            .ToList();
+    }
 
-        foreach (var plugin in _allPlugins)
+    private int GetStandardPriority(string standard, string messageContent)
+    {
+        var standardLower = standard.ToLowerInvariant();
+
+        // HL7 messages typically start with MSH and use pipe delimiters
+        if (messageContent.StartsWith("MSH") && messageContent.Contains('|'))
         {
-            var pluginStandard = plugin.Standard.ToUpperInvariant();
+            if (standardLower.StartsWith("hl7"))
+                return 100;
             
-            // Check if plugin standard starts with family name
-            // e.g., "HL7" family matches "HL7V23", "HL7V25", etc.
-            if (pluginStandard.StartsWith(familyKey, StringComparison.OrdinalIgnoreCase))
-            {
-                familyPlugins.Add(plugin);
-            }
+            return 10; // Lower priority for non-HL7 plugins analyzing HL7-like content
         }
 
-        // Order by priority within family
-        var orderedPlugins = familyPlugins
-            .OrderByDescending(p => p.Priority)
-            .ThenBy(p => p.Standard)
-            .ToList();
-
-        _logger.LogDebug("Found {PluginCount} plugins for standard family '{Family}': {Standards}", 
-            orderedPlugins.Count, standardFamily, string.Join(", ", orderedPlugins.Select(p => p.Standard)));
-
-        return orderedPlugins;
-    }
-
-    /// <summary>
-    /// Gets comprehensive statistics about registered plugins.
-    /// Useful for diagnostics and system health monitoring.
-    /// </summary>
-    public PluginRegistryStats GetStatistics()
-    {
-        var pluginsByFamily = _allPlugins
-            .GroupBy(p => GetStandardFamily(p.Standard))
-            .ToDictionary(g => g.Key, g => g.Count());
-
-        return new PluginRegistryStats
+        // FHIR messages are typically JSON
+        if (messageContent.TrimStart().StartsWith("{") || messageContent.TrimStart().StartsWith("["))
         {
-            TotalPlugins = _allPlugins.Count,
-            RegisteredStandards = _pluginsByStandard.Keys.ToList(),
-            PluginsByFamily = pluginsByFamily,
-            AveragePriority = _allPlugins.Any() ? _allPlugins.Average(p => p.Priority) : 0.0
-        };
-    }
+            if (standardLower.StartsWith("fhir"))
+                return 100;
+                
+            return 10; // Lower priority for non-FHIR plugins analyzing JSON
+        }
 
-    private static string GetStandardFamily(string standard)
-    {
-        if (standard.StartsWith("HL7", StringComparison.OrdinalIgnoreCase))
-            return "HL7";
-        if (standard.StartsWith("FHIR", StringComparison.OrdinalIgnoreCase))
-            return "FHIR";
-        if (standard.StartsWith("NCPDP", StringComparison.OrdinalIgnoreCase))
-            return "NCPDP";
-        if (standard.StartsWith("DICOM", StringComparison.OrdinalIgnoreCase))
-            return "DICOM";
-        if (standard.StartsWith("CDA", StringComparison.OrdinalIgnoreCase))
-            return "CDA";
-        
-        return "Other";
-    }
-}
+        // NCPDP messages have specific format patterns
+        if (standardLower.StartsWith("ncpdp"))
+        {
+            return 50; // Medium priority for NCPDP
+        }
 
-/// <summary>
-/// Statistics about the plugin registry for monitoring and diagnostics.
-/// </summary>
-public record PluginRegistryStats
-{
-    /// <summary>
-    /// Total number of registered plugins.
-    /// </summary>
-    public required int TotalPlugins { get; init; }
-
-    /// <summary>
-    /// List of all registered standard names.
-    /// </summary>
-    public required IReadOnlyList<string> RegisteredStandards { get; init; }
-
-    /// <summary>
-    /// Count of plugins by standard family (HL7, FHIR, NCPDP, etc.).
-    /// </summary>
-    public required IReadOnlyDictionary<string, int> PluginsByFamily { get; init; }
-
-    /// <summary>
-    /// Average priority across all plugins.
-    /// </summary>
-    public required double AveragePriority { get; init; }
-
-    /// <summary>
-    /// Gets a summary string for logging and diagnostics.
-    /// </summary>
-    public string GetSummary()
-    {
-        var families = string.Join(", ", PluginsByFamily.Select(kvp => $"{kvp.Key}:{kvp.Value}"));
-        return $"{TotalPlugins} plugins registered - Families: {families} - Avg Priority: {AveragePriority:F1}";
+        // Default priority
+        return 1;
     }
 }

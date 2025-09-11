@@ -27,6 +27,13 @@ public static class ServiceCollectionExtensions
         // Add standard plugin registry (singleton pattern)
         services.AddSingleton<IStandardPluginRegistry, StandardPluginRegistry>();
         
+        // Add vendor plugin registry for multi-standard detection
+        services.AddSingleton<Pidgeon.Core.Application.Interfaces.Configuration.IStandardVendorPluginRegistry, 
+                             Pidgeon.Core.Application.Services.Configuration.StandardVendorPluginRegistry>();
+        
+        // Register standard vendor plugins from Infrastructure assembly
+        services.AddStandardVendorPlugins();
+        
         // Add all core services using convention-based registration
         services.AddPidgeonCoreServices();
         

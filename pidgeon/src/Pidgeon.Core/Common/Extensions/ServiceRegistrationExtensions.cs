@@ -45,7 +45,7 @@ public static class ServiceRegistrationExtensions
     {
         var coreAssembly = Assembly.GetAssembly(typeof(ServiceRegistrationExtensions))!;
         
-        // Find all plugin types by convention
+        // Find all plugin types by convention in Core assembly
         var pluginTypes = coreAssembly.GetTypes()
             .Where(type => type.IsClass && 
                           !type.IsAbstract && 
@@ -53,6 +53,41 @@ public static class ServiceRegistrationExtensions
                           type.Namespace?.Contains("Standards") == true)
             .ToList();
 
+        // Register plugins from Core assembly
+        RegisterPluginTypes(services, pluginTypes);
+        
+        return services;
+    }
+
+    /// <summary>
+    /// Registers standard vendor plugins using convention-based discovery.
+    /// Extends plugin registration to include vendor-specific plugins from Infrastructure namespace.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddStandardVendorPlugins(this IServiceCollection services)
+    {
+        var coreAssembly = Assembly.GetAssembly(typeof(ServiceRegistrationExtensions))!;
+        
+        // Find vendor plugin types by convention in Core assembly Infrastructure namespace
+        var vendorPluginTypes = coreAssembly.GetTypes()
+            .Where(type => type.IsClass && 
+                          !type.IsAbstract && 
+                          type.Name.EndsWith("VendorPlugin") &&
+                          type.Namespace?.Contains("Infrastructure.Standards") == true)
+            .ToList();
+
+        // Register vendor plugins from Core assembly
+        RegisterPluginTypes(services, vendorPluginTypes);
+        
+        return services;
+    }
+
+    /// <summary>
+    /// Registers a collection of plugin types using the standard plugin registration pattern.
+    /// </summary>
+    private static void RegisterPluginTypes(IServiceCollection services, IEnumerable<Type> pluginTypes)
+    {
         foreach (var pluginType in pluginTypes)
         {
             // Register the concrete plugin
@@ -68,8 +103,6 @@ public static class ServiceRegistrationExtensions
                 services.AddScoped(interfaceType, provider => provider.GetRequiredService(pluginType));
             }
         }
-        
-        return services;
     }
 
     /// <summary>
