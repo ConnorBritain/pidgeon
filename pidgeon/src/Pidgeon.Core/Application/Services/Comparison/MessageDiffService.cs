@@ -1,0 +1,565 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+using Microsoft.Extensions.Logging;
+using Pidgeon.Core;
+using Pidgeon.Core.Application.Interfaces.Comparison;
+using Pidgeon.Core.Application.Interfaces;
+using Pidgeon.Core.Generation;
+using Pidgeon.Core.Domain.Comparison.Entities;
+
+namespace Pidgeon.Core.Application.Services.Comparison;
+
+/// <summary>
+/// Service for comparing healthcare messages using algorithmic field-level analysis.
+/// Designed to be enhanced with local AI models for deeper insights.
+/// </summary>
+public class MessageDiffService : IMessageDiffService
+{
+    private readonly ILogger<MessageDiffService> _logger;
+    private readonly IMessageValidationService _validationService;
+    private readonly IGenerationService _generationService;
+
+    public MessageDiffService(
+        ILogger<MessageDiffService> logger,
+        IMessageValidationService validationService,
+        IGenerationService generationService)
+    {
+        _logger = logger;
+        _validationService = validationService;
+        _generationService = generationService;
+    }
+
+    public async Task<Result<MessageDiff>> CompareMessagesAsync(
+        string leftMessage,
+        string rightMessage,
+        DiffContext context,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _logger.LogInformation("Starting message comparison: {LeftSource} vs {RightSource}", 
+                context.LeftSource.Identifier, context.RightSource.Identifier);
+
+            // Validate inputs
+            var validationResult = await ValidateComparisonAsync(leftMessage, rightMessage, context);
+            if (validationResult.IsFailure)
+            {
+                return Result<MessageDiff>.Failure($"Comparison validation failed: {validationResult.Error}");
+            }
+
+            // Detect message standards if not specified
+            var leftStandard = await DetectMessageStandardAsync(leftMessage);
+            var rightStandard = await DetectMessageStandardAsync(rightMessage);
+
+            if (leftStandard.IsFailure || rightStandard.IsFailure)
+            {
+                return Result<MessageDiff>.Failure("Could not detect message standards for comparison");
+            }
+
+            // Create diff result
+            var messageDiff = new MessageDiff
+            {
+                Context = context with
+                {
+                    LeftSource = context.LeftSource with { Standard = leftStandard.Value.Standard },
+                    RightSource = context.RightSource with { Standard = rightStandard.Value.Standard }
+                }
+            };
+
+            // Perform field-level comparison based on detected standard
+            var fieldDifferences = await CompareMessageFieldsAsync(leftMessage, rightMessage, leftStandard.Value.Standard);
+            if (fieldDifferences.IsFailure)
+            {
+                return Result<MessageDiff>.Failure($"Field comparison failed: {fieldDifferences.Error}");
+            }
+
+            // Calculate similarity score
+            var similarityScore = CalculateSimilarityScore(fieldDifferences.Value);
+
+            // Generate summary
+            var summary = GenerateDiffSummary(fieldDifferences.Value);
+
+            // Generate algorithmic insights
+            var insights = await GenerateAlgorithmicInsightsAsync(fieldDifferences.Value, context);
+
+            // Complete the diff result
+            messageDiff = messageDiff with
+            {
+                FieldDifferences = fieldDifferences.Value,
+                SimilarityScore = similarityScore,
+                Summary = summary,
+                Insights = insights
+            };
+
+            _logger.LogInformation("Message comparison completed: {DiffCount} differences found, {SimilarityScore:P} similarity", 
+                fieldDifferences.Value.Count, similarityScore);
+
+            return Result<MessageDiff>.Success(messageDiff);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during message comparison");
+            return Result<MessageDiff>.Failure($"Message comparison error: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<MessageDiff>> CompareMessageFilesAsync(
+        string leftFilePath,
+        string rightFilePath,
+        DiffContext context,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Read file contents
+            if (!File.Exists(leftFilePath))
+            {
+                return Result<MessageDiff>.Failure($"Left file not found: {leftFilePath}");
+            }
+
+            if (!File.Exists(rightFilePath))
+            {
+                return Result<MessageDiff>.Failure($"Right file not found: {rightFilePath}");
+            }
+
+            var leftContent = await File.ReadAllTextAsync(leftFilePath, cancellationToken);
+            var rightContent = await File.ReadAllTextAsync(rightFilePath, cancellationToken);
+
+            // Update context with file information
+            var fileContext = context with
+            {
+                LeftSource = context.LeftSource with
+                {
+                    Identifier = leftFilePath,
+                    SourceType = "file",
+                    Size = new FileInfo(leftFilePath).Length,
+                    LastModified = File.GetLastWriteTime(leftFilePath)
+                },
+                RightSource = context.RightSource with
+                {
+                    Identifier = rightFilePath,
+                    SourceType = "file",
+                    Size = new FileInfo(rightFilePath).Length,
+                    LastModified = File.GetLastWriteTime(rightFilePath)
+                }
+            };
+
+            return await CompareMessagesAsync(leftContent, rightContent, fileContext, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error comparing message files: {LeftFile} vs {RightFile}", leftFilePath, rightFilePath);
+            return Result<MessageDiff>.Failure($"File comparison error: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<IEnumerable<MessageDiff>>> CompareDirectoriesAsync(
+        string leftDirectory,
+        string rightDirectory,
+        DiffContext context,
+        CancellationToken cancellationToken = default)
+    {
+        // TODO: Implement directory comparison
+        // This will be a future enhancement for comparing multiple files
+        await Task.Yield();
+        return Result<IEnumerable<MessageDiff>>.Failure("Directory comparison not yet implemented");
+    }
+
+    public async Task<Result<bool>> ValidateComparisonAsync(
+        string leftMessage,
+        string rightMessage,
+        DiffContext context)
+    {
+        await Task.Yield();
+
+        if (string.IsNullOrWhiteSpace(leftMessage))
+        {
+            return Result<bool>.Failure("Left message is empty or null");
+        }
+
+        if (string.IsNullOrWhiteSpace(rightMessage))
+        {
+            return Result<bool>.Failure("Right message is empty or null");
+        }
+
+        // TODO: Add more sophisticated validation
+        // - Check if messages are in comparable formats
+        // - Validate against known standards
+        // - Check for minimum required fields
+
+        return Result<bool>.Success(true);
+    }
+
+    public async Task<Result<IEnumerable<string>>> GetSupportedStandardsAsync()
+    {
+        await Task.Yield();
+        
+        var supportedStandards = new List<string>
+        {
+            "HL7v2",
+            "FHIR",
+            "NCPDP"
+        };
+
+        return Result<IEnumerable<string>>.Success(supportedStandards);
+    }
+
+    public async Task<Result<(string Standard, string Version)>> DetectMessageStandardAsync(string messageContent)
+    {
+        await Task.Yield();
+
+        if (string.IsNullOrWhiteSpace(messageContent))
+        {
+            return Result<(string, string)>.Failure("Message content is empty");
+        }
+
+        // Basic standard detection logic
+        if (messageContent.StartsWith("MSH|"))
+        {
+            // HL7 v2.x detection
+            var mshSegment = messageContent.Split('\r', '\n')[0];
+            var fields = mshSegment.Split('|');
+            if (fields.Length > 12)
+            {
+                var version = fields[12]?.Trim() ?? "2.3";
+                return Result<(string, string)>.Success(("HL7v2", version));
+            }
+            return Result<(string, string)>.Success(("HL7v2", "2.3"));
+        }
+        
+        if (messageContent.TrimStart().StartsWith("{"))
+        {
+            // Likely FHIR JSON
+            if (messageContent.Contains("\"resourceType\""))
+            {
+                return Result<(string, string)>.Success(("FHIR", "R4"));
+            }
+        }
+
+        if (messageContent.Contains("NCPDP"))
+        {
+            return Result<(string, string)>.Success(("NCPDP", "SCRIPT"));
+        }
+
+        return Result<(string, string)>.Failure("Could not detect message standard");
+    }
+
+    private async Task<Result<List<FieldDifference>>> CompareMessageFieldsAsync(
+        string leftMessage, 
+        string rightMessage, 
+        string standard)
+    {
+        var differences = new List<FieldDifference>();
+
+        try
+        {
+            if (standard == "HL7v2")
+            {
+                differences.AddRange(await CompareHL7FieldsAsync(leftMessage, rightMessage));
+            }
+            else if (standard == "FHIR")
+            {
+                differences.AddRange(await CompareFHIRFieldsAsync(leftMessage, rightMessage));
+            }
+            else
+            {
+                // Generic comparison for unknown standards
+                differences.AddRange(await CompareGenericFieldsAsync(leftMessage, rightMessage));
+            }
+
+            return Result<List<FieldDifference>>.Success(differences);
+        }
+        catch (Exception ex)
+        {
+            return Result<List<FieldDifference>>.Failure($"Field comparison error: {ex.Message}");
+        }
+    }
+
+    private async Task<List<FieldDifference>> CompareHL7FieldsAsync(string leftMessage, string rightMessage)
+    {
+        await Task.Yield();
+        var differences = new List<FieldDifference>();
+
+        // Parse HL7 messages into segments
+        var leftSegments = ParseHL7Segments(leftMessage);
+        var rightSegments = ParseHL7Segments(rightMessage);
+
+        // Compare each segment type
+        var allSegmentTypes = leftSegments.Keys.Union(rightSegments.Keys).ToList();
+
+        foreach (var segmentType in allSegmentTypes)
+        {
+            var leftSegment = leftSegments.GetValueOrDefault(segmentType, new List<string>());
+            var rightSegment = rightSegments.GetValueOrDefault(segmentType, new List<string>());
+
+            differences.AddRange(CompareHL7Segment(segmentType, leftSegment, rightSegment));
+        }
+
+        return differences;
+    }
+
+    private Dictionary<string, List<string>> ParseHL7Segments(string message)
+    {
+        var segments = new Dictionary<string, List<string>>();
+        var lines = message.Split('\r', '\n', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var line in lines)
+        {
+            if (line.Length >= 3)
+            {
+                var segmentType = line.Substring(0, 3);
+                if (!segments.ContainsKey(segmentType))
+                {
+                    segments[segmentType] = new List<string>();
+                }
+                segments[segmentType].Add(line);
+            }
+        }
+
+        return segments;
+    }
+
+    private List<FieldDifference> CompareHL7Segment(string segmentType, List<string> leftSegments, List<string> rightSegments)
+    {
+        var differences = new List<FieldDifference>();
+
+        if (!leftSegments.Any() && rightSegments.Any())
+        {
+            differences.Add(new FieldDifference
+            {
+                FieldPath = segmentType,
+                FieldDescription = $"{segmentType} segment",
+                LeftValue = null,
+                RightValue = string.Join("|", rightSegments.First().Split('|').Take(5)) + "...",
+                DifferenceType = DifferenceType.MissingInLeft,
+                Severity = DifferenceSeverity.Warning,
+                Standard = "HL7v2"
+            });
+        }
+        else if (leftSegments.Any() && !rightSegments.Any())
+        {
+            differences.Add(new FieldDifference
+            {
+                FieldPath = segmentType,
+                FieldDescription = $"{segmentType} segment", 
+                LeftValue = string.Join("|", leftSegments.First().Split('|').Take(5)) + "...",
+                RightValue = null,
+                DifferenceType = DifferenceType.MissingInRight,
+                Severity = DifferenceSeverity.Warning,
+                Standard = "HL7v2"
+            });
+        }
+        else if (leftSegments.Any() && rightSegments.Any())
+        {
+            // Compare field by field for the first occurrence
+            var leftFields = leftSegments.First().Split('|');
+            var rightFields = rightSegments.First().Split('|');
+            var maxFields = Math.Max(leftFields.Length, rightFields.Length);
+
+            for (int i = 0; i < maxFields; i++)
+            {
+                var leftValue = i < leftFields.Length ? leftFields[i] : null;
+                var rightValue = i < rightFields.Length ? rightFields[i] : null;
+
+                if (leftValue != rightValue)
+                {
+                    differences.Add(new FieldDifference
+                    {
+                        FieldPath = $"{segmentType}.{i + 1}",
+                        FieldDescription = GetHL7FieldDescription(segmentType, i + 1),
+                        LeftValue = leftValue,
+                        RightValue = rightValue,
+                        DifferenceType = leftValue == null ? DifferenceType.MissingInLeft :
+                                       rightValue == null ? DifferenceType.MissingInRight :
+                                       DifferenceType.ValueDifference,
+                        Severity = GetHL7FieldSeverity(segmentType, i + 1),
+                        Standard = "HL7v2",
+                        IsRequired = IsHL7FieldRequired(segmentType, i + 1)
+                    });
+                }
+            }
+        }
+
+        return differences;
+    }
+
+    private async Task<List<FieldDifference>> CompareFHIRFieldsAsync(string leftMessage, string rightMessage)
+    {
+        await Task.Yield();
+        var differences = new List<FieldDifference>();
+
+        // TODO: Implement FHIR-specific field comparison
+        // This will parse JSON and compare FHIR resource fields
+        
+        differences.Add(new FieldDifference
+        {
+            FieldPath = "FHIR.comparison",
+            FieldDescription = "FHIR comparison placeholder",
+            LeftValue = "FHIR left",
+            RightValue = "FHIR right", 
+            DifferenceType = DifferenceType.ValueDifference,
+            Severity = DifferenceSeverity.Info,
+            Standard = "FHIR",
+            AnalysisContext = "FHIR comparison not yet fully implemented"
+        });
+
+        return differences;
+    }
+
+    private async Task<List<FieldDifference>> CompareGenericFieldsAsync(string leftMessage, string rightMessage)
+    {
+        await Task.Yield();
+        var differences = new List<FieldDifference>();
+
+        if (leftMessage != rightMessage)
+        {
+            differences.Add(new FieldDifference
+            {
+                FieldPath = "message.content",
+                FieldDescription = "Message content",
+                LeftValue = leftMessage.Length > 100 ? leftMessage.Substring(0, 100) + "..." : leftMessage,
+                RightValue = rightMessage.Length > 100 ? rightMessage.Substring(0, 100) + "..." : rightMessage,
+                DifferenceType = DifferenceType.ValueDifference,
+                Severity = DifferenceSeverity.Warning,
+                Standard = "Generic"
+            });
+        }
+
+        return differences;
+    }
+
+    private double CalculateSimilarityScore(List<FieldDifference> differences)
+    {
+        if (!differences.Any())
+        {
+            return 1.0; // Identical messages
+        }
+
+        // Simple similarity calculation - can be enhanced
+        // Weight differences by severity
+        var totalWeight = differences.Count * 1.0;
+        var penaltyWeight = differences.Sum(d => d.Severity switch
+        {
+            DifferenceSeverity.Critical => 1.0,
+            DifferenceSeverity.Warning => 0.7,
+            DifferenceSeverity.Info => 0.3,
+            _ => 0.5
+        });
+
+        return Math.Max(0.0, 1.0 - (penaltyWeight / Math.Max(totalWeight, 1.0)));
+    }
+
+    private DiffSummary GenerateDiffSummary(List<FieldDifference> differences)
+    {
+        return new DiffSummary
+        {
+            TotalDifferences = differences.Count,
+            CriticalDifferences = differences.Count(d => d.Severity == DifferenceSeverity.Critical),
+            WarningDifferences = differences.Count(d => d.Severity == DifferenceSeverity.Warning),
+            InformationalDifferences = differences.Count(d => d.Severity == DifferenceSeverity.Info),
+            FieldsOnlyInLeft = differences.Count(d => d.DifferenceType == DifferenceType.MissingInRight),
+            FieldsOnlyInRight = differences.Count(d => d.DifferenceType == DifferenceType.MissingInLeft),
+            FieldsWithDifferentValues = differences.Count(d => d.DifferenceType == DifferenceType.ValueDifference)
+        };
+    }
+
+    private async Task<List<AnalysisInsight>> GenerateAlgorithmicInsightsAsync(
+        List<FieldDifference> differences, 
+        DiffContext context)
+    {
+        await Task.Yield();
+        var insights = new List<AnalysisInsight>();
+
+        // Generate pattern-based insights
+        if (differences.Any(d => d.FieldPath.Contains("MSH.7")))
+        {
+            insights.Add(new AnalysisInsight
+            {
+                InsightType = InsightType.PatternRecognition,
+                Title = "Timestamp Difference Detected",
+                Description = "MSH.7 (Date/Time of Message) differs between messages. This is common and usually not problematic unless messages should be identical.",
+                RelatedFields = differences.Where(d => d.FieldPath.Contains("MSH.7")).Select(d => d.FieldPath).ToList(),
+                Confidence = 0.95,
+                Severity = InsightSeverity.Informational,
+                HealthcareCategory = HealthcareCategory.Administrative,
+                RecommendedAction = "Verify if timestamp differences are expected for this comparison",
+                AnalysisSource = new AnalysisSource
+                {
+                    SourceType = AnalysisSourceType.Algorithmic,
+                    EngineName = "Pidgeon Pattern Analysis",
+                    Version = "1.0",
+                    IsLocal = true
+                }
+            });
+        }
+
+        // Generate severity-based insights
+        var criticalDiffs = differences.Where(d => d.Severity == DifferenceSeverity.Critical).ToList();
+        if (criticalDiffs.Any())
+        {
+            insights.Add(new AnalysisInsight
+            {
+                InsightType = InsightType.RootCauseAnalysis,
+                Title = "Critical Field Differences Found",
+                Description = $"Found {criticalDiffs.Count} critical differences that may cause message processing failures.",
+                RelatedFields = criticalDiffs.Select(d => d.FieldPath).ToList(),
+                Confidence = 0.9,
+                Severity = InsightSeverity.High,
+                RecommendedAction = "Review and address critical field differences before deploying",
+                AnalysisSource = new AnalysisSource
+                {
+                    SourceType = AnalysisSourceType.Algorithmic,
+                    EngineName = "Pidgeon Severity Analysis",
+                    Version = "1.0",
+                    IsLocal = true
+                }
+            });
+        }
+
+        return insights;
+    }
+
+    private string GetHL7FieldDescription(string segmentType, int fieldNumber)
+    {
+        // TODO: Implement comprehensive HL7 field descriptions
+        return segmentType switch
+        {
+            "MSH" when fieldNumber == 7 => "Date/Time of Message",
+            "MSH" when fieldNumber == 9 => "Message Type",
+            "MSH" when fieldNumber == 10 => "Message Control ID",
+            "PID" when fieldNumber == 5 => "Patient Name",
+            "PID" when fieldNumber == 7 => "Date/Time of Birth",
+            "PV1" when fieldNumber == 2 => "Patient Class",
+            _ => $"{segmentType} Field {fieldNumber}"
+        };
+    }
+
+    private DifferenceSeverity GetHL7FieldSeverity(string segmentType, int fieldNumber)
+    {
+        // TODO: Implement field-specific severity rules
+        return (segmentType, fieldNumber) switch
+        {
+            ("MSH", 7) => DifferenceSeverity.Info, // Timestamp usually not critical
+            ("MSH", 9) => DifferenceSeverity.Critical, // Message type is critical
+            ("PID", 5) => DifferenceSeverity.Warning, // Patient name important but not always critical
+            _ => DifferenceSeverity.Warning
+        };
+    }
+
+    private bool IsHL7FieldRequired(string segmentType, int fieldNumber)
+    {
+        // TODO: Implement comprehensive HL7 required field rules
+        return (segmentType, fieldNumber) switch
+        {
+            ("MSH", 1) => true, // Field separator
+            ("MSH", 2) => true, // Encoding characters
+            ("MSH", 7) => true, // Date/time of message
+            ("MSH", 9) => true, // Message type
+            ("MSH", 10) => true, // Message control ID
+            ("PID", 1) => false, // Set ID is optional in most cases
+            _ => false
+        };
+    }
+}
