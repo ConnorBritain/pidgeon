@@ -3,9 +3,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
-using Pidgeon.Core.Application.Interfaces.Validation;
+using Pidgeon.Core.Application.Interfaces;
 using Pidgeon.Core.Application.Interfaces.Standards;
-using Pidgeon.Core.Application.Common;
+using Pidgeon.Core.Domain.Validation;
 using System.CommandLine;
 
 namespace Pidgeon.CLI.Commands;
@@ -15,11 +15,11 @@ namespace Pidgeon.CLI.Commands;
 /// </summary>
 public class ValidateCommand : CommandBuilderBase
 {
-    private readonly IValidationService _validationService;
+    private readonly IMessageValidationService _validationService;
 
     public ValidateCommand(
         ILogger<ValidateCommand> logger,
-        IValidationService validationService) 
+        IMessageValidationService validationService) 
         : base(logger)
     {
         _validationService = validationService;
@@ -53,7 +53,7 @@ public class ValidateCommand : CommandBuilderBase
             Console.WriteLine($"Validating {file} with {mode} mode...");
             
             var content = await File.ReadAllTextAsync(file!, cancellationToken);
-            var result = await _validationService.ValidateAsync(content, mode, standard);
+            var result = await _validationService.ValidateAsync(content, standard, mode);
             
             if (result.IsSuccess)
             {
@@ -61,21 +61,23 @@ public class ValidateCommand : CommandBuilderBase
                 if (validation.IsValid)
                 {
                     Console.WriteLine("Validation passed!");
-                    if (validation.Warnings.Any())
+                    var warnings = validation.Issues.Where(i => i.Severity == ValidationSeverity.Warning).ToList();
+                    if (warnings.Any())
                     {
-                        Console.WriteLine($"Warnings: {validation.Warnings.Count}");
-                        foreach (var warning in validation.Warnings)
+                        Console.WriteLine($"Warnings: {warnings.Count}");
+                        foreach (var warning in warnings)
                         {
-                            Console.WriteLine($"{warning.Code}: {warning.Message}");
+                            Console.WriteLine($"{warning.RuleId}: {warning.Message}");
                         }
                     }
                 }
                 else
                 {
-                    Console.Error.WriteLine($"Validation failed with {validation.Errors.Count} error(s):");
-                    foreach (var error in validation.Errors)
+                    var errors = validation.Issues.Where(i => i.Severity == ValidationSeverity.Error).ToList();
+                    Console.Error.WriteLine($"Validation failed with {errors.Count} error(s):");
+                    foreach (var error in errors)
                     {
-                        Console.Error.WriteLine($"  {error.Code}: {error.Message}");
+                        Console.Error.WriteLine($"  {error.RuleId}: {error.Message}");
                         if (!string.IsNullOrEmpty(error.Location))
                             Console.WriteLine($"    Location: {error.Location}");
                     }

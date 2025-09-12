@@ -23,8 +23,7 @@ namespace Pidgeon.Core.Application.Services.Workflow;
 internal class WorkflowExecutionService : IWorkflowExecutionService
 {
     private readonly IMessageGenerationService _generationService;
-    // FIXME: ValidationService interface architecture needs cleanup - multiple competing interfaces exist
-    private readonly IValidationService? _validationService;
+    private readonly IMessageValidationService _validationService;
     private readonly IDeIdentificationEngine _deIdentificationEngine;
     private readonly IMultiStandardVendorDetectionService _vendorDetectionService;
     private readonly ILogger<WorkflowExecutionService> _logger;
@@ -34,12 +33,13 @@ internal class WorkflowExecutionService : IWorkflowExecutionService
 
     public WorkflowExecutionService(
         IMessageGenerationService generationService,
+        IMessageValidationService validationService,
         IDeIdentificationEngine deIdentificationEngine,
         IMultiStandardVendorDetectionService vendorDetectionService,
         ILogger<WorkflowExecutionService> logger)
     {
         _generationService = generationService ?? throw new ArgumentNullException(nameof(generationService));
-        _validationService = null; // FIXME: Inject when validation service architecture is resolved
+        _validationService = validationService ?? throw new ArgumentNullException(nameof(validationService));
         _deIdentificationEngine = deIdentificationEngine ?? throw new ArgumentNullException(nameof(deIdentificationEngine));
         _vendorDetectionService = vendorDetectionService ?? throw new ArgumentNullException(nameof(vendorDetectionService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -271,51 +271,17 @@ internal class WorkflowExecutionService : IWorkflowExecutionService
         {
             var content = await File.ReadAllTextAsync(filePath, cancellationToken);
             
-            if (_validationService == null)
+            var standard = step.Parameters.GetValueOrDefault("standard", "hl7")?.ToString() ?? "hl7";
+            var mode = Enum.Parse<Core.Domain.Validation.ValidationMode>(
+                step.Parameters.GetValueOrDefault("mode", "Strict")?.ToString() ?? "Strict");
+            
+            var result = await _validationService.ValidateAsync(content, standard, mode);
+            if (result.IsFailure)
             {
-                // FIXME: Implement proper validation service integration
-                // Using placeholder validation result for now
-                var placeholderResult = new Core.Domain.Validation.ValidationResult
-                {
-                    IsValid = true,
-                    Standard = "HL7v2",
-                    Mode = Core.Domain.Validation.ValidationMode.Strict,
-                    Issues = new List<Core.Domain.Validation.ValidationIssue>(),
-                    Statistics = new Core.Domain.Validation.ValidationStatistics
-                    {
-                        TotalRulesChecked = 0,
-                        RulesPassed = 0,
-                        RulesFailed = 0,
-                        FieldsValidated = 0,
-                        ValidationTime = TimeSpan.Zero
-                    }
-                };
-                validationResults.Add(placeholderResult);
-                continue;
+                return Result<WorkflowStepResult>.Failure($"Validation failed for file {Path.GetFileName(filePath)}: {result.Error.Message}");
             }
             
-            // FIXME: Real validation service integration once interface architecture is cleaned up
-            // Extract validation parameters from step configuration
-            var standard = step.Parameters.GetValueOrDefault("standard", "HL7v2")?.ToString() ?? "HL7v2";
-            var mode = Core.Domain.Validation.ValidationMode.Strict;
-            
-            // Placeholder for now - would call actual validation service
-            var validationResult = new Core.Domain.Validation.ValidationResult
-            {
-                IsValid = true,
-                Standard = standard,
-                Mode = mode,
-                Issues = new List<Core.Domain.Validation.ValidationIssue>(),
-                Statistics = new Core.Domain.Validation.ValidationStatistics
-                {
-                    TotalRulesChecked = 1,
-                    RulesPassed = 1,
-                    RulesFailed = 0,
-                    FieldsValidated = 1,
-                    ValidationTime = TimeSpan.FromMilliseconds(10)
-                }
-            };
-            validationResults.Add(validationResult);
+            validationResults.Add(result.Value);
         }
         
         var overallSuccess = validationResults.All(r => r.IsValid);
