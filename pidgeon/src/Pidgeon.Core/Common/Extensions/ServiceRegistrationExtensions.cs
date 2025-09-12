@@ -32,6 +32,9 @@ public static class ServiceRegistrationExtensions
         // Register de-identification services
         services.AddDeIdentificationServices();
         
+        // Register AI services
+        services.AddAIServices();
+        
         return services;
     }
 
@@ -191,6 +194,43 @@ public static class ServiceRegistrationExtensions
         foreach (var helperType in helperTypes)
         {
             services.AddScoped(helperType);
+        }
+        
+        return services;
+    }
+
+    /// <summary>
+    /// Registers all AI services using convention-based discovery.
+    /// Scans for AI provider implementations and registers them automatically.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddAIServices(this IServiceCollection services)
+    {
+        var coreAssembly = Assembly.GetAssembly(typeof(ServiceRegistrationExtensions))!;
+        
+        // Find all AI service types by convention
+        var aiServiceTypes = coreAssembly.GetTypes()
+            .Where(type => type.IsClass && 
+                          !type.IsAbstract && 
+                          (type.Name.Contains("Model") || type.Name.Contains("AI") || type.Name.Contains("Intelligence")) &&
+                          type.Namespace?.Contains("Application.Services.Intelligence") == true)
+            .ToList();
+
+        foreach (var serviceType in aiServiceTypes)
+        {
+            // Register the concrete service
+            services.AddScoped(serviceType);
+            
+            // Register for all interfaces it implements
+            var interfaces = serviceType.GetInterfaces()
+                .Where(i => i.Namespace?.Contains("Application.Interfaces.Intelligence") == true)
+                .ToList();
+                
+            foreach (var interfaceType in interfaces)
+            {
+                services.AddScoped(interfaceType, provider => provider.GetRequiredService(serviceType));
+            }
         }
         
         return services;
