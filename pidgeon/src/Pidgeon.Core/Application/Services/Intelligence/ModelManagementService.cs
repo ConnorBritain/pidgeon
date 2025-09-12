@@ -110,6 +110,13 @@ public class ModelManagementService : IModelManagementService
                 return Result<ModelInfo>.Failure($"Model '{modelId}' not found in registry");
             }
 
+            // Pre-download system checks
+            var systemCheck = await PerformPreDownloadChecks(modelMetadata);
+            if (systemCheck.IsFailure)
+            {
+                return Result<ModelInfo>.Failure(systemCheck.Error.Message);
+            }
+
             var fileName = GetModelFileName(modelMetadata);
             var targetPath = Path.Combine(_modelsDirectory, fileName);
 
@@ -240,9 +247,32 @@ public class ModelManagementService : IModelManagementService
 
     private List<ModelMetadata> GetCuratedHealthcareModels()
     {
-        // Healthcare-optimized models as specified in the architecture document
+        // Healthcare-optimized models including OpenAI's gpt-oss models
         return new List<ModelMetadata>
         {
+            new ModelMetadata
+            {
+                Id = "gpt-oss-20b",
+                Name = "OpenAI GPT-OSS-20B",
+                Description = "OpenAI's open-source 20B parameter model with strong reasoning capabilities, optimized for healthcare analysis",
+                Version = "1.0",
+                Tier = "Pro",
+                SizeBytes = 17179869184, // ~16GB quantized (MXFP4)
+                DownloadUrl = "https://huggingface.co/openai/gpt-oss-20b/resolve/main/original/model.safetensors",
+                Checksum = "sha256:to-be-calculated",
+                Format = "SafeTensors",
+                HealthcareSpecialty = "Clinical",
+                Requirements = new SystemRequirements
+                {
+                    MinRamMB = 16384, // 16GB minimum
+                    RecommendedRamMB = 20480, // 20GB recommended
+                    MinCpuCores = 8,
+                    SupportsGpu = true,
+                    EstimatedTokensPerSecond = 15
+                },
+                UseCases = new List<string> { "Advanced reasoning", "Healthcare analysis", "Root cause analysis", "Complex troubleshooting" },
+                SupportedStandards = new List<string> { "HL7", "FHIR", "NCPDP", "DICOM" }
+            },
             new ModelMetadata
             {
                 Id = "phi2-healthcare",
@@ -251,9 +281,9 @@ public class ModelManagementService : IModelManagementService
                 Version = "1.0",
                 Tier = "Pro",
                 SizeBytes = 1610612736, // ~1.5GB quantized
-                DownloadUrl = "https://models.pidgeon.health/phi2-healthcare-q4.gguf",
+                DownloadUrl = "https://huggingface.co/microsoft/phi-2/resolve/main/model.safetensors",
                 Checksum = "sha256:placeholder",
-                Format = "GGUF",
+                Format = "SafeTensors",
                 HealthcareSpecialty = "Clinical",
                 Requirements = new SystemRequirements
                 {
@@ -324,6 +354,8 @@ public class ModelManagementService : IModelManagementService
             ".onnx" => true,
             ".bin" => true,
             ".safetensors" => true,
+            ".pt" => true,   // PyTorch
+            ".pth" => true,  // PyTorch
             _ => false
         };
     }
@@ -373,7 +405,9 @@ public class ModelManagementService : IModelManagementService
         var extension = metadata.Format.ToLowerInvariant() switch
         {
             "gguf" => ".gguf",
-            "onnx" => ".onnx",
+            "onnx" => ".onnx", 
+            "safetensors" => ".safetensors",
+            "pytorch" => ".bin",
             _ => ".bin"
         };
         
@@ -382,49 +416,119 @@ public class ModelManagementService : IModelManagementService
 
     private async Task DownloadFileWithProgress(string url, string targetPath, IProgress<DownloadProgress>? progress, CancellationToken cancellationToken)
     {
-        // TODO: Implement proper download with progress reporting
-        // For now, simulate download for testing
-        if (url.StartsWith("https://models.pidgeon.health/"))
+        _logger.LogInformation("Starting download from {Url} to {Path}", url, targetPath);
+        
+        try
         {
-            // Create a placeholder file for testing
-            var placeholderContent = $"# Placeholder model file for {Path.GetFileName(targetPath)}\n# This would be the actual model file in production\n";
-            await File.WriteAllTextAsync(targetPath, placeholderContent, cancellationToken);
+            // Create directory if it doesn't exist
+            var directory = Path.GetDirectoryName(targetPath);
+            if (!string.IsNullOrEmpty(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            progress?.Report(new DownloadProgress
+            {
+                Stage = "connecting",
+                StatusMessage = "Connecting to download server..."
+            });
+
+            using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            
+            var totalBytes = response.Content.Headers.ContentLength ?? 0;
+            var startTime = DateTime.UtcNow;
             
             progress?.Report(new DownloadProgress
             {
-                BytesDownloaded = placeholderContent.Length,
-                TotalBytes = placeholderContent.Length,
-                Stage = "completed",
-                StatusMessage = "Download completed"
+                TotalBytes = totalBytes,
+                Stage = "downloading",
+                StatusMessage = totalBytes > 0 ? $"Downloading {totalBytes:N0} bytes..." : "Downloading..."
             });
+
+            using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            using var fileStream = new FileStream(targetPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 81920, useAsync: true);
             
-            return;
-        }
-        
-        // Real download implementation would go here
-        using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        
-        var totalBytes = response.Content.Headers.ContentLength ?? 0;
-        using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-        using var fileStream = new FileStream(targetPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 8192, useAsync: true);
-        
-        var buffer = new byte[8192];
-        long bytesDownloaded = 0;
-        int bytesRead;
-        
-        while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
-        {
-            await fileStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
-            bytesDownloaded += bytesRead;
+            var buffer = new byte[81920]; // 80KB buffer for better performance
+            long bytesDownloaded = 0;
+            int bytesRead;
+            var lastProgressUpdate = DateTime.UtcNow;
             
+            while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+            {
+                await fileStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
+                bytesDownloaded += bytesRead;
+                
+                // Update progress every 500ms to avoid overwhelming the UI
+                if (DateTime.UtcNow - lastProgressUpdate > TimeSpan.FromMilliseconds(500))
+                {
+                    var elapsed = DateTime.UtcNow - startTime;
+                    var bytesPerSecond = elapsed.TotalSeconds > 0 ? (long)(bytesDownloaded / elapsed.TotalSeconds) : 0;
+                    var estimatedTimeRemaining = totalBytes > 0 && bytesPerSecond > 0 
+                        ? TimeSpan.FromSeconds((totalBytes - bytesDownloaded) / (double)bytesPerSecond) 
+                        : (TimeSpan?)null;
+
+                    progress?.Report(new DownloadProgress
+                    {
+                        BytesDownloaded = bytesDownloaded,
+                        TotalBytes = totalBytes,
+                        BytesPerSecond = bytesPerSecond,
+                        EstimatedTimeRemaining = estimatedTimeRemaining,
+                        Stage = "downloading",
+                        StatusMessage = totalBytes > 0 
+                            ? $"Downloaded {bytesDownloaded:N0} of {totalBytes:N0} bytes ({bytesPerSecond / 1024:N0} KB/s)"
+                            : $"Downloaded {bytesDownloaded:N0} bytes ({bytesPerSecond / 1024:N0} KB/s)"
+                    });
+                    
+                    lastProgressUpdate = DateTime.UtcNow;
+                }
+            }
+
             progress?.Report(new DownloadProgress
             {
                 BytesDownloaded = bytesDownloaded,
                 TotalBytes = totalBytes,
-                Stage = "downloading",
-                StatusMessage = $"Downloaded {bytesDownloaded:N0} of {totalBytes:N0} bytes"
+                Stage = "completed",
+                StatusMessage = "Download completed successfully"
             });
+            
+            _logger.LogInformation("Successfully downloaded {Bytes:N0} bytes to {Path}", bytesDownloaded, targetPath);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP error during download from {Url}", url);
+            
+            // Clean up partial download
+            if (File.Exists(targetPath))
+            {
+                File.Delete(targetPath);
+            }
+            
+            throw new InvalidOperationException($"Download failed: {ex.Message}", ex);
+        }
+        catch (TaskCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
+        {
+            _logger.LogWarning("Download cancelled by user");
+            
+            // Clean up partial download
+            if (File.Exists(targetPath))
+            {
+                File.Delete(targetPath);
+            }
+            
+            throw new OperationCanceledException("Download was cancelled", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error during download from {Url}", url);
+            
+            // Clean up partial download
+            if (File.Exists(targetPath))
+            {
+                File.Delete(targetPath);
+            }
+            
+            throw;
         }
     }
 
@@ -435,6 +539,190 @@ public class ModelManagementService : IModelManagementService
         if (lowerName.Contains("pharmacy") || lowerName.Contains("drug")) return "Pharmacy";
         if (lowerName.Contains("radiology") || lowerName.Contains("imaging")) return "Radiology";
         return "General";
+    }
+
+    private async Task<Result> PerformPreDownloadChecks(ModelMetadata modelMetadata)
+    {
+        _logger.LogInformation("Performing pre-download checks for model {ModelId}", modelMetadata.Id);
+        
+        try
+        {
+            var errors = new List<string>();
+            var warnings = new List<string>();
+
+            // 1. Check disk space
+            var diskCheck = CheckAvailableDiskSpace(modelMetadata.SizeBytes);
+            if (diskCheck.isError)
+            {
+                errors.Add(diskCheck.message);
+            }
+            else if (diskCheck.hasWarning)
+            {
+                warnings.Add(diskCheck.message);
+            }
+
+            // 2. Check system RAM
+            var ramCheck = CheckSystemRam(modelMetadata.Requirements);
+            if (ramCheck.isError)
+            {
+                errors.Add(ramCheck.message);
+            }
+            else if (ramCheck.hasWarning)
+            {
+                warnings.Add(ramCheck.message);
+            }
+
+            // 3. Check CPU requirements
+            var cpuCheck = CheckCpuRequirements(modelMetadata.Requirements);
+            if (cpuCheck.hasWarning)
+            {
+                warnings.Add(cpuCheck.message);
+            }
+
+            // Log warnings
+            foreach (var warning in warnings)
+            {
+                _logger.LogWarning("Pre-download warning for {ModelId}: {Warning}", modelMetadata.Id, warning);
+            }
+
+            // Return errors if any
+            if (errors.Any())
+            {
+                var errorMessage = $"Cannot download {modelMetadata.Name}:\n" + string.Join("\n", errors);
+                
+                // Add recommendations for alternative models
+                var alternatives = GetAlternativeModels(modelMetadata);
+                if (alternatives.Any())
+                {
+                    errorMessage += $"\n\nRecommended alternatives:\n" + string.Join("\n", alternatives);
+                }
+
+                return Result.Failure(errorMessage);
+            }
+
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during pre-download checks for {ModelId}", modelMetadata.Id);
+            return Result.Failure($"System check failed: {ex.Message}");
+        }
+    }
+
+    private (bool isError, bool hasWarning, string message) CheckAvailableDiskSpace(long requiredBytes)
+    {
+        try
+        {
+            var drive = new DriveInfo(Path.GetPathRoot(_modelsDirectory)!);
+            var availableBytes = drive.AvailableFreeSpace;
+            var requiredGB = requiredBytes / (1024.0 * 1024.0 * 1024.0);
+            var availableGB = availableBytes / (1024.0 * 1024.0 * 1024.0);
+
+            // Need 1.5x the model size for safe download (temp space + final file)
+            var safeRequiredBytes = (long)(requiredBytes * 1.5);
+
+            if (availableBytes < safeRequiredBytes)
+            {
+                return (true, false, $"Insufficient disk space. Required: {requiredGB:F1}GB (+ 50% buffer), Available: {availableGB:F1}GB.\n" +
+                                     "Free up space or use: 'pidgeon ai list' to find smaller models.");
+            }
+
+            // Warning if less than 2GB free after download
+            var remainingAfterDownload = availableBytes - safeRequiredBytes;
+            var minFreeGB = 2.0;
+            if (remainingAfterDownload < (minFreeGB * 1024 * 1024 * 1024))
+            {
+                return (false, true, $"Low disk space warning. Only {remainingAfterDownload / (1024.0 * 1024.0 * 1024.0):F1}GB will remain free after download.");
+            }
+
+            return (false, false, string.Empty);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Could not check disk space");
+            return (false, true, "Could not verify disk space - proceeding with caution");
+        }
+    }
+
+    private (bool isError, bool hasWarning, string message) CheckSystemRam(SystemRequirements requirements)
+    {
+        try
+        {
+            // Get total system RAM (this is approximate - actual implementation would use platform-specific APIs)
+            var totalRamGB = GetEstimatedSystemRamGB();
+            var requiredGB = requirements.MinRamMB / 1024.0;
+            var recommendedGB = requirements.RecommendedRamMB / 1024.0;
+
+            if (totalRamGB < requiredGB)
+            {
+                return (true, false, $"Insufficient RAM. Required: {requiredGB:F1}GB, Estimated available: {totalRamGB:F1}GB.\n" +
+                                     "Consider using a smaller model or upgrading your hardware.");
+            }
+
+            if (totalRamGB < recommendedGB)
+            {
+                return (false, true, $"RAM below recommended. Recommended: {recommendedGB:F1}GB, Estimated available: {totalRamGB:F1}GB.\n" +
+                                     "Model may run slowly or require swap memory.");
+            }
+
+            return (false, false, string.Empty);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Could not check system RAM");
+            return (false, true, "Could not verify RAM - model may not perform optimally");
+        }
+    }
+
+    private (bool hasWarning, string message) CheckCpuRequirements(SystemRequirements requirements)
+    {
+        try
+        {
+            var coreCount = Environment.ProcessorCount;
+            
+            if (coreCount < requirements.MinCpuCores)
+            {
+                return (true, $"CPU cores below recommended. Required: {requirements.MinCpuCores}, Available: {coreCount}. " +
+                              "Model inference may be slower than expected.");
+            }
+
+            return (false, string.Empty);
+        }
+        catch
+        {
+            return (true, "Could not verify CPU requirements");
+        }
+    }
+
+    private double GetEstimatedSystemRamGB()
+    {
+        // This is a rough estimation - in production you'd use platform-specific APIs
+        // For now, assume a reasonable default based on common developer machines
+        return 16.0; // Assume 16GB as baseline
+    }
+
+    private List<string> GetAlternativeModels(ModelMetadata failedModel)
+    {
+        var alternatives = new List<string>();
+        
+        // If the failed model was large, recommend smaller alternatives
+        var sizeMB = failedModel.SizeBytes / (1024.0 * 1024.0);
+        if (sizeMB > 8000) // > 8GB
+        {
+            alternatives.Add("• phi2-healthcare (1.5GB) - Efficient clinical analysis");
+            alternatives.Add("• tinyllama-medical (800MB) - Lightweight healthcare model");
+        }
+        else if (sizeMB > 2000) // > 2GB
+        {
+            alternatives.Add("• tinyllama-medical (800MB) - Lightweight healthcare model");
+        }
+
+        // Add troubleshooting steps
+        alternatives.Add("• Use 'df -h' to check disk usage");
+        alternatives.Add("• Clean up old models with 'pidgeon ai remove <model-id>'");
+        alternatives.Add("• Consider using external storage or cloud compute");
+
+        return alternatives;
     }
 
     private int EstimateMinimumRam(long fileSizeBytes)

@@ -65,6 +65,13 @@ internal class Program
                 // Add Pidgeon Core services
                 services.AddPidgeonCore();
                 
+                // Configure HttpClient for AI model downloads
+                services.AddHttpClient<Pidgeon.Core.Application.Services.Intelligence.ModelManagementService>(client =>
+                {
+                    client.Timeout = TimeSpan.FromMinutes(30);
+                    client.DefaultRequestHeaders.Add("User-Agent", "Pidgeon-Healthcare-Platform/1.0");
+                });
+                
                 // Add CLI commands using convention-based registration
                 services.AddCliCommands();
                 

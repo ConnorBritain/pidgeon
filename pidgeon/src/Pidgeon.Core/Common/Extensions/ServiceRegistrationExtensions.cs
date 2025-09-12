@@ -209,6 +209,7 @@ public static class ServiceRegistrationExtensions
     {
         var coreAssembly = Assembly.GetAssembly(typeof(ServiceRegistrationExtensions))!;
         
+        // Note: HttpClient configuration is handled in CLI layer
         // Find all AI service types by convention
         var aiServiceTypes = coreAssembly.GetTypes()
             .Where(type => type.IsClass && 
