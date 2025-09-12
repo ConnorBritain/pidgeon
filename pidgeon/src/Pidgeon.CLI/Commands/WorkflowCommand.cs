@@ -453,7 +453,10 @@ public class WorkflowCommand : CommandBuilderBase
                 Description = stepDescription,
                 StepType = stepType,
                 Order = stepOrder,
-                EstimatedDuration = TimeSpan.FromMinutes(5) // Default
+                EstimatedDuration = TimeSpan.FromMinutes(5), // Default
+                InputDependencies = stepOrder > 1 && steps.Any() 
+                    ? new List<string> { steps.Last().Id } 
+                    : new List<string>()
             };
 
             steps.Add(step);
