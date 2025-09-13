@@ -214,7 +214,7 @@ public static class ServiceRegistrationExtensions
         var aiServiceTypes = coreAssembly.GetTypes()
             .Where(type => type.IsClass && 
                           !type.IsAbstract && 
-                          (type.Name.Contains("Model") || type.Name.Contains("AI") || type.Name.Contains("Intelligence")) &&
+                          (type.Name.Contains("Model") || type.Name.Contains("AI") || type.Name.Contains("Intelligence") || type.Name.Contains("Provider")) &&
                           type.Namespace?.Contains("Application.Services.Intelligence") == true)
             .ToList();
 

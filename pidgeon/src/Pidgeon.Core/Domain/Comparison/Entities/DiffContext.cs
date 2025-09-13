@@ -73,6 +73,18 @@ public record DiffContext
     public ComparisonOptions AnalysisOptions { get; init; } = new();
     
     /// <summary>
+    /// Whether AI-enhanced analysis is enabled for this comparison.
+    /// </summary>
+    [JsonPropertyName("enableAIAnalysis")]
+    public bool EnableAIAnalysis { get; init; } = false;
+    
+    /// <summary>
+    /// Healthcare standards being compared (derived from first standard for compatibility).
+    /// </summary>
+    [JsonIgnore]
+    public string? Standard => Standards.FirstOrDefault();
+    
+    /// <summary>
     /// Additional context metadata.
     /// </summary>
     [JsonPropertyName("metadata")]
@@ -125,6 +137,18 @@ public record MessageSource
     /// </summary>
     [JsonPropertyName("contentHash")]
     public string ContentHash { get; init; } = string.Empty;
+    
+    /// <summary>
+    /// Message type (ADT^A01, Patient, NewRx, etc.).
+    /// </summary>
+    [JsonPropertyName("messageType")]
+    public string MessageType { get; init; } = string.Empty;
+    
+    /// <summary>
+    /// Vendor configuration used for this message source.
+    /// </summary>
+    [JsonPropertyName("vendorConfiguration")]
+    public object? VendorConfiguration { get; init; }
     
     /// <summary>
     /// Additional source metadata.

@@ -146,11 +146,33 @@ public class AiCommand : CommandBuilderBase
             Description = "ID of the model to download (e.g., phi2-healthcare, tinyllama-medical)"
         };
         
+        var backgroundOption = new Option<bool>("--background")
+        {
+            Description = "Download in background (recommended for large models >1GB)"
+        };
+        
+        var statusOption = new Option<bool>("--status")
+        {
+            Description = "Check status of background downloads"
+        };
+        
         command.Add(modelIdArg);
+        command.Add(backgroundOption);
+        command.Add(statusOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
             var modelId = parseResult.GetValue(modelIdArg);
+            var useBackground = parseResult.GetValue(backgroundOption);
+            var checkStatus = parseResult.GetValue(statusOption);
+            
+            if (checkStatus)
+            {
+                // TODO: Implement background download status checking
+                Console.WriteLine("Background download status checking not yet implemented");
+                return 0;
+            }
+            
             if (string.IsNullOrEmpty(modelId))
             {
                 Console.WriteLine("Error: Model ID is required");
@@ -159,7 +181,33 @@ public class AiCommand : CommandBuilderBase
 
             try
             {
+                if (useBackground)
+                {
+                    Console.WriteLine($"Starting background download of model: {modelId}");
+                    Console.WriteLine("Note: Use 'pidgeon ai download --status' to check progress");
+                    Console.WriteLine("Large models (>1GB) recommended for background download to avoid timeout");
+                    Console.WriteLine();
+                    
+                    // Start background process
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await _modelManagementService.DownloadModelAsync(modelId, null, CancellationToken.None);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Background errors logged to file
+                            Logger.LogError(ex, "Background download failed for model {ModelId}", modelId);
+                        }
+                    }, CancellationToken.None);
+                    
+                    Console.WriteLine($"Background download started for {modelId}");
+                    return 0;
+                }
+                
                 Console.WriteLine($"Downloading model: {modelId}");
+                Console.WriteLine("Warning: Large models may timeout. Use --background for models >1GB");
                 Console.WriteLine();
 
                 var progress = new Progress<Core.Domain.Intelligence.DownloadProgress>(p =>

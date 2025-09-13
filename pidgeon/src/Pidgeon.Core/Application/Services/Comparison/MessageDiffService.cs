@@ -6,28 +6,34 @@ using Microsoft.Extensions.Logging;
 using Pidgeon.Core;
 using Pidgeon.Core.Application.Interfaces.Comparison;
 using Pidgeon.Core.Application.Interfaces;
+using Pidgeon.Core.Application.Interfaces.Intelligence;
 using Pidgeon.Core.Generation;
 using Pidgeon.Core.Domain.Comparison.Entities;
+using Pidgeon.Core.Domain.Intelligence;
+using System.Text;
 
 namespace Pidgeon.Core.Application.Services.Comparison;
 
 /// <summary>
 /// Service for comparing healthcare messages using algorithmic field-level analysis.
-/// Designed to be enhanced with local AI models for deeper insights.
+/// Enhanced with local AI models for deeper insights when available.
 /// </summary>
 public class MessageDiffService : IMessageDiffService
 {
     private readonly ILogger<MessageDiffService> _logger;
     private readonly IMessageValidationService _validationService;
     private readonly IGenerationService _generationService;
+    private readonly IAIAnalysisProvider? _aiProvider;
 
     public MessageDiffService(
         ILogger<MessageDiffService> logger,
         IMessageValidationService validationService,
-        IGenerationService generationService)
+        IGenerationService generationService,
+        IAIAnalysisProvider? aiProvider = null)
     {
         _logger = logger;
         _validationService = validationService;
+        _aiProvider = aiProvider;
         _generationService = generationService;
     }
 
@@ -83,6 +89,35 @@ public class MessageDiffService : IMessageDiffService
 
             // Generate algorithmic insights
             var insights = await GenerateAlgorithmicInsightsAsync(fieldDifferences.Value, context);
+            
+            // Enhance with AI insights if provider is available and enabled
+            _logger.LogInformation("AI Analysis Check - EnableAIAnalysis: {EnableAI}, _aiProvider: {HasProvider}", 
+                context.EnableAIAnalysis, _aiProvider != null);
+                
+            if (context.EnableAIAnalysis && _aiProvider != null)
+            {
+                _logger.LogInformation("Attempting AI insight generation with provider {ProviderId}", _aiProvider.ProviderId);
+                
+                var aiInsights = await GenerateAIEnhancedInsightsAsync(
+                    leftMessage, 
+                    rightMessage, 
+                    fieldDifferences.Value, 
+                    context);
+                    
+                if (aiInsights.IsSuccess)
+                {
+                    insights.AddRange(aiInsights.Value);
+                    _logger.LogInformation("Added {Count} AI-generated insights", aiInsights.Value.Count);
+                }
+                else
+                {
+                    _logger.LogWarning("AI insight generation failed: {Error}", aiInsights.Error);
+                }
+            }
+            else if (context.EnableAIAnalysis && _aiProvider == null)
+            {
+                _logger.LogWarning("AI analysis requested but no AI provider available - check service registration");
+            }
 
             // Complete the diff result
             messageDiff = messageDiff with
@@ -465,6 +500,171 @@ public class MessageDiffService : IMessageDiffService
         };
     }
 
+    private async Task<Result<List<AnalysisInsight>>> GenerateAIEnhancedInsightsAsync(
+        string leftMessage,
+        string rightMessage,
+        List<FieldDifference> differences,
+        DiffContext context)
+    {
+        if (_aiProvider == null)
+        {
+            return Result<List<AnalysisInsight>>.Failure("AI provider not available");
+        }
+        
+        try
+        {
+            // Check if AI provider is available
+            var isAvailable = await _aiProvider.IsAvailableAsync();
+            if (!isAvailable)
+            {
+                return Result<List<AnalysisInsight>>.Failure("AI provider is not currently available");
+            }
+            
+            // If this is a local model provider, ensure model is loaded
+            if (_aiProvider is Core.Application.Interfaces.Intelligence.ILocalModelProvider localProvider)
+            {
+                var modelInfo = await localProvider.GetModelInfoAsync();
+                if (modelInfo.IsFailure)
+                {
+                    // Try to load the first available model
+                    var modelsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".pidgeon", "models");
+                    if (Directory.Exists(modelsPath))
+                    {
+                        var ggufFiles = Directory.GetFiles(modelsPath, "*.gguf");
+                        if (ggufFiles.Length > 0)
+                        {
+                            _logger.LogInformation("Auto-loading AI model: {ModelPath}", ggufFiles[0]);
+                            var loadResult = await localProvider.LoadModelAsync(ggufFiles[0]);
+                            if (loadResult.IsFailure)
+                            {
+                                return Result<List<AnalysisInsight>>.Failure($"Failed to load AI model: {loadResult.Error}");
+                            }
+                        }
+                        else
+                        {
+                            return Result<List<AnalysisInsight>>.Failure("No GGUF models found in ~/.pidgeon/models/");
+                        }
+                    }
+                    else
+                    {
+                        return Result<List<AnalysisInsight>>.Failure("Models directory not found: ~/.pidgeon/models/");
+                    }
+                }
+            }
+            
+            // Build comprehensive prompt for AI analysis
+            var promptBuilder = new StringBuilder();
+            promptBuilder.AppendLine("You are analyzing differences between two healthcare messages.");
+            promptBuilder.AppendLine($"Standard: {context.Standard ?? "Unknown"}");
+            promptBuilder.AppendLine($"Message Types: {context.LeftSource.MessageType} vs {context.RightSource.MessageType}");
+            promptBuilder.AppendLine();
+            promptBuilder.AppendLine("FIELD DIFFERENCES:");
+            
+            foreach (var diff in differences.Take(10)) // Limit to top 10 for token efficiency
+            {
+                promptBuilder.AppendLine($"- {diff.FieldPath}: '{diff.LeftValue}' → '{diff.RightValue}' [{diff.Severity}]");
+            }
+            
+            promptBuilder.AppendLine();
+            promptBuilder.AppendLine("TASK: Provide root cause analysis and recommendations for these differences.");
+            promptBuilder.AppendLine("Focus on: 1) Why these differences might occur, 2) Clinical/operational impact, 3) How to resolve");
+            
+            // Create AI analysis request
+            var analysisRequest = new AnalysisRequest
+            {
+                Prompt = promptBuilder.ToString(),
+                Context = "healthcare_diff_analysis",
+                MaxTokens = 500,
+                Temperature = 0.3,
+                Standard = context.Standard,
+                MessageType = context.LeftSource.MessageType,
+                Metadata = new Dictionary<string, object>
+                {
+                    ["difference_count"] = differences.Count,
+                    ["critical_count"] = differences.Count(d => d.Severity == DifferenceSeverity.Critical),
+                    ["vendor_left"] = context.LeftSource.VendorConfiguration?.ToString() ?? "Unknown",
+                    ["vendor_right"] = context.RightSource.VendorConfiguration?.ToString() ?? "Unknown"
+                }
+            };
+            
+            // Get AI analysis
+            var analysisResult = await _aiProvider.AnalyzeAsync(analysisRequest);
+            if (analysisResult.IsFailure)
+            {
+                return Result<List<AnalysisInsight>>.Failure($"AI analysis failed: {analysisResult.Error}");
+            }
+            
+            // Parse AI response into insights
+            var aiInsights = ParseAIResponseToInsights(analysisResult.Value, differences);
+            
+            _logger.LogInformation("Generated {Count} AI insights using provider {ProviderId}", 
+                aiInsights.Count, _aiProvider.ProviderId);
+            
+            return Result<List<AnalysisInsight>>.Success(aiInsights);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating AI-enhanced insights");
+            return Result<List<AnalysisInsight>>.Failure($"AI insight generation error: {ex.Message}");
+        }
+    }
+    
+    private List<AnalysisInsight> ParseAIResponseToInsights(AnalysisResult analysisResult, List<FieldDifference> differences)
+    {
+        var insights = new List<AnalysisInsight>();
+        
+        // Parse AI response into structured insights
+        var aiText = analysisResult.Response;
+        
+        // Create a comprehensive root cause insight from AI analysis
+        insights.Add(new AnalysisInsight
+        {
+            InsightType = InsightType.RootCauseAnalysis,
+            Title = "AI Root Cause Analysis",
+            Description = aiText,
+            RelatedFields = differences.Select(d => d.FieldPath).Take(5).ToList(),
+            Confidence = analysisResult.Confidence,
+            Severity = DetermineAISeverity(differences),
+            HealthcareCategory = HealthcareCategory.ClinicalData,
+            RecommendedAction = ExtractRecommendations(aiText),
+            AnalysisSource = new AnalysisSource
+            {
+                SourceType = AnalysisSourceType.LocalAI,
+                EngineName = analysisResult.ModelId ?? "Unknown Model",
+                Version = "1.0",
+                IsLocal = true,
+                ProcessingTime = analysisResult.ProcessingTime
+            }
+        });
+        
+        return insights;
+    }
+    
+    private InsightSeverity DetermineAISeverity(List<FieldDifference> differences)
+    {
+        if (differences.Any(d => d.Severity == DifferenceSeverity.Critical))
+            return InsightSeverity.High;
+        if (differences.Any(d => d.Severity == DifferenceSeverity.Warning))
+            return InsightSeverity.Medium;
+        return InsightSeverity.Low;
+    }
+    
+    private string ExtractRecommendations(string aiText)
+    {
+        // Simple extraction of recommendations from AI text
+        var lines = aiText.Split('\n');
+        var recommendations = lines
+            .Where(l => l.Contains("recommend", StringComparison.OrdinalIgnoreCase) ||
+                       l.Contains("should", StringComparison.OrdinalIgnoreCase) ||
+                       l.Contains("suggest", StringComparison.OrdinalIgnoreCase))
+            .Take(3)
+            .ToList();
+            
+        return recommendations.Any() 
+            ? string.Join("; ", recommendations) 
+            : "Review field differences and update vendor configuration as needed";
+    }
+    
     private async Task<List<AnalysisInsight>> GenerateAlgorithmicInsightsAsync(
         List<FieldDifference> differences, 
         DiffContext context)

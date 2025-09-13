@@ -247,9 +247,10 @@ public class ModelManagementService : IModelManagementService
 
     private List<ModelMetadata> GetCuratedHealthcareModels()
     {
-        // Healthcare-optimized models including OpenAI's gpt-oss models
+        // Healthcare-optimized FOSS models for different use cases and resource constraints
         return new List<ModelMetadata>
         {
+            // Large models for advanced analysis
             new ModelMetadata
             {
                 Id = "gpt-oss-20b",
@@ -257,66 +258,118 @@ public class ModelManagementService : IModelManagementService
                 Description = "OpenAI's open-source 20B parameter model with strong reasoning capabilities, optimized for healthcare analysis",
                 Version = "1.0",
                 Tier = "Pro",
-                SizeBytes = 17179869184, // ~16GB quantized (MXFP4)
-                DownloadUrl = "https://huggingface.co/openai/gpt-oss-20b/resolve/main/original/model.safetensors",
+                SizeBytes = 13761300984, // 13.7GB
+                DownloadUrl = "https://huggingface.co/openai/gpt-oss-20b/resolve/main/model.safetensors",
                 Checksum = "sha256:to-be-calculated",
                 Format = "SafeTensors",
                 HealthcareSpecialty = "Clinical",
                 Requirements = new SystemRequirements
                 {
                     MinRamMB = 16384, // 16GB minimum
-                    RecommendedRamMB = 20480, // 20GB recommended
+                    RecommendedRamMB = 20480, // 20GB recommended  
                     MinCpuCores = 8,
                     SupportsGpu = true,
                     EstimatedTokensPerSecond = 15
                 },
-                UseCases = new List<string> { "Advanced reasoning", "Healthcare analysis", "Root cause analysis", "Complex troubleshooting" },
+                UseCases = new List<string> { "Advanced reasoning", "Complex root cause analysis", "Multi-standard troubleshooting" },
                 SupportedStandards = new List<string> { "HL7", "FHIR", "NCPDP", "DICOM" }
             },
+            
+            // Medical-specific models
             new ModelMetadata
             {
-                Id = "phi2-healthcare",
-                Name = "Phi-2 Healthcare",
-                Description = "Microsoft's efficient 2.7B parameter model fine-tuned for healthcare terminology and patterns",
+                Id = "biomistral-7b",
+                Name = "BioMistral-7B",
+                Description = "Mistral-7B fine-tuned on PubMed Central for biomedical domain expertise",
                 Version = "1.0",
                 Tier = "Pro",
-                SizeBytes = 1610612736, // ~1.5GB quantized
-                DownloadUrl = "https://huggingface.co/microsoft/phi-2/resolve/main/model.safetensors",
-                Checksum = "sha256:placeholder",
+                SizeBytes = 4368709120, // ~4.1GB GGUF Q4_K_M
+                DownloadUrl = "https://huggingface.co/MaziyarPanahi/BioMistral-7B-GGUF/resolve/main/BioMistral-7B-GGUF.Q4_K_M.gguf",
+                Checksum = "sha256:to-be-calculated",
+                Format = "GGUF", 
+                HealthcareSpecialty = "Biomedical",
+                Requirements = new SystemRequirements
+                {
+                    MinRamMB = 6144, // 6GB minimum
+                    RecommendedRamMB = 8192, // 8GB recommended
+                    MinCpuCores = 4,
+                    SupportsGpu = true,
+                    EstimatedTokensPerSecond = 20
+                },
+                UseCases = new List<string> { "Medical terminology analysis", "Clinical context understanding", "Biomedical reasoning" },
+                SupportedStandards = new List<string> { "HL7", "FHIR", "SNOMED", "ICD" }
+            },
+            
+            new ModelMetadata
+            {
+                Id = "mediphi-instruct",
+                Name = "MediPhi-Instruct",
+                Description = "Microsoft Phi-3.5-Mini specialized for medical and clinical NLP tasks",
+                Version = "1.0",
+                Tier = "Pro",
+                SizeBytes = 2415919104, // ~2.25GB
+                DownloadUrl = "https://huggingface.co/microsoft/Phi-3.5-mini-instruct/resolve/main/model.safetensors",
+                Checksum = "sha256:to-be-calculated",
                 Format = "SafeTensors",
                 HealthcareSpecialty = "Clinical",
                 Requirements = new SystemRequirements
                 {
-                    MinRamMB = 4096,
-                    RecommendedRamMB = 8192,
+                    MinRamMB = 4096, // 4GB minimum
+                    RecommendedRamMB = 6144, // 6GB recommended
                     MinCpuCores = 4,
                     SupportsGpu = true,
-                    EstimatedTokensPerSecond = 25
+                    EstimatedTokensPerSecond = 30
                 },
-                UseCases = new List<string> { "Field analysis", "Pattern matching", "Message validation", "Root cause analysis" },
-                SupportedStandards = new List<string> { "HL7", "FHIR", "NCPDP" }
+                UseCases = new List<string> { "Clinical NLP", "Medical coding", "Healthcare information extraction" },
+                SupportedStandards = new List<string> { "HL7", "FHIR", "ICD10CM", "ICD10PROC", "ATC" }
             },
+            
+            // Efficient models for resource-constrained environments
             new ModelMetadata
             {
-                Id = "tinyllama-medical",
-                Name = "TinyLlama Medical",
-                Description = "Ultra-lightweight 1.1B model optimized for basic healthcare diff analysis",
+                Id = "phi3-mini-instruct",
+                Name = "Phi-3-Mini-4K-Instruct",
+                Description = "Microsoft's efficient 3.8B parameter model, FOSS under MIT license",
                 Version = "1.0",
-                Tier = "Pro",
-                SizeBytes = 838860800, // ~800MB quantized
-                DownloadUrl = "https://models.pidgeon.health/tinyllama-medical-q4.gguf",
-                Checksum = "sha256:placeholder",
+                Tier = "Free",
+                SizeBytes = 2415919104, // ~2.25GB
+                DownloadUrl = "https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-gguf/resolve/main/Phi-3-mini-4k-instruct-q4.gguf",
+                Checksum = "sha256:to-be-calculated",
                 Format = "GGUF",
                 HealthcareSpecialty = "General",
                 Requirements = new SystemRequirements
                 {
-                    MinRamMB = 2048,
-                    RecommendedRamMB = 4096,
+                    MinRamMB = 4096, // 4GB minimum
+                    RecommendedRamMB = 6144, // 6GB recommended
+                    MinCpuCores = 4,
+                    SupportsGpu = true,
+                    EstimatedTokensPerSecond = 35
+                },
+                UseCases = new List<string> { "General analysis", "Code understanding", "Basic reasoning" },
+                SupportedStandards = new List<string> { "HL7", "FHIR", "JSON", "XML" }
+            },
+            
+            new ModelMetadata
+            {
+                Id = "tinyllama-chat",
+                Name = "TinyLlama-1.1B-Chat",
+                Description = "Ultra-lightweight 1.1B parameter model for resource-constrained analysis",
+                Version = "1.0",
+                Tier = "Free",
+                SizeBytes = 668123136, // ~637MB GGUF Q4_K_M  
+                DownloadUrl = "https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf",
+                Checksum = "sha256:to-be-calculated",
+                Format = "GGUF",
+                HealthcareSpecialty = "General",
+                Requirements = new SystemRequirements
+                {
+                    MinRamMB = 2048, // 2GB minimum
+                    RecommendedRamMB = 3072, // 3GB recommended
                     MinCpuCores = 2,
                     SupportsGpu = true,
-                    EstimatedTokensPerSecond = 45
+                    EstimatedTokensPerSecond = 50
                 },
-                UseCases = new List<string> { "Basic diff analysis", "Suggestions", "Real-time analysis" },
+                UseCases = new List<string> { "Basic diff analysis", "Quick suggestions", "Low-latency responses" },
                 SupportedStandards = new List<string> { "HL7", "FHIR" }
             },
             new ModelMetadata
@@ -327,7 +380,7 @@ public class ModelManagementService : IModelManagementService
                 Version = "1.0",
                 Tier = "Pro",
                 SizeBytes = 2147483648, // ~2GB ONNX format
-                DownloadUrl = "https://models.pidgeon.health/biogpt-clinical.onnx",
+                DownloadUrl = "https://huggingface.co/microsoft/BioGPT/resolve/main/pytorch_model.bin",
                 Checksum = "sha256:placeholder",
                 Format = "ONNX",
                 HealthcareSpecialty = "Clinical",

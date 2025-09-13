@@ -42,8 +42,9 @@ public class DiffCommand : CommandBuilderBase
         var ignoreOption = CreateNullableOption("--ignore", "Comma-list of fields/segments to ignore (e.g., MSH-7, PID.3[*].assigningAuthority)");
         var reportOption = CreateNullableOption("--report", "HTML/JSON diff report with triage hints");
         var severityOption = CreateOptionalOption("--severity", "hint|warn|error", "hint");
-        var aiLocalOption = CreateBooleanOption("--ai-local", "Enable local AI analysis for root cause insights (requires Pro)");
-        var aiModelOption = CreateNullableOption("--ai-model", "Specify local AI model to use (e.g., phi2-healthcare)");
+        var aiOption = CreateBooleanOption("--ai", "Enable AI analysis (auto-detects best available model)");
+        var modelOption = CreateNullableOption("--model", "Specify AI model (e.g., tinyllama-chat, phi2-healthcare)");
+        var noAiOption = CreateBooleanOption("--no-ai", "Disable AI analysis (override config default)");
         var skipProCheckOption = CreateBooleanOption("--skip-pro-check", "Skip Pro tier check (for development/testing)");
 
         command.Add(pathsArgument);
@@ -52,8 +53,9 @@ public class DiffCommand : CommandBuilderBase
         command.Add(ignoreOption);
         command.Add(reportOption);
         command.Add(severityOption);
-        command.Add(aiLocalOption);
-        command.Add(aiModelOption);
+        command.Add(aiOption);
+        command.Add(modelOption);
+        command.Add(noAiOption);
         command.Add(skipProCheckOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
@@ -99,13 +101,14 @@ public class DiffCommand : CommandBuilderBase
                 var ignoreFields = parseResult.GetValue(ignoreOption);
                 var reportFile = parseResult.GetValue(reportOption);
                 var severity = parseResult.GetValue(severityOption)!;
-                var useAiLocal = parseResult.GetValue(aiLocalOption);
-                var aiModel = parseResult.GetValue(aiModelOption);
+                var useAi = parseResult.GetValue(aiOption);
+                var aiModel = parseResult.GetValue(modelOption);
+                var noAi = parseResult.GetValue(noAiOption);
                 var skipProCheck = parseResult.GetValue(skipProCheckOption);
 
                 return await ExecuteDiffAsync(
                     _diffService, leftPath, rightPath, ignoreFields, 
-                    reportFile, severity, useAiLocal, aiModel, skipProCheck);
+                    reportFile, severity, useAi, aiModel, noAi, skipProCheck);
             }
             catch (Exception ex)
             {
@@ -125,8 +128,9 @@ public class DiffCommand : CommandBuilderBase
         string? ignoreFields,
         string? reportFile,
         string severity,
-        bool useAiLocal,
+        bool useAi,
         string? aiModel,
+        bool noAi,
         bool skipProCheck)
     {
         // Check Pro tier unless skipped
@@ -158,19 +162,24 @@ public class DiffCommand : CommandBuilderBase
         Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         Console.WriteLine();
 
-        // Check for AI capabilities if requested
-        if (useAiLocal)
+        // Smart AI capability checking with our new logic
+        bool enableAI = await DetermineAIUsageAsync(useAi, noAi, aiModel);
+        string? selectedModel = null;
+        
+        if (enableAI)
         {
-            var aiCapabilityCheck = await CheckAiCapabilities(aiModel);
-            if (!aiCapabilityCheck.isAvailable)
+            selectedModel = string.IsNullOrEmpty(aiModel) ? await SelectBestAvailableModelAsync() : aiModel;
+            if (selectedModel == null)
             {
-                Console.WriteLine($"Warning: {aiCapabilityCheck.message}");
+                Console.WriteLine("Warning: No AI models installed. Use 'pidgeon ai download phi2-healthcare' to install a model.");
                 Console.WriteLine("Proceeding with algorithmic analysis only.");
                 Console.WriteLine();
+                enableAI = false;
             }
             else
             {
-                Console.WriteLine($"AI Model: {aiCapabilityCheck.message}");
+                var modelName = Path.GetFileNameWithoutExtension(selectedModel);
+                Console.WriteLine($"Using AI analysis with {modelName}");
                 Console.WriteLine();
             }
         }
@@ -201,7 +210,7 @@ public class DiffCommand : CommandBuilderBase
             Console.WriteLine($"   Right: {Path.GetFileName(rightPath)}");
             Console.WriteLine();
 
-            var context = CreateDiffContext(ignoreFields, ComparisonType.MessageToMessage, useAiLocal);
+            var context = await CreateDiffContextAsync(ignoreFields, ComparisonType.MessageToMessage, enableAI, selectedModel, false);
             var result = await diffService.CompareMessageFilesAsync(leftPath, rightPath, context);
 
             if (result.IsFailure)
@@ -230,7 +239,7 @@ public class DiffCommand : CommandBuilderBase
         return 0;
     }
 
-    private static DiffContext CreateDiffContext(string? ignoreFields, ComparisonType comparisonType, bool useAiLocal = false)
+    private async Task<DiffContext> CreateDiffContextAsync(string? ignoreFields, ComparisonType comparisonType, bool useAi = false, string? aiModel = null, bool noAi = false)
     {
         var ignoredFieldsList = new List<string>();
         if (!string.IsNullOrEmpty(ignoreFields))
@@ -240,17 +249,26 @@ public class DiffCommand : CommandBuilderBase
                 .ToList();
         }
 
+        // Smart AI decision logic
+        bool enableAI = await DetermineAIUsageAsync(useAi, noAi, aiModel);
+        
+        if (enableAI && string.IsNullOrEmpty(aiModel))
+        {
+            aiModel = await SelectBestAvailableModelAsync();
+        }
+
         return new DiffContext
         {
             ComparisonType = comparisonType,
             IgnoredFields = ignoredFieldsList,
             InitiatedBy = Environment.UserName,
-            Purpose = "CLI diff analysis",
+            Purpose = $"CLI diff analysis{(enableAI ? $" with {aiModel ?? "auto-selected"} AI" : "")}",
+            EnableAIAnalysis = enableAI,
             AnalysisOptions = new ComparisonOptions
             {
                 IncludeStructuralAnalysis = true,
                 IncludeSemanticAnalysis = true,
-                UseIntelligentAnalysis = useAiLocal,
+                UseIntelligentAnalysis = enableAI,
                 NormalizeFormatting = true
             }
         };
@@ -350,5 +368,109 @@ public class DiffCommand : CommandBuilderBase
 </html>";
             await File.WriteAllTextAsync(reportFile, html);
         }
+    }
+
+    /// <summary>
+    /// Smart AI usage determination following our priority algorithm
+    /// </summary>
+    private async Task<bool> DetermineAIUsageAsync(bool useAi, bool noAi, string? aiModel)
+    {
+        // 1. Explicit user choice wins
+        if (noAi) return false;
+        if (useAi) return true;
+        
+        // 2. If specific model requested, enable AI
+        if (!string.IsNullOrEmpty(aiModel)) return true;
+        
+        // 3. Auto-detect if local models available
+        return await HasLocalModelsAvailableAsync();
+    }
+
+    /// <summary>
+    /// Select the best available AI model using our priority algorithm
+    /// </summary>
+    private async Task<string?> SelectBestAvailableModelAsync()
+    {
+        try
+        {
+            // Check for available models in ~/.pidgeon/models/
+            var modelsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".pidgeon", "models");
+            if (!Directory.Exists(modelsPath))
+                return null;
+
+            var ggufFiles = Directory.GetFiles(modelsPath, "*.gguf");
+            if (ggufFiles.Length == 0)
+                return null;
+
+            // Apply our priority algorithm
+            var bestModel = ggufFiles
+                .Select(path => new { Path = path, Score = CalculateModelScore(path) })
+                .OrderByDescending(m => m.Score)
+                .FirstOrDefault();
+
+            if (bestModel != null)
+            {
+                var modelName = Path.GetFileNameWithoutExtension(bestModel.Path);
+                Logger.LogInformation("Auto-selected AI model: {ModelName} (score: {Score})", 
+                    modelName, bestModel.Score);
+                return bestModel.Path;
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "Failed to auto-select AI model");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Check if local models are available for auto-enablement
+    /// </summary>
+    private async Task<bool> HasLocalModelsAvailableAsync()
+    {
+        try
+        {
+            var modelsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".pidgeon", "models");
+            return Directory.Exists(modelsPath) && Directory.GetFiles(modelsPath, "*.gguf").Length > 0;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Calculate model quality score using our healthcare-focused priority algorithm
+    /// </summary>
+    private double CalculateModelScore(string modelPath)
+    {
+        var fileName = Path.GetFileNameWithoutExtension(modelPath).ToLowerInvariant();
+        var fileInfo = new FileInfo(modelPath);
+        
+        var score = 0.7; // Base score for general models
+        
+        // Healthcare specialization bonus (highest priority)
+        if (fileName.Contains("medical") || fileName.Contains("clinical") || fileName.Contains("healthcare"))
+            score += 0.25;
+        else if (fileName.Contains("phi2-healthcare") || fileName.Contains("biogpt"))
+            score += 0.20;
+        
+        // Size bonus (more parameters = better reasoning)
+        var sizeMB = fileInfo.Length / (1024 * 1024);
+        if (sizeMB > 3000) score += 0.15;      // 3GB+ (7B+ parameters)
+        else if (sizeMB > 1500) score += 0.10; // 1.5GB+ (3B+ parameters)
+        else if (sizeMB > 500) score += 0.05;  // 500MB+ (1B+ parameters)
+        
+        // Model architecture preference
+        if (fileName.Contains("llama")) score += 0.05;
+        if (fileName.Contains("phi2")) score += 0.05;
+        
+        // Quantization quality (prefer Q4 over Q2)
+        if (fileName.Contains("q4")) score += 0.05;
+        else if (fileName.Contains("q2")) score -= 0.05;
+        
+        return Math.Min(0.95, score); // Cap at 95%
     }
 }
