@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Pidgeon.CLI.Commands;
 using Pidgeon.CLI.Extensions;
 using Pidgeon.CLI.Output;
+using Pidgeon.CLI.Services;
 using Pidgeon.Core.Extensions;
 using System.CommandLine;
 using System.Reflection;
@@ -32,6 +33,30 @@ internal class Program
         
         try
         {
+            // Check for --init flag or first-time user
+            var firstTimeService = host.Services.GetRequiredService<FirstTimeUserService>();
+            
+            if (args.Contains("--init") || (args.Length == 0 && await firstTimeService.IsFirstTimeUserAsync()))
+            {
+                // Run welcome experience
+                var result = await firstTimeService.RunWelcomeExperienceAsync();
+                if (result.IsFailure)
+                {
+                    var consoleOutput = host.Services.GetRequiredService<IConsoleOutput>();
+                    consoleOutput.WriteError($"Welcome setup failed: {result.Error}");
+                    return 1;
+                }
+                
+                // If --init was explicitly called, exit after setup
+                if (args.Contains("--init"))
+                {
+                    return 0;
+                }
+                
+                // Otherwise, continue to show help
+                args = new[] { "--help" };
+            }
+            
             // Create the root command with all subcommands
             var rootCommand = CreateRootCommand(host.Services);
             
@@ -72,8 +97,9 @@ internal class Program
                     client.DefaultRequestHeaders.Add("User-Agent", "Pidgeon-Healthcare-Platform/1.0");
                 });
                 
-                // Add CLI commands using convention-based registration
+                // Add CLI commands and services using convention-based registration
                 services.AddCliCommands();
+                services.AddCliServices();
                 
                 // Add console services
                 services.AddSingleton<IConsoleOutput, ConsoleOutput>();

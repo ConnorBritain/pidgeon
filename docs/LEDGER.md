@@ -1,5 +1,5 @@
 **Date**: September 12, 2025  
-**Decision Type**: Post-P0 Distribution Infrastructure  
+**Decision Type**: Post-P0 Distribution Infrastructure & First-Time User Experience  
 **Impact**: Strategic - Customer Journey & User Acquisition Foundation
 
 ---
@@ -82,18 +82,51 @@ dotnet run --project src/Pidgeon.CLI/Pidgeon.CLI.csproj -- generate "ADT^A01"
 - **Enterprise Credibility**: Professional packaging demonstrates platform maturity
 - **Package Manager Ready**: Foundation for npm/homebrew/chocolatey distribution
 
-### **Next Priority: First-Time User Experience**
-With distribution solved, focus shifts to magical first-run experience:
-1. Welcome wizard with demo scenario
-2. AI model selection with size/space management
-3. Automatic project structure initialization  
-4. Quick start tutorial integration
+## LEDGER-029: First-Time User Experience Implementation
+**Date**: September 12, 2025  
+**Type**: User Experience + Customer Onboarding  
+**Status**: ✅ **COMPLETED**  
+
+### **Achievement: Professional First-Time User Experience**
+Implemented comprehensive welcome wizard with AI model selection, addressing healthcare-specific user requirements for security and conservative estimates.
+
+#### **1. FirstTimeUserService Implementation**
+- ✅ **Convention-Based Registration**: Follows RULES.md service discovery patterns
+- ✅ **Welcome Wizard**: Interactive 4-option experience (demo, AI models, real message import, tutorial)
+- ✅ **AI Model Selection**: Security-first presentation with conservative download estimates
+- ✅ **Space Management**: Disk space checking with 10% buffer requirements
+- ✅ **Project Structure**: Automated ~/.pidgeon directory creation with vendor configs
+
+#### **2. Healthcare-Focused Model Descriptions**
+Based on user feedback prioritizing security over intelligence:
+- **TinyLlama**: "Fast, small, good" (5-15 minutes download)
+- **Phi-3**: "Balanced size/performance" (15-30 minutes download) 
+- **BioMistral**: "Healthcare domain expert" (30-60 minutes download)
+
+**Security Messaging**: "HIPAA-Compliant: All AI models run 100% on your device. No patient data ever leaves your computer or touches the cloud."
+
+#### **3. First-Run Detection & Integration**
+- ✅ **Automatic Detection**: Checks for ~/.pidgeon/pidgeon.config.json
+- ✅ **--init Flag Support**: Manual welcome wizard trigger
+- ✅ **Program.cs Integration**: Seamless first-run flow without breaking existing functionality
+- ✅ **Zero Compilation Errors**: Clean build with proper Result<T> usage and accessibility
+
+#### **4. Customer Journey Enhancement**
+**Before**: Complex setup, unclear AI capabilities, intimidating for healthcare users
+**After**: 
+- Guided onboarding with clear security emphasis
+- Conservative time estimates (trust-building)
+- Choice-driven experience (respects user priorities)
+- Immediate value demonstration with sample HL7 generation
 
 ### **Files Modified**
 - `pidgeon/src/Pidgeon.CLI/Pidgeon.CLI.csproj` - Self-contained publishing configuration
 - `.github/workflows/release.yml` - Complete CI/CD pipeline  
 - `scripts/build-all-platforms.sh` - Manual build automation
 - `docs/roadmap/DISTRIBUTION_STRATEGY.md` - Comprehensive distribution plan
+- `src/Pidgeon.CLI/Services/FirstTimeUserService.cs` - Complete welcome experience implementation
+- `src/Pidgeon.CLI/Program.cs` - First-run detection and --init flag integration
+- `src/Pidgeon.CLI/Extensions/ServiceCollectionExtensions.cs` - Convention-based service registration
 
 **Strategic Impact**: Pidgeon transitions from "interesting developer tool" to "professional healthcare platform ready for mainstream adoption."
 
