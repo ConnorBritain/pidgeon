@@ -33,7 +33,7 @@ public class GenerateCommand : CommandBuilderBase
         // Positional arguments for smart inference: pidgeon generate <message-type> or pidgeon generate <standard> <message-type>
         var messageTypeArg = new Argument<string[]>("args")
         {
-            Description = "Message type (e.g., ADT^A01, Patient, NewRx) or explicit standard + message type",
+            Description = "Message type (e.g., \"ADT^A01\", Patient, NewRx) or explicit standard + message type",
             Arity = ArgumentArity.OneOrMore
         };
         
@@ -63,9 +63,9 @@ public class GenerateCommand : CommandBuilderBase
                 {
                     Logger.LogError("Message type is required. Usage: pidgeon generate <message-type> or pidgeon generate <standard> <message-type>");
                     Console.WriteLine("Examples:");
-                    Console.WriteLine("  pidgeon generate ADT^A01");
+                    Console.WriteLine("  pidgeon generate \"ADT^A01\"");
                     Console.WriteLine("  pidgeon generate Patient --count 10");
-                    Console.WriteLine("  pidgeon generate hl7 ADT^A01");
+                    Console.WriteLine("  pidgeon generate hl7 \"ADT^A01\"");
                     return 1;
                 }
 
@@ -75,9 +75,9 @@ public class GenerateCommand : CommandBuilderBase
                     Logger.LogError(parsingResult.Error.Message);
                     Console.WriteLine($"❌ {parsingResult.Error.Message}");
                     Console.WriteLine("Examples:");
-                    Console.WriteLine("  pidgeon generate ADT^A01");
+                    Console.WriteLine("  pidgeon generate \"ADT^A01\"");
                     Console.WriteLine("  pidgeon generate Patient --count 10");
-                    Console.WriteLine("  pidgeon generate hl7 ADT^A01");
+                    Console.WriteLine("  pidgeon generate hl7 \"ADT^A01\"");
                     return 1;
                 }
                 

@@ -33,27 +33,44 @@ internal class Program
         
         try
         {
-            // Check for --init flag or first-time user
+            // Check for explicit welcome/init commands
             var firstTimeService = host.Services.GetRequiredService<FirstTimeUserService>();
+            var consoleOutput = host.Services.GetRequiredService<IConsoleOutput>();
             
-            if (args.Contains("--init") || (args.Length == 0 && await firstTimeService.IsFirstTimeUserAsync()))
+            if (args.Contains("welcome"))
             {
-                // Run welcome experience
-                var result = await firstTimeService.RunWelcomeExperienceAsync();
+                // Show welcome demo and orientation (no configuration)
+                var result = await firstTimeService.RunWelcomeOrientationAsync();
                 if (result.IsFailure)
                 {
-                    var consoleOutput = host.Services.GetRequiredService<IConsoleOutput>();
-                    consoleOutput.WriteError($"Welcome setup failed: {result.Error}");
+                    consoleOutput.WriteError($"Welcome orientation failed: {result.Error}");
                     return 1;
                 }
-                
-                // If --init was explicitly called, exit after setup
-                if (args.Contains("--init"))
+                return 0;
+            }
+            
+            if (args.Contains("--init"))
+            {
+                // Run machine setup and configuration
+                var result = await firstTimeService.RunInitializationAsync();
+                if (result.IsFailure)
                 {
-                    return 0;
+                    consoleOutput.WriteError($"Initialization failed: {result.Error}");
+                    return 1;
                 }
-                
-                // Otherwise, continue to show help
+                return 0;
+            }
+            
+            // For first-time users, show a subtle suggestion (not forced)
+            if (args.Length == 0 && await firstTimeService.IsFirstTimeUserAsync())
+            {
+                Console.WriteLine();
+                Console.WriteLine("👋 New to Pidgeon?");
+                Console.WriteLine("   • pidgeon welcome - See what Pidgeon can do");
+                Console.WriteLine("   • pidgeon --init  - Set up your machine");
+                Console.WriteLine("   • pidgeon generate ADT^A01 - Dive right in");
+                Console.WriteLine();
+                // Continue to show help as normal
                 args = new[] { "--help" };
             }
             

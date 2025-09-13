@@ -46,15 +46,14 @@ public class SmartCommandParser
             var inferredStandard = MessageTypeRegistry.InferStandard(firstArg);
             if (inferredStandard == null)
             {
-                return Result<GenerationRequest>.Failure($"Cannot infer standard for message type '{firstArg}'. " +
-                    "Supported types: ADT^A01 (HL7), Patient (FHIR), NewRx (NCPDP). " +
-                    "Or specify explicitly: pidgeon generate hl7 {firstArg}");
+                var smartSuggestion = MessageTypeRegistry.GetSmartErrorSuggestion(firstArg);
+                return Result<GenerationRequest>.Failure(smartSuggestion);
             }
             
             return Result<GenerationRequest>.Success(new GenerationRequest
             {
                 Standard = inferredStandard,
-                MessageType = firstArg,
+                MessageType = MessageTypeRegistry.NormalizeForGeneration(firstArg),
                 ExplicitStandardProvided = false,
                 RemainingArgs = args.Skip(1).ToArray()
             });

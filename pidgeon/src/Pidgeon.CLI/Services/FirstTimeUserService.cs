@@ -86,53 +86,75 @@ public class FirstTimeUserService
     }
 
     /// <summary>
-    /// Runs the complete first-time user experience.
+    /// Runs welcome orientation - demo and introduction only (no configuration).
     /// </summary>
-    public async Task<Result<bool>> RunWelcomeExperienceAsync()
+    public async Task<Result<bool>> RunWelcomeOrientationAsync()
     {
         try
         {
-            // Show welcome message
             ShowWelcomeBanner();
             
-            // Get user's choice for initial setup
-            var choice = await GetWelcomeChoiceAsync();
+            Console.WriteLine("Let's see what Pidgeon can do...");
+            Console.WriteLine();
             
-            switch (choice)
-            {
-                case 1:
-                    // Quick demo
-                    await RunQuickDemoAsync();
-                    break;
-                    
-                case 2:
-                    // Set up AI models
-                    await RunModelSelectionWizardAsync();
-                    break;
-                    
-                case 3:
-                    // Import real messages (show de-identification)
-                    await ShowDeIdentificationDemoAsync();
-                    break;
-                    
-                case 4:
-                    // Guided tutorial
-                    await RunGuidedTutorialAsync();
-                    break;
-            }
+            // Always run the demo for welcome
+            await RunQuickDemoAsync();
             
-            // Initialize project structure
-            await InitializeProjectStructureAsync();
-            
-            // Save first-run configuration
-            await SaveFirstRunConfigAsync();
+            Console.WriteLine();
+            Console.WriteLine("Ready to set up your machine? Run: pidgeon --init");
+            Console.WriteLine("Need help? Run: pidgeon help");
+            Console.WriteLine();
             
             return Result<bool>.Success(true);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during welcome experience");
-            return Result<bool>.Failure($"Welcome experience failed: {ex.Message}");
+            _logger.LogError(ex, "Error during welcome orientation");
+            return Result<bool>.Failure($"Welcome orientation failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Runs machine initialization - configuration and setup.
+    /// </summary>
+    public async Task<Result<bool>> RunInitializationAsync()
+    {
+        try
+        {
+            Console.WriteLine();
+            Console.WriteLine("═══════════════════════════════════════════════════════════════");
+            Console.WriteLine("  Pidgeon Machine Setup");
+            Console.WriteLine("═══════════════════════════════════════════════════════════════");
+            Console.WriteLine();
+            Console.WriteLine("Let's get your machine configured for productive use.");
+            Console.WriteLine();
+            
+            // Initialize project structure first
+            await InitializeProjectStructureAsync();
+            
+            // Set up AI models (optional)
+            Console.WriteLine("Step 1: AI Model Setup");
+            Console.WriteLine("───────────────────────");
+            var modelResult = await RunModelSelectionWizardAsync();
+            
+            // Save configuration
+            await SaveFirstRunConfigAsync();
+            
+            Console.WriteLine();
+            Console.WriteLine("✅ Machine setup complete!");
+            Console.WriteLine();
+            Console.WriteLine("Try these commands:");
+            Console.WriteLine("  pidgeon generate ADT^A01         # Generate test message");
+            Console.WriteLine("  pidgeon validate --file msg.hl7  # Validate a message");
+            Console.WriteLine("  pidgeon welcome                  # See demo");
+            Console.WriteLine();
+            
+            return Result<bool>.Success(true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during initialization");
+            return Result<bool>.Failure($"Initialization failed: {ex.Message}");
         }
     }
 
@@ -142,31 +164,38 @@ public class FirstTimeUserService
     public async Task<Result<ModelInfo>> RunModelSelectionWizardAsync()
     {
         Console.WriteLine();
-        Console.WriteLine("Secure AI Model Setup");
-        Console.WriteLine("=====================");
+        Console.WriteLine("──────────────────────────────────────");
+        Console.WriteLine("  AI Model Setup (Optional)");
+        Console.WriteLine("──────────────────────────────────────");
         Console.WriteLine();
-        Console.WriteLine("HIPAA-Compliant: All AI models run 100% on your device.");
-        Console.WriteLine("No patient data ever leaves your computer or touches the cloud.");
-        Console.WriteLine();
-        Console.WriteLine("Choose your model based on your needs:");
+        Console.WriteLine("🔒 Security: All AI models run 100% on your device.");
+        Console.WriteLine("   No patient data ever leaves your computer.");
         Console.WriteLine();
         
-        // Show model recommendations table
-        ShowModelRecommendationsTable();
+        Console.Write("Would you like to set up an AI model for enhanced analysis? (y/N): ");
+        var setupChoice = Console.ReadLine();
         
-        // Get disk space information
+        if (setupChoice?.ToLowerInvariant() != "y")
+        {
+            Console.WriteLine("\nSkipping AI setup. You can always run 'pidgeon ai download' later.");
+            return Result<ModelInfo>.Success(new ModelInfo { ModelId = "none" });
+        }
+        
+        Console.WriteLine();
+        // Show compact model options
+        Console.WriteLine("Available Models:");
+        Console.WriteLine();
+        Console.WriteLine("  1. TinyLlama (638MB) - Fast, small, good for quick testing");
+        Console.WriteLine("  2. Phi-3 (2.2GB) - Balanced size/performance for daily use");
+        Console.WriteLine("  3. BioMistral (4.1GB) - Healthcare expert, best accuracy");
+        Console.WriteLine("  0. Skip for now");
+        Console.WriteLine();
+        
         var diskSpace = GetAvailableDiskSpace();
-        Console.WriteLine($"\nDisk space available: {FormatBytes(diskSpace)}");
+        Console.WriteLine($"  Disk space available: {FormatBytes(diskSpace)}");
         Console.WriteLine();
         
-        // Get user selection
-        Console.WriteLine("Quick Guide:");
-        Console.WriteLine("• TinyLlama: Start here if unsure (smallest, fastest)");
-        Console.WriteLine("• Phi-3: Best for daily use (good balance)");
-        Console.WriteLine("• BioMistral: Maximum clinical accuracy (larger, slower)");
-        Console.WriteLine();
-        
-        Console.Write("Select model (1-3) or 0 to skip [1]: ");
+        Console.Write("Select model (0-3) [1]: ");
         var input = Console.ReadLine();
         
         if (string.IsNullOrWhiteSpace(input) || input == "1")
@@ -188,32 +217,24 @@ public class FirstTimeUserService
         
         var selectedModel = _modelRecommendations[selection - 1];
         
-        // Show confirmation with space requirements
-        Console.WriteLine();
-        Console.WriteLine($"{selectedModel.DisplayName} Selected");
-        Console.WriteLine("─".PadRight(40, '─'));
-        Console.WriteLine($"Download size: {selectedModel.Size}");
-        Console.WriteLine($"Disk space available: {FormatBytes(diskSpace)}");
-        Console.WriteLine($"Estimated download time: {selectedModel.DownloadTime}");
-        Console.WriteLine();
-        
-        // Parse size and check space
+        // Parse size and check space first
         var requiredBytes = ParseBytes(selectedModel.Size);
         if (requiredBytes > diskSpace * 0.9) // Leave 10% buffer
         {
-            Console.WriteLine("WARNING: Insufficient disk space for this model.");
-            Console.WriteLine("Please free up space or choose a smaller model.");
+            Console.WriteLine("\n⚠️  Insufficient disk space for this model.");
+            Console.WriteLine("   Please free up space or choose a smaller model.");
             return Result<ModelInfo>.Failure("Insufficient disk space");
         }
         
-        Console.WriteLine("Security & Privacy:");
-        Console.WriteLine("• 100% on-premises: No data leaves your device");
-        Console.WriteLine("• HIPAA-compliant: Safe for real patient data analysis");
-        Console.WriteLine("• No cloud APIs: Complete air-gap capability");
-        Console.WriteLine($"• Models stored locally: {Path.Combine(_configPath, "models")}");
+        // Show concise confirmation
+        Console.WriteLine();
+        Console.WriteLine($"Ready to download {selectedModel.DisplayName}:");
+        Console.WriteLine($"• Size: {selectedModel.Size}");
+        Console.WriteLine($"• Time: {selectedModel.DownloadTime}");
+        Console.WriteLine($"• Location: ~/.pidgeon/models/");
         Console.WriteLine();
         
-        Console.Write("Continue with download? (y/N): ");
+        Console.Write("Continue? (y/N): ");
         var confirm = Console.ReadLine();
         
         if (confirm?.ToLowerInvariant() != "y")
@@ -239,20 +260,19 @@ public class FirstTimeUserService
         }
         
         Console.WriteLine();
-        Console.WriteLine($"Model installed successfully!");
-        Console.WriteLine();
-        Console.WriteLine("Next steps:");
-        Console.WriteLine("• Generate your first message: pidgeon generate \"ADT^A01\"");
-        Console.WriteLine("• Validate real messages: pidgeon validate --file your_message.hl7 --ai");
-        Console.WriteLine("• Learn more: pidgeon help");
+        Console.WriteLine("✅ Model installed successfully!");
         Console.WriteLine();
         
-        Console.Write("Ready to generate your first HL7 message? (Y/n): ");
+        Console.Write("Try a quick demo? (Y/n): ");
         var ready = Console.ReadLine();
         
         if (string.IsNullOrWhiteSpace(ready) || ready.ToLowerInvariant() != "n")
         {
             await RunQuickDemoAsync();
+        }
+        else
+        {
+            Console.WriteLine("\nGet started with: pidgeon generate ADT^A01");
         }
         
         return Result<ModelInfo>.Success(new ModelInfo 
@@ -265,37 +285,20 @@ public class FirstTimeUserService
 
     private void ShowWelcomeBanner()
     {
-        Console.Clear();
-        Console.WriteLine(@"
-Welcome to Pidgeon Healthcare Platform!
-========================================
-
-Pidgeon helps you generate, validate, and test HL7/FHIR messages 
-without the compliance nightmare of real patient data.
-");
+        // Don't clear screen - respect user's terminal history
+        Console.WriteLine();
+        Console.WriteLine("═══════════════════════════════════════════════════════════════");
+        Console.WriteLine("  Welcome to Pidgeon Healthcare Platform");
+        Console.WriteLine("═══════════════════════════════════════════════════════════════");
+        Console.WriteLine();
+        Console.WriteLine("Generate, validate, and test HL7/FHIR messages");
+        Console.WriteLine("without the compliance nightmare of real patient data.");
+        Console.WriteLine();
+        
+        Console.WriteLine("Press Enter to continue...");
+        Console.ReadLine();
     }
 
-    private async Task<int> GetWelcomeChoiceAsync()
-    {
-        Console.WriteLine("What would you like to do first?");
-        Console.WriteLine();
-        Console.WriteLine("1. Quick demo (generate sample HL7 message)");
-        Console.WriteLine("2. Set up AI models for smart analysis");
-        Console.WriteLine("3. Import real messages for de-identification");
-        Console.WriteLine("4. Learn with guided tutorial");
-        Console.WriteLine();
-        Console.Write("Select option (1-4) [1]: ");
-        
-        var input = Console.ReadLine();
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            return 1;
-        }
-        
-        return int.TryParse(input, out var choice) && choice >= 1 && choice <= 4 
-            ? choice 
-            : 1;
-    }
 
     private void ShowModelRecommendationsTable()
     {
@@ -357,84 +360,73 @@ without the compliance nightmare of real patient data.
     private async Task RunQuickDemoAsync()
     {
         Console.WriteLine();
-        Console.WriteLine("Pidgeon Quick Demo");
-        Console.WriteLine("==================");
+        Console.WriteLine("──────────────────────────────────────");
+        Console.WriteLine("  Quick Demo");
+        Console.WriteLine("──────────────────────────────────────");
         Console.WriteLine();
-        Console.WriteLine("Let's generate a realistic HL7 ADT^A01 (patient admission) message:");
-        Console.WriteLine();
-        Console.WriteLine("$ pidgeon generate \"ADT^A01\" --patient \"demo\"");
+        Console.WriteLine("Generating an HL7 admission message...");
         Console.WriteLine();
         
-        // Generate a sample message
+        // Show the command
+        Console.WriteLine("  $ pidgeon generate ADT^A01");
+        Console.WriteLine();
+        
+        // Generate and show just a snippet
         var message = GenerateDemoMessage();
-        Console.WriteLine("Generated message:");
-        Console.WriteLine(message);
+        var lines = message.Split('\n');
+        
+        // Show first 3 segments only
+        Console.WriteLine("  " + lines[0]); // MSH
+        Console.WriteLine("  " + lines[1]); // EVN
+        Console.WriteLine("  " + lines[2]); // PID
+        Console.WriteLine("  ...");
         Console.WriteLine();
         
-        Console.WriteLine("Success! Generated realistic HL7 message with:");
-        Console.WriteLine("• 65-year-old male patient John Doe");
-        Console.WriteLine("• Emergency admission to ICU room 201A");
-        Console.WriteLine("• Attending physician Dr. Jane Smith");
-        Console.WriteLine("• Realistic medical record numbers and identifiers");
+        Console.WriteLine("✅ Generated realistic HL7 message");
+        Console.WriteLine("   • Synthetic patient data (safe for testing)");
+        Console.WriteLine("   • Standards-compliant format");
         Console.WriteLine();
         
-        Console.WriteLine("What this shows:");
-        Console.WriteLine("• Pidgeon generates realistic, standards-compliant messages");
-        Console.WriteLine("• All identifiers are synthetic (safe for testing)");
-        Console.WriteLine("• Messages pass validation with major EHR systems");
+        Console.WriteLine("Common commands:");
+        Console.WriteLine("  pidgeon generate ADT^A01         # Generate admission");
+        Console.WriteLine("  pidgeon validate --file msg.hl7  # Validate message");
+        Console.WriteLine("  pidgeon deident --in ./real      # De-identify real data");
         Console.WriteLine();
-        
-        Console.WriteLine("Try next:");
-        Console.WriteLine("  pidgeon validate --file message.hl7        # Validate the message");
-        Console.WriteLine("  pidgeon generate \"ADT^A01\" --count 10      # Generate 10 messages");
-        Console.WriteLine("  pidgeon workflow wizard                    # Build complex scenarios");
-        Console.WriteLine();
-        
-        Console.Write("Continue with tutorial? (y/N): ");
-        var input = Console.ReadLine();
     }
 
     private async Task ShowDeIdentificationDemoAsync()
     {
         Console.WriteLine();
-        Console.WriteLine("De-identification Demo");
-        Console.WriteLine("======================");
+        Console.WriteLine("──────────────────────────────────────");
+        Console.WriteLine("  De-identification");
+        Console.WriteLine("──────────────────────────────────────");
         Console.WriteLine();
-        Console.WriteLine("Pidgeon can safely de-identify real messages while preserving:");
-        Console.WriteLine("• Message structure and validity");
-        Console.WriteLine("• Cross-message referential integrity");
-        Console.WriteLine("• Clinical scenario relationships");
+        Console.WriteLine("Transform real messages into safe test data:");
         Console.WriteLine();
-        Console.WriteLine("Example command:");
-        Console.WriteLine("  pidgeon deident --in ./real-messages --out ./safe-messages --date-shift 30d");
+        Console.WriteLine("  $ pidgeon deident --in ./real --out ./safe");
         Console.WriteLine();
-        Console.WriteLine("This feature runs completely on your device - no cloud required.");
+        Console.WriteLine("• Removes all PHI (HIPAA Safe Harbor)");
+        Console.WriteLine("• Preserves message structure");
+        Console.WriteLine("• Runs 100% on your device");
         Console.WriteLine();
-        Console.Write("Press Enter to continue...");
+        Console.WriteLine("Press Enter to continue...");
         Console.ReadLine();
     }
 
     private async Task RunGuidedTutorialAsync()
     {
         Console.WriteLine();
-        Console.WriteLine("Guided Tutorial");
-        Console.WriteLine("===============");
+        Console.WriteLine("──────────────────────────────────────");
+        Console.WriteLine("  Tutorial Coming Soon");
+        Console.WriteLine("──────────────────────────────────────");
         Console.WriteLine();
-        Console.WriteLine("This tutorial will walk you through:");
-        Console.WriteLine("1. Generating test messages");
-        Console.WriteLine("2. Validating messages");
-        Console.WriteLine("3. De-identifying real data");
-        Console.WriteLine("4. Detecting vendor patterns");
-        Console.WriteLine("5. Creating workflows");
-        Console.WriteLine("6. Comparing messages with AI");
+        Console.WriteLine("For now, explore these commands:");
         Console.WriteLine();
-        
-        // TODO: Implement full tutorial flow
-        Console.WriteLine("Tutorial coming soon! For now, try:");
-        Console.WriteLine("  pidgeon help");
-        Console.WriteLine("  pidgeon generate --help");
+        Console.WriteLine("  pidgeon help              # Show all commands");
+        Console.WriteLine("  pidgeon generate --help   # Generation options");
+        Console.WriteLine("  pidgeon validate --help   # Validation options");
         Console.WriteLine();
-        Console.Write("Press Enter to continue...");
+        Console.WriteLine("Press Enter to continue...");
         Console.ReadLine();
     }
 
