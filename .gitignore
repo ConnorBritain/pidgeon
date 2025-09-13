@@ -26,3 +26,14 @@ pidgeon/tests/message_outputs/
 
 # Temp files
 /tmp/
+
+# Distribution binaries (built by CI/CD)
+pidgeon/dist/
+**/dist/
+*.tar.gz
+*.zip
+
+# AI models (large files, user-downloaded)
+**/.pidgeon/models/
+**/models/*.gguf
+**/models/*.bin
