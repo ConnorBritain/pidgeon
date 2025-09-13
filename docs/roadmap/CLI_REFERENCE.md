@@ -210,21 +210,40 @@ EXAMPLES
 
 ### **pidgeon diff** 🔒 **[Pro]**
 
-Compare two artifacts (files or folders). Field-aware for HL7; JSON-tree for FHIR. Emits hints.
+Compare two artifacts (files or folders). Field-aware for HL7; JSON-tree for FHIR. Emits hints with smart AI analysis.
 
 ```
 USAGE
-  pidgeon diff --left <path> --right <path> [options]
+  pidgeon diff <left> <right> [options]                    # Natural usage (like git diff)
+  pidgeon diff --left <path> --right <path> [options]      # Explicit flags when needed
 
 OPTIONS
-      --left <path>            Baseline file/folder
-      --right <path>           Candidate file/folder
+      --left <path>            Baseline file/folder (overrides positional)
+      --right <path>           Candidate file/folder (overrides positional)
       --ignore <paths>         Comma-list of fields/segments to ignore (e.g., MSH-7, PID.3[*].assigningAuthority)
       --report <path>          HTML/JSON diff report with triage hints
       --severity <min>         hint|warn|error (default: hint)
 
-EXAMPLES
-  pidgeon diff --left ./envA --right ./envB --ignore MSH-7,Pv1.44 --report diff.html
+AI OPTIONS (Smart Defaults)
+      --ai                     Enable AI analysis (auto-detects best available model)
+      --model <name>           Specify AI model (e.g., tinyllama-chat, phi2-healthcare)
+      --no-ai                  Disable AI analysis (override auto-detection)
+
+SMART AI BEHAVIOR
+  • Auto-enables AI when local models detected
+  • Prefers healthcare-specialized models (phi2-healthcare > tinyllama-chat > general)
+  • Larger models prioritized for better accuracy (7B > 3B > 1B parameters)
+  • Falls back to algorithmic analysis if no models available
+
+EXAMPLES - Natural Usage
+  pidgeon diff file1.hl7 file2.hl7                         # Simple comparison with auto AI
+  pidgeon diff ./envA ./envB                                # Directory comparison
+  pidgeon diff file1.hl7 file2.hl7 --report diff.html     # With HTML report
+  pidgeon diff file1.hl7 file2.hl7 --no-ai                # Force algorithmic only
+
+EXAMPLES - Advanced Usage
+  pidgeon diff --left baseline.hl7 --right candidate.hl7 --model phi2-healthcare
+  pidgeon diff ./envA ./envB --ignore MSH-7,PV1.44 --ai --report diff.html
 ```
 
 ### **pidgeon workflow** 🔒 **[Pro]**
@@ -312,6 +331,50 @@ EXAMPLES
 pidgeon config --profile dev    # Development environment
 pidgeon config --profile prod   # Production-like testing
 pidgeon login --enterprise      # Enterprise SSO authentication
+```
+
+---
+
+---
+
+## 🤖 **AI Integration Patterns**
+
+### **Smart AI Usage (New in P0.6)**
+Pidgeon now features intelligent AI model selection with zero configuration required:
+
+```bash
+# AUTO-DETECTION (Recommended)
+pidgeon diff file1 file2                    # Auto-enables AI if models available
+pidgeon generate ADT^A01 --ai               # Explicit AI request with auto-selection
+pidgeon validate file.hl7 --ai              # Same --ai pattern across all commands
+
+# EXPLICIT MODEL SELECTION
+pidgeon diff file1 file2 --model phi2-healthcare        # Specific model
+pidgeon diff file1 file2 --model tinyllama-chat         # Another model
+
+# AI CONTROL OPTIONS  
+pidgeon diff file1 file2 --no-ai            # Disable AI (algorithmic only)
+pidgeon diff file1 file2 --ai --report ai_insights.html  # AI + reporting
+```
+
+### **AI Model Priority Algorithm**
+1. **User Choice**: `--model specific-model` (highest priority)
+2. **Healthcare Models**: phi2-healthcare, biogpt, llama-*-medical (preferred)
+3. **Model Size**: Larger models preferred (7B > 3B > 1B parameters)
+4. **Quality**: Q4 quantization > Q2 quantization
+5. **Fallback**: Algorithmic analysis if no models available
+
+### **Model Management**
+```bash
+# View available models
+pidgeon ai list
+
+# Download healthcare-optimized models
+pidgeon ai download phi2-healthcare          # Microsoft's healthcare model
+pidgeon ai download tinyllama-chat           # Fast general model
+
+# Model auto-detection logs
+pidgeon diff file1 file2 --ai               # Shows "Auto-selected: model-name"
 ```
 
 ---

@@ -639,6 +639,22 @@ pidgeon diff --left old.hl7 --right new.hl7 --ignore MSH-7,PV1.44
 
 ---
 
+## 📝 **Future Development TODOs**
+
+### **TODO: Complete Multi-Model AI Testing & Selection Algorithm Validation**
+- **Objective**: Download and test multiple AI models for comprehensive selection algorithm validation
+- **Models Needed**: Phi-3-Mini-4K-Instruct (2.2GB), BioMistral-7B (4.1GB), healthcare-specific models
+- **Testing Goals**: 
+  - Validate priority algorithm with healthcare vs general models
+  - Test size-based selection (7B > 3B > 1B parameters)
+  - Verify explicit vs auto-detection behavior
+  - Confirm GGUF file handling and model loading
+- **Priority**: Medium - needed for comprehensive AI feature validation
+- **Estimated Time**: 2-3 hours (mostly download time)
+- **Context**: P0.6 Diff + AI Triage completed with single model; needs multi-model validation
+
+---
+
 **Strategic Vision**: By end of Year 1, Pidgeon becomes the definitive platform for healthcare interface testing and validation, with a sustainable business model, loyal user community, and clear competitive advantages that position us for rapid scaling in Year 2.
 
 *Build CLI-first for developer adoption, layer GUI for team collaboration and enterprise value.*
