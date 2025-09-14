@@ -258,7 +258,53 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
             return Result<string>.Failure(patientResult.Error);
             
         var patient = patientResult.Value;
-        return Result<string>.Success($"FHIR Patient: {patient.Name.DisplayName}, DOB: {patient.BirthDate:yyyy-MM-dd}, Gender: {patient.Gender}, MRN: {patient.MedicalRecordNumber}");
+        
+        // Generate FHIR JSON structure
+        var fhirPatient = new 
+        {
+            resourceType = "Patient",
+            id = $"patient-{patient.MedicalRecordNumber}",
+            identifier = new[] 
+            {
+                new 
+                {
+                    use = "usual",
+                    type = new 
+                    {
+                        coding = new[] 
+                        {
+                            new 
+                            {
+                                system = "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                code = "MR",
+                                display = "Medical Record Number"
+                            }
+                        }
+                    },
+                    system = "http://hospital.example.org",
+                    value = patient.MedicalRecordNumber
+                }
+            },
+            name = new[] 
+            {
+                new 
+                {
+                    use = "official",
+                    family = patient.Name.Family,
+                    given = new[] { patient.Name.Given, patient.Name.Middle }.Where(n => !string.IsNullOrEmpty(n))
+                }
+            },
+            gender = patient.Gender?.ToString().ToLowerInvariant(),
+            birthDate = patient.BirthDate?.ToString("yyyy-MM-dd")
+        };
+        
+        var json = System.Text.Json.JsonSerializer.Serialize(fhirPatient, new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        });
+        
+        return Result<string>.Success(json);
     }
 
     private async Task<Result<string>> GeneratePractitionerResourceAsync(GenerationOptions options)
@@ -268,7 +314,125 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
             return Result<string>.Failure(providerResult.Error);
             
         var provider = providerResult.Value;
-        return Result<string>.Success($"FHIR Practitioner: Dr. {provider.Name.DisplayName}, Specialty: {provider.Specialty}, License: {provider.LicenseNumber}");
+
+        // Create FHIR R4 Practitioner resource with proper JSON structure
+        var practitionerId = $"practitioner-{Guid.NewGuid():N}";
+        
+        var fhirPractitioner = new
+        {
+            resourceType = "Practitioner",
+            id = practitionerId,
+            active = true,
+            name = new object[]
+            {
+                new
+                {
+                    use = "official",
+                    family = provider.Name.Family,
+                    given = new[] { provider.Name.Given ?? "Unknown" },
+                    prefix = new[] { "Dr." },
+                    text = $"Dr. {provider.Name.DisplayName}"
+                }
+            },
+            telecom = new object[]
+            {
+                new
+                {
+                    system = "phone",
+                    value = provider.PhoneNumber ?? "+1-555-0123",
+                    use = "work"
+                },
+                new
+                {
+                    system = "email", 
+                    value = provider.EmailAddress ?? $"{provider.Name.Given?.ToLower() ?? "provider"}.{provider.Name.Family?.ToLower() ?? "unknown"}@hospital.org",
+                    use = "work"
+                }
+            },
+            address = new object[]
+            {
+                new
+                {
+                    use = "work",
+                    type = "physical",
+                    line = new[] { "123 Medical Center Dr" },
+                    city = "Healthcare City",
+                    state = "HC", 
+                    postalCode = "12345",
+                    country = "US"
+                }
+            },
+            gender = "unknown",
+            qualification = new object[]
+            {
+                new
+                {
+                    identifier = new object[]
+                    {
+                        new
+                        {
+                            use = "official",
+                            type = new
+                            {
+                                coding = new object[]
+                                {
+                                    new
+                                    {
+                                        system = "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                        code = "MD", 
+                                        display = "Medical License number"
+                                    }
+                                }
+                            },
+                            system = "http://hl7.org/fhir/sid/us-npi",
+                            value = provider.LicenseNumber
+                        }
+                    },
+                    code = new
+                    {
+                        coding = new object[]
+                        {
+                            new
+                            {
+                                system = "http://nucc.org/provider-taxonomy",
+                                code = GetNUCCCodeForSpecialty(provider.Specialty),
+                                display = provider.Specialty
+                            }
+                        },
+                        text = provider.Specialty
+                    }
+                }
+            }
+        };
+        
+        var json = System.Text.Json.JsonSerializer.Serialize(fhirPractitioner, new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        });
+        
+        return Result<string>.Success(json);
+    }
+
+    /// <summary>
+    /// Maps provider specialty to NUCC Provider Taxonomy codes for FHIR qualification.
+    /// </summary>
+    private static string GetNUCCCodeForSpecialty(string specialty)
+    {
+        return specialty?.ToLowerInvariant() switch
+        {
+            "emergency medicine" or "emergency" => "207P00000X",
+            "internal medicine" or "internist" => "207R00000X", 
+            "family medicine" or "family practice" => "207Q00000X",
+            "pediatrics" or "pediatrician" => "208000000X",
+            "cardiology" or "cardiologist" => "207RC0000X",
+            "orthopedic surgery" or "orthopedics" => "207X00000X",
+            "radiology" or "radiologist" => "2085R0202X",
+            "anesthesiology" or "anesthesiologist" => "207L00000X",
+            "psychiatry" or "psychiatrist" => "2084P0800X",
+            "general surgery" or "surgeon" => "208600000X",
+            _ => "207Q00000X" // Default to Family Medicine
+        };
     }
 
     private async Task<Result<string>> GeneratePractitionerRoleResourceAsync(GenerationOptions options)
@@ -338,17 +502,99 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
             return Result<string>.Failure(patientResult.Error);
             
         var patient = patientResult.Value;
-        var observations = new[] 
-        { 
-            ("Blood Pressure", "120/80 mmHg"), 
-            ("Heart Rate", "72 bpm"), 
-            ("Temperature", "98.6 °F"), 
-            ("Glucose", "95 mg/dL"),
-            ("Hemoglobin A1c", "5.4%")
-        };
         var random = new Random(options.Seed ?? Environment.TickCount);
-        var (obsType, value) = observations[random.Next(observations.Length)];
-        return Result<string>.Success($"FHIR Observation: {obsType} = {value} for {patient.Name.DisplayName}, Status: Final");
+        var observationId = $"observation-{Guid.NewGuid():N}";
+        var patientId = $"patient-{patient.MedicalRecordNumber}";
+        
+        // Create a specific observation based on random selection
+        var obsType = random.Next(0, 5);
+        string code, display, category;
+        object value;
+        
+        switch (obsType)
+        {
+            case 0:
+                code = "8480-6";
+                display = "Systolic blood pressure";
+                category = "vital-signs";
+                value = new { value = random.Next(90, 160), unit = "mmHg", system = "http://unitsofmeasure.org", code = "mm[Hg]" };
+                break;
+            case 1:
+                code = "8462-4"; 
+                display = "Diastolic blood pressure";
+                category = "vital-signs";
+                value = new { value = random.Next(60, 100), unit = "mmHg", system = "http://unitsofmeasure.org", code = "mm[Hg]" };
+                break;
+            case 2:
+                code = "8867-4";
+                display = "Heart rate";
+                category = "vital-signs";
+                value = new { value = random.Next(60, 100), unit = "beats/minute", system = "http://unitsofmeasure.org", code = "/min" };
+                break;
+            case 3:
+                code = "8310-5";
+                display = "Body temperature";
+                category = "vital-signs"; 
+                value = new { value = Math.Round(random.NextDouble() * (99.5 - 97.0) + 97.0, 1), unit = "degrees Fahrenheit", system = "http://unitsofmeasure.org", code = "[degF]" };
+                break;
+            default:
+                code = "33747-0";
+                display = "General appearance of patient";
+                category = "exam";
+                value = "Patient appears well";
+                break;
+        }
+        
+        // Generate FHIR Observation JSON structure
+        var observation = new
+        {
+            resourceType = "Observation",
+            id = observationId,
+            status = "final",
+            category = new[]
+            {
+                new
+                {
+                    coding = new[]
+                    {
+                        new
+                        {
+                            system = "http://terminology.hl7.org/CodeSystem/observation-category",
+                            code = category,
+                            display = category == "vital-signs" ? "Vital Signs" : "Physical Exam"
+                        }
+                    }
+                }
+            },
+            code = new
+            {
+                coding = new[]
+                {
+                    new
+                    {
+                        system = "http://loinc.org",
+                        code = code,
+                        display = display
+                    }
+                }
+            },
+            subject = new
+            {
+                reference = $"Patient/{patientId}"
+            },
+            effectiveDateTime = DateTime.UtcNow.AddHours(-random.Next(1, 24)).ToString("yyyy-MM-ddTHH:mm:ssZ"),
+            valueQuantity = category == "exam" ? (object?)null : value,
+            valueString = category == "exam" ? (string)value : null
+        };
+        
+        var json = System.Text.Json.JsonSerializer.Serialize(observation, new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+            WriteIndented = true,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        });
+        
+        return Result<string>.Success(json);
     }
 
     private async Task<Result<string>> GenerateDiagnosticReportResourceAsync(GenerationOptions options)
@@ -491,7 +737,131 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateBundleResourceAsync(GenerationOptions options)
     {
-        return Result<string>.Success($"FHIR Bundle: Collection of related resources, Type: Collection, Total: 5 resources");
+        // Generate related resources with proper reference integrity
+        var patientResult = _domainGenerationService.GeneratePatient(options);
+        if (!patientResult.IsSuccess)
+            return Result<string>.Failure(patientResult.Error);
+            
+        var patient = patientResult.Value;
+        var bundleId = $"bundle-{Guid.NewGuid():N}";
+        var patientId = $"patient-{patient.MedicalRecordNumber}";
+        
+        // Generate Patient resource
+        var patientResource = new 
+        {
+            resourceType = "Patient",
+            id = patientId,
+            identifier = new[] 
+            {
+                new 
+                {
+                    use = "usual",
+                    type = new 
+                    {
+                        coding = new[] 
+                        {
+                            new 
+                            {
+                                system = "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                code = "MR",
+                                display = "Medical Record Number"
+                            }
+                        }
+                    },
+                    system = "http://hospital.example.org",
+                    value = patient.MedicalRecordNumber
+                }
+            },
+            name = new[] 
+            {
+                new 
+                {
+                    use = "official",
+                    family = patient.Name.Family,
+                    given = new[] { patient.Name.Given, patient.Name.Middle }.Where(n => !string.IsNullOrEmpty(n))
+                }
+            },
+            gender = patient.Gender?.ToString().ToLowerInvariant(),
+            birthDate = patient.BirthDate?.ToString("yyyy-MM-dd")
+        };
+        
+        // Generate Observation resource that references the Patient
+        var observationId = $"observation-{Guid.NewGuid():N}";
+        var observationResource = new
+        {
+            resourceType = "Observation",
+            id = observationId,
+            status = "final",
+            category = new[]
+            {
+                new
+                {
+                    coding = new[]
+                    {
+                        new
+                        {
+                            system = "http://terminology.hl7.org/CodeSystem/observation-category",
+                            code = "vital-signs",
+                            display = "Vital Signs"
+                        }
+                    }
+                }
+            },
+            code = new
+            {
+                coding = new[]
+                {
+                    new
+                    {
+                        system = "http://loinc.org",
+                        code = "8480-6",
+                        display = "Systolic blood pressure"
+                    }
+                }
+            },
+            subject = new
+            {
+                reference = $"Patient/{patientId}"  // FHIR Reference to Patient
+            },
+            valueQuantity = new
+            {
+                value = 120,
+                unit = "mmHg",
+                system = "http://unitsofmeasure.org",
+                code = "mm[Hg]"
+            }
+        };
+        
+        // Create Bundle with proper FHIR structure
+        var bundle = new
+        {
+            resourceType = "Bundle",
+            id = bundleId,
+            type = "collection",
+            timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+            total = 2,
+            entry = new object[]
+            {
+                new
+                {
+                    fullUrl = $"http://example.org/fhir/Patient/{patientId}",
+                    resource = patientResource
+                },
+                new
+                {
+                    fullUrl = $"http://example.org/fhir/Observation/{observationId}",
+                    resource = observationResource
+                }
+            }
+        };
+        
+        var json = System.Text.Json.JsonSerializer.Serialize(bundle, new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        });
+        
+        return Result<string>.Success(json);
     }
 
     private async Task<Result<string>> GenerateDocumentReferenceResourceAsync(GenerationOptions options)
