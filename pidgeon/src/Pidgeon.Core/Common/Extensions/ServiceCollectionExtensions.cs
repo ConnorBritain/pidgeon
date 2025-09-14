@@ -46,6 +46,10 @@ public static class ServiceCollectionExtensions
         // Register HL7 v2.3 message factory
         services.AddScoped<IHL7MessageFactory, HL7v23MessageFactory>();
         
+        // Register FHIR R4 resource factory
+        services.AddScoped<Pidgeon.Core.Infrastructure.Standards.FHIR.R4.IFHIRResourceFactory, 
+                          Pidgeon.Core.Infrastructure.Standards.FHIR.R4.FHIRResourceFactory>();
+        
         return services;
     }
 

@@ -173,6 +173,11 @@ internal class GenerationService : IGenerationService
         return ExecuteGeneration(options, 3000, "provider", GenerateProvider);
     }
 
+    public Result<ObservationResult> GenerateObservationResult(GenerationOptions options)
+    {
+        return ExecuteGeneration(options, 4000, "observation", GenerateObservationResult);
+    }
+
     public GenerationServiceInfo GetServiceInfo()
     {
         return new GenerationServiceInfo
@@ -300,6 +305,38 @@ internal class GenerationService : IGenerationService
             Name = PersonName.Create(lastName, firstName),
             NpiNumber = npi,
             Specialty = specialties[random.Next(specialties.Length)]
+        };
+    }
+
+    private ObservationResult GenerateObservationResult(Random random)
+    {
+        // Common lab tests with realistic values for multi-standard use
+        var labTests = new[]
+        {
+            new { Name = "Complete Blood Count", Code = "CBC", Value = "WBC: 7.2, RBC: 4.5, Hgb: 14.1, Hct: 42.3", Units = "K/uL", Range = "4.0-11.0" },
+            new { Name = "Basic Metabolic Panel", Code = "BMP", Value = "Na: 138, K: 4.2, Cl: 102, CO2: 24", Units = "mmol/L", Range = "135-145" },
+            new { Name = "Lipid Panel", Code = "LIPID", Value = "Total: 180, HDL: 45, LDL: 110, Trig: 125", Units = "mg/dL", Range = "<200" },
+            new { Name = "Hemoglobin A1c", Code = "HBA1C", Value = "6.8", Units = "%", Range = "<7.0" },
+            new { Name = "Thyroid Stimulating Hormone", Code = "TSH", Value = "2.4", Units = "mIU/L", Range = "0.4-4.0" },
+            new { Name = "Creatinine", Code = "CREAT", Value = "1.1", Units = "mg/dL", Range = "0.6-1.3" },
+            new { Name = "Glucose", Code = "GLUC", Value = "95", Units = "mg/dL", Range = "70-99" }
+        };
+
+        var selectedTest = labTests[random.Next(labTests.Length)];
+        var testId = $"LAB{random.Next(10000, 99999)}";
+        
+        return new ObservationResult
+        {
+            Id = testId,
+            ObservationDescription = selectedTest.Name,
+            ObservationCode = selectedTest.Code,
+            Value = selectedTest.Value,
+            Units = selectedTest.Units,
+            ReferenceRange = selectedTest.Range,
+            ResultStatus = "F", // Final
+            ObservationDateTime = DateTime.Now.AddHours(-random.Next(1, 48)),
+            CodingSystem = "LN", // LOINC coding system
+            Category = "LAB"
         };
     }
 

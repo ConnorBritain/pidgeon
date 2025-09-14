@@ -49,6 +49,13 @@ public interface IGenerationService
     Result<Provider> GenerateProvider(GenerationOptions options);
 
     /// <summary>
+    /// Generates a synthetic clinical observation result such as lab values, vital signs, or diagnostic findings.
+    /// </summary>
+    /// <param name="options">Generation configuration including observation type and clinical context</param>
+    /// <returns>A result containing the generated observation result or error information</returns>
+    Result<ObservationResult> GenerateObservationResult(GenerationOptions options);
+
+    /// <summary>
     /// Gets metadata about the generation service capabilities and current tier.
     /// </summary>
     /// <returns>Service metadata including available features and limitations</returns>
