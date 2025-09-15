@@ -88,7 +88,7 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 **Response**: Implement as plugin following existing HL7v23Plugin pattern. Never modify core services.
 
 ### **If User Wants GUI Features**:
-**Response**: Follow CLI-GUI harmonization strategy - one engine, two frontends. GUI operations export CLI equivalents.
+**Response**: Follow CLI-GUI harmonization strategy - one engine, two frontends. GUI operations export CLI equivalents. For GUI development work, use `docs/SESSION_INIT_GUI.md` for complete design context.
 
 ---
 

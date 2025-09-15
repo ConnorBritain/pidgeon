@@ -1,0 +1,225 @@
+/*
+  Pidgeon Health — brand gradients & tokens
+  -------------------------------------------------
+  This CSS defines the core palette and gradient mappings
+  used across the logo/icon, wing slats, and wordmark accents
+  (the “i” stem and the “l”). Values are tuned to match the
+  provided images; tweak the custom properties if needed.
+*/
+
+/* base palette (approx.) */
+:root {
+  /* neutrals */
+  --ph-black: #0a0a0a;
+  --ph-white: #ffffff;
+  --ph-graphite-700: #1e2730; /* halo edge */
+  --ph-graphite-500: #2a3642;
+
+  /* blues & teals (light → dark) */
+  --ph-cyan-200: #9feaff; /* very light cyan */
+  --ph-cyan-300: #85e2ff;
+  --ph-cyan-400: #69d6ff; /* top of wing */
+  --ph-blue-300: #4fbfff;
+  --ph-blue-400: #2ea2ff; /* mid wing */
+  --ph-blue-500: #157ef3; /* lower wing */
+  --ph-blue-600: #0f63d6; /* deepest slat */
+
+  /* icon field (navy → teal) */
+  --ph-navy-900: #0b1f33; /* deep navy, bottom-left */
+  --ph-navy-700: #0e3e66; /* mid navy */
+  --ph-teal-600: #0b6d8e; /* cool teal mid */
+  --ph-teal-500: #10b7c4; /* bright teal, top-right */
+
+  /* typography */
+  --ph-text-dark: var(--ph-graphite-500);
+  --ph-text-light: var(--ph-white);
+}
+
+/* gradient tokens */
+:root {
+  /* icon background: deep navy (↙) → cool teal (↗) with edge halo */
+  --ph-gradient-icon: 
+    radial-gradient(closest-side at 50% 50%, transparent 58%, color-mix(in oklab, var(--ph-graphite-700) 35%, transparent) 100%),
+    linear-gradient(135deg,
+      var(--ph-navy-900) 8%,
+      var(--ph-navy-700) 40%,
+      var(--ph-teal-600) 68%,
+      var(--ph-teal-500) 100%
+    );
+
+  /* wing slat: light cyan (top) → medium/deep blue (bottom) */
+  --ph-gradient-wing: linear-gradient(
+    to bottom,
+    var(--ph-cyan-400) 0%,
+    var(--ph-blue-400) 60%,
+    var(--ph-blue-600) 100%
+  );
+
+  /* wordmark accent (i stem & l): match wing gradient */
+  --ph-gradient-accent: var(--ph-gradient-wing);
+}
+
+/* dark mode / light mode helpers */
+html[data-theme="dark"] {
+  --ph-app-bg: var(--ph-black);
+  --ph-text: var(--ph-text-light);
+}
+html[data-theme="light"] {
+  --ph-app-bg: var(--ph-white);
+  --ph-text: var(--ph-text-dark);
+}
+
+body { background: var(--ph-app-bg, var(--ph-black)); color: var(--ph-text, var(--ph-white)); }
+
+/* icon — circular field behind the bird */
+.logo-circle {
+  width: 216px; /* adjust as needed */
+  height: 216px;
+  border-radius: 50%;
+  background: var(--ph-gradient-icon);
+  display: inline-grid;
+  place-items: center;
+}
+
+/* wing slats (use 4 only). Example shape for a slat bar */
+.wing-slat {
+  --slat-h: 18px; /* thickness */
+  --slat-w: 128px; /* length */
+  width: var(--slat-w);
+  height: var(--slat-h);
+  background: var(--ph-gradient-wing);
+  border-radius: 9999px;                  /* pill rounding */
+  box-shadow: 0 0.5px 0.5px rgba(0,0,0,.15) inset;
+}
+
+/* wordmark — type color & accents */
+.wordmark { 
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif; 
+  font-weight: 700; /* Inter SemiBold/Satoshi Bold look */
+  letter-spacing: -0.01em;
+}
+.wordmark--white { color: var(--ph-white); }
+.wordmark--dark { color: var(--ph-text-dark); }
+
+/* gradient glyphs: wrap the letter in <span class="accent">i</span> or <span class="accent">l</span> */
+.wordmark .accent {
+  background: var(--ph-gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* optional: smooth joints between close letters (kerning tweaks) */
+.wordmark .tight-ge { letter-spacing: -0.012em; }
+.wordmark .tight-he { letter-spacing: -0.012em; }
+
+/* stacked lockup helper */
+.lockup-stack {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 8px;
+  align-items: center;
+  justify-items: center;
+}
+
+/* horizontal lockup helper */
+.lockup-row {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 16px;
+  align-items: center;
+}
+
+/* demo scaffolding (optional) -------------------------------------------
+<div class="lockup-row">
+  <div class="logo-circle"></div>
+  <h1 class="wordmark wordmark--white">
+    pid<span class="accent">g</span>eon
+    <span style="display:block"></span>
+    hea<span class="accent">l</span>th
+  </h1>
+</div>
+
+// For text-only stacked logo:
+<div class="lockup-stack">
+  <h1 class="wordmark wordmark--white">pid<span class="accent">g</span>eon</h1>
+  <h1 class="wordmark wordmark--white">hea<span class="accent">l</span>th</h1>
+</div>
+----------------------------------------------------------------------- */
+
+/* =============================================================
+   light-mode accent extensions — greens & reds for healthcare
+   Rationale: keep blue/teal as the hero; use green for positive/
+   actionable accents and red for warnings/errors. Tuned to be
+   brighter and less muted than the screenshot palette.
+   ============================================================= */
+:root {
+  /* greens (mint → emerald) */
+  --ph-mint-300: #a6f0c4;
+  --ph-mint-400: #7be7b0;
+  --ph-green-500: #2fbf71; /* primary success */
+  --ph-green-600: #19995a;
+  --ph-green-700: #0e7b45;
+
+  /* reds (coral → crimson) */
+  --ph-coral-300: #ffb4a6;
+  --ph-coral-400: #ff8e7a;
+  --ph-red-500: #e75a47;  /* primary danger */
+  --ph-red-600: #cc3a2a;
+  --ph-red-700: #a5281b;
+}
+
+:root {
+  /* semantic/background gradients */
+  --ph-gradient-success: linear-gradient(
+    to bottom,
+    var(--ph-mint-400) 0%,
+    color-mix(in oklab, var(--ph-green-500) 88%, white 12%) 55%,
+    var(--ph-green-600) 100%
+  );
+
+  --ph-gradient-danger: linear-gradient(
+    to bottom,
+    var(--ph-coral-400) 0%,
+    color-mix(in oklab, var(--ph-red-500) 88%, white 12%) 55%,
+    var(--ph-red-600) 100%
+  );
+
+  /* flat roles (for text/icons/solid fills) */
+  --ph-success: var(--ph-green-500);
+  --ph-danger:  var(--ph-red-500);
+}
+
+/***** usage helpers *****/
+/* accent stems for wordmark (e.g., i, l) in light mode */
+.wordmark .accent-success { background: var(--ph-gradient-success); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.wordmark .accent-danger  { background: var(--ph-gradient-danger);  -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+/* pills/badges */
+.pill { padding: .25rem .5rem; border-radius: 999px; font-weight: 600; color: var(--ph-white); }
+.pill--success { background: var(--ph-gradient-success); box-shadow: 0 1px 0 rgba(0,0,0,.2) inset; }
+.pill--danger  { background: var(--ph-gradient-danger);  box-shadow: 0 1px 0 rgba(0,0,0,.2) inset; }
+
+/* buttons */
+.button--success { background: var(--ph-gradient-success); color: var(--ph-white); border: 0; border-radius: 12px; padding:.625rem 1rem; }
+.button--danger  { background: var(--ph-gradient-danger);  color: var(--ph-white); border: 0; border-radius: 12px; padding:.625rem 1rem; }
+
+/* focus ring aligned to brand blues, not red/green to avoid mixed semantics */
+:focus-visible { outline: 3px solid color-mix(in oklab, var(--ph-blue-400) 60%, var(--ph-teal-500) 40%); outline-offset: 3px; }
+
+/* chart palette suggestion (ordered):
+   1) brand blue 2) teal 3) green 4) graphite 5) coral
+   Use pattern/shape along with color for accessibility. */
+.chart-color-1 { --c: var(--ph-blue-500); }
+.chart-color-2 { --c: var(--ph-teal-500); }
+.chart-color-3 { --c: var(--ph-green-500); }
+.chart-color-4 { --c: var(--ph-graphite-500); }
+.chart-color-5 { --c: var(--ph-red-500); }
+
+/* text on colored surfaces maintains AA contrast */
+.on-success { color: var(--ph-white); }
+.on-danger  { color: var(--ph-white); }
+
+/* NOTE: Avoid red+green adjacency to prevent a holiday/clinical alarm feel.
+   Prefer: blue + green together; reserve red for true alerts & destructive actions. */
+
