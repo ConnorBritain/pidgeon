@@ -2,7 +2,12 @@
 
 ## vision statement
 
-Pidgeon will become the **indispensable observability and intelligence layer** for healthcare interfaces. Where traditional engines like Mirth, Cloverleaf, or Rhapsody move messages, Pidgeon will deliver **continuous visibility, assurance, and actionable insight** into those flows. Our goal is to make Pidgeon as essential to interface infrastructure as SIEMs are to cybersecurity.
+**UPDATED STRATEGY (Sept 14, 2025)**: Pidgeon adopts a two-product gateway approach to maximize market penetration and revenue potential.
+
+**Product 1 - Pidgeon Testing Suite**: Best-in-class healthcare message testing and validation platform  
+**Product 2 - Pidgeon Observability Platform**: The **indispensable observability and intelligence layer** for healthcare interfaces
+
+Where traditional engines like Mirth, Cloverleaf, or Rhapsody move messages, Pidgeon will deliver **continuous visibility, assurance, and actionable insight** into those flows. Our goal is to make Pidgeon as essential to interface infrastructure as SIEMs are to cybersecurity.
 
 By combining testing, validation, observability, and analytics in a single platform, Pidgeon will:
 

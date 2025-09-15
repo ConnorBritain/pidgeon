@@ -1,11 +1,11 @@
 Pidgeon Conservative Pro Forma Estimates
 
-framing assumptions
-	•	Pidgeon positions as the observability and intelligence layer for healthcare interfaces.
-	•	Business model: open-core adoption with paid Pro/Enterprise tiers.
-	•	Target market: integration consultants, hospital IT teams, software vendors.
-	•	Pricing bands: Pro ~$25–50/user/month; Enterprise ~$5k–50k/year depending on scale.
-	•	Market behavior: conservative conversion rates (5–10% free → paid) given healthcare IT’s cost sensitivity.
+framing assumptions (UPDATED Sept 14, 2025)
+	•	Pidgeon adopts two-product strategy: Testing Suite + Observability Platform.
+	•	Testing Suite: open-core with Pro ($29/month) and Enterprise tiers.
+	•	Observability Platform: Enterprise SaaS ($5k–50k/year).
+	•	Target market: Testing (developers, consultants) → Observability (hospital IT operations).
+	•	Market behavior: Testing Suite builds user base, natural progression to Observability Platform.
 
 ⸻
 

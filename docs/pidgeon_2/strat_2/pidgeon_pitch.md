@@ -10,7 +10,10 @@ Healthcare data exchange runs on complex HL7, FHIR, and NCPDP interfaces. Engine
 
 ## the solution
 
-**Pidgeon** is the **healthcare interface observability and intelligence platform**.
+**UPDATED STRATEGY (Sept 14, 2025)**: Pidgeon delivers a two-product solution:
+
+**Pidgeon Testing Suite**: Healthcare message testing and validation platform (immediate market entry)
+**Pidgeon Observability Platform**: Healthcare interface observability and intelligence platform (enterprise expansion)
 
 * **Testing & validation**: Generate synthetic HL7/FHIR data, validate against specs, infer vendor quirks.
 * **Observability**: Monitor live interfaces, track errors, latency, and drift; proactive alerts prevent downtime.
