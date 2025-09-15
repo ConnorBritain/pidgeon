@@ -62,7 +62,7 @@ public class ConfidenceCalculatorBehaviorTests : IDisposable
         // Assert - Should indicate high confidence for well-populated patterns
         if (result.IsFailure)
         {
-            Assert.True(false, $"Confidence calculation failed: {result.Error.Message}");
+            Assert.Fail($"Confidence calculation failed: {result.Error.Message}");
         }
         
         result.Value.Should().BeGreaterThan(0.0, "Should calculate meaningful confidence");

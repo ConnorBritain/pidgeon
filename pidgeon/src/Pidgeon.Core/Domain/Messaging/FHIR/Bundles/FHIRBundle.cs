@@ -48,8 +48,6 @@ public abstract class FHIRBundle : HealthcareMessage
         if (!Standard.Equals("FHIR", StringComparison.OrdinalIgnoreCase))
             return Error.Validation($"Standard must be FHIR, got: {Standard}", nameof(Standard));
 
-        if (BundleType == null)
-            return Error.Validation("FHIR Bundle Type is required", nameof(BundleType));
 
         // Validate all entries
         for (var i = 0; i < Entries.Count; i++)

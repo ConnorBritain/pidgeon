@@ -1,26 +1,125 @@
 @import "tailwindcss";
 
+/* Import Pidgeon Health Design System */
+@import '../styles/pidgeon-health.css';
+
+/* Healthcare Desktop Application Variables */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Pidgeon Health brand colors override */
+  --background: var(--ph-desktop-bg);
+  /* Use a dark foreground in light mode for readability */
+  --foreground: #1e2730; /* ph-graphite-700 */
+  
+  /* Healthcare typography */
+  --font-sans: Inter, system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 }
 
-@theme inline {
+@theme {
+  /* Tailwind theme integration */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  
+  /* Healthcare spacing */
+  --spacing-desktop-xs: 6px;
+  --spacing-desktop-sm: 12px;
+  --spacing-desktop-md: 20px;
+  --spacing-desktop-lg: 32px;
+  --spacing-desktop-xl: 48px;
+  
+  /* Healthcare colors */
+  --color-ph-blue-500: #157ef3;
+  --color-ph-success: #2fbf71;
+  --color-ph-danger: #e75a47;
+  --color-ph-warning: #f5a623;
+  --color-ph-info: #10b7c4;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #1e1e1e;
     --foreground: #ededed;
   }
 }
 
+/* Healthcare Desktop Application Base */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+}
+
 body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  overflow: hidden; /* Desktop app - no page scrolling */
+}
+
+/* Healthcare professional focus management */
+:focus-visible {
+  outline: 2px solid var(--ph-blue-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Code elements for healthcare messages */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.4;
+  background: var(--ph-desktop-editor-bg);
+  border: 1px solid var(--ph-desktop-border);
+  border-radius: 4px;
+  padding: 12px;
+  overflow: auto;
+}
+
+/* Scrollbar styling for healthcare apps */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Selection styling */
+::selection {
+  background: rgba(21, 126, 243, 0.2);
+  color: inherit;
+}
+
+/* Healthcare app root container */
+#__next {
+  height: 100vh;
+  overflow: hidden;
 }

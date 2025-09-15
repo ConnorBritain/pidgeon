@@ -1,0 +1,417 @@
+/*
+  Pidgeon Health — Brand Design System for Desktop GUI
+  -------------------------------------------------
+  Healthcare-focused design tokens and component patterns
+  for professional desktop application environments
+*/
+
+/* Import base brand tokens */
+@import url('../../../docs/visuals/pidgeon_health_brand_baseline.css');
+
+/* Healthcare Desktop Application Extensions */
+:root {
+  /* Desktop-specific spacing (larger for desktop interactions) */
+  --ph-space-desktop-xs: 6px;
+  --ph-space-desktop-sm: 12px;
+  --ph-space-desktop-md: 20px;
+  --ph-space-desktop-lg: 32px;
+  --ph-space-desktop-xl: 48px;
+  
+  /* Healthcare workstation typography */
+  --ph-font-desktop-xs: 11px/16px;    /* Small labels */
+  --ph-font-desktop-sm: 13px/20px;    /* Body text */
+  --ph-font-desktop-base: 14px/22px;  /* Default desktop */
+  --ph-font-desktop-lg: 16px/26px;    /* Headers */
+  --ph-font-desktop-xl: 18px/28px;    /* Section titles */
+  --ph-font-desktop-2xl: 22px/32px;   /* Page titles */
+  
+  /* Activity Bar dimensions */
+  --ph-activity-bar-width: 64px;
+  --ph-activity-bar-item-size: 48px;
+  --ph-activity-bar-padding: 8px;
+  
+  /* Panel dimensions */
+  --ph-panel-min-width: 240px;
+  --ph-panel-default-width: 320px;
+  --ph-panel-max-width: 480px;
+  
+  /* Message editor dimensions */
+  --ph-editor-min-height: 300px;
+  --ph-editor-default-height: 500px;
+  
+  /* Healthcare semantic colors for desktop */
+  --ph-desktop-focus: var(--ph-blue-400);
+  --ph-desktop-focus-ring: rgba(21, 126, 243, 0.2);
+  --ph-desktop-border: var(--ph-gray-300);
+  --ph-desktop-border-hover: var(--ph-gray-500);
+  
+  /* Professional desktop surfaces */
+  --ph-desktop-bg: #f1f3f5;
+  --ph-desktop-panel-bg: var(--ph-white);
+  --ph-desktop-toolbar-bg: #e9ecef;
+  --ph-desktop-editor-bg: var(--ph-white);
+}
+
+/* Dark mode for healthcare environments */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ph-desktop-bg: #1e1e1e;
+    --ph-desktop-panel-bg: #252526;
+    --ph-desktop-toolbar-bg: #2d2d30;
+    --ph-desktop-editor-bg: #1e1e1e;
+    --ph-desktop-border: #3e3e42;
+    --ph-desktop-border-hover: #5a5a5a;
+  }
+}
+
+/* Healthcare Professional Typography */
+.ph-text-desktop-xs { font: var(--ph-font-desktop-xs) var(--font-sans); }
+.ph-text-desktop-sm { font: var(--ph-font-desktop-sm) var(--font-sans); }
+.ph-text-desktop-base { font: var(--ph-font-desktop-base) var(--font-sans); }
+.ph-text-desktop-lg { font: var(--ph-font-desktop-lg) var(--font-sans); font-weight: 500; }
+.ph-text-desktop-xl { font: var(--ph-font-desktop-xl) var(--font-sans); font-weight: 600; }
+.ph-text-desktop-2xl { font: var(--ph-font-desktop-2xl) var(--font-sans); font-weight: 600; }
+
+/* Code typography for healthcare messages */
+.ph-code-text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: 0.025em;
+}
+
+/* Healthcare Focus Management */
+.ph-focus-ring {
+  outline: 2px solid var(--ph-desktop-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.ph-focus-ring-inset {
+  box-shadow: inset 0 0 0 2px var(--ph-desktop-focus);
+}
+
+/* Healthcare Button Patterns */
+.ph-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font: var(--ph-font-desktop-sm) var(--font-sans);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ph-btn:focus-visible {
+  outline: 2px solid var(--ph-desktop-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.ph-btn-primary {
+  background: radial-gradient(ellipse at center, #69d6ff 0%, #2ea2ff 45%, #157ef3 70%, #0f63d6 100%);
+  color: var(--ph-white);
+  box-shadow: 0 2px 8px rgba(21, 126, 243, 0.25);
+  border: none;
+}
+
+.ph-btn-primary:hover {
+  background: radial-gradient(ellipse at center, #85e2ff 0%, #4fbfff 45%, #2ea2ff 70%, #157ef3 100%);
+  box-shadow: 0 4px 16px rgba(21, 126, 243, 0.35);
+  transform: translateY(-1px);
+}
+
+.ph-btn-secondary {
+  background: var(--ph-white);
+  color: var(--ph-black);
+  border: 1px solid var(--ph-gray-300);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.ph-btn-secondary:hover {
+  border-color: var(--ph-gray-500);
+  background: var(--ph-gray-100);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.ph-btn-success {
+  background: var(--ph-gradient-success);
+  color: var(--ph-white);
+}
+
+.ph-btn-danger {
+  background: var(--ph-gradient-danger);
+  color: var(--ph-white);
+}
+
+/* Healthcare Card Patterns */
+.ph-card {
+  background: var(--ph-desktop-panel-bg);
+  border: 1px solid var(--ph-desktop-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.ph-card-interactive {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.ph-card-interactive:hover {
+  border-color: var(--ph-desktop-border-hover);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Healthcare Input Patterns */
+.ph-input {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  font: var(--ph-font-desktop-sm) var(--font-sans);
+  background: var(--ph-desktop-editor-bg);
+  border: 1px solid var(--ph-desktop-border);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.ph-input:focus {
+  outline: none;
+  border-color: var(--ph-desktop-focus);
+  box-shadow: 0 0 0 3px var(--ph-desktop-focus-ring);
+}
+
+.ph-input::placeholder {
+  color: var(--ph-gray-500);
+}
+
+/* Healthcare Status Indicators */
+.ph-status-success {
+  color: var(--ph-success);
+}
+
+.ph-status-danger {
+  color: var(--ph-danger);
+}
+
+.ph-status-warning {
+  color: var(--ph-warning);
+}
+
+.ph-status-info {
+  color: var(--ph-info);
+}
+
+/* Healthcare Badge Patterns */
+.ph-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font: var(--ph-font-desktop-xs) var(--font-sans);
+  font-weight: 500;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.ph-badge-success {
+  background: rgba(47, 191, 113, 0.1);
+  color: var(--ph-green-700);
+}
+
+.ph-badge-danger {
+  background: rgba(231, 90, 71, 0.1);
+  color: var(--ph-red-700);
+}
+
+.ph-badge-warning {
+  background: rgba(245, 166, 35, 0.1);
+  color: #b45309;
+}
+
+.ph-badge-info {
+  background: rgba(16, 183, 196, 0.1);
+  color: #0c7983;
+}
+
+/* Healthcare Loading States */
+.ph-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ph-space-desktop-sm);
+  color: var(--ph-gray-500);
+  font: var(--ph-font-desktop-sm) var(--font-sans);
+}
+
+.ph-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--ph-gray-300);
+  border-top: 2px solid var(--ph-blue-500);
+  border-radius: 50%;
+  animation: ph-spin 1s linear infinite;
+}
+
+@keyframes ph-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Healthcare Desktop Layout Patterns */
+.ph-desktop-layout {
+  display: grid;
+  grid-template-columns: var(--ph-activity-bar-width) 1fr;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  background: var(--ph-desktop-bg);
+  color: var(--ph-white);
+  font: var(--ph-font-desktop-base) var(--font-sans);
+}
+
+.ph-activity-bar {
+  grid-row: 1 / -1;
+  background: var(--ph-desktop-toolbar-bg);
+  border-right: 1px solid var(--ph-desktop-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--ph-activity-bar-padding);
+  gap: var(--ph-space-desktop-sm);
+}
+
+.ph-activity-item {
+  width: var(--ph-activity-bar-item-size);
+  height: var(--ph-activity-bar-item-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 20px;
+  color: var(--ph-gray-500);
+}
+
+.ph-activity-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ph-graphite-700);
+}
+
+.ph-activity-item--active {
+  background: var(--ph-gradient-wing);
+  color: var(--ph-white);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ph-main-content {
+  display: grid;
+  grid-template-columns: var(--ph-panel-default-width) 1fr;
+  min-height: 0; /* Allow content to shrink */
+}
+
+.ph-panel {
+  background: var(--ph-desktop-panel-bg);
+  border-right: 1px solid var(--ph-desktop-border);
+  overflow: auto;
+}
+
+.ph-canvas {
+  background: var(--ph-desktop-editor-bg);
+  overflow: auto;
+  position: relative;
+}
+
+/* Healthcare Message Editor Patterns */
+.ph-message-editor {
+  height: var(--ph-editor-default-height);
+  border: 1px solid var(--ph-desktop-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ph-validation-panel {
+  background: var(--ph-desktop-panel-bg);
+  border: 1px solid var(--ph-desktop-border);
+  border-radius: 4px;
+  padding: var(--ph-space-desktop-md);
+}
+
+/* Healthcare Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode for clinical environments */
+@media (prefers-contrast: high) {
+  :root {
+    --ph-desktop-border: #000000;
+    --ph-desktop-focus: #0066cc;
+  }
+  
+  .ph-btn-secondary {
+    border-width: 2px;
+  }
+  
+  .ph-input {
+    border-width: 2px;
+  }
+}
+
+/* Healthcare Professional Utilities */
+.ph-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ph-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ph-select-none {
+  user-select: none;
+}
+
+.ph-select-all {
+  user-select: all;
+}
+
+/* Healthcare Data Table Patterns */
+.ph-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--ph-font-desktop-sm) var(--font-sans);
+}
+
+.ph-table th {
+  text-align: left;
+  padding: var(--ph-space-desktop-sm) var(--ph-space-desktop-md);
+  border-bottom: 2px solid var(--ph-desktop-border);
+  font-weight: 600;
+  color: var(--ph-graphite-700);
+}
+
+.ph-table td {
+  padding: var(--ph-space-desktop-sm) var(--ph-space-desktop-md);
+  border-bottom: 1px solid var(--ph-gray-200);
+}
+
+.ph-table tbody tr:hover {
+  background: var(--ph-gray-100);
+}

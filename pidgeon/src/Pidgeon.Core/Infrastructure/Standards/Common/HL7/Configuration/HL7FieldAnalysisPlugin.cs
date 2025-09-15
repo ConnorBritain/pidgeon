@@ -100,9 +100,9 @@ internal class HL7FieldAnalysisPlugin : IStandardFieldAnalysisPlugin
                 MessageType = new HL7MessageType { MessageCode = messageType, TriggerEvent = string.Empty },
                 Standard = "HL7v2",
                 Version = MshHeaderParser.ExtractVersionId(segments) ?? "2.3",  // Default to 2.3 if not specified
-                MessageControlId = MshHeaderParser.ExtractMessageControlId(segments),
-                SendingSystem = MshHeaderParser.ExtractSendingSystem(segments),
-                ReceivingSystem = MshHeaderParser.ExtractReceivingSystem(segments),
+                MessageControlId = MshHeaderParser.ExtractMessageControlId(segments) ?? string.Empty,
+                SendingSystem = MshHeaderParser.ExtractSendingSystem(segments) ?? string.Empty,
+                ReceivingSystem = MshHeaderParser.ExtractReceivingSystem(segments) ?? string.Empty,
                 Timestamp = DateTime.UtcNow,
                 Segments = ParseSegments(segments).Values.ToList()
             };

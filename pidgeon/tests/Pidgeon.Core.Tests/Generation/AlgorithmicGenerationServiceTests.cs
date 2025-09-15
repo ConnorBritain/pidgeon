@@ -282,7 +282,7 @@ public class AlgorithmicGenerationServiceTests
         serviceInfo.Dataset.FirstNameCount.Should().BeGreaterThan(0, "Should have first names in dataset");
         serviceInfo.Dataset.SurnameCount.Should().BeGreaterThan(0, "Should have surnames in dataset");
         serviceInfo.Limits.Should().NotBeNull();
-        serviceInfo.Limits.MaxGenerationsPerPeriod.Should().BeGreaterThan(0, "Should have generation limits");
+        serviceInfo.Limits!.MaxGenerationsPerPeriod.Should().BeGreaterThan(0, "Should have generation limits");
     }
 
     #endregion
@@ -314,7 +314,7 @@ public class AlgorithmicGenerationServiceTests
         {
             var result = _service.GeneratePatient(_defaultOptions);
             result.IsSuccess.Should().BeTrue();
-            addresses.Add(result.Value.Address);
+            addresses.Add(result.Value.Address!);
         }
         
         // Assert - All addresses should have valid US format
@@ -336,7 +336,7 @@ public class AlgorithmicGenerationServiceTests
         {
             var result = _service.GeneratePatient(_defaultOptions);
             result.IsSuccess.Should().BeTrue();
-            phoneNumbers.Add(result.Value.PhoneNumber);
+            phoneNumbers.Add(result.Value.PhoneNumber!);
         }
         
         // Assert - All phone numbers should follow US format

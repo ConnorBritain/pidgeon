@@ -81,7 +81,7 @@ public class ADTMessage : HL7Message
             };
 
             // Configure MSH segment
-            var msh = message.MSH;
+            var msh = message.MSH!;
             msh.SetMessageType("ADT", "A01");
 
             if (sendingApplication != null)
@@ -136,7 +136,7 @@ public class ADTMessage : HL7Message
         if (result.IsSuccess)
         {
             // Change trigger event to A03 (Discharge)
-            result.Value.MSH.SetMessageType("ADT", "A03");
+            result.Value.MSH!.SetMessageType("ADT", "A03");
         }
         return result;
     }
@@ -163,7 +163,7 @@ public class ADTMessage : HL7Message
         if (result.IsSuccess)
         {
             // Change trigger event to A08 (Update Patient Information)
-            result.Value.MSH.SetMessageType("ADT", "A08");
+            result.Value.MSH!.SetMessageType("ADT", "A08");
         }
         return result;
     }

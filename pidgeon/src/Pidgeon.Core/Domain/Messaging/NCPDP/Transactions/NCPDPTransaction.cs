@@ -43,8 +43,6 @@ public abstract class NCPDPTransaction : HealthcareMessage
         if (!Standard.Equals("NCPDP", StringComparison.OrdinalIgnoreCase))
             return Error.Validation($"Standard must be NCPDP, got: {Standard}", nameof(Standard));
 
-        if (TransactionType == null)
-            return Error.Validation("NCPDP Transaction Type is required", nameof(TransactionType));
 
         // NCPDP transactions must have UIB (Interchange Header) and UIH (Message Header)
         if (!Segments.ContainsKey("UIB"))

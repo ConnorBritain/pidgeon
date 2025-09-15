@@ -366,7 +366,7 @@ internal class GenerationService : IGenerationService
             random.Next(0, 12);
     }
 
-    private string GenerateSpecialInstructions(Random random, Medication medication)
+    private string? GenerateSpecialInstructions(Random random, Medication medication)
     {
         var instructions = new[] 
         {

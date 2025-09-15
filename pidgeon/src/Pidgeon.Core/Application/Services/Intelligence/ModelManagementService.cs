@@ -19,7 +19,6 @@ public class ModelManagementService : IModelManagementService
     private readonly ILogger<ModelManagementService> _logger;
     private readonly HttpClient _httpClient;
     private readonly string _modelsDirectory;
-    private readonly string _modelRegistryUrl;
 
     public ModelManagementService(
         ILogger<ModelManagementService> logger,
@@ -32,8 +31,7 @@ public class ModelManagementService : IModelManagementService
         var userHome = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         _modelsDirectory = Path.Combine(userHome, ".pidgeon", "models");
         
-        // TODO: Make this configurable
-        _modelRegistryUrl = "https://models.pidgeon.health/registry.json";
+        // TODO: Make model registry URL configurable
         
         Directory.CreateDirectory(_modelsDirectory);
     }

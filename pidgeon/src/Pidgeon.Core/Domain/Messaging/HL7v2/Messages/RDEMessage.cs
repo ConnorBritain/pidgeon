@@ -86,7 +86,7 @@ public class RDEMessage : HL7Message
             var message = new RDEMessage();
 
             // Configure MSH segment
-            var msh = message.MSH;
+            var msh = message.MSH!;
             msh.SetMessageType("RDE", "O01");
 
             if (sendingApplication != null)
@@ -120,9 +120,9 @@ public class RDEMessage : HL7Message
             }
 
             // Populate RXR segment (Route)
-            if (message.RXR != null)
+            if (message.RXR != null && prescription.Dosage != null)
             {
-                var route = prescription.Dosage.Route.ToString();
+                var route = prescription.Dosage.Route?.ToString() ?? "Unknown";
                 var rxrResult = message.RXR.SetRoute(route);
                 if (rxrResult.IsFailure)
                     return Result<RDEMessage>.Failure($"Failed to populate route information: {rxrResult.Error}");

@@ -1,103 +1,166 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { Workspace } from '@/components/layout';
+import { ControlBar, MessageEditor, ValidationPanel, EmptyState, UserMode } from '@/components/workbench';
+import { EditorHeader } from '@/components/workbench/EditorHeader';
+import { buildGenerateCli, buildValidateCli } from '@/lib/cliMapping';
+import { LibraryPanel, VendorPanel, WorkflowsPanel, DiffPanel, DatasetsPanel, ExplorerPanel } from '@/components/leftpanels';
+
+type ValidationMode = 'strict' | 'compatibility';
+
+interface ValidationIssue {
+  ruleId: string;
+  message: string;
+  severity: 'Error' | 'Warning' | 'Info';
+  location?: string;
+}
+
+interface ValidationResultView {
+  isValid: boolean;
+  issues: ValidationIssue[];
+}
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [aiPanelOpen, setAIPanelOpen] = useState(false);
+  const [mode, setMode] = useState<UserMode>('basic');
+  const [standard, setStandard] = useState<string>('HL7 v2.x');
+  const [messageType, setMessageType] = useState<string>('ADT^A01');
+  const [message, setMessage] = useState<string>('');
+  const [validationMode, setValidationMode] = useState<ValidationMode>('strict');
+  const [validation, setValidation] = useState<ValidationResultView | null>(null);
+  const [vendorProfile, setVendorProfile] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const handleGenerate = () => {
+    if (standard.toLowerCase().includes('hl7')) {
+      const now = new Date().toISOString();
+      setMessage(`MSH|^~\\&|PIDGEON|FAC|RCV|DEST|${now}|PIDGEON|ADT^A01|123|P|2.3\nPID|1||12345^^^HOSP^MR||DOE^JOHN^^^^^L|`);
+    } else if (standard.toLowerCase().includes('fhir')) {
+      setMessage(`{\n  "resourceType": "Patient",\n  "id": "example",\n  "name": [{ "family": "Doe", "given": ["John"] }]\n}`);
+    } else {
+      setMessage('NewRx|example-stub');
+    }
+    // Auto-clear validation result
+    setValidation(null);
+  };
+
+  const handleValidate = () => {
+    if (message.trim().length === 0) {
+      setValidation({ isValid: false, issues: [{ ruleId: 'EMPTY', message: 'No message content', severity: 'Error' }] });
+      return;
+    }
+    if (standard.toLowerCase().includes('hl7')) {
+      const isHL7 = message.startsWith('MSH');
+      const issues: ValidationIssue[] = [];
+      if (!isHL7) {
+        issues.push({ ruleId: 'HL7_MSH_REQUIRED', message: 'MSH segment missing', severity: 'Error' });
+      }
+      setValidation({ isValid: issues.length === 0, issues });
+    } else if (standard.toLowerCase().includes('fhir')) {
+      try {
+        JSON.parse(message);
+        setValidation({ isValid: true, issues: [] });
+      } catch {
+        setValidation({ isValid: false, issues: [{ ruleId: 'JSON_PARSE', message: 'Invalid JSON', severity: 'Error' }] });
+      }
+    } else {
+      setValidation({ isValid: true, issues: [] });
+    }
+  };
+
+  const handleImport = (deidentify: boolean) => {
+    // Stub: simulate import
+    const imported = 'MSH|^~\\&|...\nPID|...';
+    setMessage(imported + (deidentify ? '\n# De-identified preview' : ''));
+    setValidation(null);
+  };
+
+  const handleAnalyzeVendor = () => {
+    // Stub: pretend we saved a vendor profile
+    setVendorProfile('epic_er.json');
+  };
+
+  const handleUseVendor = () => {
+    if (!vendorProfile) setVendorProfile('epic_er.json');
+  };
+
+  const genCli = () => buildGenerateCli(standard, messageType, 1, vendorProfile);
+  const valCli = () => buildValidateCli('current.hl7', validationMode);
+
+  const renderLeftPanel = (active: string) => {
+    switch (active) {
+      case 'explorer':
+        return <ExplorerPanel />;
+      case 'library':
+        return <LibraryPanel />;
+      case 'vendor':
+        return <VendorPanel />;
+      case 'workflows':
+        return <WorkflowsPanel />;
+      case 'diff':
+        return <DiffPanel />;
+      case 'datasets':
+        return <DatasetsPanel />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <Workspace
+      aiPanelOpen={aiPanelOpen}
+      onAIPanelToggle={() => setAIPanelOpen(!aiPanelOpen)}
+      renderLeftPanel={renderLeftPanel}
+    >
+      <div className="p-desktop-md space-y-desktop-md max-w-6xl mx-auto w-full">
+        <ControlBar
+          mode={mode}
+          onModeChange={setMode}
+          standard={standard}
+          onStandardChange={(s) => {
+            setStandard(s);
+            // Adjust default types when switching standards
+            if (s.toLowerCase().includes('hl7')) setMessageType('ADT^A01');
+            else if (s.toLowerCase().includes('fhir')) setMessageType('Patient');
+            else setMessageType('NewRx');
+          }}
+          messageType={messageType}
+          onMessageTypeChange={setMessageType}
+          hasMessage={message.trim().length > 0}
+          onGenerate={handleGenerate}
+          onValidate={handleValidate}
+          onImport={handleImport}
+          aiOpen={aiPanelOpen}
+          onToggleAI={() => setAIPanelOpen(!aiPanelOpen)}
+          vendorProfile={vendorProfile}
+          onAnalyzeVendor={handleAnalyzeVendor}
+          onUseVendor={handleUseVendor}
+          buildGenerateCli={genCli}
+          buildValidateCli={valCli}
+        />
+
+        {message.trim().length === 0 ? (
+          <EmptyState
+            onQuickGenerate={handleGenerate}
+            onImportDeidentify={() => handleImport(true)}
+            onPickTemplate={(std, type) => {
+              setStandard(std);
+              setMessageType(type);
+            }}
+            primaryLabel={`Generate ${standard.includes('HL7') ? messageType : messageType}`}
+          />
+        ) : (
+          <>
+            <EditorHeader
+              label={`${standard} • ${messageType}`}
+              onValidate={handleValidate}
+              buildValidateCli={valCli}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            <MessageEditor value={message} onChange={setMessage} />
+            <ValidationPanel result={validation} buildValidateCli={valCli} />
+          </>
+        )}
+      </div>
+    </Workspace>
   );
 }

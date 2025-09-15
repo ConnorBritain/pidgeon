@@ -1,0 +1,23 @@
+import { InputHTMLAttributes, forwardRef } from 'react';
+import { cn } from '@/lib/utils';
+
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  variant?: 'default' | 'healthcare';
+}
+
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        className={cn('ph-input', className)}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+
+Input.displayName = 'Input';
+
+export { Input };

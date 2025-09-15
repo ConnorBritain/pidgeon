@@ -53,7 +53,7 @@ internal static class TestHelpers
             }
         };
         
-        mock.Setup(x => x.GeneratePatient(It.IsAny<GenerationOptions?>()))
+        mock.Setup(x => x.GeneratePatient(It.IsAny<GenerationOptions>()))
             .Returns(Result<Patient>.Success(mockPatient));
             
         // Setup mock encounter generation
@@ -75,7 +75,7 @@ internal static class TestHelpers
             Priority = EncounterPriority.Routine
         };
         
-        mock.Setup(x => x.GenerateEncounter(It.IsAny<GenerationOptions?>()))
+        mock.Setup(x => x.GenerateEncounter(It.IsAny<GenerationOptions>()))
             .Returns(Result<Encounter>.Success(mockEncounter));
             
         // Setup mock prescription generation
@@ -105,7 +105,7 @@ internal static class TestHelpers
             }
         };
         
-        mock.Setup(x => x.GeneratePrescription(It.IsAny<GenerationOptions?>()))
+        mock.Setup(x => x.GeneratePrescription(It.IsAny<GenerationOptions>()))
             .Returns(Result<Prescription>.Success(mockPrescription));
         
         return mock;

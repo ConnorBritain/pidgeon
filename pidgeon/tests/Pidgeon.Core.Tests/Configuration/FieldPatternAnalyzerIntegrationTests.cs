@@ -48,7 +48,7 @@ public class FieldPatternAnalyzerIntegrationTests : IDisposable
         // Assert - Verify meaningful pattern detection
         if (result.IsFailure)
         {
-            Assert.True(false, $"Pattern analysis failed: {result.Error.Message}");
+            Assert.Fail($"Pattern analysis failed: {result.Error.Message}");
         }
         
         result.Value.Should().NotBeNull();
@@ -71,7 +71,7 @@ public class FieldPatternAnalyzerIntegrationTests : IDisposable
         // Assert - Should extract PID-specific patterns
         if (result.IsFailure)
         {
-            Assert.True(false, $"Segment analysis failed: {result.Error.Message}");
+            Assert.Fail($"Segment analysis failed: {result.Error.Message}");
         }
         
         result.Value.Should().NotBeNull();

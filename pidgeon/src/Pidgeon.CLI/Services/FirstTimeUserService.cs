@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core;
 using Pidgeon.Core.Application.Interfaces.Intelligence;
@@ -11,15 +12,24 @@ namespace Pidgeon.CLI.Services;
 /// Manages the first-time user experience including welcome wizard,
 /// AI model selection, and quick start demonstration.
 /// </summary>
-public class FirstTimeUserService
+public class FirstTimeUserService(
+    ILogger<FirstTimeUserService> logger,
+    IModelManagementService modelService)
 {
-    private readonly ILogger<FirstTimeUserService> _logger;
-    private readonly IModelManagementService _modelService;
-    private readonly string _configPath;
+    private readonly ILogger<FirstTimeUserService> _logger = logger;
+    private readonly IModelManagementService _modelService = modelService;
+    private readonly string _configPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+        ".pidgeon");
+    
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        WriteIndented = true
+    };
     
     // Model recommendations with healthcare focus
-    private readonly List<ModelRecommendation> _modelRecommendations = new()
-    {
+    private readonly List<ModelRecommendation> _modelRecommendations =
+    [
         new ModelRecommendation
         {
             ModelId = "tinyllama-1.1b-chat",
@@ -62,19 +72,8 @@ public class FirstTimeUserService
             IsHealthcareSpecific = true,
             DownloadUrl = "https://huggingface.co/BioMistral/BioMistral-7B-GGUF/resolve/main/biomistral-7b-q4.gguf"
         }
-    };
+    ];
 
-    public FirstTimeUserService(
-        ILogger<FirstTimeUserService> logger,
-        IModelManagementService modelService)
-    {
-        _logger = logger;
-        _modelService = modelService;
-        _configPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-            ".pidgeon"
-        );
-    }
 
     /// <summary>
     /// Checks if this is the first time the user is running Pidgeon.
@@ -267,7 +266,7 @@ public class FirstTimeUserService
         Console.Write("Try a quick demo? (Y/n): ");
         var ready = Console.ReadLine();
         
-        if (string.IsNullOrWhiteSpace(ready) || ready.ToLowerInvariant() != "n")
+        if (string.IsNullOrWhiteSpace(ready) || !string.Equals(ready, "n", StringComparison.OrdinalIgnoreCase))
         {
             await RunQuickDemoAsync();
         }
@@ -284,7 +283,7 @@ public class FirstTimeUserService
         });
     }
 
-    private void ShowWelcomeBanner()
+    private static void ShowWelcomeBanner()
     {
         // Don't clear screen - respect user's terminal history
         Console.WriteLine();
@@ -331,7 +330,9 @@ public class FirstTimeUserService
             
             var modelPath = Path.Combine(modelsDir, $"{modelId}.gguf");
             
-            // Simulate download with progress bar (in real implementation, use HttpClient with progress)
+            // TODO: Implement actual download from url using HttpClient with progress
+            // Currently simulating download with progress bar
+            _ = url; // TODO: Use url parameter when implementing real download
             var progressBar = new StringBuilder();
             var progressWidth = 50;
             
@@ -358,7 +359,7 @@ public class FirstTimeUserService
         }
     }
 
-    private async Task RunQuickDemoAsync()
+    private static async Task RunQuickDemoAsync()
     {
         await Task.Yield();
         Console.WriteLine();
@@ -396,7 +397,7 @@ public class FirstTimeUserService
         Console.WriteLine();
     }
 
-    private async Task ShowDeIdentificationDemoAsync()
+    private static async Task ShowDeIdentificationDemoAsync()
     {
         await Task.Yield();
         Console.WriteLine();
@@ -416,7 +417,7 @@ public class FirstTimeUserService
         Console.ReadLine();
     }
 
-    private async Task RunGuidedTutorialAsync()
+    private static async Task RunGuidedTutorialAsync()
     {
         await Task.Yield();
         Console.WriteLine();
@@ -482,10 +483,7 @@ public class FirstTimeUserService
                 }
             };
 
-            var json = System.Text.Json.JsonSerializer.Serialize(config, new System.Text.Json.JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            var json = JsonSerializer.Serialize(config, JsonOptions);
 
             await File.WriteAllTextAsync(configFile, json);
             _logger.LogInformation("Saved first-run configuration");
@@ -496,7 +494,7 @@ public class FirstTimeUserService
         }
     }
 
-    private long GetAvailableDiskSpace()
+    private static long GetAvailableDiskSpace()
     {
         try
         {
@@ -510,7 +508,7 @@ public class FirstTimeUserService
         }
     }
 
-    private long ParseBytes(string sizeStr)
+    private static long ParseBytes(string sizeStr)
     {
         sizeStr = sizeStr.ToUpperInvariant().Trim();
         
@@ -528,7 +526,7 @@ public class FirstTimeUserService
         return 0;
     }
 
-    private string FormatBytes(long bytes)
+    private static string FormatBytes(long bytes)
     {
         if (bytes >= 1024L * 1024 * 1024)
         {
@@ -544,7 +542,7 @@ public class FirstTimeUserService
         }
     }
 
-    private string GenerateDemoMessage()
+    private static string GenerateDemoMessage()
     {
         return @"MSH|^~\&|PIDGEON|HOSPITAL|RECEIVER|FACILITY|20250912154823||ADT^A01^ADT_A01|MSG12345|P|2.3
 EVN|A01|20250912154823|||

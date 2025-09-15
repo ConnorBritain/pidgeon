@@ -16,7 +16,6 @@ public class LlamaCppProvider : ILocalModelProvider
 {
     private readonly ILogger<LlamaCppProvider> _logger;
     private ModelInfo? _loadedModel;
-    private bool _isInitialized;
 
     public string ProviderId => "llama-cpp";
     public bool IsLocal => true;
@@ -174,7 +173,6 @@ public class LlamaCppProvider : ILocalModelProvider
                 }
             };
 
-            _isInitialized = true;
             _logger.LogInformation("Successfully loaded model {ModelId} ({SizeMB} MB) - Ready for inference", 
                 _loadedModel.Id, _loadedModel.SizeBytes / (1024 * 1024));
             return Result.Success();
@@ -211,7 +209,6 @@ public class LlamaCppProvider : ILocalModelProvider
             {
                 _logger.LogInformation("Unloading model {ModelId}", _loadedModel.Id);
                 _loadedModel = null;
-                _isInitialized = false;
             }
 
             return Result.Success();
