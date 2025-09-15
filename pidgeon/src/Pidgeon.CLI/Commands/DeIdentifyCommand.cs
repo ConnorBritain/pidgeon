@@ -95,7 +95,7 @@ public class DeIdentifyCommand : CommandBuilderBase
                     Logger.LogInformation("Generating de-identification preview for {Input}", inputPath);
                     Console.WriteLine($"🔍 Previewing de-identification changes for: {inputPath}");
                     
-                    var previewResult = await _deIdentificationEngine.PreviewChangesAsync(inputPath, options);
+                    var previewResult = await _deIdentificationEngine.PreviewChangesAsync(inputPath!, options);
                     if (previewResult.IsFailure)
                     {
                         Logger.LogError("Preview generation failed: {Error}", previewResult.Error.Message);
@@ -124,7 +124,7 @@ public class DeIdentifyCommand : CommandBuilderBase
                     Logger.LogInformation("De-identifying file: {Input} -> {Output}", inputPath, outputPath);
                     Console.WriteLine($"🔒 De-identifying file: {inputPath}");
                     
-                    var result = await _deIdentificationEngine.ProcessFileAsync(inputPath, outputPath, options);
+                    var result = await _deIdentificationEngine.ProcessFileAsync(inputPath!, outputPath!, options);
                     if (result.IsFailure)
                     {
                         Logger.LogError("De-identification failed: {Error}", result.Error.Message);
@@ -140,7 +140,7 @@ public class DeIdentifyCommand : CommandBuilderBase
                     Logger.LogInformation("De-identifying directory: {Input} -> {Output}", inputPath, outputPath);
                     Console.WriteLine($"🔒 De-identifying directory: {inputPath}");
                     
-                    var result = await _deIdentificationEngine.ProcessDirectoryAsync(inputPath, outputPath, options);
+                    var result = await _deIdentificationEngine.ProcessDirectoryAsync(inputPath!, outputPath!, options);
                     if (result.IsFailure)
                     {
                         Logger.LogError("De-identification failed: {Error}", result.Error.Message);

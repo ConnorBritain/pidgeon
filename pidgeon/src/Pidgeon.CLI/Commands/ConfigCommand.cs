@@ -406,6 +406,7 @@ public class ConfigCommand : CommandBuilderBase
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
+            await Task.Yield();
             var leftName = parseResult.GetValue(leftOption)!;
             var rightName = parseResult.GetValue(rightOption)!;
             var reportPath = parseResult.GetValue(reportOption);

@@ -26,6 +26,7 @@ internal class MessageValidationService : IMessageValidationService
         string? standard = null, 
         ValidationMode mode = ValidationMode.Strict)
     {
+        await Task.Yield();
         try
         {
             if (string.IsNullOrWhiteSpace(messageContent))

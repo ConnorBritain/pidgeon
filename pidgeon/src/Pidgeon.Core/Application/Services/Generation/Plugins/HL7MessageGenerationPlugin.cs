@@ -238,6 +238,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GenerateAdmitDischargeTransferAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         var encounterResult = _domainGenerationService.GenerateEncounter(options);
         if (!encounterResult.IsSuccess)
             return Result<string>.Failure(encounterResult.Error);
@@ -264,6 +265,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GenerateOrderManagementAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -278,6 +280,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GenerateObservationResultsAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -304,6 +307,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GeneratePharmacyOrderAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -323,6 +327,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GeneratePharmacyGiveAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -337,6 +342,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GeneratePharmacyAdministrationAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -351,6 +357,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GenerateSchedulingAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -370,6 +377,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GenerateMedicalDocumentAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -388,6 +396,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GenerateQueryAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         return Result<string>.Success($"QBP Message: Query request for patient data ({messageType})");
     }
 
@@ -397,6 +406,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GenerateQueryResponseAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -411,6 +421,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GenerateAcknowledgmentAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         return Result<string>.Success($"ACK Message: Application Accept - Message received and processed successfully ({messageType})");
     }
 
@@ -420,6 +431,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GenerateBillingAsync(string messageType, GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);

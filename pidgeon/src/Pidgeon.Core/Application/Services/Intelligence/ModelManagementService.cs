@@ -40,6 +40,7 @@ public class ModelManagementService : IModelManagementService
 
     public async Task<Result<IReadOnlyList<ModelMetadata>>> ListAvailableModelsAsync(CancellationToken cancellationToken = default)
     {
+        await Task.Yield();
         try
         {
             _logger.LogInformation("Fetching available models from registry");
@@ -217,6 +218,7 @@ public class ModelManagementService : IModelManagementService
 
     public async Task<Result<ModelValidationResult>> ValidateModelAsync(string modelPath, CancellationToken cancellationToken = default)
     {
+        await Task.Yield();
         try
         {
             var result = new ModelValidationResult
@@ -415,6 +417,7 @@ public class ModelManagementService : IModelManagementService
 
     private async Task<ModelInfo?> CreateModelInfoFromFile(string filePath)
     {
+        await Task.Yield();
         try
         {
             var fileInfo = new FileInfo(filePath);
@@ -596,6 +599,7 @@ public class ModelManagementService : IModelManagementService
 
     private async Task<Result> PerformPreDownloadChecks(ModelMetadata modelMetadata)
     {
+        await Task.Yield();
         _logger.LogInformation("Performing pre-download checks for model {ModelId}", modelMetadata.Id);
         
         try

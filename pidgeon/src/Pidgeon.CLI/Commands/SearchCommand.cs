@@ -103,7 +103,7 @@ public class SearchCommand : CommandBuilderBase
                 if (result.IsSuccess)
                 {
                     // Format output based on requested format
-                    var formattedOutput = FormatOutput(result.Value, format);
+                    var formattedOutput = FormatOutput(result.Value, format!);
                     
                     if (!string.IsNullOrWhiteSpace(output))
                     {

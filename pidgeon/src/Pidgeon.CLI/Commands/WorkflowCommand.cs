@@ -344,6 +344,7 @@ public class WorkflowCommand : CommandBuilderBase
 
     private async Task<List<string>> PromptForStandardsAsync()
     {
+        await Task.Yield();
         Console.WriteLine();
         Console.WriteLine("🏥 Healthcare Standards Selection");
         Console.WriteLine("Select the standards your workflow will use:");
@@ -368,6 +369,7 @@ public class WorkflowCommand : CommandBuilderBase
 
     private async Task<List<Core.Domain.Configuration.Entities.ConfigurationAddress>> PromptForVendorConfigurationsAsync()
     {
+        await Task.Yield();
         Console.WriteLine();
         Console.WriteLine("🏢 Vendor Configuration Selection");
         Console.WriteLine("Available vendor configurations:");
@@ -411,6 +413,7 @@ public class WorkflowCommand : CommandBuilderBase
 
     private async Task<List<WorkflowStep>> PromptForWorkflowStepsAsync()
     {
+        await Task.Yield();
         Console.WriteLine();
         Console.WriteLine("🔧 Workflow Steps Configuration");
         Console.WriteLine("Build your workflow step by step:");

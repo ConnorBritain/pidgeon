@@ -367,6 +367,7 @@ internal class FHIRSearchHarnessService : IFHIRSearchHarnessService
 
     private async Task<List<FHIRResource>> GenerateAdmissionWithLabsScenario(GenerationOptions options)
     {
+        await Task.Yield();
         var resources = new List<FHIRResource>();
 
         // Generate Patient
@@ -425,6 +426,7 @@ internal class FHIRSearchHarnessService : IFHIRSearchHarnessService
 
     private async Task<List<FHIRResource>> GenerateDiabetesManagementScenario(GenerationOptions options)
     {
+        await Task.Yield();
         var resources = new List<FHIRResource>();
 
         // Generate Patient with diabetes
@@ -484,6 +486,7 @@ internal class FHIRSearchHarnessService : IFHIRSearchHarnessService
 
     private async Task<List<FHIRResource>> GenerateEmergencyVisitScenario(GenerationOptions options)
     {
+        await Task.Yield();
         var resources = new List<FHIRResource>();
 
         // Generate Patient
@@ -558,12 +561,14 @@ internal class FHIRSearchHarnessService : IFHIRSearchHarnessService
 
     private async Task<List<FHIRResource>> GenerateSurgicalCareScenario(GenerationOptions options)
     {
+        await Task.Yield();
         // TODO: Implement surgical care scenario with pre/post-op documentation
         return new List<FHIRResource>();
     }
 
     private async Task<List<FHIRResource>> GenerateMedicationRefillScenario(GenerationOptions options)
     {
+        await Task.Yield();
         var resources = new List<FHIRResource>();
 
         // Generate Patient
@@ -635,18 +640,21 @@ internal class FHIRSearchHarnessService : IFHIRSearchHarnessService
 
     private async Task<List<FHIRResource>> GeneratePreventiveCareScenario(GenerationOptions options)
     {
+        await Task.Yield();
         // TODO: Implement preventive care scenario
         return new List<FHIRResource>();
     }
 
     private async Task<List<FHIRResource>> GenerateChronicCareManagementScenario(GenerationOptions options)
     {
+        await Task.Yield();
         // TODO: Implement chronic care management scenario
         return new List<FHIRResource>();
     }
 
     private async Task<List<FHIRResource>> GeneratePediatricWellChildScenario(GenerationOptions options)
     {
+        await Task.Yield();
         // TODO: Implement pediatric well-child scenario
         return new List<FHIRResource>();
     }
@@ -669,6 +677,7 @@ internal class FHIRSearchHarnessService : IFHIRSearchHarnessService
 
     private async Task<Result<string>> GeneratePatientResource(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -678,6 +687,7 @@ internal class FHIRSearchHarnessService : IFHIRSearchHarnessService
 
     private async Task<Result<string>> GeneratePractitionerResource(GenerationOptions options)
     {
+        await Task.Yield();
         var providerResult = _domainGenerationService.GenerateProvider(options);
         if (!providerResult.IsSuccess)
             return Result<string>.Failure(providerResult.Error);
@@ -687,6 +697,7 @@ internal class FHIRSearchHarnessService : IFHIRSearchHarnessService
 
     private async Task<Result<string>> GenerateObservationResource(GenerationOptions options)
     {
+        await Task.Yield();
         var obsResult = _domainGenerationService.GenerateObservationResult(options);
         if (!obsResult.IsSuccess)
             return Result<string>.Failure(obsResult.Error);
@@ -696,6 +707,7 @@ internal class FHIRSearchHarnessService : IFHIRSearchHarnessService
 
     private async Task<Result<string>> GenerateEncounterResource(GenerationOptions options)
     {
+        await Task.Yield();
         var encounterResult = _domainGenerationService.GenerateEncounter(options);
         if (!encounterResult.IsSuccess)
             return Result<string>.Failure(encounterResult.Error);

@@ -29,6 +29,7 @@ public class LlamaCppProvider : ILocalModelProvider
 
     public async Task<bool> IsAvailableAsync(CancellationToken cancellationToken = default)
     {
+        await Task.Yield();
         try
         {
             // Check for downloaded models
@@ -187,6 +188,7 @@ public class LlamaCppProvider : ILocalModelProvider
 
     public async Task<Result<ModelInfo>> GetModelInfoAsync(CancellationToken cancellationToken = default)
     {
+        await Task.Yield();
         if (_loadedModel == null)
         {
             return Result<ModelInfo>.Failure("No model currently loaded");
@@ -202,6 +204,7 @@ public class LlamaCppProvider : ILocalModelProvider
 
     public async Task<Result> UnloadModelAsync(CancellationToken cancellationToken = default)
     {
+        await Task.Yield();
         try
         {
             if (_loadedModel != null)

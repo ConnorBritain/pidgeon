@@ -324,6 +324,7 @@ internal class MultiStandardVendorDetectionService : IMultiStandardVendorDetecti
     /// </summary>
     public async Task<Result<VendorSignature>> DetectFromHeadersAsync(MessageHeaders messageHeaders)
     {
+        await Task.Yield();
         if (messageHeaders == null)
             return Result<VendorSignature>.Failure("Message headers cannot be null");
 
@@ -397,6 +398,7 @@ internal class MultiStandardVendorDetectionService : IMultiStandardVendorDetecti
     /// </summary>
     public async Task<Result<IReadOnlyList<VendorDetectionPattern>>> GetPatternsForStandardAsync(string standard)
     {
+        await Task.Yield();
         if (string.IsNullOrWhiteSpace(standard))
             return Result<IReadOnlyList<VendorDetectionPattern>>.Failure("Standard cannot be empty");
 

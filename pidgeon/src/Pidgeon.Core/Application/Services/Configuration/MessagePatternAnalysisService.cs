@@ -203,6 +203,7 @@ internal class MessagePatternAnalysisService : PluginAccessorBase<MessagePattern
         string standard,
         IStandardFieldAnalysisPlugin plugin)
     {
+        await Task.Yield();
         try
         {
             // For component analysis, we need the plugin to handle field value extraction

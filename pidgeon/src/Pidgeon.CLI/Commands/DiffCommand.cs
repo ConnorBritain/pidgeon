@@ -276,6 +276,7 @@ public class DiffCommand : CommandBuilderBase
 
     private static async Task<(bool isAvailable, string message)> CheckAiCapabilities(string? requestedModel)
     {
+        await Task.Yield();
         try
         {
             if (string.IsNullOrEmpty(requestedModel))
@@ -391,6 +392,7 @@ public class DiffCommand : CommandBuilderBase
     /// </summary>
     private async Task<string?> SelectBestAvailableModelAsync()
     {
+        await Task.Yield();
         try
         {
             // Check for available models in ~/.pidgeon/models/
@@ -430,6 +432,7 @@ public class DiffCommand : CommandBuilderBase
     /// </summary>
     private async Task<bool> HasLocalModelsAvailableAsync()
     {
+        await Task.Yield();
         try
         {
             var modelsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".pidgeon", "models");

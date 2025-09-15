@@ -259,6 +259,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GeneratePatientResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -271,6 +272,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GeneratePractitionerResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var providerResult = _domainGenerationService.GenerateProvider(options);
         if (!providerResult.IsSuccess)
             return Result<string>.Failure(providerResult.Error);
@@ -280,6 +282,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GeneratePractitionerRoleResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var providerResult = _domainGenerationService.GenerateProvider(options);
         if (!providerResult.IsSuccess)
             return Result<string>.Failure(providerResult.Error);
@@ -290,11 +293,13 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateOrganizationResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         return Result<string>.Success($"FHIR Organization: General Hospital, Type: Healthcare Provider, Status: Active");
     }
 
     private async Task<Result<string>> GenerateLocationResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var locations = new[] { "Emergency Department", "ICU", "Medical/Surgical Unit", "Outpatient Clinic", "Operating Room" };
         var random = new Random(options.Seed ?? Environment.TickCount);
         var location = locations[random.Next(locations.Length)];
@@ -303,6 +308,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateEncounterResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var encounterResult = _domainGenerationService.GenerateEncounter(options);
         if (!encounterResult.IsSuccess)
             return Result<string>.Failure(encounterResult.Error);
@@ -313,6 +319,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateEpisodeOfCareResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -326,6 +333,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateAppointmentResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -343,6 +351,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
     /// </summary>
     private async Task<Result<string>> GenerateObservationResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var observationResult = _domainGenerationService.GenerateObservationResult(options);
         if (!observationResult.IsSuccess)
             return Result<string>.Failure(observationResult.Error);
@@ -352,6 +361,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateDiagnosticReportResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -365,6 +375,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateConditionResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -378,6 +389,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateProcedureResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -391,6 +403,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateMedicationResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var medicationResult = _domainGenerationService.GenerateMedication(options);
         if (!medicationResult.IsSuccess)
             return Result<string>.Failure(medicationResult.Error);
@@ -401,6 +414,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateMedicationRequestResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -411,6 +425,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateMedicationDispenseResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -421,6 +436,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateMedicationAdministrationResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -431,6 +447,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateCarePlanResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -444,6 +461,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateCareTeamResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -454,6 +472,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateServiceRequestResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -467,6 +486,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateAccountResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -477,6 +497,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateCoverageResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -532,6 +553,7 @@ internal class FHIRMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateDocumentReferenceResourceAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);

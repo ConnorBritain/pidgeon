@@ -81,6 +81,7 @@ public class FirstTimeUserService
     /// </summary>
     public async Task<bool> IsFirstTimeUserAsync()
     {
+        await Task.Yield();
         var configFile = Path.Combine(_configPath, "pidgeon.config.json");
         return !File.Exists(configFile);
     }
@@ -359,6 +360,7 @@ public class FirstTimeUserService
 
     private async Task RunQuickDemoAsync()
     {
+        await Task.Yield();
         Console.WriteLine();
         Console.WriteLine("──────────────────────────────────────");
         Console.WriteLine("  Quick Demo");
@@ -396,6 +398,7 @@ public class FirstTimeUserService
 
     private async Task ShowDeIdentificationDemoAsync()
     {
+        await Task.Yield();
         Console.WriteLine();
         Console.WriteLine("──────────────────────────────────────");
         Console.WriteLine("  De-identification");
@@ -415,6 +418,7 @@ public class FirstTimeUserService
 
     private async Task RunGuidedTutorialAsync()
     {
+        await Task.Yield();
         Console.WriteLine();
         Console.WriteLine("──────────────────────────────────────");
         Console.WriteLine("  Tutorial Coming Soon");
@@ -432,6 +436,7 @@ public class FirstTimeUserService
 
     private async Task InitializeProjectStructureAsync()
     {
+        await Task.Yield();
         try
         {
             // Create standard directory structure

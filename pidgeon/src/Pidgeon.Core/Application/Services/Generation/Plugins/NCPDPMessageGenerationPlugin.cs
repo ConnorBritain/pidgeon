@@ -221,6 +221,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateNewPrescriptionAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -231,6 +232,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateChangeRequestAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -241,6 +243,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateChangeResponseAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -251,6 +254,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateRefillRequestAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -261,6 +265,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateRefillResponseAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -271,6 +276,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateRxFillAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -281,6 +287,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateCancelRxAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -291,6 +298,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateCancelResponseAsync(GenerationOptions options)
     {
+        await Task.Yield();
         return Result<string>.Success($"NCPDP CANCELRXRESPONSE: Prescription cancellation acknowledged - Status: Cancelled");
     }
 
@@ -298,6 +306,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateHistoryRequestAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -308,6 +317,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateHistoryResponseAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -318,11 +328,13 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateVerificationAsync(GenerationOptions options)
     {
+        await Task.Yield();
         return Result<string>.Success($"NCPDP VERIFY: Prescription verification request - Status: Authentic");
     }
 
     private async Task<Result<string>> GenerateStatusUpdateAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var statuses = new[] { "Received", "In Progress", "Ready for Pickup", "Dispensed", "Partially Filled" };
         var random = new Random(options.Seed ?? Environment.TickCount);
         var status = statuses[random.Next(statuses.Length)];
@@ -331,6 +343,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateErrorNotificationAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var errors = new[] { "Invalid DEA Number", "Patient Not Found", "Drug Not Covered", "Prior Authorization Required", "Quantity Exceeded" };
         var random = new Random(options.Seed ?? Environment.TickCount);
         var error = errors[random.Next(errors.Length)];
@@ -341,6 +354,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GeneratePredeterminationAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -351,6 +365,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GeneratePriorAuthAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -361,6 +376,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GeneratePriorAuthResponseAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -371,6 +387,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateEligibilityAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -381,6 +398,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateFormularyAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var medicationResult = _domainGenerationService.GenerateMedication(options);
         if (!medicationResult.IsSuccess)
             return Result<string>.Failure(medicationResult.Error);
@@ -393,6 +411,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateDurReviewAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var prescriptionResult = _domainGenerationService.GeneratePrescription(options);
         if (!prescriptionResult.IsSuccess)
             return Result<string>.Failure(prescriptionResult.Error);
@@ -403,6 +422,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateDrugAlertAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var medicationResult = _domainGenerationService.GenerateMedication(options);
         if (!medicationResult.IsSuccess)
             return Result<string>.Failure(medicationResult.Error);
@@ -413,6 +433,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateInteractionAlertAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var medicationResult = _domainGenerationService.GenerateMedication(options);
         if (!medicationResult.IsSuccess)
             return Result<string>.Failure(medicationResult.Error);
@@ -423,6 +444,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateAllergyAlertAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -433,6 +455,7 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateClinicalInfoAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var patientResult = _domainGenerationService.GeneratePatient(options);
         if (!patientResult.IsSuccess)
             return Result<string>.Failure(patientResult.Error);
@@ -445,16 +468,19 @@ internal class NCPDPMessageGenerationPlugin : IMessageGenerationPlugin
 
     private async Task<Result<string>> GenerateAcknowledgmentAsync(GenerationOptions options)
     {
+        await Task.Yield();
         return Result<string>.Success($"NCPDP ACKNOWLEDGMENT: Message received and processed successfully - Timestamp: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
     }
 
     private async Task<Result<string>> GenerateStructuredMessageAsync(GenerationOptions options)
     {
+        await Task.Yield();
         return Result<string>.Success($"NCPDP STRUCTURED: Multi-part structured message - Contains prescription, patient, and insurance data");
     }
 
     private async Task<Result<string>> GenerateFreeFormMessageAsync(GenerationOptions options)
     {
+        await Task.Yield();
         var messages = new[] 
         { 
             "Please call pharmacy for prescription pickup instructions",
