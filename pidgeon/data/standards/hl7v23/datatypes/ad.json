@@ -1,0 +1,58 @@
+{
+  "dataType": "AD",
+  "name": "Address",
+  "description": "Address data type for HL7 v2.3",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "composite",
+  "components": {
+    "AD.1": {
+      "name": "Street Address",
+      "dataType": "ST",
+      "length": 120,
+      "required": false,
+      "description": "Street or mailing address"
+    },
+    "AD.2": {
+      "name": "Other Designation", 
+      "dataType": "ST",
+      "length": 120,
+      "required": false,
+      "description": "Second line of address"
+    },
+    "AD.3": {
+      "name": "City",
+      "dataType": "ST", 
+      "length": 50,
+      "required": false,
+      "description": "City, district or place name"
+    },
+    "AD.4": {
+      "name": "State or Province",
+      "dataType": "ST",
+      "length": 50,
+      "required": false,
+      "description": "State or province"
+    },
+    "AD.5": {
+      "name": "Zip or Postal Code",
+      "dataType": "ST",
+      "length": 12,
+      "required": false,
+      "description": "ZIP or postal code"
+    },
+    "AD.6": {
+      "name": "Country",
+      "dataType": "ID",
+      "length": 3,
+      "required": false,
+      "description": "Country (ISO 3166 3 character code)",
+      "table": "0399"
+    }
+  },
+  "usage": "Used in PID, NK1, PV1 and other segments for address information",
+  "examples": [
+    "1234 Main St^^Springfield^IL^62701^USA",
+    "555 Oak Ave^Apt 2B^Chicago^IL^60601"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "table": "0142",
+  "name": "TODO: Define table name for 0142",
+  "description": "TODO: Define description for table 0142",
+  "standard": "hl7v23",
+  "version": "2.3", 
+  "type": "TODO: user_defined|hl7_defined",
+  "values": [
+    {
+      "code": "TODO", 
+      "description": "TODO: Add all valid codes and descriptions",
+      "definition": "TODO: Define meaning"
+    }
+  ],
+  "usedIn": ["TODO: List segments.fields that reference this table"],
+  "vendorVariations": {
+    "TODO": "Research vendor-specific implementations"
+  },
+  "generationRules": {
+    "TODO": "Define realistic distribution for synthetic data"
+  }
+}

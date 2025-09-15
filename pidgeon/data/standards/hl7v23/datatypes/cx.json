@@ -1,0 +1,17 @@
+{
+  "dataType": "CX",
+  "name": "TODO: Define data type name for CX", 
+  "description": "TODO: Define description for CX data type",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "TODO: primitive|composite",
+  "components": {
+    "TODO": "Define components for composite types"
+  },
+  "length": "TODO: Define max length",
+  "usage": "TODO: Define where this data type is used",
+  "examples": ["TODO: Add realistic examples"],
+  "vendorVariations": {
+    "TODO": "Research vendor-specific implementations"
+  }
+}

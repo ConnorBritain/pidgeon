@@ -1,0 +1,48 @@
+{
+  "table": "0001",
+  "name": "Sex",
+  "description": "Administrative Sex codes for HL7 v2.3",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "type": "user_defined",
+  "values": [
+    {
+      "code": "F",
+      "description": "Female",
+      "definition": "Patient is female"
+    },
+    {
+      "code": "M", 
+      "description": "Male",
+      "definition": "Patient is male"
+    },
+    {
+      "code": "O",
+      "description": "Other",
+      "definition": "Other or unspecified"
+    },
+    {
+      "code": "U",
+      "description": "Unknown",
+      "definition": "Unknown sex"
+    }
+  ],
+  "usedIn": [
+    "PID.8",
+    "NK1.15"
+  ],
+  "vendorVariations": {
+    "epic": "Supports additional internal codes",
+    "cerner": "May use 'X' for indeterminate",
+    "allscripts": "Standard implementation"
+  },
+  "generationRules": {
+    "distribution": {
+      "F": 0.51,
+      "M": 0.49,
+      "O": 0.002,
+      "U": 0.001
+    },
+    "realistic": "Use statistical distribution for synthetic data generation"
+  }
+}

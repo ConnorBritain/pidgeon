@@ -3,11 +3,16 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Infrastructure.Registry;
 using Pidgeon.Core.Application.Services.Generation;
 using Pidgeon.Core.Generation;
 using Pidgeon.Core.Infrastructure.Standards.HL7.v23;
+using Pidgeon.Core.Application.Interfaces.Reference;
+using Pidgeon.Core.Application.Services.Reference;
+using Pidgeon.Core.Infrastructure.Reference;
 
 namespace Pidgeon.Core.Extensions;
 
@@ -50,6 +55,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<Pidgeon.Core.Infrastructure.Standards.FHIR.R4.IFHIRResourceFactory, 
                           Pidgeon.Core.Infrastructure.Standards.FHIR.R4.FHIRResourceFactory>();
         
+        // Register standards reference system
+        services.AddStandardsReferenceSystem();
+        
         return services;
     }
 
@@ -82,6 +90,54 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<TPlugin>(factory);
         services.AddScoped<IStandardPlugin>(provider => provider.GetRequiredService<TPlugin>());
+        
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the standards reference system with all plugins and services.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddStandardsReferenceSystem(this IServiceCollection services)
+    {
+        // Register core reference service
+        services.AddScoped<IStandardReferenceService, StandardReferenceService>();
+        
+        // Register memory cache for plugin caching
+        services.AddMemoryCache();
+        
+        // Register HL7 reference plugins for different versions
+        services.AddHL7ReferencePlugin("2.3", "hl7v23", "HL7 v2.3");
+        services.AddHL7ReferencePlugin("2.4", "hl7v24", "HL7 v2.4");
+        services.AddHL7ReferencePlugin("2.5", "hl7v25", "HL7 v2.5");
+        services.AddHL7ReferencePlugin("2.5.1", "hl7v251", "HL7 v2.5.1");
+        
+        return services;
+    }
+
+    /// <summary>
+    /// Registers an HL7 reference plugin for a specific version.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <param name="version">HL7 version (e.g., "2.3", "2.4")</param>
+    /// <param name="standardId">Standard identifier (e.g., "hl7v23")</param>
+    /// <param name="standardName">Display name (e.g., "HL7 v2.3")</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddHL7ReferencePlugin(
+        this IServiceCollection services,
+        string version,
+        string standardId,
+        string standardName)
+    {
+        var config = new Infrastructure.Reference.HL7VersionConfig(
+            version, standardId, standardName, standardId);
+        
+        services.AddScoped<IStandardReferencePlugin>(provider =>
+            new Infrastructure.Reference.JsonHL7ReferencePlugin(
+                config,
+                provider.GetRequiredService<ILogger<Infrastructure.Reference.JsonHL7ReferencePlugin>>(),
+                provider.GetRequiredService<IMemoryCache>()));
         
         return services;
     }

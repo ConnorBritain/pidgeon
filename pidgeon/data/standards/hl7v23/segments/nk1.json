@@ -1,0 +1,368 @@
+{
+  "segment": "NK1",
+  "name": "Next of Kin/Associated Parties",
+  "description": "The NK1 segment contains information about the patient's next of kin, emergency contacts, and other associated parties. This segment is repeatable to allow multiple contacts with different relationships and roles.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "*",
+    "note": "NK1 segments are optional and repeatable for multiple contacts"
+  },
+  "messageTypes": [
+    "ADT^A01", "ADT^A02", "ADT^A03", "ADT^A04", "ADT^A05", "ADT^A06", "ADT^A07", "ADT^A08",
+    "ADT^A09", "ADT^A10", "ADT^A11", "ADT^A12", "ADT^A13", "ADT^A14", "ADT^A15", "ADT^A16",
+    "ADT^A17", "ADT^A18", "ADT^A21", "ADT^A22", "ADT^A23", "ADT^A24", "ADT^A25", "ADT^A26",
+    "ADT^A27", "ADT^A28", "ADT^A29", "ADT^A31", "ADT^A32", "ADT^A33", "ADT^A37", "ADT^A38"
+  ],
+  "fields": {
+    "NK1.1": {
+      "name": "Set ID - NK1",
+      "description": "This field uniquely identifies the NK1 records for the purpose of adding, changing, or deleting records. For the first NK1 segment, this should be 1; for the second, 2; etc.",
+      "dataType": "SI",
+      "usage": "R",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Sequential number starting from 1 for each NK1 segment"
+    },
+    "NK1.2": {
+      "name": "Name",
+      "description": "This field contains the name of the next of kin or associated party. Uses extended person name format with family name, given name, middle name, suffix, prefix, and degree components.",
+      "dataType": "XPN",
+      "usage": "O",
+      "maxLength": 48,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <family_name>^<given_name>^<middle_name>^<suffix>^<prefix>^<degree>"
+    },
+    "NK1.3": {
+      "name": "Relationship",
+      "description": "This field defines the actual personal relationship that the next of kin has to the patient. Values from user-defined table 0063 - relationship.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "SPO", "description": "Spouse"},
+        {"code": "CHD", "description": "Child"},
+        {"code": "PAR", "description": "Parent"},
+        {"code": "SIB", "description": "Sibling"},
+        {"code": "DOM", "description": "Life partner"},
+        {"code": "GRD", "description": "Guardian"},
+        {"code": "NCH", "description": "Natural child"},
+        {"code": "SCH", "description": "Stepchild"},
+        {"code": "FCH", "description": "Foster child"},
+        {"code": "DEP", "description": "Handicapped dependent"},
+        {"code": "WRD", "description": "Ward of court"},
+        {"code": "GRP", "description": "Grandparent"},
+        {"code": "EXF", "description": "Extended family"},
+        {"code": "OTH", "description": "Other"},
+        {"code": "UNK", "description": "Unknown"}
+      ],
+      "generationHint": "Most common: SPO (spouse), CHD (child), PAR (parent), SIB (sibling)"
+    },
+    "NK1.4": {
+      "name": "Address",
+      "description": "This field contains the address of the next of kin/associated party. Multiple addresses are allowed for the same person.",
+      "dataType": "XAD",
+      "usage": "O",
+      "maxLength": 106,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <street>^<other_designation>^<city>^<state>^<zip>^<country>^<address_type>"
+    },
+    "NK1.5": {
+      "name": "Phone Number",
+      "description": "This field contains the telephone number of the next of kin/associated party. Multiple phone numbers are allowed. The primary telephone number must be sent in the first sequence.",
+      "dataType": "XTN",
+      "usage": "O",
+      "maxLength": 40,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <phone_number>^<telecom_use_code>^<telecom_equipment_type>, e.g., '5551234567^PRN^PH'"
+    },
+    "NK1.6": {
+      "name": "Business Phone Number",
+      "description": "This field contains the business telephone number of the next of kin/associated party. Multiple business phone numbers are allowed.",
+      "dataType": "XTN",
+      "usage": "O",
+      "maxLength": 40,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format similar to NK1.5 but for business/work phone numbers"
+    },
+    "NK1.7": {
+      "name": "Contact Role",
+      "description": "This field contains the contact role that defines the relationship of the person described in this segment to the patient being referred. Values from user-defined table 0131.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "BP", "description": "Billing contact person"},
+        {"code": "CP", "description": "Contact person"},
+        {"code": "EP", "description": "Emergency contact person"},
+        {"code": "PR", "description": "Person to receive results"},
+        {"code": "E", "description": "Employer"},
+        {"code": "C", "description": "Emergency Contact"},
+        {"code": "F", "description": "Federal Agency"},
+        {"code": "I", "description": "Insurance Company"},
+        {"code": "N", "description": "Next-of-Kin"},
+        {"code": "S", "description": "State Agency"},
+        {"code": "O", "description": "Other"}
+      ],
+      "generationHint": "Common roles: EP (emergency contact), N (next-of-kin), CP (contact person)"
+    },
+    "NK1.8": {
+      "name": "Start Date",
+      "description": "This field contains the date from which this next of kin record is effective. Used for tracking changes in contact information over time.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: YYYYMMDD, e.g., '20241215'"
+    },
+    "NK1.9": {
+      "name": "End Date",
+      "description": "This field contains the date until which this next of kin record is effective. Used for tracking changes in contact information over time.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: YYYYMMDD, should be after NK1.8 start date"
+    },
+    "NK1.10": {
+      "name": "Next of Kin/Associated Parties Job Title",
+      "description": "This field contains the job title of the next of kin/associated party. Used for identification and contact purposes.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Free text job title, e.g., 'Registered Nurse', 'Software Engineer', 'Teacher'"
+    },
+    "NK1.11": {
+      "name": "Next of Kin/Associated Parties Job Code/Class",
+      "description": "This field contains the job code or class of the next of kin/associated party. Uses coded values for standardized job classification.",
+      "dataType": "JCC",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Job code format: <job_code>^<job_class>, institution-specific values"
+    },
+    "NK1.12": {
+      "name": "Next of Kin/Associated Parties Employee Number",
+      "description": "This field contains the employee number of the next of kin/associated party if they are employed by the same organization as the patient or healthcare facility.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <employee_id>^<check_digit>^<identifier_type>, e.g., 'EMP123456^^^EI'"
+    },
+    "NK1.13": {
+      "name": "Organization Name - NK1",
+      "description": "This field contains the name of the organization with which the next of kin/associated party is associated. Used when the contact is an organization rather than an individual.",
+      "dataType": "XON",
+      "usage": "O",
+      "maxLength": 90,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <organization_name>^<organization_name_type>^<id_number>, e.g., 'ABC Hospital^L^12345'"
+    },
+    "NK1.14": {
+      "name": "Marital Status",
+      "description": "This field contains the marital status of the next of kin/associated party. Values from user-defined table 0002 - marital status.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "A", "description": "Separated"},
+        {"code": "D", "description": "Divorced"},
+        {"code": "M", "description": "Married"},
+        {"code": "S", "description": "Single"},
+        {"code": "W", "description": "Widowed"},
+        {"code": "C", "description": "Common law"},
+        {"code": "G", "description": "Living together"},
+        {"code": "P", "description": "Domestic partner"},
+        {"code": "R", "description": "Registered domestic partner"},
+        {"code": "U", "description": "Unmarried"},
+        {"code": "UNK", "description": "Unknown"}
+      ],
+      "generationHint": "Common status: M (married), S (single), D (divorced), W (widowed)"
+    },
+    "NK1.15": {
+      "name": "Administrative Sex",
+      "description": "This field contains the administrative sex of the next of kin/associated party. Values from HL7 Table 0001 - administrative sex.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "F", "description": "Female"},
+        {"code": "M", "description": "Male"},
+        {"code": "O", "description": "Other"},
+        {"code": "U", "description": "Unknown"},
+        {"code": "A", "description": "Ambiguous"},
+        {"code": "N", "description": "Not applicable"}
+      ],
+      "generationHint": "Most common: M (male), F (female), U (unknown)"
+    },
+    "NK1.16": {
+      "name": "Date/Time of Birth",
+      "description": "This field contains the date and time of birth of the next of kin/associated party. Used for identification and contact verification purposes.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: YYYYMMDDHHMMSS, often just date portion used: YYYYMMDD"
+    },
+    "NK1.17": {
+      "name": "Living Dependency",
+      "description": "This field indicates the living dependency status of the next of kin/associated party with respect to the patient. Values from user-defined table 0223.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "S", "description": "Spouse dependent"},
+        {"code": "C", "description": "Small children dependent"},
+        {"code": "M", "description": "Medical supervision required"},
+        {"code": "O", "description": "Other"}
+      ],
+      "generationHint": "Indicates dependency relationship: S (spouse), C (children), M (medical)"
+    },
+    "NK1.18": {
+      "name": "Ambulatory Status",
+      "description": "This field indicates the ambulatory status of the next of kin/associated party. Values from user-defined table 0009 - ambulatory status.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "A0", "description": "No functional limitations"},
+        {"code": "A1", "description": "Ambulates with assistive device"},
+        {"code": "A2", "description": "Wheelchair/stretcher bound"},
+        {"code": "A3", "description": "Comatose; non-responsive"},
+        {"code": "A4", "description": "Disoriented"},
+        {"code": "A5", "description": "Vision impaired"},
+        {"code": "A6", "description": "Hearing impaired"},
+        {"code": "A7", "description": "Speech impaired"},
+        {"code": "A8", "description": "Non-English speaking"},
+        {"code": "A9", "description": "Functional level unknown"}
+      ],
+      "generationHint": "Usually A0 (no limitations) or empty unless contact has special needs"
+    },
+    "NK1.19": {
+      "name": "Citizenship",
+      "description": "This field contains the citizenship information of the next of kin/associated party. Values from user-defined table 0171 - citizenship.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Country codes: US^United States^ISO3166, CA^Canada^ISO3166"
+    },
+    "NK1.20": {
+      "name": "Primary Language",
+      "description": "This field contains the primary language spoken by the next of kin/associated party. Values from user-defined table 0296 - primary language.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "en", "description": "English"},
+        {"code": "es", "description": "Spanish"},
+        {"code": "fr", "description": "French"},
+        {"code": "de", "description": "German"},
+        {"code": "zh", "description": "Chinese"},
+        {"code": "ja", "description": "Japanese"},
+        {"code": "ko", "description": "Korean"},
+        {"code": "ru", "description": "Russian"}
+      ],
+      "generationHint": "Use ISO 639 language codes: en^English^ISO639, es^Spanish^ISO639"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "Patient.contact",
+      "RelatedPerson.relationship",
+      "RelatedPerson.name",
+      "ContactPoint.value"
+    ],
+    "related": ["PID", "PV1", "EVN", "GT1", "IN1"]
+  },
+  "generationRules": {
+    "required": ["NK1.1"],
+    "conditional": {
+      "NK1.2": "Should be provided for individual contacts",
+      "NK1.3": "Should specify relationship type",
+      "NK1.7": "Important for determining contact purpose"
+    },
+    "relationships": {
+      "NK1.1": "Must be sequential across multiple NK1 segments",
+      "NK1.8_NK1.9": "End date must be after start date if both present",
+      "NK1.3_NK1.7": "Relationship and contact role should be complementary"
+    },
+    "validation": {
+      "NK1.3": "Must be valid user-defined table 0063 relationship code",
+      "NK1.7": "Must be valid user-defined table 0131 contact role code",
+      "NK1.14": "Must be valid user-defined table 0002 marital status code",
+      "NK1.15": "Must be valid HL7 Table 0001 administrative sex code"
+    }
+  }
+}

@@ -1,0 +1,289 @@
+{
+  "segment": "PID",
+  "name": "Patient Identification",
+  "description": "The PID segment is used by all applications as the primary means of communicating patient identification information. This segment contains permanent patient identifying and demographic information that, once established, is not likely to change frequently.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "R",
+  "cardinality": {
+    "min": 1,
+    "max": 1,
+    "note": "PID segment is required and appears exactly once per patient in most message types"
+  },
+  "messageTypes": [
+    "ADT^A01", "ADT^A02", "ADT^A03", "ADT^A04", "ADT^A05", "ADT^A06", "ADT^A07", "ADT^A08",
+    "ORU^R01", "RDE^O01", "RDE^O11", "ORM^O01", "VXU^V04"
+  ],
+  "fields": {
+    "PID.1": {
+      "name": "Set ID - PID",
+      "description": "This field contains the number that identifies this transaction. For the first occurrence of the segment, the sequence number shall be one; for the second occurrence, the sequence number shall be two; etc.",
+      "dataType": "SI",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "maxLength": 4,
+      "examples": ["1", "2", "3"],
+      "generationHint": "Usually 1 for single patient messages, increment for multiple patients"
+    },
+    "PID.2": {
+      "name": "Patient ID",
+      "description": "This field is retained for backward compatibility only as of v 2.3.1. The reader is referred to PID.3 - patient identifier list.",
+      "dataType": "CX",
+      "usage": "X",
+      "cardinality": {"min": 0, "max": 0},
+      "examples": [],
+      "generationHint": "Do not populate - deprecated field"
+    },
+    "PID.3": {
+      "name": "Patient Identifier List",
+      "description": "This field contains the list of identifiers (one or more) used by the healthcare facility to uniquely identify a patient (e.g., medical record number, billing number, birth registry, national identifier, etc.).",
+      "dataType": "CX",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": "unbounded"},
+      "examples": [
+        "PATID1234^^^MRN^MR",
+        "123456789^^^SSN^SS~PATID1234^^^MRN^MR",
+        "E12345^^^EPI^MR~12345^^^CERNER^FN"
+      ],
+      "generationHint": "Generate at least MRN, optionally add SSN or other identifiers",
+      "components": {
+        "PID.3.1": {
+          "name": "ID Number",
+          "description": "This string refers to the actual identifier.",
+          "dataType": "ST",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "maxLength": 15,
+          "examples": ["PATID1234", "123456789", "E12345"],
+          "generationHint": "Generate realistic MRN or other ID format"
+        },
+        "PID.3.2": {
+          "name": "Check Digit",
+          "description": "The check digit is used to verify the validity of the identifier.",
+          "dataType": "ST",
+          "usage": "O", 
+          "cardinality": {"min": 0, "max": 1},
+          "maxLength": 1,
+          "examples": ["2", "7"],
+          "generationHint": "Usually omitted unless specific algorithm required"
+        },
+        "PID.3.3": {
+          "name": "Code Identifying the Check Digit Scheme Employed",
+          "description": "This component contains the code for the check digit scheme employed.",
+          "dataType": "ID",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "table": "0061",
+          "validValues": [
+            {"code": "M10", "description": "Mod 10 algorithm"},
+            {"code": "M11", "description": "Mod 11 algorithm"},
+            {"code": "NPI", "description": "Check digit algorithm in the US National Provider Identifier"}
+          ],
+          "generationHint": "Usually omitted unless check digit is provided"
+        },
+        "PID.3.4": {
+          "name": "Assigning Authority",
+          "description": "The assigning authority is a unique name of the system/organization/agency/department that creates the data.",
+          "dataType": "HD",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "examples": ["MRN", "SSN", "EPI", "CERNER"],
+          "generationHint": "Use facility or system name that assigns the identifier"
+        },
+        "PID.3.5": {
+          "name": "Identifier Type Code",
+          "description": "A code corresponding to the type of identifier. In some cases, this code may be used as a qualifier to the Assigning authority component.",
+          "dataType": "ID",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "maxLength": 5,
+          "table": "0203",
+          "validValues": [
+            {"code": "MR", "description": "Medical record number"},
+            {"code": "SS", "description": "Social Security number"},
+            {"code": "DL", "description": "Driver's license number"},
+            {"code": "FN", "description": "Facility ID number"},
+            {"code": "AN", "description": "Account number"},
+            {"code": "PI", "description": "Patient internal identifier"},
+            {"code": "PT", "description": "Patient external identifier"}
+          ],
+          "examples": ["MR", "SS", "DL", "FN"],
+          "generationHint": "Most common: MR for medical record number, SS for social security"
+        }
+      }
+    },
+    "PID.5": {
+      "name": "Patient Name",
+      "description": "This field contains the names for the patient. Multiple names for the same patient may be sent in subsequent name fields (e.g., maiden name, nickname, etc.).",
+      "dataType": "XPN", 
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": [
+        "DOE^JOHN^Q^^DR",
+        "SMITH^JANE^MARIE^^",
+        "JOHNSON^ROBERT^LEE^III^MR"
+      ],
+      "generationHint": "Generate realistic names, typically one legal name",
+      "components": {
+        "PID.5.1": {
+          "name": "Family Name",
+          "description": "This component allows for family names, including the family name surname and family name prefix.",
+          "dataType": "FN",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "examples": ["DOE", "SMITH", "JOHNSON"],
+          "generationHint": "Generate common surname"
+        },
+        "PID.5.2": {
+          "name": "Given Name",
+          "description": "First name.",
+          "dataType": "ST",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "maxLength": 30,
+          "examples": ["JOHN", "JANE", "ROBERT"],
+          "generationHint": "Generate common first name"
+        },
+        "PID.5.3": {
+          "name": "Second and Further Given Names or Initials Thereof",
+          "description": "Middle name(s) or initial(s).",
+          "dataType": "ST",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "maxLength": 30,
+          "examples": ["Q", "MARIE", "LEE"],
+          "generationHint": "Optional middle name or initial"
+        },
+        "PID.5.4": {
+          "name": "Suffix",
+          "description": "Used to specify a name suffix (e.g., Jr. or III).",
+          "dataType": "ST",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "maxLength": 20,
+          "validValues": [
+            {"code": "JR", "description": "Junior"},
+            {"code": "SR", "description": "Senior"},
+            {"code": "II", "description": "The second"},
+            {"code": "III", "description": "The third"},
+            {"code": "IV", "description": "The fourth"}
+          ],
+          "examples": ["JR", "III"],
+          "generationHint": "Usually omitted, occasionally Jr or III"
+        },
+        "PID.5.5": {
+          "name": "Prefix",
+          "description": "Used to specify a name prefix (e.g., Dr.).",
+          "dataType": "ST",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "maxLength": 20,
+          "validValues": [
+            {"code": "DR", "description": "Doctor"},
+            {"code": "MR", "description": "Mister"},
+            {"code": "MRS", "description": "Missus"},
+            {"code": "MS", "description": "Miss"}
+          ],
+          "examples": ["DR", "MR"],
+          "generationHint": "Usually omitted for patients, may include for providers"
+        }
+      }
+    },
+    "PID.7": {
+      "name": "Date/Time of Birth",
+      "description": "This field contains the patient's date and time of birth.",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["19801015", "19801015123000", "198010151230-0500"],
+      "generationHint": "Generate realistic birth date, typically YYYYMMDD format"
+    },
+    "PID.8": {
+      "name": "Administrative Sex",
+      "description": "This field contains the patient's sex.",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "maxLength": 1,
+      "table": "0001",
+      "validValues": [
+        {"code": "F", "description": "Female"},
+        {"code": "M", "description": "Male"},
+        {"code": "O", "description": "Other"},
+        {"code": "U", "description": "Unknown"}
+      ],
+      "examples": ["M", "F"],
+      "generationHint": "Generate M or F most commonly, occasionally U for unknown"
+    },
+    "PID.11": {
+      "name": "Patient Address",
+      "description": "This field contains the mailing address of the patient.",
+      "dataType": "XAD",
+      "usage": "O", 
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": [
+        "123 MAIN ST^^CLEVELAND^OH^44101^USA",
+        "456 ELM AVENUE^APT 2B^COLUMBUS^OH^43215^USA"
+      ],
+      "generationHint": "Generate realistic US address with street, city, state, zip"
+    },
+    "PID.13": {
+      "name": "Phone Number - Home",
+      "description": "This field contains the patient's personal telephone number.",
+      "dataType": "XTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": [
+        "(216) 555-1234",
+        "2165551234^PRN^PH",
+        "(614) 555-9876^ORN^PH^^^614"
+      ],
+      "generationHint": "Generate realistic US phone number format"
+    },
+    "PID.18": {
+      "name": "Patient Account Number",
+      "description": "This field contains the external identifier used by the healthcare facility for billing purposes.",
+      "dataType": "CX",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["ACC123456^^^AN^AN", "BILL789^^^ACCT^AN"],
+      "generationHint": "Generate account number if billing context needed"
+    },
+    "PID.19": {
+      "name": "SSN Number - Patient",
+      "description": "This field contains the patient's social security number.",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "maxLength": 11,
+      "examples": ["123-45-6789", "987654321"],
+      "generationHint": "Generate fake SSN using 9XX format to avoid real numbers"
+    }
+  },
+  "crossReferences": {
+    "fhir-r4": {
+      "PID.3": "Patient.identifier",
+      "PID.3.1": "Patient.identifier.value", 
+      "PID.3.4": "Patient.identifier.system",
+      "PID.3.5": "Patient.identifier.type.coding.code",
+      "PID.5": "Patient.name",
+      "PID.5.1": "Patient.name.family",
+      "PID.5.2": "Patient.name.given[0]",
+      "PID.5.3": "Patient.name.given[1]",
+      "PID.7": "Patient.birthDate",
+      "PID.8": "Patient.gender",
+      "PID.11": "Patient.address",
+      "PID.13": "Patient.telecom",
+      "PID.19": "Patient.identifier (where type.coding.code = 'SS')"
+    }
+  },
+  "examples": [
+    "PID|1||PATID1234^^^MRN^MR||DOE^JOHN^Q||19801015|M|||123 MAIN ST^^CLEVELAND^OH^44101^USA||(216) 555-1234||||||123-45-6789|||",
+    "PID|1||12345^^^HOSP^MR~123456789^^^SSN^SS||SMITH^JANE^MARIE||19750322|F|||456 ELM AVE^APT 2B^COLUMBUS^OH^43215^USA||(614) 555-9876|||||||"
+  ],
+  "notes": [
+    "PID segment must appear in most message types involving patient data",
+    "PID.3 (Patient Identifier List) is the most critical field - at minimum should contain MRN",
+    "Generation hints guide the algorithmic generator for realistic data creation"
+  ]
+}

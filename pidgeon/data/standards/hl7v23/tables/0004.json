@@ -1,0 +1,54 @@
+{
+  "table": "0004",
+  "name": "Patient class",
+  "description": "User Defined Tables - Tables with data suggested by HL7 organization. Most table are customized to reflect system workflows and coded values.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "Patient Administration",
+  "type": "user_defined",
+  "values": [
+    {
+      "code": "B",
+      "description": "Obstetrics"
+    },
+    {
+      "code": "E", 
+      "description": "Emergency"
+    },
+    {
+      "code": "I",
+      "description": "Inpatient"
+    },
+    {
+      "code": "O",
+      "description": "Outpatient"
+    },
+    {
+      "code": "P",
+      "description": "Preadmit"
+    },
+    {
+      "code": "R",
+      "description": "Recurring patient"
+    }
+  ],
+  "usedIn": [
+    "PV1.2"
+  ],
+  "generationRules": {
+    "distribution": {
+      "O": 0.45,
+      "I": 0.25, 
+      "E": 0.15,
+      "P": 0.05,
+      "R": 0.04,
+      "B": 0.06
+    },
+    "messageContext": {
+      "ADT^A01": ["I", "E", "O"],
+      "ADT^A04": ["I", "P"],
+      "ORU^R01": ["I", "O", "E"],
+      "ORM^O01": ["O", "I"]
+    }
+  }
+}
