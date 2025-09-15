@@ -33,6 +33,11 @@ pidgeon/dist/
 *.tar.gz
 *.zip
 
+# Documentation data
+# Ignore the entire docs/data_sourcing/ folder and all future PNGs within it (recursively)
+docs/data_sourcing/
+docs/data_sourcing/**/*.png
+
 # AI models (large files, user-downloaded)
 **/.pidgeon/models/
 **/models/*.gguf
