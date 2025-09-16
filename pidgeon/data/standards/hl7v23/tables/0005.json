@@ -1,22 +1,66 @@
 {
   "table": "0005",
-  "name": "TODO: Define table name for 0005",
-  "description": "TODO: Define description for table 0005",
+  "name": "Race",
+  "description": "User-defined table with suggested values for patient race classification based on CDC codes",
   "standard": "hl7v23",
-  "version": "2.3", 
-  "type": "TODO: user_defined|hl7_defined",
+  "version": "2.3",
+  "chapter": "Patient Administration",
+  "type": "user_defined",
   "values": [
     {
-      "code": "TODO", 
-      "description": "TODO: Add all valid codes and descriptions",
-      "definition": "TODO: Define meaning"
+      "code": "1002-5",
+      "description": "American Indian or Alaska Native",
+      "definition": "A person having origins in any of the original peoples of North and South America (including Central America) and who maintains tribal affiliation or community attachment"
+    },
+    {
+      "code": "2028-9",
+      "description": "Asian",
+      "definition": "A person having origins in any of the original peoples of the Far East, Southeast Asia, or the Indian subcontinent"
+    },
+    {
+      "code": "2054-5",
+      "description": "Black or African American",
+      "definition": "A person having origins in any of the black racial groups of Africa"
+    },
+    {
+      "code": "2076-8",
+      "description": "Native Hawaiian or Other Pacific Islander",
+      "definition": "A person having origins in any of the original peoples of Hawaii, Guam, Samoa, or other Pacific Islands"
+    },
+    {
+      "code": "2106-3",
+      "description": "White",
+      "definition": "A person having origins in any of the original peoples of Europe, the Middle East, or North Africa"
+    },
+    {
+      "code": "2131-1",
+      "description": "Other Race",
+      "definition": "Used when race does not fit into standard categories or multiple races are indicated"
+    },
+    {
+      "code": "",
+      "description": "Unknown",
+      "definition": "Race information is not available or not provided"
     }
   ],
-  "usedIn": ["TODO: List segments.fields that reference this table"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "usedIn": [
+    "PID.10",
+    "NK1.35"
+  ],
+  "notes": "These codes include CDC Race and Ethnicity codes adopted by HL7 in 2005. Values contain pre-calculated Mod 10 check digit. If value is unknown, use empty field.",
   "generationRules": {
-    "TODO": "Define realistic distribution for synthetic data"
+    "distribution": {
+      "2106-3": 0.60,
+      "2054-5": 0.15,
+      "2028-9": 0.12,
+      "2076-8": 0.05,
+      "1002-5": 0.03,
+      "2131-1": 0.03,
+      "": 0.02
+    },
+    "messageContext": {
+      "patient_demographics": ["2106-3", "2054-5", "2028-9", "2076-8", "1002-5"],
+      "census_reporting": ["1002-5", "2028-9", "2054-5", "2076-8", "2106-3", "2131-1"]
+    }
   }
 }

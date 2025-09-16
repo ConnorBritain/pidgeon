@@ -1,22 +1,42 @@
 {
   "table": "0092",
-  "name": "TODO: Define table name for 0092",
-  "description": "TODO: Define description for table 0092",
+  "name": "Re-admission indicator",
+  "description": "User-defined table indicating that a patient is being re-admitted to the facility and the circumstances",
   "standard": "hl7v23",
-  "version": "2.3", 
-  "type": "TODO: user_defined|hl7_defined",
+  "version": "2.3",
+  "chapter": "Patient Administration",
+  "type": "user_defined",
   "values": [
     {
-      "code": "TODO", 
-      "description": "TODO: Add all valid codes and descriptions",
-      "definition": "TODO: Define meaning"
+      "code": "R",
+      "description": "Re-admission",
+      "definition": "Patient is being re-admitted to the healthcare facility"
+    },
+    {
+      "code": "",
+      "description": "Not specified",
+      "definition": "No re-admission indicator specified (null value)"
     }
   ],
-  "usedIn": ["TODO: List segments.fields that reference this table"],
+  "usedIn": [
+    "PV1.13"
+  ],
+  "notes": "User-defined table with 'R' as commonly suggested value for readmission. Organizations may define additional local codes.",
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": "Uses standard 'R' code with additional organization-specific readmission categories",
+    "cerner": "Supports 'R' with local extensions for different types of readmissions",
+    "allscripts": "Standard implementation with optional workflow-specific indicators"
   },
   "generationRules": {
-    "TODO": "Define realistic distribution for synthetic data"
+    "distribution": {
+      "": 0.85,
+      "R": 0.15
+    },
+    "messageContext": {
+      "ADT^A01": ["", "R"],
+      "scheduled_readmissions": ["R"],
+      "emergency_readmissions": ["R"],
+      "new_admissions": [""]
+    }
   }
 }

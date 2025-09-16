@@ -1,22 +1,125 @@
 {
   "table": "0003",
-  "name": "TODO: Define table name for 0003",
-  "description": "TODO: Define description for table 0003",
+  "name": "Event type",
+  "description": "HL7-defined table containing trigger event codes that identify specific events within healthcare workflow",
   "standard": "hl7v23",
-  "version": "2.3", 
-  "type": "TODO: user_defined|hl7_defined",
+  "version": "2.3",
+  "chapter": "Patient Administration",
+  "type": "hl7_defined",
   "values": [
     {
-      "code": "TODO", 
-      "description": "TODO: Add all valid codes and descriptions",
-      "definition": "TODO: Define meaning"
+      "code": "A01",
+      "description": "Admit/visit notification",
+      "definition": "Notifies systems when a patient is admitted to a facility or begins a visit"
+    },
+    {
+      "code": "A02",
+      "description": "Transfer a patient",
+      "definition": "Patient is transferred from one location to another within the facility"
+    },
+    {
+      "code": "A03",
+      "description": "Discharge/end visit",
+      "definition": "Patient is discharged from the facility or visit has ended"
+    },
+    {
+      "code": "A04",
+      "description": "Register a patient",
+      "definition": "Patient registration information is created or updated"
+    },
+    {
+      "code": "A05",
+      "description": "Pre-admit a patient",
+      "definition": "Patient is pre-admitted for future admission"
+    },
+    {
+      "code": "A06",
+      "description": "Change an outpatient to an inpatient",
+      "definition": "Patient status changed from outpatient to inpatient"
+    },
+    {
+      "code": "A07",
+      "description": "Change an inpatient to an outpatient",
+      "definition": "Patient status changed from inpatient to outpatient"
+    },
+    {
+      "code": "A08",
+      "description": "Update patient information",
+      "definition": "Patient demographic or administrative information is updated"
+    },
+    {
+      "code": "A09",
+      "description": "Patient departing – tracking",
+      "definition": "Patient is departing from a location (tracking purposes)"
+    },
+    {
+      "code": "A10",
+      "description": "Patient arriving – tracking",
+      "definition": "Patient has arrived at a location (tracking purposes)"
+    },
+    {
+      "code": "A11",
+      "description": "Cancel admit/visit notification",
+      "definition": "Previously sent admit or visit notification is cancelled"
+    },
+    {
+      "code": "A12",
+      "description": "Cancel transfer",
+      "definition": "Previously sent transfer notification is cancelled"
+    },
+    {
+      "code": "A13",
+      "description": "Cancel discharge/end visit",
+      "definition": "Previously sent discharge notification is cancelled"
+    },
+    {
+      "code": "A14",
+      "description": "Pending admit",
+      "definition": "Patient admission is pending"
+    },
+    {
+      "code": "A15",
+      "description": "Pending transfer",
+      "definition": "Patient transfer is pending"
+    },
+    {
+      "code": "A16",
+      "description": "Pending discharge",
+      "definition": "Patient discharge is pending"
+    },
+    {
+      "code": "A17",
+      "description": "Swap patients",
+      "definition": "Two patients' locations are swapped"
+    },
+    {
+      "code": "A18",
+      "description": "Merge patient information",
+      "definition": "Patient information from multiple records is merged"
     }
   ],
-  "usedIn": ["TODO: List segments.fields that reference this table"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "usedIn": [
+    "EVN.1",
+    "MSH.9.2"
+  ],
   "generationRules": {
-    "TODO": "Define realistic distribution for synthetic data"
+    "distribution": {
+      "A01": 0.25,
+      "A03": 0.24,
+      "A04": 0.20,
+      "A08": 0.15,
+      "A02": 0.10,
+      "A05": 0.03,
+      "A11": 0.01,
+      "A12": 0.01,
+      "A13": 0.01
+    },
+    "messageContext": {
+      "ADT^A01": ["A01"],
+      "ADT^A03": ["A03"],
+      "ADT^A04": ["A04"],
+      "ADT^A08": ["A08"],
+      "ADT^A02": ["A02"]
+    }
   }
 }

@@ -20,6 +20,9 @@
 6. **[`docs/roadmap/features/cli_gui_harmonization.md`](docs/roadmap/features/cli_gui_harmonization.md)** - **PLATFORM STRATEGY: One engine, two frontends approach**
 7. **[`docs/LEDGER.md`](docs/LEDGER.md)** - Recent development decisions and rollback procedures
 
+### **📖 HL7 Standards Reference (Added for Segment Development)**
+8. **[`docs/HL7_REFERENCE_GUIDE.md`](docs/HL7_REFERENCE_GUIDE.md)** - **DEFINITIVE HL7 v2.3 STANDARDS: Official documentation navigation and compliance framework**
+
 ### **Agent Steering Documentation**
 7. **[`docs/agent_steering/product.md`](docs/agent_steering/product.md)** - Product vision and Core+ strategy
 8. **[`docs/agent_steering/structure.md`](docs/agent_steering/structure.md)** - Clean architecture principles

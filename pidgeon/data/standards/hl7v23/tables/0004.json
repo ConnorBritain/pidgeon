@@ -1,7 +1,7 @@
 {
   "table": "0004",
   "name": "Patient class",
-  "description": "User Defined Tables - Tables with data suggested by HL7 organization. Most table are customized to reflect system workflows and coded values.",
+  "description": "User-defined table used by systems to categorize patients by site and service type",
   "standard": "hl7v23",
   "version": "2.3",
   "chapter": "Patient Administration",
@@ -9,32 +9,44 @@
   "values": [
     {
       "code": "B",
-      "description": "Obstetrics"
+      "description": "Obstetrics",
+      "definition": "Patient receiving obstetric or maternity care services"
     },
     {
-      "code": "E", 
-      "description": "Emergency"
+      "code": "E",
+      "description": "Emergency",
+      "definition": "Patient receiving emergency department services"
     },
     {
       "code": "I",
-      "description": "Inpatient"
+      "description": "Inpatient",
+      "definition": "Patient admitted as an inpatient to the facility"
     },
     {
       "code": "O",
-      "description": "Outpatient"
+      "description": "Outpatient",
+      "definition": "Patient receiving outpatient or ambulatory services"
     },
     {
       "code": "P",
-      "description": "Preadmit"
+      "description": "Preadmit",
+      "definition": "Patient registered for future admission or services"
     },
     {
       "code": "R",
-      "description": "Recurring patient"
+      "description": "Recurring patient",
+      "definition": "Patient with recurring or repeated visits to the facility"
     }
   ],
   "usedIn": [
     "PV1.2"
   ],
+  "notes": "User-defined table without consistent industry-wide definition. Subject to site-specific variations for organizational workflow requirements.",
+  "vendorVariations": {
+    "epic": "Supports standard codes with additional internal patient class categories for specialized care areas",
+    "cerner": "Uses standard values with organization-specific extensions for service line categorization",
+    "allscripts": "Standard implementation with optional workflow-specific patient classifications"
+  },
   "generationRules": {
     "distribution": {
       "O": 0.45,

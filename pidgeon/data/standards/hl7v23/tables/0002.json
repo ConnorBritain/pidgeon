@@ -1,22 +1,60 @@
 {
   "table": "0002",
-  "name": "TODO: Define table name for 0002",
-  "description": "TODO: Define description for table 0002",
+  "name": "Marital status",
+  "description": "User-defined table specifying a person's marital status",
   "standard": "hl7v23",
-  "version": "2.3", 
-  "type": "TODO: user_defined|hl7_defined",
+  "version": "2.3",
+  "chapter": "Patient Administration",
+  "type": "user_defined",
   "values": [
     {
-      "code": "TODO", 
-      "description": "TODO: Add all valid codes and descriptions",
-      "definition": "TODO: Define meaning"
+      "code": "A",
+      "description": "Separated",
+      "definition": "Person who is separated from spouse but not divorced"
+    },
+    {
+      "code": "D",
+      "description": "Divorced",
+      "definition": "Person who is legally divorced"
+    },
+    {
+      "code": "M",
+      "description": "Married",
+      "definition": "Person who is currently married"
+    },
+    {
+      "code": "S",
+      "description": "Single",
+      "definition": "Person who has never been married"
+    },
+    {
+      "code": "W",
+      "description": "Widowed",
+      "definition": "Person whose spouse has died and who has not remarried"
     }
   ],
-  "usedIn": ["TODO: List segments.fields that reference this table"],
+  "usedIn": [
+    "PID.16",
+    "NK1.15"
+  ],
+  "notes": "User-defined table allows customization for jurisdictional and cultural variations. Case insensitive values.",
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": "Supports standard codes with additional local marital status options",
+    "cerner": "Uses standard values with organization-specific extensions",
+    "allscripts": "Standard implementation with optional cultural customizations"
   },
   "generationRules": {
-    "TODO": "Define realistic distribution for synthetic data"
+    "distribution": {
+      "M": 0.45,
+      "S": 0.30,
+      "D": 0.15,
+      "W": 0.08,
+      "A": 0.02
+    },
+    "messageContext": {
+      "patient_demographics": ["M", "S", "D", "W", "A"],
+      "next_of_kin": ["M", "S", "D", "W"],
+      "insurance_demographics": ["M", "S", "D"]
+    }
   }
 }
