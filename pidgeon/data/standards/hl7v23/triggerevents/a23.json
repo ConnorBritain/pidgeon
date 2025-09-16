@@ -1,24 +1,52 @@
 {
   "triggerEvent": "A23",
-  "name": "TODO: Define trigger event name for A23",
-  "description": "TODO: Define description for A23 trigger event",
+  "name": "Delete Patient Record",
+  "description": "Removal of visit or episode-specific information from the patient record for legitimate data management purposes",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A23",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "NK1",
+      "PV1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Remove old visit or episode-specific data from databases that cannot hold all historical patient information due to storage constraints",
+  "timing": "Sent when legitimate data deletion is required for database maintenance or regulatory compliance",
+  "responseMessage": "ACK^A23^ACK",
+  "realWorldScenarios": [
+    "Archive old visit data due to database storage limits",
+    "Remove test patient records from production system",
+    "Comply with data retention policies by purging old episodes",
+    "Database maintenance requiring historical visit removal",
+    "System migration cleanup of legacy visit records",
+    "Regulatory compliance deletion of expired healthcare data"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "EVN.1": "A23",
+    "EVN.2": "Current timestamp",
+    "EVN.6": "Deletion execution timestamp",
+    "PID": "Patient identification for record being deleted",
+    "PV1": "Visit information for specific episode being removed",
+    "requiredDataQuality": "Critical - accurate identification required to prevent accidental deletion of wrong records"
   }
 }

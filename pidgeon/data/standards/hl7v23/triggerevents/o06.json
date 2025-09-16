@@ -1,24 +1,46 @@
 {
   "triggerEvent": "O06",
-  "name": "TODO: Define trigger event name for O06",
-  "description": "TODO: Define description for O06 trigger event",
+  "name": "Stock Requisition Acknowledgment",
+  "description": "Response message acknowledging receipt and status of stock requisition orders from inventory systems",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "4",
+  "chapterName": "Order Entry",
+  "messageStructure": "ORS^O06",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "MSA",
+      "ORC"
+    ],
+    "optional": [
+      "NTE",
+      "PID",
+      "RQD",
+      "RQ1"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Acknowledge stock requisition receipt and communicate order status changes back to the requesting department",
+  "timing": "Sent by inventory systems in response to stock requisition order messages (O05)",
+  "responseMessage": "ACK^O06^ACK",
+  "realWorldScenarios": [
+    "Central supply confirms sterile instrument set available for surgery",
+    "Pharmacy acknowledges IV fluid order but reports partial availability",
+    "Warehouse confirms equipment requisition with delivery schedule",
+    "Supply system reports out-of-stock item with suggested substitution",
+    "Laboratory supply confirms reagent order with expiration date notice",
+    "Materials management acknowledges bulk order with cost center allocation"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "MSH.9": "ORS^O06",
+    "MSA.1": "AA|AE|AR (Application Accept|Error|Reject)",
+    "MSA.2": "Original message control ID from requisition order",
+    "ORC.1": "OK|CR|UC (Order OK|Cancelled|Unable to Cancel)",
+    "ORC.5": "Order status (A|IP|CM|CA|DC|ER|HD|RP)",
+    "ORC.16": "Order control code reason",
+    "RQD.1": "Acknowledged requisition line number",
+    "RQD.3": "Confirmed available quantity",
+    "RQD.8": "Date needed/expected delivery date",
+    "requiredDataQuality": "High - requisition acknowledgment affects inventory management and operational planning"
   }
 }

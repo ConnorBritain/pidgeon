@@ -1,22 +1,112 @@
 {
   "table": "0200",
-  "name": "TODO: Define table name for 0200",
-  "description": "TODO: Define description for table 0200",
+  "name": "Name Type",
+  "description": "Codes specifying the type or classification of a person's name for proper identification and context",
   "standard": "hl7v23",
-  "version": "2.3", 
-  "type": "TODO: user_defined|hl7_defined",
+  "version": "2.3",
+  "type": "hl7_defined",
   "values": [
     {
-      "code": "TODO", 
-      "description": "TODO: Add all valid codes and descriptions",
-      "definition": "TODO: Define meaning"
+      "code": "L",
+      "description": "Official Registry Name",
+      "definition": "The formal name as registered in an official registry"
+    },
+    {
+      "code": "D",
+      "description": "Customary Name",
+      "definition": "Known as/conventional/the one you use. May also be known as a preferred name"
+    },
+    {
+      "code": "A",
+      "description": "Assigned",
+      "definition": "A name assigned to a person, may include not knowing the person's name, or to maintain anonymity"
+    },
+    {
+      "code": "M",
+      "description": "Maiden Name",
+      "definition": "A name you had just before you got married"
+    },
+    {
+      "code": "B",
+      "description": "Birth name",
+      "definition": "A name that a person had shortly after being born. Usually for family names"
+    },
+    {
+      "code": "C",
+      "description": "Adopted Name",
+      "definition": "A name acquired by adoption"
+    },
+    {
+      "code": "N",
+      "description": "Nickname",
+      "definition": "Nickname/'Call me' Name/Street Name"
+    },
+    {
+      "code": "K",
+      "description": "Business name",
+      "definition": "A name used in a Professional or Business context, includes pseudonyms, stage names, etc."
+    },
+    {
+      "code": "P",
+      "description": "Name of Partner/Spouse",
+      "definition": "Retained for backward compatibility"
+    },
+    {
+      "code": "S",
+      "description": "Pseudonym",
+      "definition": "Coded Pseudo-Name to ensure anonymity"
+    },
+    {
+      "code": "T",
+      "description": "Indigenous/Tribal",
+      "definition": "Indigenous/Tribal/Community Name"
+    },
+    {
+      "code": "U",
+      "description": "Unknown",
+      "definition": "Unknown name type"
+    },
+    {
+      "code": "TEMP",
+      "description": "Temporary Name",
+      "definition": "A temporary name"
+    },
+    {
+      "code": "REL",
+      "description": "Religious",
+      "definition": "e.g. Sister Mary Francis, Brother John"
+    },
+    {
+      "code": "NB",
+      "description": "Newborn Name",
+      "definition": "A name assigned on a temporary basis at birth"
+    },
+    {
+      "code": "MSK",
+      "description": "Masked",
+      "definition": "Information available but not provided due to security or privacy reasons"
     }
   ],
-  "usedIn": ["TODO: List segments.fields that reference this table"],
+  "usedIn": [
+    "XPN.7",
+    "XCN.10"
+  ],
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": "Supports standard codes with additional internal name categorization",
+    "cerner": "Standard implementation with validation for common name types",
+    "allscripts": "Supports primary codes (L, D, A, M, B, N)"
   },
   "generationRules": {
-    "TODO": "Define realistic distribution for synthetic data"
+    "distribution": {
+      "L": 0.40,
+      "D": 0.30,
+      "A": 0.10,
+      "M": 0.08,
+      "B": 0.05,
+      "N": 0.03,
+      "K": 0.02,
+      "U": 0.02
+    },
+    "realistic": "Official and customary names are most common, maiden names for married patients, business names for providers"
   }
 }

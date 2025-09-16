@@ -1,22 +1,42 @@
 {
   "table": "0103",
-  "name": "TODO: Define table name for 0103",
-  "description": "TODO: Define description for table 0103",
+  "name": "Processing ID",
+  "description": "Codes indicating the processing mode for HL7 messages (production, training, or debugging)",
   "standard": "hl7v23",
-  "version": "2.3", 
-  "type": "TODO: user_defined|hl7_defined",
+  "version": "2.3",
+  "type": "hl7_defined",
   "values": [
     {
-      "code": "TODO", 
-      "description": "TODO: Add all valid codes and descriptions",
-      "definition": "TODO: Define meaning"
+      "code": "D",
+      "description": "Debugging",
+      "definition": "Message is part of a debugging system with detailed logging and diagnostic information"
+    },
+    {
+      "code": "P",
+      "description": "Production",
+      "definition": "Message is part of a production system with real patient data and live operations"
+    },
+    {
+      "code": "T",
+      "description": "Training",
+      "definition": "Message is part of a training system for education and practice scenarios"
     }
   ],
-  "usedIn": ["TODO: List segments.fields that reference this table"],
+  "usedIn": [
+    "MSH.11",
+    "PT.1"
+  ],
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": "Standard implementation with strict P/T validation",
+    "cerner": "Supports all three codes with additional internal tracking",
+    "allscripts": "Standard implementation"
   },
   "generationRules": {
-    "TODO": "Define realistic distribution for synthetic data"
+    "distribution": {
+      "P": 0.70,
+      "T": 0.25,
+      "D": 0.05
+    },
+    "realistic": "Production environments use P, test systems use T, debugging scenarios use D"
   }
 }

@@ -1,24 +1,45 @@
 {
   "triggerEvent": "O03",
-  "name": "TODO: Define trigger event name for O03",
-  "description": "TODO: Define description for O03 trigger event",
+  "name": "Dietary Order",
+  "description": "Order message for dietary services including diet codes, supplements, and tray instructions",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "4",
+  "chapterName": "Order Entry",
+  "messageStructure": "OMD^O03",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "ORC",
+      "ODS"
+    ],
+    "optional": [
+      "NTE",
+      "PID",
+      "PV1",
+      "ODT"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Communicate dietary orders including diet specifications, supplements, and special tray instructions to food service systems",
+  "timing": "Sent when dietary orders are placed, modified, or discontinued for patient meal planning",
+  "responseMessage": "ACK^O03^ACK",
+  "realWorldScenarios": [
+    "Patient admitted requiring diabetic diet with low sodium supplement",
+    "Post-surgical patient transitioned from NPO to clear liquid diet",
+    "Allergic patient requiring dairy-free and gluten-free dietary restrictions",
+    "Cardiac patient ordered heart-healthy diet with fluid restriction",
+    "Pediatric patient requiring texture-modified diet due to swallowing difficulty",
+    "Discharge patient dietary order discontinued for meal service termination"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "MSH.9": "OMD^O03",
+    "ORC.1": "NW|CA|OC|RE|SC|DC (New|Cancel|Order Changed|Replace|Status Changed|Discontinue)",
+    "ORC.2": "Placer order number",
+    "ORC.3": "Filler order number",
+    "ODS.1": "Diet type (e.g., REG, NPO, DAB, LNA)",
+    "ODS.2": "Diet supplement codes",
+    "ODS.3": "Diet preferences",
+    "ODT.1": "Tray type (e.g., standard, isolation, bedside)",
+    "requiredDataQuality": "High - accurate dietary orders critical for patient nutrition and medical compliance"
   }
 }

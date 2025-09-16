@@ -1,24 +1,43 @@
 {
   "triggerEvent": "O02",
-  "name": "TODO: Define trigger event name for O02",
-  "description": "TODO: Define description for O02 trigger event",
+  "name": "Order Response",
+  "description": "Response message acknowledging receipt and status of order, providing feedback to the ordering system",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "4",
+  "chapterName": "Order Entry",
+  "messageStructure": "ORR^O02",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "MSA",
+      "ORC"
+    ],
+    "optional": [
+      "NTE",
+      "PID",
+      "OBR",
+      "CTI"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Acknowledge order receipt and communicate order status changes back to the ordering system",
+  "timing": "Sent by receiving/fulfilling system in response to order messages (O01)",
+  "responseMessage": "ACK^O02^ACK",
+  "realWorldScenarios": [
+    "Laboratory acknowledges test order receipt",
+    "Pharmacy confirms prescription acceptance",
+    "Radiology confirms imaging appointment scheduled",
+    "Surgery department acknowledges procedure order",
+    "Blood bank confirms blood product order",
+    "Dietary confirms meal modification order"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "MSH.9": "ORR^O02",
+    "MSA.1": "AA|AE|AR (Application Accept|Error|Reject)",
+    "MSA.2": "Original message control ID from order",
+    "ORC.1": "OK|CR|UC (Order OK|Cancelled|Unable to Cancel)",
+    "ORC.5": "Order status (A|IP|CM|CA|DC|ER|HD|RP)",
+    "ORC.16": "Order control code reason",
+    "requiredDataQuality": "High - order acknowledgment affects clinical workflow and patient safety"
   }
 }

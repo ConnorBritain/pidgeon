@@ -1,24 +1,70 @@
 {
   "triggerEvent": "M06",
-  "name": "TODO: Define trigger event name for M06",
-  "description": "TODO: Define description for M06 trigger event",
+  "name": "Master File - Clinical Study with Phases and Schedules",
+  "description": "Master file updates for clinical research studies including protocols, phases, schedules, and participant management data",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "8",
+  "chapterName": "Master Files",
+  "messageStructure": "MFN^M06",
+  "hl7Reference": "HL7 v2.3 Chapter 8 Master Files - HL7.eu/HL7v2x/v23/std23",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "MFI",
+      "MFE",
+      "CM0"
+    ],
+    "optional": [
+      "CM1",
+      "CM2"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Synchronize clinical study master data across research systems for protocol management and regulatory compliance",
+  "timing": "Sent when clinical study information changes, including protocol amendments, phase transitions, or scheduling updates",
+  "responseMessage": "MFK^M06^MFK",
+  "standardNotes": [
+    "M06 handles clinical study master file updates for research management systems",
+    "CM0 segment contains clinical study master information and protocol details",
+    "CM1 segment provides clinical study phase information and scheduling",
+    "CM2 segment contains clinical study schedule master data",
+    "Essential for clinical trial management and regulatory reporting",
+    "Updates must maintain protocol version control and audit trails"
+  ],
+  "realWorldScenarios": [
+    "New oncology clinical trial protocol activated for patient enrollment",
+    "Phase II study transitions to Phase III requiring protocol amendments",
+    "Clinical study schedule updated for additional data collection visits",
+    "Multi-site research study adds new participating investigator sites",
+    "Study protocol suspended pending safety review and protocol revision",
+    "Pediatric study age criteria modified based on interim safety analysis"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "MSH.9": "MFN^M06",
+    "MFI.1": "Clinical Study master file identifier",
+    "MFI.3": "File-level event code (REP, UPD)",
+    "MFE.1": "Record-level event code (MAD, MUP, MDL)",
+    "MFE.4": "Primary key value (study identifier)",
+    "CM0.1": "Set ID - CM0",
+    "CM0.2": "Sponsor Study ID",
+    "CM0.3": "Alternate Study ID",
+    "CM0.4": "Title of Study",
+    "CM0.5": "Chairman of Study",
+    "CM0.6": "Last IRB Approval Date",
+    "CM0.7": "Total Accrual to Date",
+    "CM0.8": "Last Accrual Date",
+    "CM0.9": "Contact for Study",
+    "CM0.10": "Contact's Telephone Number",
+    "CM1.1": "Set ID - CM1",
+    "CM1.2": "Study Phase ID",
+    "CM1.3": "Description of Study Phase",
+    "CM2.1": "Set ID - CM2",
+    "CM2.2": "Scheduled Time Point",
+    "CM2.3": "Description of Time Point",
+    "requiredDataQuality": "Critical - clinical study accuracy affects patient safety, regulatory compliance, and research integrity",
+    "tableReferences": {
+      "MFI.3": "HL7-0178 (File Level Event Code)",
+      "MFE.1": "HL7-0180 (Record Level Event Code)"
+    }
   }
 }

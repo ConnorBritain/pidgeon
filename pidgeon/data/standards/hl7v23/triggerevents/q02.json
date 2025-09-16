@@ -1,24 +1,44 @@
 {
   "triggerEvent": "Q02",
-  "name": "TODO: Define trigger event name for Q02",
-  "description": "TODO: Define description for Q02 trigger event",
+  "name": "Deferred Query",
+  "description": "Query message requesting deferred access to data when immediate response is not required or available",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "5",
+  "chapterName": "Query",
+  "messageStructure": "QRY^Q02",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "QRD"
+    ],
+    "optional": [
+      "QRF",
+      "DSC"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Request data access when immediate response is not required, allowing responding systems to process queries during optimal times",
+  "timing": "Sent when systems need data but can wait for response processing during off-peak hours or batch processing windows",
+  "responseMessage": "QCK^Q02^QCK",
+  "realWorldScenarios": [
+    "Overnight batch processing for patient census reports",
+    "Monthly quality metrics compilation requiring extensive data mining",
+    "Research data extraction for clinical studies with flexible timing",
+    "Insurance claims processing queries that can be processed in batches",
+    "Historical data analysis requests for trending and reporting",
+    "Cross-system data reconciliation during maintenance windows"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "MSH.9": "QRY^Q02",
+    "QRD.1": "Query date/time",
+    "QRD.2": "Query format code (R=record oriented, D=display oriented)",
+    "QRD.3": "Query priority (D=deferred)",
+    "QRD.4": "Query ID for tracking deferred response",
+    "QRD.7": "Quantity limited request",
+    "QRD.8": "Who subject filter",
+    "QRD.9": "What subject filter",
+    "QRD.10": "Which date/time qualifier",
+    "QRF": "Optional query filter for additional specificity",
+    "requiredDataQuality": "Medium - deferred queries allow for comprehensive data gathering but must maintain request specificity"
   }
 }

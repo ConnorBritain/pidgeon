@@ -1,17 +1,122 @@
 {
   "dataType": "TN",
-  "name": "TODO: Define data type name for TN", 
-  "description": "TODO: Define description for TN data type",
+  "name": "Telephone Number",
+  "description": "The TN data type is used to represent telephone numbers in a simple string format. It provides basic telephone number representation without the enhanced structure and telecommunications capabilities of the XTN data type. TN has been replaced by XTN as of HL7 v2.3 but is maintained for backward compatibility with older systems and simple telephone number requirements.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
-  "components": {
-    "TODO": "Define components for composite types"
+  "category": "primitive",
+  "length": 40,
+  "constraints": {
+    "format": "Free-form text field for telephone number representation",
+    "replacement": "XTN data type provides enhanced telecommunications capabilities",
+    "compatibility": "Maintained for backward compatibility with legacy systems",
+    "simplicity": "Simple string representation without structured components"
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "usage": [
+    "Legacy telephone number fields in older HL7 implementations",
+    "Simple telephone number representation without structured components",
+    "Backward compatibility with systems using earlier HL7 versions",
+    "Basic contact information where XTN complexity is not needed",
+    "Migration scenarios from older HL7 versions"
+  ],
+  "examples": [
+    "555-123-4567",
+    "(555) 123-4567",
+    "1-800-555-1234",
+    "555.123.4567",
+    "+1-555-123-4567",
+    "555-123-4567 ext 123"
+  ],
+  "commonFields": [
+    "Legacy phone number fields in older HL7 versions",
+    "Simple contact fields not requiring XTN structure",
+    "Backward compatibility implementations",
+    "Basic telecommunications fields in legacy systems",
+    "Migration support for older message formats"
+  ],
+  "generationHints": {
+    "typical": "Use standard phone number formats appropriate for the region",
+    "formats": ["555-123-4567", "(555) 123-4567", "555.123.4567"],
+    "extensions": "May include extension numbers (ext 123, x123)",
+    "international": "Can include international dialing codes (+1, +44, etc.)",
+    "simplicity": "Keep formatting simple and readable"
+  },
+  "formatPatterns": {
+    "us_standard": {
+      "pattern": "NXX-NXX-XXXX",
+      "example": "555-123-4567",
+      "description": "Standard US format with hyphens"
+    },
+    "us_parentheses": {
+      "pattern": "(NXX) NXX-XXXX",
+      "example": "(555) 123-4567",
+      "description": "US format with area code in parentheses"
+    },
+    "us_dots": {
+      "pattern": "NXX.NXX.XXXX",
+      "example": "555.123.4567",
+      "description": "US format with dots"
+    },
+    "international": {
+      "pattern": "+CC-NXX-NXX-XXXX",
+      "example": "+1-555-123-4567",
+      "description": "International format with country code"
+    },
+    "with_extension": {
+      "pattern": "NXX-NXX-XXXX ext XXX",
+      "example": "555-123-4567 ext 123",
+      "description": "Phone number with extension"
+    }
+  },
+  "validationRules": {
+    "lengthValidation": "Should not exceed 40 characters",
+    "formatFlexibility": "Accepts various telephone number formats",
+    "characterSet": "Typically numeric digits with common separators (-, ., space, parentheses)",
+    "readability": "Should be human-readable and recognizable as a phone number"
+  },
+  "limitationsVsXTN": {
+    "noStructure": "Lacks structured components for area code, extension, etc.",
+    "noUseCode": "Cannot specify whether home, work, or mobile number",
+    "noEquipmentType": "Cannot distinguish between phone, fax, pager, etc.",
+    "noInternational": "Limited support for international numbering conventions",
+    "noValidation": "Cannot perform sophisticated validation or formatting"
+  },
+  "migrationToXTN": {
+    "replacement": "XTN provides comprehensive telecommunications support",
+    "advantages": "XTN offers structured components, use codes, and equipment types",
+    "compatibility": "TN values can be mapped to XTN.1 (Telephone Number) component",
+    "recommendation": "New implementations should use XTN instead of TN"
+  },
+  "relatedDataTypes": {
+    "XTN": "Extended Telecommunications Number - comprehensive replacement for TN",
+    "ST": "String - TN is essentially a specialized string for phone numbers",
+    "FT": "Formatted Text - for complex telecommunications formatting",
+    "TX": "Text Data - for extended telecommunications descriptions"
+  },
+  "implementationNotes": {
+    "legacy": "Primarily used for maintaining compatibility with older systems",
+    "simplicity": "Appropriate for simple implementations not requiring XTN complexity",
+    "migration": "Should be migrated to XTN for new implementations",
+    "validation": "Limited validation capabilities compared to structured alternatives",
+    "display": "Simple string display without special formatting requirements"
+  },
+  "backwardCompatibility": {
+    "purpose": "Maintains compatibility with HL7 versions prior to 2.3",
+    "systems": "Legacy systems may still use TN for simple phone number storage",
+    "conversion": "Can be converted to XTN format for enhanced functionality",
+    "preservation": "Preserves existing data when upgrading HL7 versions"
+  },
+  "useCases": {
+    "legacy": "Supporting legacy HL7 implementations",
+    "simple": "Simple systems with basic phone number requirements",
+    "migration": "Transitional implementations upgrading from older HL7 versions",
+    "compatibility": "Interfacing with systems that only support TN format",
+    "basic": "Basic contact information without advanced telecommunications features"
+  },
+  "deprecationNotes": {
+    "status": "Superseded by XTN as of HL7 v2.3",
+    "recommendation": "Use XTN for new implementations requiring telecommunications data",
+    "support": "Maintained for backward compatibility with legacy systems",
+    "limitation": "Limited functionality compared to modern telecommunications requirements"
   }
 }

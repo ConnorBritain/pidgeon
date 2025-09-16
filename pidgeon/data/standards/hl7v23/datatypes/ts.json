@@ -1,17 +1,81 @@
 {
   "dataType": "TS",
-  "name": "TODO: Define data type name for TS", 
-  "description": "TODO: Define description for TS data type",
+  "name": "Time Stamp",
+  "description": "The TS data type represents a timestamp with two components: the time of an event and the degree of precision. It combines date and time information to specify when an event occurred, with flexible precision from year-only to fractional seconds.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "TS.1": {
+      "name": "Time of an Event",
+      "dataType": "ST",
+      "description": "The actual timestamp value in YYYYMMDD[HHMM[SS[.SSSS]]][+/-ZZZZ] format. The precision is determined by the number of characters included.",
+      "length": 26,
+      "usage": "required",
+      "position": 1
+    },
+    "TS.2": {
+      "name": "Degree of Precision",
+      "dataType": "ST",
+      "description": "Indicates the precision of the timestamp (Y=year, L=month, D=day, H=hour, M=minute, S=second). Optional component for explicit precision specification.",
+      "length": 1,
+      "usage": "optional",
+      "position": 2
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 26,
+  "constraints": {
+    "format": "YYYYMMDD[HHMM[SS[.SSSS]]][+/-ZZZZ] - brackets indicate optional portions",
+    "precision": "Precision determined by the number of digits included",
+    "timezone": "Time zone offset in +/-HHMM format when specified",
+    "fractional": "Fractional seconds (.SSSS) allowed for sub-second precision"
+  },
+  "usage": [
+    "Message timestamp in MSH.7 - Date/Time of Message",
+    "Event timestamps in EVN.2 - Recorded Date/Time",
+    "Patient birth date/time in PID.7 - Date/Time of Birth",
+    "Observation timestamps in OBX.14 - Date/Time of the Observation",
+    "Any date/time field requiring precise timing"
+  ],
+  "examples": [
+    "199804121200",
+    "19980412120000.1234",
+    "199804121200-0500",
+    "19980412",
+    "199804121200^M"
+  ],
+  "commonFields": [
+    "MSH.7 - Date/Time of Message",
+    "EVN.2 - Recorded Date/Time",
+    "PID.7 - Date/Time of Birth",
+    "OBX.14 - Date/Time of the Observation",
+    "PV1.44 - Admit Date/Time"
+  ],
+  "generationHints": {
+    "typical": "Use current or recent timestamps for realistic healthcare scenarios",
+    "format": "YYYYMMDDHHMMSS is the most common precision level",
+    "timezone": "Include timezone offset for systems spanning multiple time zones",
+    "precision": "Match precision to the clinical context (birth dates vs observation times)",
+    "examples": {
+      "dateOnly": "20231215 (date only)",
+      "dateTime": "20231215143022 (to seconds)",
+      "withTimezone": "20231215143022-0500 (with timezone)",
+      "fractional": "20231215143022.123 (with milliseconds)"
+    }
+  },
+  "precisionLevels": {
+    "Y": "Year only (YYYY)",
+    "L": "Month (YYYYMM)",
+    "D": "Day (YYYYMMDD)",
+    "H": "Hour (YYYYMMDDHH)",
+    "M": "Minute (YYYYMMDDHHM)",
+    "S": "Second (YYYYMMDDHHMMSS)",
+    "fractional": "Sub-second (.SSSS)"
+  },
+  "validationRules": {
+    "dateFormat": "Must follow YYYYMMDD format for date portion",
+    "timeFormat": "Must follow HHMMSS format for time portion when included",
+    "timezone": "Timezone must be in +/-HHMM format",
+    "ranges": "All date/time components must be within valid ranges"
   }
 }

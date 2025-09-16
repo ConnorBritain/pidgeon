@@ -1,17 +1,85 @@
 {
   "dataType": "SAD",
-  "name": "TODO: Define data type name for SAD", 
-  "description": "TODO: Define description for SAD data type",
+  "name": "Street Address",
+  "description": "The SAD data type is used to represent street address information with separate components for street number, street name, and dwelling number. It provides structured address representation that enables better address parsing, validation, and standardization compared to simple string addresses. SAD is particularly useful for systems that need to perform address matching, geocoding, or postal validation while maintaining compatibility with various international addressing conventions.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "SAD.1": {
+      "name": "Street or Mailing Address",
+      "dataType": "ST",
+      "description": "The complete street address including street number, direction, street name, and street type. This is the primary address line for mail delivery and location identification.",
+      "length": 120,
+      "usage": "optional",
+      "position": 1
+    },
+    "SAD.2": {
+      "name": "Street Name",
+      "dataType": "ST",
+      "description": "The name of the street without the street number or type (e.g., 'Main' from '123 Main Street'). Enables address component analysis and standardization.",
+      "length": 50,
+      "usage": "optional",
+      "position": 2
+    },
+    "SAD.3": {
+      "name": "Dwelling Number",
+      "dataType": "ST",
+      "description": "Additional address identifiers such as apartment number, suite, unit, or floor designation. Used for multi-unit buildings and complex addressing.",
+      "length": 12,
+      "usage": "optional",
+      "position": 3
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 182,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "addressValidation": "Street address should follow local postal addressing conventions",
+    "completeness": "Street or Mailing Address (SAD.1) is typically the most important component",
+    "standardization": "Address components should support postal standardization and validation"
+  },
+  "usage": [
+    "Patient and provider street addresses in demographic data",
+    "Facility and organization physical addresses",
+    "Emergency contact and next of kin address information",
+    "Insurance and guarantor address fields",
+    "Shipping and billing addresses for healthcare services",
+    "Location-based healthcare analytics and reporting"
+  ],
+  "examples": [
+    "123 Main Street^Main^Apt 4B",
+    "456 Oak Avenue, Building A^Oak^Suite 200",
+    "789 First Street NW^First^Unit 12",
+    "321 Elm Drive^Elm^Floor 3",
+    "654 Park Boulevard^Park^",
+    "987 Health Center Way^Health Center^Room 101"
+  ],
+  "commonFields": [
+    "PID.11 - Patient Address street address components",
+    "NK1.4 - Next of Kin Address street information",
+    "Provider address fields in directory and credentialing",
+    "Facility address information in organization data",
+    "Insurance and guarantor address components",
+    "Emergency contact address fields"
+  ],
+  "generationHints": {
+    "typical": "Use realistic street addresses with proper street types and dwelling numbers",
+    "streetTypes": ["Street", "Avenue", "Boulevard", "Drive", "Lane", "Way", "Road", "Circle"],
+    "directions": ["N", "S", "E", "W", "NE", "NW", "SE", "SW", "North", "South"],
+    "dwellings": ["Apt", "Suite", "Unit", "Floor", "Room", "#", "Building"],
+    "numbers": "Use realistic house numbers and dwelling identifiers for the context"
+  },
+  "relatedDataTypes": {
+    "XAD": "Extended Address - comprehensive address data type that may include SAD",
+    "AD": "Address - simpler address representation without component separation",
+    "ST": "String - used for all SAD components",
+    "HD": "Hierarchic Designator - may be used for complex address authorities"
+  },
+  "implementationNotes": {
+    "parsing": "Enables better address parsing and component extraction for standardization",
+    "validation": "Supports address validation and postal verification processes",
+    "geocoding": "Facilitates geocoding and mapping applications for location services",
+    "standardization": "Enables address standardization according to postal service requirements",
+    "analytics": "Supports location-based analytics and geographic reporting"
   }
 }

@@ -1,17 +1,85 @@
 {
   "dataType": "AUI",
-  "name": "TODO: Define data type name for AUI", 
-  "description": "TODO: Define description for AUI data type",
+  "name": "Authorization Information",
+  "description": "The AUI data type is used to represent authorization and approval information for healthcare services, procedures, and treatments. It contains details about insurance pre-authorizations, medical necessity approvals, and administrative authorizations required for patient care. AUI enables healthcare systems to track authorization status, approval numbers, and authorization validity periods, ensuring compliance with insurance requirements and regulatory guidelines.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "AUI.1": {
+      "name": "Authorization Number",
+      "dataType": "ST",
+      "description": "The unique authorization or approval number assigned by the authorizing entity. This identifier is used to reference the specific authorization in communications and claims.",
+      "length": 30,
+      "usage": "optional",
+      "position": 1
+    },
+    "AUI.2": {
+      "name": "Date",
+      "dataType": "TS",
+      "description": "The date when the authorization was granted or becomes effective. Establishes the temporal validity of the authorization.",
+      "length": 26,
+      "usage": "optional",
+      "position": 2
+    },
+    "AUI.3": {
+      "name": "Source",
+      "dataType": "ST",
+      "description": "The entity or organization that granted the authorization (e.g., insurance company, medical director, utilization review organization). Identifies the authorizing authority.",
+      "length": 199,
+      "usage": "optional",
+      "position": 3
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 255,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "authorizationNumber": "Authorization number should be unique within the authorizing source's system",
+    "dateValidation": "Date should be valid timestamp format indicating authorization timing",
+    "sourceIdentification": "Source should clearly identify the authorizing entity or system"
+  },
+  "usage": [
+    "Insurance pre-authorization tracking for procedures and treatments",
+    "Medical necessity approvals and utilization review documentation",
+    "Administrative approvals for specialized services and equipment",
+    "Regulatory compliance tracking for controlled substances and procedures",
+    "Prior authorization management in healthcare workflows",
+    "Authorization status tracking for billing and claims processing"
+  ],
+  "examples": [
+    "AUTH12345^20240315080000^Blue Cross Blue Shield",
+    "PA-7890123^20240318000000^Medicare Administrative Contractor",
+    "UR-456789^20240320120000^Aetna Utilization Review",
+    "PREAUTH987^20240322000000^United Healthcare",
+    "MED-AUTH-001^20240325090000^Hospital Medical Director",
+    "PROC-APPR-789^20240327000000^State Medicaid Program"
+  ],
+  "commonFields": [
+    "Authorization fields in procedure and treatment orders",
+    "Insurance pre-authorization tracking in patient encounters",
+    "Utilization review and medical necessity documentation",
+    "Prior authorization fields in billing and claims systems",
+    "Regulatory approval tracking for controlled procedures",
+    "Administrative approval fields in specialized service orders"
+  ],
+  "generationHints": {
+    "typical": "Use realistic authorization numbers with appropriate dates and authorizing sources",
+    "authNumbers": ["AUTH followed by numbers", "PA- prefix for prior auth", "UR- for utilization review"],
+    "sources": ["Insurance companies", "Medicare contractors", "Medicaid programs", "Medical directors"],
+    "dates": "Use recent dates appropriate for healthcare authorization timelines",
+    "formats": "Follow common authorization number formats used in healthcare industry"
+  },
+  "relatedDataTypes": {
+    "ST": "String - used for authorization number and source components",
+    "TS": "Time Stamp - used for authorization date component",
+    "CE": "Coded Element - may be used for standardized authorization types",
+    "EI": "Entity Identifier - alternative for structured authorization identifiers"
+  },
+  "implementationNotes": {
+    "tracking": "Enables comprehensive tracking of authorization status throughout care episodes",
+    "compliance": "Supports regulatory compliance and insurance requirement documentation",
+    "workflow": "Integrates with prior authorization and utilization review workflows",
+    "billing": "Critical for accurate billing and claims submission processes",
+    "validation": "Authorization information should be validated against authorizing source systems"
   }
 }

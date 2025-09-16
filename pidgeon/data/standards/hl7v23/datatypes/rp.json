@@ -1,17 +1,160 @@
 {
   "dataType": "RP",
-  "name": "TODO: Define data type name for RP", 
-  "description": "TODO: Define description for RP data type",
+  "name": "Reference Pointer",
+  "description": "The RP data type is used to reference external documents, files, or data objects that are related to but not contained within the HL7 message. It provides a structured way to point to multimedia content, external reports, images, documents, or other data that supplements the information in the message. RP enables linking to various types of external resources while maintaining the integrity and relationships of healthcare information.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "RP.1": {
+      "name": "Pointer",
+      "dataType": "ST",
+      "description": "The actual pointer or reference to the external resource. This may be a file path, URL, database key, or other identifier that can be used to locate the referenced content.",
+      "length": 199,
+      "usage": "optional",
+      "position": 1
+    },
+    "RP.2": {
+      "name": "Application ID",
+      "dataType": "HD",
+      "description": "Identifies the application or system that manages or owns the referenced resource. Hierarchic designator for the system that can provide access to the referenced content.",
+      "length": 227,
+      "usage": "optional",
+      "position": 2
+    },
+    "RP.3": {
+      "name": "Type of Data",
+      "dataType": "ID",
+      "description": "Specifies the type or format of the referenced data (e.g., image, document, audio, video). Indicates what kind of content the pointer references.",
+      "length": 6,
+      "usage": "optional",
+      "position": 3,
+      "table": "0191"
+    },
+    "RP.4": {
+      "name": "Subtype",
+      "dataType": "ID",
+      "description": "Further specifies the subtype or specific format of the referenced data (e.g., JPEG, PDF, DICOM). Provides more detailed type information.",
+      "length": 6,
+      "usage": "optional",
+      "position": 4,
+      "table": "0291"
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 439,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "pointerRequired": "RP.1 (Pointer) should typically be populated for meaningful reference",
+    "typeConsistency": "Type of Data should match the actual format of the referenced content",
+    "accessibility": "Referenced resources should be accessible to authorized systems and users"
+  },
+  "usage": [
+    "Medical imaging study references (X-rays, CT scans, MRIs)",
+    "Laboratory report attachments and documents",
+    "Clinical document references (PDFs, Word documents)",
+    "Multimedia content (audio recordings, video clips)",
+    "External database record pointers",
+    "Digital pathology slides and microscopy images"
+  ],
+  "examples": [
+    "/images/xray/patient123_chest_20240315.dcm^RADIOLOGY^IMAGE^DICOM",
+    "http://reports.hospital.org/lab/CBC_20240315_001.pdf^LAB^DOC^PDF",
+    "\\\\server\\pathology\\slide_H123456.svs^PATHOLOGY^IMAGE^SVS",
+    "file://documents/discharge_summary_P789.docx^EMR^DOC^DOCX",
+    "uuid:550e8400-e29b-41d4-a716-446655440000^PACS^IMAGE^JPEG"
+  ],
+  "commonFields": [
+    "OBX.5 - Observation Value for multimedia results",
+    "TXA.7 - Document Type for transcription references",
+    "Various multimedia and document reference fields",
+    "Clinical attachment and supplementary data fields",
+    "External resource linking fields throughout HL7 messages"
+  ],
+  "generationHints": {
+    "typical": "Use realistic file paths, URLs, and identifiers appropriate for healthcare systems",
+    "imagingPaths": ["/images/ct/", "/radiology/studies/", "\\\\pacs\\images\\"],
+    "documentPaths": ["/documents/reports/", "\\\\docs\\clinical\\", "https://docs.hospital.org/"],
+    "dataTypes": ["IMAGE", "DOC", "AUDIO", "VIDEO", "APP", "DATA"],
+    "subtypes": ["DICOM", "PDF", "JPEG", "MP3", "MPEG", "DOCX", "XML"]
+  },
+  "referenceTypes": {
+    "imaging": {
+      "description": "Medical imaging studies and radiological content",
+      "dataType": "IMAGE",
+      "commonSubtypes": ["DICOM", "JPEG", "TIFF", "PNG"],
+      "examples": ["/pacs/studies/CT_chest_001.dcm", "/xray/chest_pa_lat.jpg"]
+    },
+    "documents": {
+      "description": "Clinical documents and reports",
+      "dataType": "DOC",
+      "commonSubtypes": ["PDF", "DOCX", "RTF", "TXT"],
+      "examples": ["/reports/discharge_summary.pdf", "/documents/operative_note.docx"]
+    },
+    "multimedia": {
+      "description": "Audio and video content",
+      "dataType": "AUDIO/VIDEO",
+      "commonSubtypes": ["MP3", "WAV", "MPEG", "AVI"],
+      "examples": ["/audio/heart_sounds.mp3", "/video/procedure_recording.mpeg"]
+    },
+    "laboratory": {
+      "description": "Laboratory data and microscopy",
+      "dataType": "IMAGE/DATA",
+      "commonSubtypes": ["SVS", "JPEG", "XML", "CSV"],
+      "examples": ["/pathology/slide_001.svs", "/lab/results/CBC_data.xml"]
+    }
+  },
+  "protocolSupport": {
+    "file": "Local file system references (file://)",
+    "http": "Web-based resources (http://, https://)",
+    "ftp": "File transfer protocol resources (ftp://)",
+    "unc": "Universal naming convention paths (\\\\server\\share)",
+    "uuid": "Universal unique identifiers for abstract references"
+  },
+  "validationRules": {
+    "pointerFormat": "Pointer should follow valid format for the specified protocol",
+    "applicationValidation": "Application ID should reference valid and accessible system",
+    "typeConsistency": "Type of Data should match the actual content being referenced",
+    "subtypeValidation": "Subtype should be valid for the specified data type",
+    "accessibility": "Referenced resources should be accessible with appropriate permissions"
+  },
+  "securityConsiderations": {
+    "access": "Referenced resources may require authentication and authorization",
+    "hipaa": "Medical content references must comply with HIPAA privacy requirements",
+    "encryption": "Sensitive content may require encrypted storage and transmission",
+    "audit": "Access to referenced resources should be logged and auditable"
+  },
+  "integrationScenarios": {
+    "pacs": "Picture Archiving and Communication System integration",
+    "ris": "Radiology Information System report linking",
+    "lis": "Laboratory Information System result attachments",
+    "emr": "Electronic Medical Record document references",
+    "cms": "Content Management System integration"
+  },
+  "relatedDataTypes": {
+    "HD": "Hierarchic Designator - used for Application ID",
+    "ID": "Coded Value - used for data type and subtype",
+    "ST": "String - used for the pointer value",
+    "ED": "Encapsulated Data - for embedded content instead of references"
+  },
+  "implementationNotes": {
+    "resolution": "Systems must be able to resolve references to actual content",
+    "caching": "Consider caching strategies for frequently accessed content",
+    "versioning": "Handle versioning of referenced content appropriately",
+    "lifecycle": "Manage lifecycle of referenced content and broken links",
+    "performance": "Large references may impact message processing performance"
+  },
+  "contentManagement": {
+    "storage": "Referenced content may be stored in various systems and formats",
+    "backup": "Ensure backup and recovery strategies for referenced content",
+    "migration": "Plan for content migration and reference updates",
+    "retention": "Follow retention policies for referenced healthcare content",
+    "disposal": "Secure disposal of referenced content when no longer needed"
+  },
+  "clinicalWorkflow": {
+    "ordering": "Link orders to supporting documentation and images",
+    "reporting": "Attach multimedia content to clinical reports",
+    "consultation": "Share relevant content for specialist consultations",
+    "documentation": "Reference supporting evidence in clinical notes",
+    "education": "Link to educational materials and resources"
   }
 }

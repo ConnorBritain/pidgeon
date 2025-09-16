@@ -1,17 +1,147 @@
 {
   "dataType": "CN",
-  "name": "TODO: Define data type name for CN", 
-  "description": "TODO: Define description for CN data type",
+  "name": "Composite ID Number and Name",
+  "description": "The CN data type is used when both an ID number and the associated descriptive name need to be transmitted together. It provides a compact way to send both a coded identifier and its corresponding text description. This data type has been replaced by XCN (Extended Composite ID Number and Name for Persons) for person-related fields as of HL7 v2.3, but is maintained for backward compatibility and non-person entities.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "CN.1": {
+      "name": "ID Number",
+      "dataType": "ST",
+      "description": "The identifier or code value. This component contains the actual ID or code that uniquely identifies the entity.",
+      "length": 15,
+      "usage": "optional",
+      "position": 1
+    },
+    "CN.2": {
+      "name": "Family Name",
+      "dataType": "ST",
+      "description": "The surname or family name associated with the ID. For non-person entities, this may contain the primary name or description.",
+      "length": 50,
+      "usage": "optional",
+      "position": 2
+    },
+    "CN.3": {
+      "name": "Given Name",
+      "dataType": "ST",
+      "description": "The first name or given name associated with the ID. For non-person entities, this may contain additional descriptive information.",
+      "length": 30,
+      "usage": "optional",
+      "position": 3
+    },
+    "CN.4": {
+      "name": "Middle Initial or Name",
+      "dataType": "ST",
+      "description": "Middle name or initial. For non-person entities, this may contain supplementary descriptive text.",
+      "length": 30,
+      "usage": "optional",
+      "position": 4
+    },
+    "CN.5": {
+      "name": "Suffix",
+      "dataType": "ST",
+      "description": "Name suffix such as Jr., Sr., III. For non-person entities, this may contain classification or type information.",
+      "length": 20,
+      "usage": "optional",
+      "position": 5
+    },
+    "CN.6": {
+      "name": "Prefix",
+      "dataType": "ST",
+      "description": "Name prefix such as Dr., Mr., Ms. For non-person entities, this may contain category or classification prefixes.",
+      "length": 20,
+      "usage": "optional",
+      "position": 6
+    },
+    "CN.7": {
+      "name": "Degree",
+      "dataType": "ST",
+      "description": "Academic degree or professional designation such as MD, RN, PhD. For non-person entities, this may contain certification or standard information.",
+      "length": 20,
+      "usage": "optional",
+      "position": 7
+    },
+    "CN.8": {
+      "name": "Source Table",
+      "dataType": "IS",
+      "description": "Identifies the source table or coding system from which the ID number is drawn. Provides context for the identifier.",
+      "length": 4,
+      "usage": "optional",
+      "position": 8
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 189,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "usage": "At least one component should be populated for meaningful identification",
+    "personVsEntity": "Different usage patterns for person identifiers vs. entity identifiers",
+    "replacement": "For person identification, XCN is preferred in HL7 v2.3 and later"
+  },
+  "usage": [
+    "Legacy person identification (replaced by XCN)",
+    "Entity identification where both code and name are needed",
+    "Backward compatibility with older HL7 implementations",
+    "Non-person entities requiring composite identification",
+    "Systems that haven't migrated to newer data types"
+  ],
+  "examples": [
+    "12345^SMITH^JOHN^A^JR^DR^MD^",
+    "DOC001^DOE^JANE^^^DR^RN^STAFF",
+    "EQ-001^VENTILATOR^HAMILTON^G5^^^EQUIPMENT",
+    "LAB123^CHEMISTRY^ANALYZER^^^^INSTRUMENT",
+    "^RADIOLOGY^DEPARTMENT^^^^DEPT"
+  ],
+  "commonFields": [
+    "Legacy physician identification fields",
+    "Equipment and device identification",
+    "Backward compatibility implementations",
+    "Entity identification in older systems",
+    "Mixed person/entity identification scenarios"
+  ],
+  "generationHints": {
+    "typical": "Use realistic identifiers appropriate for the entity type being identified",
+    "personPattern": "Follow name conventions for healthcare providers when used for persons",
+    "entityPattern": "Use descriptive naming for equipment, departments, or other entities",
+    "degrees": ["MD", "RN", "PhD", "DO", "NP", "PA", "LPN", "RT"],
+    "prefixes": ["DR", "MR", "MS", "MRS", "PROF"],
+    "context": "Consider whether the identifier represents a person or entity"
+  },
+  "usagePatterns": {
+    "legacyPerson": "Historical person identification before XCN adoption",
+    "equipment": "Medical equipment and device identification",
+    "department": "Organizational units and departments",
+    "mixed": "Systems handling both persons and entities with same data type",
+    "compatibility": "Maintaining compatibility with legacy implementations"
+  },
+  "validationRules": {
+    "minimumPopulation": "At least CN.1 or CN.2 should be populated for meaningful identification",
+    "lengthConstraints": "All components must respect their maximum length limitations",
+    "sourceTableValidation": "CN.8 should reference valid coding system when populated",
+    "contextualValidation": "Content should be appropriate for the type of entity being identified"
+  },
+  "migrationNotes": {
+    "replacement": "XCN replaces CN for person identification as of HL7 v2.3",
+    "advantages": "XCN provides additional components and better person identification support",
+    "compatibility": "CN maintained for backward compatibility and non-person entities",
+    "recommendation": "Use XCN for new person identification implementations"
+  },
+  "relatedDataTypes": {
+    "XCN": "Extended Composite ID Number and Name for Persons - replaces CN for person identification",
+    "CX": "Extended Composite ID with Check Digit - for enhanced ID validation",
+    "HD": "Hierarchic Designator - for assigning authorities",
+    "EI": "Entity Identifier - for non-person entity identification"
+  },
+  "implementationNotes": {
+    "flexibility": "Can accommodate both person and entity identification needs",
+    "legacy": "Important for maintaining compatibility with older HL7 implementations",
+    "context": "Usage context determines whether person or entity identification pattern applies",
+    "evolution": "Demonstrates evolution of HL7 data types toward more specific solutions"
+  },
+  "deprecationStatus": {
+    "persons": "Replaced by XCN for person identification as of HL7 v2.3",
+    "entities": "Still valid for non-person entity identification",
+    "compatibility": "Maintained for backward compatibility with legacy systems",
+    "recommendation": "Use more specific data types (XCN, EI) for new implementations"
   }
 }

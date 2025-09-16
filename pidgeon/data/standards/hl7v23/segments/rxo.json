@@ -1,27 +1,364 @@
 {
   "segment": "RXO",
-  "name": "TODO: Define segment name for RXO",
-  "description": "TODO: Define description for RXO segment",
+  "name": "Pharmacy/Treatment Order",
+  "description": "The RXO segment details the pharmacy or treatment order. This segment is used in conjunction with the ORC segment to fully specify a pharmacy/treatment order. It contains the details of what is being ordered, including medication, dose, route, timing, and special instructions.",
   "standard": "hl7v23",
   "version": "2.3",
-  "usage": "TODO",
+  "usage": "R",
   "cardinality": {
-    "min": 0,
+    "min": 1,
     "max": 1,
-    "note": "TODO: Define cardinality rules"
+    "note": "RXO segment is required when pharmacy/treatment order detail is needed"
   },
-  "messageTypes": ["TODO: Define message types"],
+  "messageTypes": [
+    "RDE^O01", "RDE^O11", "RDS^O13", "ORM^O01"
+  ],
   "fields": {
-    "TODO": "Complete field definitions needed"
-  },
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "RXO.1": {
+      "name": "Requested Give Code",
+      "description": "This field contains the code for the medication or treatment being ordered. This is typically a drug code from a standard vocabulary like NDC, RxNorm, or local formulary codes.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 100,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "197804", "description": "Lisinopril 10 MG Oral Tablet", "system": "RxNorm"},
+        {"code": "314076", "description": "Metformin 500 MG Oral Tablet", "system": "RxNorm"},
+        {"code": "198211", "description": "Amlodipine 5 MG Oral Tablet", "system": "RxNorm"},
+        {"code": "617314", "description": "Atorvastatin 20 MG Oral Tablet", "system": "RxNorm"},
+        {"code": "104894", "description": "Omeprazole 20 MG Delayed Release Oral Capsule", "system": "RxNorm"},
+        {"code": "206819", "description": "Levothyroxine 50 MCG Oral Tablet", "system": "RxNorm"},
+        {"code": "197361", "description": "Gabapentin 300 MG Oral Capsule", "system": "RxNorm"},
+        {"code": "197696", "description": "Sertraline 50 MG Oral Tablet", "system": "RxNorm"}
+      ],
+      "generationHint": "Format: <code>^<text>^<coding_system>, use common RxNorm codes for medications"
+    },
+    "RXO.2": {
+      "name": "Requested Give Amount - Minimum",
+      "description": "This field contains the minimum amount of the medication to be given. Used for range dosing or PRN medications.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Numeric minimum dose, e.g., 5 (for 5-10mg range), 1 (for 1-2 tablets PRN)"
+    },
+    "RXO.3": {
+      "name": "Requested Give Amount - Maximum",
+      "description": "This field contains the maximum amount of the medication to be given. Used for range dosing or PRN medications.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Numeric maximum dose, e.g., 10 (for 5-10mg range), 2 (for 1-2 tablets PRN)"
+    },
+    "RXO.4": {
+      "name": "Requested Give Units",
+      "description": "This field contains the units for the requested give amount. Common units include mg, mL, tablets, capsules, etc.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "mg", "description": "milligrams"},
+        {"code": "mL", "description": "milliliters"},
+        {"code": "TAB", "description": "tablets"},
+        {"code": "CAP", "description": "capsules"},
+        {"code": "mcg", "description": "micrograms"},
+        {"code": "g", "description": "grams"},
+        {"code": "units", "description": "units"},
+        {"code": "DROP", "description": "drops"},
+        {"code": "PATCH", "description": "patches"},
+        {"code": "SUPP", "description": "suppositories"}
+      ],
+      "generationHint": "Standard dose units: mg, mL, TAB, CAP based on medication form"
+    },
+    "RXO.5": {
+      "name": "Requested Dosage Form",
+      "description": "This field describes the dosage form of the medication being ordered (tablet, capsule, liquid, injection, etc.).",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "TAB", "description": "Tablet"},
+        {"code": "CAP", "description": "Capsule"},
+        {"code": "LIQ", "description": "Liquid"},
+        {"code": "INJ", "description": "Injection"},
+        {"code": "CRM", "description": "Cream"},
+        {"code": "OIN", "description": "Ointment"},
+        {"code": "PATCH", "description": "Transdermal patch"},
+        {"code": "SUPP", "description": "Suppository"},
+        {"code": "INH", "description": "Inhaler"},
+        {"code": "DROP", "description": "Drops"}
+      ],
+      "generationHint": "Dosage form should match the medication ordered in RXO.1"
+    },
+    "RXO.6": {
+      "name": "Provider's Pharmacy/Treatment Instructions",
+      "description": "This field contains free-text instructions from the provider about how the medication should be administered or any special considerations.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Free text instructions: 'Take with food', 'Take at bedtime', 'Do not crush', 'Take on empty stomach'"
+    },
+    "RXO.7": {
+      "name": "Provider's Administration Instructions",
+      "description": "This field contains specific administration instructions from the provider, including route, frequency, and timing.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "PO BID", "description": "By mouth twice daily"},
+        {"code": "PO TID", "description": "By mouth three times daily"},
+        {"code": "PO QID", "description": "By mouth four times daily"},
+        {"code": "PO QD", "description": "By mouth once daily"},
+        {"code": "PO Q12H", "description": "By mouth every 12 hours"},
+        {"code": "PO Q8H", "description": "By mouth every 8 hours"},
+        {"code": "PO Q6H", "description": "By mouth every 6 hours"},
+        {"code": "PO PRN", "description": "By mouth as needed"},
+        {"code": "IV Q8H", "description": "Intravenously every 8 hours"},
+        {"code": "IM Q24H", "description": "Intramuscularly every 24 hours"}
+      ],
+      "generationHint": "Standard sig codes: route + frequency combinations"
+    },
+    "RXO.8": {
+      "name": "Deliver-To Location",
+      "description": "This field identifies where the medication should be delivered. This could be a patient location, pharmacy, or nursing station.",
+      "dataType": "LA1",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Location format: department, room, or pharmacy identifier"
+    },
+    "RXO.9": {
+      "name": "Allow Substitutions",
+      "description": "This field indicates whether generic or therapeutic substitutions are allowed for this medication order.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Substitutions allowed"},
+        {"code": "N", "description": "Substitutions not allowed"},
+        {"code": "G", "description": "Generic substitution allowed"},
+        {"code": "T", "description": "Therapeutic substitution allowed"}
+      ],
+      "generationHint": "Usually Y (allowed) unless specific brand required"
+    },
+    "RXO.10": {
+      "name": "Requested Dispense Code",
+      "description": "This field contains the code for the specific product to be dispensed. This may be different from the ordered code if substitutions are made.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 100,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Specific NDC or formulary code for dispensing, may differ from RXO.1"
+    },
+    "RXO.11": {
+      "name": "Requested Dispense Amount",
+      "description": "This field contains the amount of medication to be dispensed (total quantity for the prescription).",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Total quantity to dispense: 30 (tablets), 90 (tablets), 10 (mL)"
+    },
+    "RXO.12": {
+      "name": "Requested Dispense Units",
+      "description": "This field contains the units for the dispense amount (tablets, capsules, mL, etc.).",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Dispense units: TAB, CAP, mL, matching medication form"
+    },
+    "RXO.13": {
+      "name": "Number of Refills",
+      "description": "This field contains the number of refills authorized for this prescription.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Number of refills: 0-11, common values: 0, 5, 11 (for maintenance medications)"
+    },
+    "RXO.14": {
+      "name": "Ordering Provider's DEA Number",
+      "description": "This field contains the DEA (Drug Enforcement Administration) number of the provider ordering controlled substances.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 120,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "DEA format: 2 letters + 7 digits, e.g., 'AB1234567^^^DEA'"
+    },
+    "RXO.15": {
+      "name": "Pharmacist/Treatment Supplier's Verifier ID",
+      "description": "This field identifies the pharmacist or treatment supplier who will verify and dispense the medication.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 120,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Pharmacist identifier with name and credentials"
+    },
+    "RXO.16": {
+      "name": "Needs Human Review",
+      "description": "This field indicates whether this order requires human review before dispensing. Used for high-risk medications or unusual orders.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Human review required"},
+        {"code": "N", "description": "Human review not required"}
+      ],
+      "generationHint": "Y for high-risk medications, controlled substances, or unusual doses"
+    },
+    "RXO.17": {
+      "name": "Requested Give Per (Time Unit)",
+      "description": "This field specifies the time unit for the medication administration frequency (per day, per dose, etc.).",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Time units: 'day', 'dose', 'hour', 'week' for frequency calculations"
+    },
+    "RXO.18": {
+      "name": "Requested Give Strength",
+      "description": "This field contains the strength of the medication being ordered (concentration per unit).",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Medication strength: 10 (for 10mg tablets), 250 (for 250mg capsules)"
+    },
+    "RXO.19": {
+      "name": "Requested Give Strength Units",
+      "description": "This field contains the units for the medication strength (mg, mcg, mg/mL, etc.).",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Strength units: mg, mcg, mg/mL, units/mL based on medication"
+    },
+    "RXO.20": {
+      "name": "Indication",
+      "description": "This field contains the clinical indication or reason for the medication order. May include diagnosis codes or free text.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "I10", "description": "Essential hypertension", "system": "ICD-10-CM"},
+        {"code": "E11.9", "description": "Type 2 diabetes mellitus without complications", "system": "ICD-10-CM"},
+        {"code": "F32.9", "description": "Major depressive disorder, single episode, unspecified", "system": "ICD-10-CM"},
+        {"code": "M79.18", "description": "Myalgia, other site", "system": "ICD-10-CM"},
+        {"code": "R06.02", "description": "Shortness of breath", "system": "ICD-10-CM"}
+      ],
+      "generationHint": "Clinical indication with ICD-10-CM codes or free text description"
+    }
   },
   "crossReferences": {
-    "fhir": ["TODO: Map to FHIR resources"],
-    "related": ["TODO: Identify related segments"]
+    "fhir": [
+      "MedicationRequest.medication",
+      "MedicationRequest.dosageInstruction",
+      "MedicationRequest.dispenseRequest",
+      "MedicationRequest.substitution"
+    ],
+    "related": ["ORC", "RXE", "RXR", "RXC", "NTE"]
   },
+  "examples": [
+    "RXO|197804^Lisinopril 10 MG Oral Tablet^RxNorm|1|1|TAB|TAB^Tablet^HL70001|Take with food|PO QD^By mouth once daily^LOCAL||Y||30|TAB|5|||N|day|10|mg|I10^Essential hypertension^ICD10",
+    "RXO|314076^Metformin 500 MG Oral Tablet^RxNorm|1|2|TAB|TAB^Tablet^HL70001|Take with meals|PO BID^By mouth twice daily^LOCAL||Y||60|TAB|11|||N|day|500|mg|E11.9^Type 2 diabetes mellitus^ICD10",
+    "RXO|104894^Omeprazole 20 MG Delayed Release Oral Capsule^RxNorm|1|1|CAP|CAP^Capsule^HL70001|Take before breakfast|PO QD^By mouth once daily^LOCAL||Y||30|CAP|5|||N|day|20|mg|K21.9^Gastroesophageal reflux disease^ICD10"
+  ],
+  "notes": [
+    "RXO segment is required for pharmacy/treatment orders and works with ORC segment",
+    "RXO.1 (Requested Give Code) is required and should contain standard drug codes",
+    "Dose amount (RXO.2-RXO.3) and units (RXO.4) work together for precise dosing",
+    "Administration instructions (RXO.7) are critical for proper medication administration",
+    "Dispense quantity (RXO.11-RXO.12) determines total amount to be dispensed",
+    "Refills (RXO.13) important for maintenance medications and controlled substances"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "required": ["RXO.1"],
+    "conditional": {
+      "RXO.3": "Should be provided if RXO.2 (minimum) is present for range dosing",
+      "RXO.4": "Should be provided when dose amounts are specified",
+      "RXO.12": "Should be provided if RXO.11 (dispense amount) is present",
+      "RXO.14": "Required for controlled substance prescriptions",
+      "RXO.19": "Should be provided if RXO.18 (strength) is present"
+    },
+    "relationships": {
+      "RXO.2_RXO.3": "Maximum dose should be >= minimum dose if both present",
+      "RXO.4_RXO.12": "Give units and dispense units should be compatible",
+      "RXO.18_RXO.19": "Strength and strength units work together",
+      "RXO.1_RXO.10": "Dispense code may differ from ordered code if substitutions allowed"
+    },
+    "validation": {
+      "RXO.9": "Must be Y, N, G, or T if present",
+      "RXO.16": "Must be Y or N if present",
+      "RXO.13": "Must be numeric 0-99 for refill count"
+    }
   }
 }

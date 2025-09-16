@@ -1,17 +1,78 @@
 {
   "dataType": "FC",
-  "name": "TODO: Define data type name for FC", 
-  "description": "TODO: Define description for FC data type",
+  "name": "Financial Class",
+  "description": "The FC data type is used to represent financial classification information for healthcare services and patient encounters. It combines financial class codes with effective date ranges to track how patients should be billed and what payment arrangements apply during specific time periods. FC enables healthcare organizations to manage complex billing scenarios, insurance changes, and financial class transitions while maintaining accurate financial records and compliance with billing regulations.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "FC.1": {
+      "name": "Financial Class",
+      "dataType": "IS",
+      "description": "The financial classification code indicating how the patient should be billed (e.g., Medicare, Commercial Insurance, Self-Pay, Charity Care). Determines billing procedures and payment expectations.",
+      "length": 20,
+      "usage": "required",
+      "position": 1,
+      "table": "0064"
+    },
+    "FC.2": {
+      "name": "Effective Date",
+      "dataType": "TS",
+      "description": "The date and time when this financial class becomes effective for the patient encounter. Marks the beginning of the financial classification period.",
+      "length": 26,
+      "usage": "optional",
+      "position": 2
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 46,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "financialClass": "Financial class must reference valid codes from table 0064",
+    "dateValidation": "Effective date should be valid timestamp format",
+    "businessRules": "Financial class changes should follow organizational billing policies"
+  },
+  "usage": [
+    "Patient financial classification and billing categories",
+    "Insurance coverage determination and billing instructions",
+    "Payment source tracking and revenue cycle management",
+    "Financial counseling and patient financial assistance programs",
+    "Billing system configuration and automated charge routing",
+    "Compliance tracking for government programs and regulations"
+  ],
+  "examples": [
+    "MEDICARE^20240315080000",
+    "COMMERCIAL^20240301000000",
+    "SELFPAY^20240315120000",
+    "MEDICAID^20240320000000",
+    "CHARITY^20240318000000",
+    "WORKERS_COMP^20240316090000"
+  ],
+  "commonFields": [
+    "PV1.20 - Financial Class in patient visit information",
+    "Financial classification fields in billing and registration",
+    "Insurance authorization and pre-certification tracking",
+    "Revenue cycle management and charge capture systems",
+    "Patient account management and billing workflow routing"
+  ],
+  "generationHints": {
+    "typical": "Use realistic financial classes with appropriate effective dates",
+    "financialClasses": ["MEDICARE", "MEDICAID", "COMMERCIAL", "SELFPAY", "CHARITY", "WORKERS_COMP", "TRICARE"],
+    "dates": "Use current or recent dates for effective financial classification",
+    "scenarios": "Consider financial class changes during patient encounters",
+    "compliance": "Ensure financial classes align with actual healthcare payment sources"
+  },
+  "relatedDataTypes": {
+    "IS": "Coded Value - used for financial class code component",
+    "TS": "Time Stamp - used for effective date component",
+    "CE": "Coded Element - alternative for more complex financial classification",
+    "IN1": "Insurance - related to insurance-based financial classes",
+    "GT1": "Guarantor - related to guarantor-based financial arrangements"
+  },
+  "implementationNotes": {
+    "billing": "Financial class drives billing procedures, claim submission, and payment processing",
+    "compliance": "Must comply with federal and state regulations for healthcare billing",
+    "tracking": "Enable tracking of financial class changes throughout patient encounters",
+    "automation": "Support automated routing and processing based on financial classification",
+    "reporting": "Enable financial reporting and analytics by classification categories"
   }
 }

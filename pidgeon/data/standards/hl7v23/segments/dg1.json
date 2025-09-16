@@ -1,27 +1,282 @@
 {
   "segment": "DG1",
-  "name": "TODO: Define segment name for DG1",
-  "description": "TODO: Define description for DG1 segment",
+  "name": "Diagnosis",
+  "description": "The DG1 segment contains patient diagnosis information. It is used to send diagnoses and/or procedures from one system to another. Multiple DG1 segments can be sent with a single patient visit. The DG1 segment is used in the ADT message types to communicate patient diagnoses.",
   "standard": "hl7v23",
   "version": "2.3",
-  "usage": "TODO",
+  "usage": "O",
   "cardinality": {
     "min": 0,
-    "max": 1,
-    "note": "TODO: Define cardinality rules"
+    "max": "*",
+    "note": "Multiple DG1 segments can appear to send multiple diagnoses"
   },
-  "messageTypes": ["TODO: Define message types"],
+  "messageTypes": [
+    "ADT^A01", "ADT^A02", "ADT^A03", "ADT^A04", "ADT^A05", "ADT^A06", "ADT^A07", "ADT^A08",
+    "ADT^A09", "ADT^A10", "ADT^A11", "ADT^A12", "ADT^A13", "ADT^A14", "ADT^A15", "ADT^A16",
+    "ADT^A17", "ADT^A18", "ADT^A21", "ADT^A22", "ADT^A23", "ADT^A24", "ADT^A25", "ADT^A26",
+    "ADT^A27", "ADT^A28", "ADT^A29", "ADT^A31", "ADT^A32", "ADT^A33", "ADT^A37", "ADT^A38"
+  ],
   "fields": {
-    "TODO": "Complete field definitions needed"
-  },
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "DG1.1": {
+      "name": "Set ID - DG1",
+      "description": "This field contains the number that identifies this transaction. For the first occurrence of the segment, the sequence number shall be one; for the second occurrence, the sequence number shall be two; etc.",
+      "dataType": "SI",
+      "usage": "R",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Sequential number starting from 1 for each DG1 in a message"
+    },
+    "DG1.2": {
+      "name": "Diagnosis Coding Method",
+      "description": "This field indicates the coding method used for the diagnosis code in DG1.3. It identifies which coding system is being used.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "C", "description": "Clinical modification"},
+        {"code": "N", "description": "National modification"},
+        {"code": "I", "description": "ICD"},
+        {"code": "O", "description": "Other"}
+      ],
+      "generationHint": "Most common: 'I' for ICD coding systems"
+    },
+    "DG1.3": {
+      "name": "Diagnosis Code - DG1",
+      "description": "This field contains the diagnosis code. The code is drawn from a coding system identified by the Diagnosis Coding Method field.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Z51.1", "description": "Encounter for antineoplastic chemotherapy", "system": "ICD-10-CM"},
+        {"code": "I10", "description": "Essential hypertension", "system": "ICD-10-CM"},
+        {"code": "E11.9", "description": "Type 2 diabetes mellitus without complications", "system": "ICD-10-CM"},
+        {"code": "J44.1", "description": "Chronic obstructive pulmonary disease with acute exacerbation", "system": "ICD-10-CM"},
+        {"code": "N18.6", "description": "End stage renal disease", "system": "ICD-10-CM"},
+        {"code": "I25.10", "description": "Atherosclerotic heart disease of native coronary artery without angina pectoris", "system": "ICD-10-CM"},
+        {"code": "F32.9", "description": "Major depressive disorder, single episode, unspecified", "system": "ICD-10-CM"},
+        {"code": "M79.18", "description": "Myalgia, other site", "system": "ICD-10-CM"},
+        {"code": "R06.02", "description": "Shortness of breath", "system": "ICD-10-CM"}
+      ],
+      "generationHint": "Format: <code>^<text>^<coding_system>, use common ICD-10-CM codes"
+    },
+    "DG1.4": {
+      "name": "Diagnosis Description",
+      "description": "This field contains the textual description of the diagnosis code. It provides a human-readable description of the diagnosis.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 40,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Free text description matching the diagnosis code, e.g., 'Essential hypertension'"
+    },
+    "DG1.5": {
+      "name": "Diagnosis Date/Time",
+      "description": "This field contains the date and time the diagnosis was determined. This is when the diagnosis was made, not necessarily when it was entered into the system.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: YYYYMMDDHHMMSS, typically during current encounter"
+    },
+    "DG1.6": {
+      "name": "Diagnosis Type",
+      "description": "This field identifies the type of diagnosis being reported. It indicates whether this is an admission diagnosis, working diagnosis, final diagnosis, etc.",
+      "dataType": "IS",
+      "usage": "R",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "A", "description": "Admitting"},
+        {"code": "W", "description": "Working"},
+        {"code": "F", "description": "Final"},
+        {"code": "P", "description": "Prenatal"},
+        {"code": "D", "description": "Discharge"},
+        {"code": "S", "description": "Secondary"},
+        {"code": "C", "description": "Complication"},
+        {"code": "O", "description": "Other"}
+      ],
+      "generationHint": "Most common: A (admitting), F (final), W (working), D (discharge)"
+    },
+    "DG1.7": {
+      "name": "Major Diagnostic Category",
+      "description": "This field contains the major diagnostic category (MDC) for DRG assignment. Used for billing and case mix analysis.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "01", "description": "Diseases and Disorders of the Nervous System"},
+        {"code": "02", "description": "Diseases and Disorders of the Eye"},
+        {"code": "03", "description": "Diseases and Disorders of the Ear, Nose, Mouth, and Throat"},
+        {"code": "04", "description": "Diseases and Disorders of the Respiratory System"},
+        {"code": "05", "description": "Diseases and Disorders of the Circulatory System"},
+        {"code": "06", "description": "Diseases and Disorders of the Digestive System"},
+        {"code": "07", "description": "Diseases and Disorders of the Hepatobiliary System and Pancreas"},
+        {"code": "08", "description": "Diseases and Disorders of the Musculoskeletal System and Connective Tissue"},
+        {"code": "09", "description": "Diseases and Disorders of the Skin, Subcutaneous Tissue and Breast"},
+        {"code": "10", "description": "Endocrine, Nutritional and Metabolic Diseases and Disorders"}
+      ],
+      "generationHint": "Map to appropriate MDC based on primary diagnosis"
+    },
+    "DG1.8": {
+      "name": "Diagnostic Related Group",
+      "description": "This field contains the DRG (Diagnosis Related Group) assigned to this patient for this episode of care. Used for billing and resource allocation.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "3-4 digit DRG code, e.g., '247', '390', '603'"
+    },
+    "DG1.9": {
+      "name": "DRG Approval Indicator",
+      "description": "This field indicates whether the DRG assignment has been reviewed and approved by the appropriate authority.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes, approved"},
+        {"code": "N", "description": "No, not approved"},
+        {"code": "U", "description": "Unknown"}
+      ],
+      "generationHint": "Usually 'Y' for finalized cases, 'N' for pending review"
+    },
+    "DG1.10": {
+      "name": "DRG Grouper Review Code",
+      "description": "This field contains a code indicating the review status of the DRG assignment by automated grouping software.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "0", "description": "Valid DRG"},
+        {"code": "1", "description": "Invalid age, sex, or discharge status for this DRG"},
+        {"code": "2", "description": "Ungroupable - invalid data"},
+        {"code": "3", "description": "Questionable assignment"}
+      ],
+      "generationHint": "Usually '0' for valid DRG assignments"
+    },
+    "DG1.11": {
+      "name": "Outlier Type",
+      "description": "This field identifies the type of outlier this case represents for DRG payment purposes.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "C", "description": "Cost outlier"},
+        {"code": "D", "description": "Day outlier"},
+        {"code": "N", "description": "Not an outlier"}
+      ],
+      "generationHint": "Usually empty unless case is identified as an outlier"
+    },
+    "DG1.12": {
+      "name": "Outlier Days",
+      "description": "This field contains the number of outlier days for day outlier cases. Used for billing calculations.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Number of days beyond normal DRG length of stay threshold"
+    },
+    "DG1.13": {
+      "name": "Outlier Cost",
+      "description": "This field contains the outlier cost amount for cost outlier cases. Represents additional cost beyond normal DRG payment.",
+      "dataType": "CP",
+      "usage": "O",
+      "maxLength": 12,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <amount>^<currency>, e.g., '5000.00^USD'"
+    },
+    "DG1.14": {
+      "name": "Grouper Version and Type",
+      "description": "This field identifies the version and type of the DRG grouper software used to assign the DRG.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Version identifier, e.g., 'V39', 'V40', indicating grouper version"
+    }
   },
   "crossReferences": {
-    "fhir": ["TODO: Map to FHIR resources"],
-    "related": ["TODO: Identify related segments"]
+    "fhir": [
+      "Encounter.diagnosis",
+      "Condition.code",
+      "DiagnosticReport.conclusion"
+    ],
+    "related": ["PID", "PV1", "EVN", "ADT"]
   },
+  "examples": [
+    "DG1|1|I|I10^Essential hypertension^ICD10|Essential hypertension|20220815143000|A||247^MEDICAL BACK PROBLEMS W/O MCC^DRG|Y|0|N|||V40",
+    "DG1|2|I|E11.9^Type 2 diabetes mellitus without complications^ICD10|Type 2 diabetes|20220815143000|F||641^NUTRITIONAL AND MISC METABOLIC DISORDERS W/O MCC^DRG|Y|0|N|||V40",
+    "DG1|1|I|J44.1^COPD with acute exacerbation^ICD10|COPD exacerbation|20220816090000|A||190^CHRONIC OBSTRUCTIVE PULMONARY DISEASE W MCC^DRG|Y|0|C|3|2500.00^USD|V39"
+  ],
+  "notes": [
+    "DG1 segment can appear multiple times to report multiple diagnoses",
+    "DG1.1 (Set ID) is required and should be sequential within a message",
+    "DG1.6 (Diagnosis Type) is required and identifies the context of the diagnosis",
+    "DRG-related fields (DG1.7-DG1.14) are primarily used for billing purposes",
+    "Diagnosis codes should follow standard coding systems like ICD-10-CM"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "required": ["DG1.1", "DG1.6"],
+    "conditional": {
+      "DG1.3": "Should be provided for meaningful diagnosis reporting",
+      "DG1.4": "Should match DG1.3 diagnosis code description",
+      "DG1.5": "Should be populated for completed diagnoses"
+    },
+    "relationships": {
+      "DG1.3_DG1.4": "Description should match the code text",
+      "DG1.6_admission_context": "Diagnosis type should match patient encounter context",
+      "DG1.7_DG1.8": "MDC should align with DRG assignment"
+    },
+    "validation": {
+      "DG1.6": "Must be valid diagnosis type from user-defined table",
+      "DG1.2": "Must be valid coding method if present",
+      "DG1.9": "Must be Y/N/U if present"
+    }
   }
 }

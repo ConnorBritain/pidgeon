@@ -1,17 +1,39 @@
 {
   "dataType": "ST",
-  "name": "TODO: Define data type name for ST", 
-  "description": "TODO: Define description for ST data type",
+  "name": "String Data", 
+  "description": "String data is left justified with leading and trailing spaces ignored. Leading and trailing spaces are not significant. A string may contain printable ASCII characters (codes 32-126) and certain control characters including tabs and carriage returns.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
-  "components": {
-    "TODO": "Define components for composite types"
+  "category": "primitive",
+  "length": 200,
+  "constraints": {
+    "characters": "ASCII printable characters (32-126) plus tabs and carriage returns",
+    "justification": "left justified",
+    "spaces": "leading and trailing spaces ignored"
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "usage": [
+    "Patient names, addresses, and other textual information",
+    "Facility names and descriptions", 
+    "Comments and notes fields",
+    "General text data throughout HL7 messages"
+  ],
+  "examples": [
+    "John Doe",
+    "123 Main Street",
+    "Emergency Department",
+    "Patient reports chest pain",
+    "General Hospital"
+  ],
+  "commonFields": [
+    "PID.5 - Patient Name components",
+    "PID.11 - Patient Address components", 
+    "PV1.3 - Assigned Patient Location components",
+    "OBX.5 - Observation Value (when text)",
+    "NTE.3 - Comment"
+  ],
+  "generationHints": {
+    "typical": "Use realistic healthcare-related text",
+    "maxLength": "Keep under 200 characters",
+    "avoid": "Special characters outside ASCII printable range"
   }
 }

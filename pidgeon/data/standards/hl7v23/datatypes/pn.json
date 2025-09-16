@@ -1,17 +1,111 @@
 {
   "dataType": "PN",
-  "name": "TODO: Define data type name for PN", 
-  "description": "TODO: Define description for PN data type",
+  "name": "Person Name",
+  "description": "The PN data type specifies the names of persons using a six-component structure. This data type was used in earlier versions of HL7 but has been replaced by XPN (Extended Person Name) as of HL7 v2.3. Maintained for backward compatibility with systems using older message formats.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "PN.1": {
+      "name": "Family Name",
+      "dataType": "ST",
+      "description": "Surname of a person. If a person's name has only one component, that name is sent in this field, which is common practice in some countries such as Indonesia.",
+      "length": 50,
+      "usage": "required",
+      "position": 1
+    },
+    "PN.2": {
+      "name": "Given Name",
+      "dataType": "ST",
+      "description": "First name of the person. Also known as the given name or forename.",
+      "length": 30,
+      "usage": "optional",
+      "position": 2
+    },
+    "PN.3": {
+      "name": "Middle Initial or Name",
+      "dataType": "ST",
+      "description": "Middle name or middle initial. Multiple middle names may be included.",
+      "length": 30,
+      "usage": "optional",
+      "position": 3
+    },
+    "PN.4": {
+      "name": "Suffix",
+      "dataType": "ST",
+      "description": "Name suffix (e.g., JR or III). Used for generational suffixes and other name extensions.",
+      "length": 20,
+      "usage": "optional",
+      "position": 4
+    },
+    "PN.5": {
+      "name": "Prefix",
+      "dataType": "ST",
+      "description": "Name prefix or title (e.g., DR). Professional and courtesy titles that precede the name.",
+      "length": 20,
+      "usage": "optional",
+      "position": 5
+    },
+    "PN.6": {
+      "name": "Degree",
+      "dataType": "ST",
+      "description": "Academic or professional degree (e.g., MD). Educational qualifications and professional designations.",
+      "length": 20,
+      "usage": "optional",
+      "position": 6
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 150,
+  "constraints": {
+    "singleName": "If person has only one name component, send in PN.1 (Family Name)",
+    "encoding": "Components separated by ^ (component separator)",
+    "characterSets": "Supports multiple character sets for international usage"
+  },
+  "usage": [
+    "Patient names in earlier HL7 versions (replaced by XPN)",
+    "Legacy system compatibility",
+    "Backward compatibility for older message formats",
+    "Person names in systems that haven't migrated to XPN"
+  ],
+  "examples": [
+    "SMITH^JOHN^A^JR^DR^MD",
+    "DOE^JANE^MARIE^^^RN",
+    "JOHNSON^ROBERT^B^III^MR^",
+    "GARCIA^MARIA^ELENA^^DR^MD",
+    "PATEL^RAJESH^^^^"
+  ],
+  "commonFields": [
+    "Legacy patient name fields",
+    "Backward compatibility implementations",
+    "Older system integrations"
+  ],
+  "generationHints": {
+    "typical": "Use realistic names appropriate for healthcare demographics",
+    "migration": "Consider using XPN for new implementations",
+    "degrees": ["MD", "RN", "PhD", "DO", "NP", "PA", "LPN"],
+    "prefixes": ["DR", "MR", "MS", "MRS"],
+    "suffixes": ["JR", "SR", "II", "III", "IV"]
+  },
+  "internationalSupport": {
+    "description": "Supports multiple character sets for international usage",
+    "characterSets": "Can switch between alphabetic, ideographic, and phonetic character sets",
+    "singleNameCountries": "Some countries like Indonesia commonly use single names in the Family Name field"
+  },
+  "validationRules": {
+    "familyNameRequired": "PN.1 (Family Name) should always be populated",
+    "componentSeparation": "Use ^ (component separator) between name components",
+    "characterSetHandling": "Follow HL7 character set switching rules for international names"
+  },
+  "replacement": {
+    "successor": "XPN (Extended Person Name) replaces PN as of HL7 v2.3",
+    "migration": "New implementations should use XPN for enhanced name support",
+    "compatibility": "PN maintained for backward compatibility with older systems",
+    "enhancement": "XPN provides additional components like name type and representation codes"
+  },
+  "deprecationNotes": {
+    "status": "Replaced by XPN as of HL7 v2.3",
+    "recommendation": "Use XPN for new implementations",
+    "supportReason": "Maintained for backward compatibility with legacy systems",
+    "migrationPath": "Direct mapping from PN components to corresponding XPN components"
   }
 }

@@ -139,6 +139,19 @@
     ],
     "related": ["MSH", "PID", "PV1", "ORC"]
   },
+  "examples": [
+    "EVN|A01|200202150945|||ADMIN^SMITH^JOHN^RN|200202150930",
+    "EVN|A08|20220815143022|20220815140000|02|12345^DOE^JANE^MD|20220815142500",
+    "EVN|A03|20220816090000||01|54321^JONES^MARY^RN|20220816085500",
+    "EVN||200202150945|||CLERK^JOHNSON^BOB||200202150930"
+  ],
+  "notes": [
+    "EVN segment is required for all ADT message types",
+    "EVN.2 (Recorded Date/Time) is the only required field in HL7 v2.3",
+    "EVN.1 should match the trigger event from MSH.9 when populated",
+    "EVN.6 (Event Occurred) often differs from EVN.2 (when recorded in system)",
+    "Generation hints guide realistic data creation for different event types"
+  ],
   "generationRules": {
     "required": ["EVN.2"],
     "conditional": {

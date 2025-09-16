@@ -1,17 +1,59 @@
 {
   "dataType": "NM",
-  "name": "TODO: Define data type name for NM", 
-  "description": "TODO: Define description for NM data type",
+  "name": "Numeric",
+  "description": "The NM data type is used to represent numeric values including integers and decimal numbers. It allows for positive and negative numbers and supports decimal places for precision. Used throughout HL7 for quantities, measurements, counts, and other numeric data.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
-  "components": {
-    "TODO": "Define components for composite types"
+  "category": "primitive",
+  "length": 16,
+  "constraints": {
+    "format": "ASCII digits 0-9, optional decimal point, optional leading + or - sign",
+    "decimal": "Decimal point (.) allowed for fractional values",
+    "signs": "Leading + or - signs allowed for positive/negative values",
+    "noCommas": "Thousands separators (commas) are not allowed",
+    "scientific": "Scientific notation (E notation) is not typically used in HL7 v2.3"
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "usage": [
+    "Numeric observation values in OBX.5 - Observation Value",
+    "Patient counts and quantities",
+    "Birth order in PID.25 - Birth Order",
+    "Guarantor priority in GT1.1 - Guarantor Number",
+    "Bed numbers and room numbers",
+    "Ages, weights, heights, and other measurements"
+  ],
+  "examples": [
+    "123",
+    "45.67",
+    "-10",
+    "+98.6",
+    "0",
+    "1000",
+    "12.345"
+  ],
+  "commonFields": [
+    "OBX.5 - Observation Value (when numeric)",
+    "PID.25 - Birth Order",
+    "GT1.1 - Guarantor Number",
+    "PV1.6 - Prior Patient Location bed",
+    "OBR.27 - Quantity/Timing"
+  ],
+  "generationHints": {
+    "typical": "Use appropriate numeric values for the healthcare context",
+    "ranges": {
+      "age": "0-120",
+      "temperature": "96.0-110.0 (Fahrenheit)",
+      "heartRate": "40-200",
+      "bloodPressure": "60-300",
+      "weight": "2-500 (pounds or kg)",
+      "height": "20-250 (inches or cm)"
+    },
+    "precision": "Use appropriate decimal places for the measurement type",
+    "avoid": "Do not use commas as thousands separators"
+  },
+  "validationRules": {
+    "required": "Must contain at least one digit",
+    "format": "Must match pattern: [+-]?[0-9]+(\.[0-9]+)?",
+    "length": "Maximum 16 characters including sign and decimal point",
+    "overflow": "Implementations should handle numeric overflow appropriately"
   }
 }

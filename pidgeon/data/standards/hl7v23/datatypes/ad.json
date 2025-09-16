@@ -1,7 +1,7 @@
 {
   "dataType": "AD",
   "name": "Address",
-  "description": "Address data type for HL7 v2.3",
+  "description": "The AD data type specifies the address of a person or institution. It was retained for backward compatibility but has been largely replaced by XAD (Extended Address) as of HL7 v2.3. Supports both institutional and personal addresses with comprehensive geographic designations.",
   "standard": "hl7v23",
   "version": "2.3",
   "category": "composite",
@@ -9,50 +9,105 @@
     "AD.1": {
       "name": "Street Address",
       "dataType": "ST",
+      "description": "Specifies the street or mailing address of a person or institution. When referencing an institution, this component is used to specify the institution name. When used for a person, this component specifies the first line of the address.",
       "length": 120,
-      "required": false,
-      "description": "Street or mailing address"
+      "usage": "optional",
+      "position": 1
     },
     "AD.2": {
-      "name": "Other Designation", 
+      "name": "Other Designation",
       "dataType": "ST",
+      "description": "Specifies the second line of address. In general, it qualifies the address. Examples: Suite 555 or Fourth Floor. When referencing an institution, this component specifies the street address.",
       "length": 120,
-      "required": false,
-      "description": "Second line of address"
+      "usage": "optional",
+      "position": 2
     },
     "AD.3": {
       "name": "City",
-      "dataType": "ST", 
+      "dataType": "ST",
+      "description": "City, district, or place name component of the address.",
       "length": 50,
-      "required": false,
-      "description": "City, district or place name"
+      "usage": "optional",
+      "position": 3
     },
     "AD.4": {
       "name": "State or Province",
       "dataType": "ST",
+      "description": "State or province component of the address. Use standard postal abbreviations where applicable.",
       "length": 50,
-      "required": false,
-      "description": "State or province"
+      "usage": "optional",
+      "position": 4
     },
     "AD.5": {
       "name": "Zip or Postal Code",
       "dataType": "ST",
+      "description": "ZIP code or postal code component of the address.",
       "length": 12,
-      "required": false,
-      "description": "ZIP or postal code"
+      "usage": "optional",
+      "position": 5
     },
     "AD.6": {
       "name": "Country",
       "dataType": "ID",
+      "description": "Specifies the country where the addressee is located. HL7 specifies that the 3-character (alphabetic) form of ISO 3166 be used for the country code.",
       "length": 3,
-      "required": false,
-      "description": "Country (ISO 3166 3 character code)",
+      "usage": "optional",
+      "position": 6,
       "table": "0399"
+    },
+    "AD.7": {
+      "name": "Address Type",
+      "dataType": "ID",
+      "description": "Specifies the kind or type of address (e.g., home, business, mailing, etc.).",
+      "length": 3,
+      "usage": "optional",
+      "position": 7,
+      "table": "0190"
+    },
+    "AD.8": {
+      "name": "Other Geographic Designation",
+      "dataType": "ST",
+      "description": "Specifies any other geographic designation that may be necessary. It includes county, bioregion, SMSA, etc.",
+      "length": 50,
+      "usage": "optional",
+      "position": 8
     }
   },
-  "usage": "Used in PID, NK1, PV1 and other segments for address information",
+  "length": 300,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "backward": "Retained for backward compatibility; XAD preferred for new implementations",
+    "geographic": "Should follow standard postal address formats for the respective country"
+  },
+  "usage": [
+    "Patient addresses in PID.11 - Patient Address",
+    "Next of kin addresses in NK1.4 - Address",
+    "Guarantor addresses in GT1.5 - Guarantor Address",
+    "Institution addresses in various segments",
+    "Legacy address fields throughout HL7 messages"
+  ],
   "examples": [
-    "1234 Main St^^Springfield^IL^62701^USA",
-    "555 Oak Ave^Apt 2B^Chicago^IL^60601"
-  ]
+    "1234 Main St^Suite 100^Springfield^IL^62701^USA^B^Cook County",
+    "555 Oak Ave^Apt 2B^Chicago^IL^60601^USA^H^",
+    "General Hospital^Emergency Department^Boston^MA^02101^USA^B^Suffolk County",
+    "123 Elm Street^^Toronto^ON^M5V 3A8^CAN^H^"
+  ],
+  "commonFields": [
+    "PID.11 - Patient Address",
+    "NK1.4 - Address",
+    "GT1.5 - Guarantor Address",
+    "Various institutional address fields"
+  ],
+  "generationHints": {
+    "typical": "Use realistic addresses appropriate for healthcare demographics",
+    "addressTypes": ["H - Home", "B - Business", "M - Mailing", "O - Office"],
+    "countries": ["USA", "CAN", "MEX", "GBR", "AUS"],
+    "formats": "Follow postal conventions for the target country",
+    "institutional": "For institutions, use organization name in AD.1 and street address in AD.2"
+  },
+  "replacement": {
+    "note": "The AD data type has been largely replaced by XAD (Extended Address) data type as of HL7 v2.3",
+    "migration": "New implementations should use XAD for enhanced address support",
+    "compatibility": "AD is maintained for backward compatibility with older systems"
+  }
 }

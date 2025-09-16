@@ -1,24 +1,52 @@
 {
   "triggerEvent": "A05",
-  "name": "TODO: Define trigger event name for A05",
-  "description": "TODO: Define description for A05 trigger event",
+  "name": "Pre-admit Patient",
+  "description": "Pre-admission notification sent when a patient undergoes the pre-admission process in preparation for a future visit or stay",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A05",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "NK1",
+      "PV1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Notify receiving applications that episode-related data has been collected in preparation for a patient's upcoming visit or admission",
+  "timing": "Sent during pre-admission process before actual patient arrival",
+  "responseMessage": "ACK^A05^ACK",
+  "realWorldScenarios": [
+    "Scheduled surgery pre-admission testing",
+    "Pre-registration for planned admission",
+    "Insurance verification and pre-authorization",
+    "Pre-operative assessment completion",
+    "Scheduled outpatient procedure pre-admission",
+    "Elective admission pre-processing"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "EVN.1": "A05",
+    "EVN.2": "Current timestamp",
+    "EVN.6": "Pre-admission timestamp",
+    "PV1.2": "P (Pre-admit) or future patient class",
+    "PV1.44": "Planned admit date/time",
+    "requiredDataQuality": "Medium - pre-admission data collection may be incomplete pending actual arrival"
   }
 }

@@ -1,17 +1,120 @@
 {
   "dataType": "EI",
-  "name": "TODO: Define data type name for EI", 
-  "description": "TODO: Define description for EI data type",
+  "name": "Entity Identifier",
+  "description": "The EI data type is used to specify the identifier for an entity. It provides a comprehensive structure for uniquely identifying entities with both local identifiers and universal identifiers. The EI data type combines a namespace identifier (for local use) with a universal identifier and its type, enabling flexible identification schemes that work both locally and globally.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "EI.1": {
+      "name": "Entity Identifier",
+      "dataType": "ST",
+      "description": "The actual identifier value for the entity. This is the unique identifier within the specified namespace.",
+      "length": 199,
+      "usage": "conditional",
+      "position": 1
+    },
+    "EI.2": {
+      "name": "Namespace ID",
+      "dataType": "IS",
+      "description": "Identifies the namespace in which the identifier is unique. Specifies the context or system that assigned the identifier.",
+      "length": 20,
+      "usage": "conditional",
+      "position": 2,
+      "table": "0363"
+    },
+    "EI.3": {
+      "name": "Universal ID",
+      "dataType": "ST",
+      "description": "A unique identifier that is universal across all systems. Formatted according to the scheme defined by the Universal ID Type.",
+      "length": 199,
+      "usage": "conditional",
+      "position": 3
+    },
+    "EI.4": {
+      "name": "Universal ID Type",
+      "dataType": "ID",
+      "description": "Specifies the format and interpretation rules for the Universal ID component. Defines the naming system used for the universal identifier.",
+      "length": 6,
+      "usage": "conditional",
+      "position": 4,
+      "table": "0301"
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 427,
+  "constraints": {
+    "populationRules": [
+      "At least one of EI.1 or EI.3 must be populated",
+      "If EI.4 is present, EI.3 must also be present",
+      "EI.2 provides context for EI.1 when present"
+    ],
+    "encoding": "Components separated by ^ (component separator)",
+    "uniqueness": "The combination of identifier and namespace must be unique within the specified context"
+  },
+  "usage": [
+    "Equipment identifiers in equipment management",
+    "Document identifiers for clinical documents",
+    "System identifiers for applications and devices",
+    "Instance identifiers for various healthcare entities",
+    "Reference identifiers across different systems"
+  ],
+  "examples": [
+    "12345^RADIOLOGY^1.2.840.114398.1.100^ISO",
+    "CT-001^IMAGING^^",
+    "^PATHOLOGY^1.2.840.114398.1.200^ISO",
+    "DOC-2024-001^TRANSCRIPTION^^",
+    "EQ12345^EQUIPMENT^2.16.840.1.113883.3.42^ISO"
+  ],
+  "commonFields": [
+    "Equipment and device identification fields",
+    "Document reference identifiers",
+    "System and application identifiers",
+    "Instance identifiers in various HL7 segments",
+    "Reference fields requiring entity identification"
+  ],
+  "generationHints": {
+    "typical": "Use realistic entity identifiers appropriate for healthcare equipment and systems",
+    "namespaces": ["RADIOLOGY", "LAB", "PHARMACY", "EQUIPMENT", "TRANSCRIPTION"],
+    "universalIDTypes": ["ISO", "UUID", "DNS", "HL7"],
+    "patterns": "Combine descriptive local identifiers with universal identification where needed",
+    "context": "Ensure identifiers are appropriate for the entity type being identified"
+  },
+  "identificationModes": {
+    "localOnly": "EI.1 and optionally EI.2 - local identifier with namespace",
+    "universalOnly": "EI.3 and EI.4 - universal identifier with type",
+    "hybrid": "All components - both local and universal identification",
+    "minimal": "EI.1 only - simple identifier without namespace"
+  },
+  "namespaceExamples": {
+    "equipment": "Equipment management systems and device registries",
+    "documents": "Clinical document management and transcription systems",
+    "applications": "Software applications and system identifiers",
+    "devices": "Medical devices and monitoring equipment",
+    "instances": "Specific instances of healthcare entities"
+  },
+  "validationRules": {
+    "conditionalRequirement": "At least one identifier (EI.1 or EI.3) must be present",
+    "universalIDConsistency": "Universal ID Type must match the format of Universal ID",
+    "namespaceValidation": "Namespace ID should reference valid table values when applicable",
+    "lengthConstraints": "All components must respect their maximum length limitations"
+  },
+  "relatedDataTypes": {
+    "HD": "Hierarchic Designator - for assigning authorities",
+    "CX": "Extended Composite ID - for person identifiers with check digits",
+    "ST": "String - for simple text identifiers",
+    "IS": "Coded Value - for namespace identifiers"
+  },
+  "implementationNotes": {
+    "flexibility": "Supports both simple local identifiers and complex universal identification",
+    "interoperability": "Universal ID components enable cross-system identification",
+    "namespace": "Namespace ID provides context for local identifier interpretation",
+    "extensibility": "Can accommodate various identification schemes and standards"
+  },
+  "useCases": {
+    "equipment": "Identifying medical equipment, devices, and instruments",
+    "documents": "Referencing clinical documents, reports, and transcriptions",
+    "systems": "Identifying software systems, applications, and services",
+    "instances": "Unique identification of healthcare entity instances",
+    "references": "Cross-referencing entities across different healthcare systems"
   }
 }

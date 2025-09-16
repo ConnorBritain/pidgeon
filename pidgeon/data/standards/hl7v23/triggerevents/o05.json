@@ -1,24 +1,47 @@
 {
   "triggerEvent": "O05",
-  "name": "TODO: Define trigger event name for O05",
-  "description": "TODO: Define description for O05 trigger event",
+  "name": "Stock Requisition Order",
+  "description": "Order message for requesting stock items from inventory systems including medical supplies and pharmaceuticals",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "4",
+  "chapterName": "Order Entry",
+  "messageStructure": "OMS^O05",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "ORC",
+      "RQD"
+    ],
+    "optional": [
+      "NTE",
+      "PID",
+      "PV1",
+      "RQ1"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Request stock items from central supply, pharmacy, or other inventory systems for patient care or department operations",
+  "timing": "Sent when departments need to requisition stock items from inventory management systems",
+  "responseMessage": "ACK^O05^ACK",
+  "realWorldScenarios": [
+    "Operating room requesting sterile surgical instruments for scheduled procedures",
+    "Emergency department ordering IV fluids and emergency medications",
+    "ICU requisitioning specialized monitoring equipment and supplies",
+    "Pharmacy requesting bulk medication restocking from central warehouse",
+    "Laboratory ordering reagents and test supplies for diagnostic equipment",
+    "Patient care unit requesting standard medical supplies and consumables"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "MSH.9": "OMS^O05",
+    "ORC.1": "NW|CA|OC|RE|SC|DC (New|Cancel|Order Changed|Replace|Status Changed|Discontinue)",
+    "ORC.2": "Placer order number",
+    "ORC.3": "Filler order number",
+    "RQD.1": "Requisition line number",
+    "RQD.2": "Item code and description",
+    "RQD.3": "Requested quantity",
+    "RQD.4": "Unit of measure",
+    "RQD.5": "Department requesting items",
+    "RQD.6": "Item cost center",
+    "requiredDataQuality": "High - accurate requisitions critical for inventory management and patient care delivery"
   }
 }

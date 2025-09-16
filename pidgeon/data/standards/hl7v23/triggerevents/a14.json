@@ -1,24 +1,54 @@
 {
   "triggerEvent": "A14",
-  "name": "TODO: Define trigger event name for A14",
-  "description": "TODO: Define description for A14 trigger event",
+  "name": "Pending Admit",
+  "description": "Advance notification of a planned admission when patient admission is imminent or reservation exists",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A14",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "NK1",
+      "PV1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Notify receiving systems of a planned admission to allow preparation for patient arrival",
+  "timing": "Sent when admission is planned and advance notification is needed for preparation",
+  "responseMessage": "ACK^A14^ACK",
+  "realWorldScenarios": [
+    "Emergency department patient awaiting inpatient bed",
+    "Scheduled surgery admission planned for next day",
+    "Direct admission from physician office scheduled",
+    "Transfer patient expected from another facility",
+    "Observation patient likely to be admitted",
+    "Pre-operative admission planned for same-day surgery"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "EVN.1": "A14",
+    "EVN.2": "Current timestamp",
+    "EVN.6": "Planned admission timestamp",
+    "PV1.2": "Planned patient class (I=Inpatient expected)",
+    "PV1.3": "Expected location/bed assignment",
+    "PV1.44": "Expected admit date/time",
+    "admissionStatus": "Pending/Planned",
+    "requiredDataQuality": "Medium - planning data may be tentative but should include expected timing"
   }
 }

@@ -1,27 +1,312 @@
 {
   "segment": "AIL",
-  "name": "TODO: Define segment name for AIL",
-  "description": "TODO: Define description for AIL segment",
+  "name": "Appointment Information - Location Resource",
+  "description": "The AIL segment contains information about location resources that can be scheduled for appointments. These are physical locations such as rooms, buildings, departments, or other places where healthcare services are provided. This segment is essential for comprehensive appointment scheduling and resource management.",
   "standard": "hl7v23",
   "version": "2.3",
-  "usage": "TODO",
+  "usage": "O",
   "cardinality": {
     "min": 0,
-    "max": 1,
-    "note": "TODO: Define cardinality rules"
+    "max": "*",
+    "note": "Multiple AIL segments can be used to specify different locations for the same appointment"
   },
-  "messageTypes": ["TODO: Define message types"],
+  "messageTypes": ["SIU^S12", "SIU^S13", "SIU^S14", "SIU^S15", "SIU^S16", "SIU^S17", "SIU^S26"],
   "fields": {
-    "TODO": "Complete field definitions needed"
+    "AIL.1": {
+      "name": "Set ID - AIL",
+      "description": "This field contains the number that identifies this transaction. For the first occurrence of the segment, the sequence number shall be one, for the second occurrence, the sequence number shall be two, etc.",
+      "dataType": "SI",
+      "usage": "R",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Sequential number starting at 1 for each location resource in the appointment"
+    },
+    "AIL.2": {
+      "name": "Segment Action Code",
+      "description": "This field indicates the action to be taken when processing this segment. It allows applications to process the segment appropriately.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "A", "description": "Add/Insert"},
+        {"code": "D", "description": "Delete"},
+        {"code": "U", "description": "Update"},
+        {"code": "X", "description": "No change"}
+      ],
+      "generationHint": "A for new location bookings, U for updates, D for cancellations"
+    },
+    "AIL.3": {
+      "name": "Location Resource ID",
+      "description": "This field contains a unique identifier for the location resource. This should be a system-specific identifier that uniquely identifies the location within the facility management system.",
+      "dataType": "PL",
+      "usage": "O",
+      "maxLength": 80,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Standard room/location identifiers: Building^Room^Floor^Department format"
+    },
+    "AIL.4": {
+      "name": "Location Type - AIL",
+      "description": "This field categorizes the type of location being scheduled. This helps in location management and scheduling optimization.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "C", "description": "Clinic"},
+        {"code": "D", "description": "Department"},
+        {"code": "H", "description": "Home"},
+        {"code": "N", "description": "Nursing Unit"},
+        {"code": "O", "description": "Provider's Office"},
+        {"code": "P", "description": "Phone"},
+        {"code": "S", "description": "Provider's Office"},
+        {"code": "ROOM", "description": "Room"},
+        {"code": "WARD", "description": "Ward"},
+        {"code": "OR", "description": "Operating Room"},
+        {"code": "ER", "description": "Emergency Room"},
+        {"code": "ICU", "description": "Intensive Care Unit"},
+        {"code": "LAB", "description": "Laboratory"},
+        {"code": "RADIOLOGY", "description": "Radiology Department"},
+        {"code": "SURGERY", "description": "Surgery Suite"},
+        {"code": "OUTPATIENT", "description": "Outpatient Area"},
+        {"code": "INPATIENT", "description": "Inpatient Room"}
+      ],
+      "generationHint": "Most common: ROOM (40%), O (Office, 25%), C (Clinic, 15%), OR (10%)"
+    },
+    "AIL.5": {
+      "name": "Location Group",
+      "description": "This field identifies a group or category that the location belongs to. This allows for grouped scheduling and location management.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "CARDIOLOGY", "description": "Cardiology Department"},
+        {"code": "SURGERY", "description": "Surgical Services"},
+        {"code": "EMERGENCY", "description": "Emergency Department"},
+        {"code": "RADIOLOGY", "description": "Radiology Department"},
+        {"code": "LABORATORY", "description": "Laboratory Services"},
+        {"code": "OUTPATIENT", "description": "Outpatient Services"},
+        {"code": "INPATIENT", "description": "Inpatient Services"},
+        {"code": "PEDIATRICS", "description": "Pediatrics Department"},
+        {"code": "OBSTETRICS", "description": "Obstetrics Department"},
+        {"code": "ONCOLOGY", "description": "Oncology Department"},
+        {"code": "MENTAL_HEALTH", "description": "Mental Health Services"},
+        {"code": "REHAB", "description": "Rehabilitation Services"}
+      ],
+      "generationHint": "Group locations by medical specialty or service line"
+    },
+    "AIL.6": {
+      "name": "Start Date/Time",
+      "description": "This field contains the start date and time that this location is requested for the appointment.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Should match or be within the overall appointment timeframe"
+    },
+    "AIL.7": {
+      "name": "Start Date/Time Offset",
+      "description": "This field contains the number of units that the start date/time may be moved without affecting the schedule.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Flexibility window in minutes: 0 (exact), 15, 30, 60 for flexible scheduling"
+    },
+    "AIL.8": {
+      "name": "Start Date/Time Offset Units",
+      "description": "This field contains the units of time for the start date/time offset.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MIN", "description": "Minutes"},
+        {"code": "H", "description": "Hours"},
+        {"code": "D", "description": "Days"}
+      ],
+      "generationHint": "MIN most common for short flexibility windows"
+    },
+    "AIL.9": {
+      "name": "Duration",
+      "description": "This field contains the duration that this location is requested for the appointment.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Duration in specified units: 15, 30, 60, 90, 120 (minutes) for typical appointments"
+    },
+    "AIL.10": {
+      "name": "Duration Units",
+      "description": "This field contains the units of time for the duration.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MIN", "description": "Minutes"},
+        {"code": "H", "description": "Hours"},
+        {"code": "D", "description": "Days"}
+      ],
+      "generationHint": "MIN for routine appointments, H for procedures or long consultations"
+    },
+    "AIL.11": {
+      "name": "Allow Substitution Code",
+      "description": "This field indicates whether substitution of this location with an equivalent location is allowed.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 10,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes, substitution allowed"},
+        {"code": "N", "description": "No, substitution not allowed"},
+        {"code": "C", "description": "Confirm substitution with requester"}
+      ],
+      "generationHint": "Y for flexible scheduling, N for specialized rooms or patient preferences"
+    },
+    "AIL.12": {
+      "name": "Filler Status Code",
+      "description": "This field describes the status of the appointment as maintained by the filler application.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "PENDING", "description": "Pending confirmation"},
+        {"code": "BOOKED", "description": "Booked/confirmed"},
+        {"code": "COMPLETE", "description": "Completed"},
+        {"code": "CANCELLED", "description": "Cancelled"},
+        {"code": "NOSHOW", "description": "No show"},
+        {"code": "BLOCKED", "description": "Blocked"},
+        {"code": "OVERBOOK", "description": "Overbooked"},
+        {"code": "WAITLIST", "description": "Waitlisted"}
+      ],
+      "generationHint": "PENDING for new requests, BOOKED for confirmed locations"
+    }
   },
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": {
+      "commonFields": ["AIL.1", "AIL.3", "AIL.4", "AIL.6", "AIL.9", "AIL.10", "AIL.12"],
+      "extensions": ["Room utilization analytics", "Smart room recommendations", "Integrated space management"],
+      "notes": "Epic provides comprehensive location management with real-time availability and utilization tracking"
+    },
+    "cerner": {
+      "commonFields": ["AIL.1", "AIL.3", "AIL.4", "AIL.5", "AIL.6", "AIL.9", "AIL.11"],
+      "extensions": ["Multi-facility location sharing", "Room preparation workflows", "Capacity optimization"],
+      "notes": "Cerner emphasizes cross-facility resource sharing and workflow optimization"
+    },
+    "allscripts": {
+      "commonFields": ["AIL.1", "AIL.3", "AIL.4", "AIL.6", "AIL.9", "AIL.12"],
+      "extensions": ["Basic room scheduling", "Location conflict alerts"],
+      "notes": "Allscripts provides fundamental location scheduling with conflict prevention"
+    },
+    "athenahealth": {
+      "commonFields": ["AIL.1", "AIL.3", "AIL.4", "AIL.6", "AIL.12"],
+      "extensions": ["Cloud-based location management", "Mobile room booking"],
+      "notes": "Athenahealth focuses on mobile-friendly location scheduling"
+    }
   },
   "crossReferences": {
-    "fhir": ["TODO: Map to FHIR resources"],
-    "related": ["TODO: Identify related segments"]
+    "fhir": [
+      "Appointment.participant.actor",
+      "Location.identifier",
+      "Location.type",
+      "Location.managingOrganization",
+      "Schedule.actor",
+      "Slot.schedule"
+    ],
+    "related": ["SCH", "AIG", "AIP", "AIS", "MSH", "PID"]
   },
+  "examples": [
+    {
+      "name": "Exam Room Appointment",
+      "segment": "AIL|1|A|MAIN^ROOM101^2^CARDIOLOGY|ROOM^Room^LOCTYPE|CARDIOLOGY^Cardiology Department^DEPT|20241215140000|15|MIN|30|MIN|Y|BOOKED^Booked^STATUS",
+      "description": "Cardiology exam room booked for 30-minute appointment with 15-minute flexibility"
+    },
+    {
+      "name": "Operating Room Surgery",
+      "segment": "AIL|1|A|SURGICAL^OR3^3^SURGERY|OR^Operating Room^LOCTYPE|SURGERY^Surgical Services^DEPT|20241215080000||MIN|240|MIN|N|BOOKED^Booked^STATUS",
+      "description": "Operating room #3 booked for 4-hour surgical procedure, no substitution allowed"
+    },
+    {
+      "name": "Clinic Office Visit",
+      "segment": "AIL|1|A|CLINIC^OFFICE205^2^FAMILY_MED|O^Provider Office^LOCTYPE|OUTPATIENT^Outpatient Services^DEPT|20241215100000|30|MIN|20|MIN|Y|BOOKED^Booked^STATUS",
+      "description": "Family medicine office for routine visit with flexible timing"
+    },
+    {
+      "name": "Emergency Department Room",
+      "segment": "AIL|1|A|ED^TRAUMA1^1^EMERGENCY|ER^Emergency Room^LOCTYPE|EMERGENCY^Emergency Department^DEPT|20241215201500||MIN|60|MIN|N|PENDING^Pending^STATUS",
+      "description": "Emergency trauma room allocation, exact timing required"
+    }
+  ],
+  "notes": [
+    "AIL segments are essential for comprehensive location resource management",
+    "Location ID should follow facility's standard room/location naming conventions",
+    "Allow substitution codes enable flexible scheduling while respecting specific requirements",
+    "Duration and timing fields ensure proper location allocation and availability",
+    "Status codes track location utilization throughout the appointment lifecycle",
+    "Multiple AIL segments can specify different locations for complex multi-location procedures"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "fieldPopulation": {
+      "required": ["AIL.1", "AIL.4"],
+      "recommended": ["AIL.3", "AIL.6", "AIL.9", "AIL.10", "AIL.12"],
+      "situational": ["AIL.2", "AIL.5", "AIL.7", "AIL.11"]
+    },
+    "dataConsistency": {
+      "timingAlignment": "AIL.6 should align with overall appointment schedule",
+      "durationUnits": "AIL.9 and AIL.10 must be specified together",
+      "offsetUnits": "AIL.7 and AIL.8 must be paired when offset is specified",
+      "locationFormat": "AIL.3 should follow facility's location identifier format"
+    },
+    "businessRules": {
+      "locationAvailability": "Locations must be available during requested timeframe",
+      "conflictPrevention": "No double-booking of single-occupancy locations",
+      "substitutionLogic": "Substitute locations must meet appointment requirements",
+      "statusProgression": "Status should follow logical appointment workflow",
+      "capacityManagement": "Location capacity must accommodate appointment needs"
+    },
+    "messageFlow": {
+      "triggers": ["Appointment booking", "Location requests", "Schedule modifications"],
+      "responses": ["Location confirmations", "Availability updates", "Conflict notifications"],
+      "workflow": "Usually accompanies SCH segment and other appointment-related segments"
+    }
   }
 }

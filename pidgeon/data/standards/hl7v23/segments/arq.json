@@ -1,27 +1,444 @@
 {
   "segment": "ARQ",
-  "name": "TODO: Define segment name for ARQ",
-  "description": "TODO: Define description for ARQ segment",
+  "name": "Appointment Request",
+  "description": "The Appointment Request segment (ARQ) contains information about appointment requests for healthcare services. This segment is essential for scheduling workflows and appointment management, serving as the core component of SIU (Schedule Information Unsolicited) messages. The ARQ segment supports complex scheduling scenarios including recurring appointments, multi-resource booking, priority scheduling, and appointment modification requests. It provides the foundation for coordinating patient care, provider schedules, facility usage, and resource allocation in healthcare organizations.",
   "standard": "hl7v23",
   "version": "2.3",
-  "usage": "TODO",
+  "usage": "R",
   "cardinality": {
-    "min": 0,
+    "min": 1,
     "max": 1,
-    "note": "TODO: Define cardinality rules"
+    "note": "Required segment in SIU scheduling messages"
   },
-  "messageTypes": ["TODO: Define message types"],
+  "messageTypes": ["SIU^S12", "SIU^S13", "SIU^S14", "SIU^S15", "SIU^S16", "SIU^S17", "SIU^S18", "SIU^S19", "SIU^S20", "SIU^S21", "SIU^S22", "SIU^S23", "SIU^S24", "SIU^S26"],
   "fields": {
-    "TODO": "Complete field definitions needed"
+    "ARQ.1": {
+      "name": "Placer Appointment ID",
+      "description": "This field contains the appointment identifier assigned by the placer application (the system requesting the appointment).",
+      "dataType": "EI",
+      "usage": "R",
+      "maxLength": 75,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Unique appointment identifier from requesting system: APPT<date><sequence>^<system_id>"
+    },
+    "ARQ.2": {
+      "name": "Filler Appointment ID",
+      "description": "This field contains the appointment identifier assigned by the filler application (the system managing the appointments).",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 75,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Unique appointment identifier from scheduling system: SCH<timestamp><counter>^<scheduler_id>"
+    },
+    "ARQ.3": {
+      "name": "Occurrence Number",
+      "description": "This field contains the occurrence number for recurring appointments, indicating which instance of a recurring series this appointment represents.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 5,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Sequential number for recurring appointments: 1, 2, 3, etc."
+    },
+    "ARQ.4": {
+      "name": "Placer Group Number",
+      "description": "This field contains a group number assigned by the placer application for appointments that are part of a series or group.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 22,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Group identifier for related appointments: GRP<date><sequence>^<system_id>"
+    },
+    "ARQ.5": {
+      "name": "Schedule ID",
+      "description": "This field identifies the schedule or calendar into which this appointment should be placed.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "CARDIOLOGY", "description": "Cardiology clinic schedule"},
+        {"code": "ORTHOPEDIC", "description": "Orthopedic clinic schedule"},
+        {"code": "PRIMARY_CARE", "description": "Primary care schedule"},
+        {"code": "RADIOLOGY", "description": "Radiology schedule"},
+        {"code": "SURGERY", "description": "Surgical schedule"},
+        {"code": "EMERGENCY", "description": "Emergency department schedule"},
+        {"code": "ONCOLOGY", "description": "Oncology clinic schedule"},
+        {"code": "PEDIATRICS", "description": "Pediatric clinic schedule"}
+      ],
+      "generationHint": "Department or clinic schedule identifier for appointment placement"
+    },
+    "ARQ.6": {
+      "name": "Request Event Reason",
+      "description": "This field contains the reason for the appointment request or scheduling event.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "ROUTINE", "description": "Routine appointment"},
+        {"code": "URGENT", "description": "Urgent appointment needed"},
+        {"code": "FOLLOWUP", "description": "Follow-up appointment"},
+        {"code": "CONSULTATION", "description": "Consultation requested"},
+        {"code": "PROCEDURE", "description": "Procedure scheduling"},
+        {"code": "ANNUAL_EXAM", "description": "Annual examination"},
+        {"code": "PREVENTIVE", "description": "Preventive care"},
+        {"code": "EMERGENCY", "description": "Emergency appointment"}
+      ],
+      "generationHint": "Clinical reason driving the appointment request"
+    },
+    "ARQ.7": {
+      "name": "Appointment Reason",
+      "description": "This field contains the medical or administrative reason for the appointment.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "I10", "description": "Essential hypertension"},
+        {"code": "E11.9", "description": "Type 2 diabetes mellitus"},
+        {"code": "M79.3", "description": "Panniculitis, unspecified"},
+        {"code": "Z00.00", "description": "Encounter for general adult medical examination"},
+        {"code": "Z12.31", "description": "Encounter for screening mammogram for malignant neoplasm of breast"},
+        {"code": "CHECKUP", "description": "Regular checkup"},
+        {"code": "BLOODWORK", "description": "Laboratory work"},
+        {"code": "IMAGING", "description": "Diagnostic imaging"}
+      ],
+      "generationHint": "ICD-10 codes for medical reasons, or descriptive terms for administrative appointments"
+    },
+    "ARQ.8": {
+      "name": "Appointment Type",
+      "description": "This field specifies the type or category of appointment being requested.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "OFFICE", "description": "Office visit"},
+        {"code": "PHONE", "description": "Telephone consultation"},
+        {"code": "TELEMEDICINE", "description": "Telemedicine appointment"},
+        {"code": "PROCEDURE", "description": "Procedure appointment"},
+        {"code": "SURGERY", "description": "Surgical procedure"},
+        {"code": "DIAGNOSTIC", "description": "Diagnostic testing"},
+        {"code": "THERAPY", "description": "Therapy session"},
+        {"code": "VACCINATION", "description": "Vaccination appointment"}
+      ],
+      "generationHint": "OFFICE most common for regular visits, TELEMEDICINE increasingly used"
+    },
+    "ARQ.9": {
+      "name": "Appointment Duration",
+      "description": "This field specifies the expected duration of the appointment in minutes.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Duration in minutes: 15, 30, 45, 60 for common appointment types"
+    },
+    "ARQ.10": {
+      "name": "Appointment Duration Units",
+      "description": "This field specifies the units for the appointment duration.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MIN", "description": "Minutes"},
+        {"code": "HR", "description": "Hours"},
+        {"code": "DAY", "description": "Days"}
+      ],
+      "generationHint": "MIN (minutes) most common for regular appointments"
+    },
+    "ARQ.11": {
+      "name": "Requested Start Date/Time Range",
+      "description": "This field contains the requested start date and time range for the appointment.",
+      "dataType": "DR",
+      "usage": "O",
+      "maxLength": 53,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Date range for appointment scheduling flexibility: start_datetime^end_datetime"
+    },
+    "ARQ.12": {
+      "name": "Priority - ARQ",
+      "description": "This field indicates the priority level of the appointment request.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 5,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "STAT", "description": "Immediate/Emergency"},
+        {"code": "ASAP", "description": "As soon as possible"},
+        {"code": "URGENT", "description": "Urgent"},
+        {"code": "ROUTINE", "description": "Routine priority"},
+        {"code": "ELECTIVE", "description": "Elective/Can be delayed"}
+      ],
+      "generationHint": "ROUTINE most common, STAT for emergencies, URGENT for expedited scheduling"
+    },
+    "ARQ.13": {
+      "name": "Repeating Interval",
+      "description": "This field specifies the interval for recurring appointments.",
+      "dataType": "RI",
+      "usage": "O",
+      "maxLength": 100,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Recurring patterns: weekly, monthly, quarterly for follow-up appointments"
+    },
+    "ARQ.14": {
+      "name": "Repeating Interval Duration",
+      "description": "This field specifies how long the recurring appointment pattern should continue.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 5,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Duration for recurring series: 6 months, 1 year, indefinite"
+    },
+    "ARQ.15": {
+      "name": "Placer Contact Person",
+      "description": "This field identifies the person who can be contacted regarding this appointment request.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Referring provider, scheduler, or administrative contact for appointment coordination"
+    },
+    "ARQ.16": {
+      "name": "Placer Contact Phone Number",
+      "description": "This field contains the phone number for contacting the placer regarding this appointment.",
+      "dataType": "XTN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Direct phone line for appointment coordination and changes"
+    },
+    "ARQ.17": {
+      "name": "Placer Contact Address",
+      "description": "This field contains the address for the placer contact person or organization.",
+      "dataType": "XAD",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Professional address for appointment-related correspondence"
+    },
+    "ARQ.18": {
+      "name": "Placer Contact Location",
+      "description": "This field specifies the location of the placer contact person.",
+      "dataType": "PL",
+      "usage": "O",
+      "maxLength": 80,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Physical location where placer contact can be reached"
+    },
+    "ARQ.19": {
+      "name": "Entered By Person",
+      "description": "This field identifies the person who entered the appointment request into the system.",
+      "dataType": "XCN",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 1,
+        "max": "*"
+      },
+      "generationHint": "User who created the appointment request - scheduler, nurse, or provider"
+    },
+    "ARQ.20": {
+      "name": "Entered By Phone Number",
+      "description": "This field contains the phone number of the person who entered the appointment request.",
+      "dataType": "XTN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Contact number for the person who created the appointment request"
+    },
+    "ARQ.21": {
+      "name": "Entered By Location",
+      "description": "This field specifies the location where the appointment request was entered.",
+      "dataType": "PL",
+      "usage": "O",
+      "maxLength": 80,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Department or workstation where appointment request was created"
+    },
+    "ARQ.22": {
+      "name": "Parent Placer Appointment ID",
+      "description": "This field contains the placer appointment ID of a parent appointment when this appointment is part of a series or related to another appointment.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 75,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Reference to parent appointment for linked or follow-up appointments"
+    },
+    "ARQ.23": {
+      "name": "Parent Filler Appointment ID",
+      "description": "This field contains the filler appointment ID of a parent appointment when this appointment is part of a series or related to another appointment.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 75,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Reference to parent appointment from scheduling system for linked appointments"
+    },
+    "ARQ.24": {
+      "name": "Placer Order Number",
+      "description": "This field contains a reference to an order that this appointment is intended to fulfill.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 22,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Link to procedure orders, lab orders, or imaging orders requiring appointments"
+    },
+    "ARQ.25": {
+      "name": "Filler Order Number",
+      "description": "This field contains the filler order number when the appointment is associated with a specific order.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 22,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Fulfilling system order identifier linked to the appointment"
+    }
   },
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": {
+      "commonFields": ["ARQ.1", "ARQ.2", "ARQ.5", "ARQ.7", "ARQ.8", "ARQ.9", "ARQ.11", "ARQ.12", "ARQ.19"],
+      "extensions": ["MyChart patient self-scheduling", "Provider template scheduling", "Multi-resource coordination"],
+      "notes": "Epic provides comprehensive scheduling workflows with patient engagement and provider optimization"
+    },
+    "cerner": {
+      "commonFields": ["ARQ.1", "ARQ.2", "ARQ.6", "ARQ.7", "ARQ.8", "ARQ.11", "ARQ.12", "ARQ.13", "ARQ.19"],
+      "extensions": ["PowerChart scheduling integration", "Recurring appointment management", "Resource utilization tracking"],
+      "notes": "Cerner emphasizes clinical workflow integration and resource optimization"
+    },
+    "allscripts": {
+      "commonFields": ["ARQ.1", "ARQ.5", "ARQ.7", "ARQ.8", "ARQ.9", "ARQ.12", "ARQ.19"],
+      "extensions": ["Practice management scheduling", "Provider calendar sync", "Basic recurring appointments"],
+      "notes": "Allscripts provides essential scheduling functionality for practice-based workflows"
+    },
+    "athenahealth": {
+      "commonFields": ["ARQ.1", "ARQ.2", "ARQ.6", "ARQ.7", "ARQ.11", "ARQ.12", "ARQ.24", "ARQ.25"],
+      "extensions": ["Patient engagement scheduling", "Order-driven appointments", "Revenue optimization"],
+      "notes": "Athenahealth focuses on patient experience and revenue cycle integration"
+    }
   },
   "crossReferences": {
-    "fhir": ["TODO: Map to FHIR resources"],
-    "related": ["TODO: Identify related segments"]
+    "fhir": [
+      "Appointment.identifier",
+      "Appointment.status",
+      "Appointment.appointmentType",
+      "Appointment.reasonCode",
+      "Appointment.priority",
+      "Appointment.start",
+      "Appointment.end",
+      "Appointment.minutesDuration",
+      "Appointment.participant",
+      "Appointment.requestedPeriod",
+      "AppointmentResponse.identifier"
+    ],
+    "related": ["AIG", "AIL", "AIP", "AIS", "PID", "PV1", "SCH", "NTE", "OBR"]
   },
+  "examples": [
+    "ARQ|APPT20241215001^HIS|SCH20241215001^SCHED|1||CARDIOLOGY^Cardiology clinic schedule|ROUTINE^Routine appointment|I10^Essential hypertension^ICD10|OFFICE^Office visit|30|MIN^Minutes|20241220080000^20241220120000|ROUTINE||||||12345^SCHEDULER^MARY^A^RN^||123 MAIN ST^^ANYTOWN^ST^12345|CARDIOLOGY DEPT|67890^DOCTOR^JOHN^B^MD^|555-123-4567|SCHEDULING DESK||||",
+    "ARQ|APPT20241215002^REF||2|GRP20241215001^REF|ORTHOPEDIC^Orthopedic clinic schedule|FOLLOWUP^Follow-up appointment|M25.561^Pain in right knee^ICD10|OFFICE^Office visit|45|MIN^Minutes|20250115100000^20250115140000|URGENT|1W^Weekly|6M|11111^REFERRING^PHYSICIAN^MD|555-987-6543|456 ELM ST^^HOMETOWN^ST^54321|REFERRAL OFFICE|22222^NURSE^JANE^C^RN^|555-456-7890|ORTHOPEDIC CLINIC|APPT20241201001^REF|SCH20241201001^SCHED|ORD20241215001^ORM|FIL20241215001^ORM",
+    "ARQ|APPT20241215003^URGENT||||EMERGENCY^Emergency department schedule|EMERGENCY^Emergency appointment|R50.9^Fever unspecified^ICD10|OFFICE^Office visit|60|MIN^Minutes|20241215140000^20241215180000|STAT||||||33333^TRIAGE^NURSE^RN^|555-999-8888|789 HOSPITAL WAY^^URGENTTOWN^ST^98765|EMERGENCY DEPT|44444^CHARGE^NURSE^RN^|555-111-2222|EMERGENCY DEPT||||"
+  ],
+  "notes": [
+    "ARQ segment is the foundation of healthcare appointment scheduling workflows",
+    "Placer Appointment ID (ARQ.1) and Entered By Person (ARQ.19) are required fields",
+    "Essential for SIU scheduling messages and appointment coordination",
+    "Supports complex scenarios including recurring appointments and multi-resource booking",
+    "Priority scheduling helps manage urgent vs. routine appointment requests",
+    "Contact information enables effective appointment coordination and changes"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "fieldPopulation": {
+      "required": ["ARQ.1", "ARQ.19"],
+      "recommended": ["ARQ.2", "ARQ.5", "ARQ.7", "ARQ.8", "ARQ.9", "ARQ.11", "ARQ.12"],
+      "situational": ["ARQ.3", "ARQ.4", "ARQ.13", "ARQ.14", "ARQ.22", "ARQ.23", "ARQ.24", "ARQ.25"]
+    },
+    "dataConsistency": {
+      "appointmentTiming": "Requested start time should align with appointment duration",
+      "priorityAlignment": "Priority should match appointment type and clinical urgency",
+      "recurringLogic": "Repeating intervals should have consistent duration specifications",
+      "contactValidation": "Contact information should be reachable and current"
+    },
+    "businessRules": {
+      "schedulingConstraints": "Appointments should respect provider availability and facility capacity",
+      "priorityEscalation": "STAT and URGENT appointments may override normal scheduling rules",
+      "recurringManagement": "Recurring appointments require appropriate interval and duration specifications",
+      "orderLinkage": "Order-driven appointments should reference valid procedure or lab orders",
+      "resourceCoordination": "Complex appointments may require multiple ARQ segments for different resources"
+    },
+    "messageFlow": {
+      "triggers": ["Appointment requests", "Schedule modifications", "Recurring appointment setup", "Order-driven scheduling"],
+      "responses": ["Schedule confirmations", "Resource availability updates", "Appointment confirmations", "Schedule conflicts"],
+      "workflow": "Core component of SIU messages for comprehensive healthcare appointment management"
+    }
   }
 }

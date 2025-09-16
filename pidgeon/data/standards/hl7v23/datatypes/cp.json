@@ -1,17 +1,140 @@
 {
   "dataType": "CP",
-  "name": "TODO: Define data type name for CP", 
-  "description": "TODO: Define description for CP data type",
+  "name": "Composite Price",
+  "description": "The CP data type is used to communicate prices and pricing information in healthcare transactions. It provides a structured way to represent monetary amounts along with pricing components, currency information, and price qualifiers. This data type supports complex pricing scenarios including itemized billing, insurance calculations, and multi-currency environments common in healthcare financial transactions.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "CP.1": {
+      "name": "Price",
+      "dataType": "MO",
+      "description": "The monetary amount representing the price. This component contains both the numeric value and currency designation.",
+      "length": 10,
+      "usage": "required",
+      "position": 1
+    },
+    "CP.2": {
+      "name": "Price Type",
+      "dataType": "ID",
+      "description": "Specifies the type or category of the price (e.g., unit price, total price, discount price). Indicates the nature of the pricing information.",
+      "length": 2,
+      "usage": "optional",
+      "position": 2,
+      "table": "0205"
+    },
+    "CP.3": {
+      "name": "From Value",
+      "dataType": "NM",
+      "description": "The lower bound of a price range. Used when specifying price ranges or quantity breaks in pricing structures.",
+      "length": 4,
+      "usage": "optional",
+      "position": 3
+    },
+    "CP.4": {
+      "name": "To Value",
+      "dataType": "NM",
+      "description": "The upper bound of a price range. Used in conjunction with From Value to specify complete price ranges.",
+      "length": 4,
+      "usage": "optional",
+      "position": 4
+    },
+    "CP.5": {
+      "name": "Range Units",
+      "dataType": "CE",
+      "description": "The units of measure for the From Value and To Value components. Specifies what the range values represent (e.g., quantity, volume, time period).",
+      "length": 200,
+      "usage": "optional",
+      "position": 5
+    },
+    "CP.6": {
+      "name": "Range Type",
+      "dataType": "ID",
+      "description": "Specifies the type of range being described (e.g., quantity break, time-based pricing, volume discount). Provides context for the range values.",
+      "length": 1,
+      "usage": "optional",
+      "position": 6,
+      "table": "0298"
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 223,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "priceRequired": "CP.1 (Price) is typically required for meaningful pricing information",
+    "rangeLogic": "If range values are specified, both From Value and To Value should be provided",
+    "currency": "Currency specification handled within the MO (Money) data type in CP.1"
+  },
+  "usage": [
+    "Healthcare service pricing and billing",
+    "Pharmaceutical and supply cost information",
+    "Insurance copayment and deductible amounts",
+    "Procedure and diagnostic test pricing",
+    "Equipment rental and lease costs",
+    "Volume-based and tiered pricing structures"
+  ],
+  "examples": [
+    "125.00^USD^UP^^",
+    "50.00^USD^DC^10^20^QTY^Q",
+    "1000.00^USD^TP^^^^",
+    "75.50^USD^CP^^^^",
+    "200.00^USD^UP^1^5^UNITS^Q"
+  ],
+  "commonFields": [
+    "CDM.6 - Procedure Code pricing information",
+    "Various billing and financial segments",
+    "Insurance and payment calculation fields",
+    "Service and supply cost fields",
+    "Pricing structures in healthcare transactions"
+  ],
+  "generationHints": {
+    "typical": "Use realistic healthcare pricing appropriate for services, procedures, and supplies",
+    "amounts": "Vary from small copays ($10-50) to major procedures ($1000-50000)",
+    "currency": "Primarily USD for US healthcare, but support international currencies",
+    "priceTypes": ["UP - Unit Price", "TP - Total Price", "DC - Discount Price", "CP - Contract Price"],
+    "ranges": "Use quantity breaks and volume discounts for realistic pricing scenarios"
+  },
+  "priceTypes": {
+    "UP": "Unit Price - price per individual unit",
+    "TP": "Total Price - complete price for the service or item",
+    "DC": "Discount Price - reduced price from standard pricing",
+    "CP": "Contract Price - negotiated contract pricing",
+    "IP": "Insurance Price - price specific to insurance coverage"
+  },
+  "pricingScenarios": {
+    "singlePrice": "Simple unit or total price without ranges",
+    "quantityBreaks": "Different pricing based on quantity ranges",
+    "volumeDiscounts": "Reduced pricing for higher volumes",
+    "tieredPricing": "Multiple price levels based on various criteria",
+    "contractPricing": "Negotiated rates for specific agreements"
+  },
+  "validationRules": {
+    "priceRequired": "CP.1 (Price) should be populated for meaningful pricing data",
+    "rangeConsistency": "If range values are used, From Value should be less than To Value",
+    "currencyValidation": "Currency codes should follow ISO 4217 standards",
+    "priceTypeValidation": "Price Type should reference valid table values",
+    "rangeUnitsValidation": "Range Units should be appropriate for the pricing context"
+  },
+  "financialContext": {
+    "healthcareApplications": [
+      "Procedure and service pricing",
+      "Pharmaceutical cost calculations",
+      "Insurance copayment structures",
+      "Equipment and supply pricing",
+      "Volume-based healthcare contracts"
+    ],
+    "billingIntegration": "Used in charge description master and billing systems",
+    "insuranceProcessing": "Supports complex insurance calculation scenarios"
+  },
+  "relatedDataTypes": {
+    "MO": "Money - used in CP.1 for the actual price amount",
+    "NM": "Numeric - used for range values in CP.3 and CP.4",
+    "CE": "Coded Element - used for range units in CP.5",
+    "ID": "Coded Value - used for price and range types"
+  },
+  "implementationNotes": {
+    "complexity": "Supports sophisticated pricing models beyond simple unit costs",
+    "flexibility": "Accommodates various healthcare pricing scenarios and structures",
+    "integration": "Designed to work with healthcare billing and financial systems",
+    "standardization": "Provides consistent pricing representation across HL7 messages"
   }
 }

@@ -1,22 +1,82 @@
 {
   "table": "0202",
-  "name": "TODO: Define table name for 0202",
-  "description": "TODO: Define description for table 0202",
+  "name": "Telecommunication Equipment Type",
+  "description": "Codes specifying the type of telecommunications equipment or device used for communication",
   "standard": "hl7v23",
-  "version": "2.3", 
-  "type": "TODO: user_defined|hl7_defined",
+  "version": "2.3",
+  "type": "hl7_defined",
   "values": [
     {
-      "code": "TODO", 
-      "description": "TODO: Add all valid codes and descriptions",
-      "definition": "TODO: Define meaning"
+      "code": "PH",
+      "description": "Telephone",
+      "definition": "Standard voice telephone communication device"
+    },
+    {
+      "code": "FX",
+      "description": "Fax",
+      "definition": "Facsimile transmission device for document communication"
+    },
+    {
+      "code": "MD",
+      "description": "Modem",
+      "definition": "Data communication device for computer-to-computer transmission"
+    },
+    {
+      "code": "CP",
+      "description": "Cellular Phone",
+      "definition": "Mobile cellular telephone device"
+    },
+    {
+      "code": "SAT",
+      "description": "Satellite Phone",
+      "definition": "Satellite-based communication device"
+    },
+    {
+      "code": "BP",
+      "description": "Beeper",
+      "definition": "Paging device for receiving short messages"
+    },
+    {
+      "code": "Internet",
+      "description": "Internet Address",
+      "definition": "Email or other internet-based communication method"
+    },
+    {
+      "code": "X.400",
+      "description": "X.400 email address",
+      "definition": "X.400 standard electronic mail system address"
+    },
+    {
+      "code": "TDD",
+      "description": "Telecommunications Device for the Deaf",
+      "definition": "Text-based communication device for hearing-impaired individuals"
+    },
+    {
+      "code": "TTY",
+      "description": "Teletypewriter",
+      "definition": "Text-based communication terminal device"
     }
   ],
-  "usedIn": ["TODO: List segments.fields that reference this table"],
+  "usedIn": [
+    "XTN.3",
+    "TN.3"
+  ],
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": "Supports standard codes with additional mobile device categorization",
+    "cerner": "Standard implementation with validation for modern communication types",
+    "allscripts": "Supports common equipment types (PH, FX, CP, Internet)"
   },
   "generationRules": {
-    "TODO": "Define realistic distribution for synthetic data"
+    "distribution": {
+      "PH": 0.40,
+      "CP": 0.25,
+      "Internet": 0.20,
+      "FX": 0.08,
+      "BP": 0.03,
+      "MD": 0.02,
+      "TDD": 0.01,
+      "TTY": 0.01
+    },
+    "realistic": "Telephone and cellular devices most common, internet addresses increasingly important, fax still used in healthcare settings"
   }
 }

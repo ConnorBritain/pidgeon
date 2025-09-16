@@ -1,17 +1,80 @@
 {
   "dataType": "TM",
-  "name": "TODO: Define data type name for TM", 
-  "description": "TODO: Define description for TM data type",
+  "name": "Time",
+  "description": "The TM data type specifies the hour of the day with optional minutes, seconds, and fraction of second using a 24-hour clock notation. As of HL7 v2.3, the number of characters populated (excluding the time zone specification) specifies the precision. Time zone specification is optional.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
-  "components": {
-    "TODO": "Define components for composite types"
+  "category": "primitive",
+  "length": 16,
+  "constraints": {
+    "format": "HH[MM[SS[.SSSS]]][+/-ZZZZ] - 24-hour clock notation",
+    "precision": "Precision determined by number of characters (excluding timezone)",
+    "timezone": "Time zone offset in +/-HHMM format when specified",
+    "fractional": "Fractional seconds (.SSSS) allowed for sub-second precision",
+    "v23change": "As of v2.3, minutes are no longer required (changed from v2.2)"
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "usage": [
+    "Time fields in scheduling and appointment messages",
+    "Observation collection times",
+    "Medication administration times",
+    "Recurring schedule time specifications",
+    "Any time-only field (without date component)"
+  ],
+  "examples": [
+    "0630",
+    "063015",
+    "063015.1234",
+    "0630-0500",
+    "14",
+    "1430",
+    "143045"
+  ],
+  "commonFields": [
+    "Schedule time components",
+    "Medication administration times",
+    "Observation collection times",
+    "Appointment times",
+    "Operating hours specifications"
+  ],
+  "generationHints": {
+    "typical": "Use realistic times appropriate for healthcare operations",
+    "format": "HHMM or HHMMSS are most common precision levels",
+    "timezone": "Include timezone for systems spanning multiple time zones",
+    "precision": "Match precision to the clinical or operational context",
+    "examples": {
+      "hourOnly": "14 (2:00 PM)",
+      "hourMinute": "1430 (2:30 PM)",
+      "withSeconds": "143015 (2:30:15 PM)",
+      "withTimezone": "1430-0500 (2:30 PM EST)",
+      "fractional": "143015.123 (with milliseconds)"
+    }
+  },
+  "precisionLevels": {
+    "HH": "Hour only (14 = 2:00 PM)",
+    "HHMM": "Hour and minute (1430 = 2:30 PM)",
+    "HHMMSS": "Hour, minute, second (143015 = 2:30:15 PM)",
+    "HHMMSS.SSSS": "With fractional seconds (143015.123)"
+  },
+  "validationRules": {
+    "hourRange": "Hours must be 00-23",
+    "minuteRange": "Minutes must be 00-59",
+    "secondRange": "Seconds must be 00-59",
+    "timezone": "Timezone must be in +/-HHMM format",
+    "format": "Must follow HH[MM[SS[.SSSS]]] pattern"
+  },
+  "timezoneSupport": {
+    "format": "+/-HHMM (e.g., -0500 for EST, +0000 for UTC)",
+    "restriction": "Restricted to legally-defined time zones",
+    "examples": [
+      "-0500 (Eastern Standard Time)",
+      "-0800 (Pacific Standard Time)",
+      "+0000 (UTC/Greenwich Mean Time)",
+      "+0100 (Central European Time)"
+    ]
+  },
+  "versionChanges": {
+    "v22": "Format was HHMM[SS[.SSSS]][+/-ZZZZ] - minutes were required",
+    "v23": "Minutes are no longer required - format became HH[MM[SS[.SSSS]]][+/-ZZZZ]",
+    "fractionalSeconds": "Allowed for transmitters requiring greater precision than whole seconds"
   }
 }

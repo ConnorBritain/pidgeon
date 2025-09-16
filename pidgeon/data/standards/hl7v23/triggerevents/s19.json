@@ -1,24 +1,31 @@
 {
   "triggerEvent": "S19",
-  "name": "TODO: Define trigger event name for S19",
-  "description": "TODO: Define description for S19 trigger event",
+  "name": "Notification of Modification of Service/Resource on Appointment",
+  "description": "Notification sent when an existing service or resource on an appointment has been modified",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "10",
+  "chapterName": "Scheduling",
+  "messageStructure": "SIU^S19",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": ["MSH", "SCH"],
+    "optional": ["NTE", "PID", "PV1", "PV2", "OBX", "DG1", "RGS", "AIS", "AIG", "AIL", "AIP"]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
-  "generationRules": {
-    "TODO": "Define generation and validation rules"
+  "businessPurpose": "Notify systems when existing services or resources on appointments are modified for proper coordination and resource management",
+  "timing": "Sent when an existing service or resource on an appointment is modified",
+  "responseMessage": "ACK^S19^ACK",
+  "realWorldScenarios": ["Anesthesia type changed from local to general for surgical procedure", "Equipment specifications updated for complex diagnostic imaging", "Interpreter language changed based on patient preference update", "Nursing support level modified due to patient acuity change", "Room requirements updated for procedure complexity", "Personnel assignments modified due to staff availability"],
+    "generationRules": {
+    "MSH.9": "SIU^S19",
+    "SCH.1": "Appointment ID being modified",
+    "SCH.2": "Filler appointment ID",
+    "SCH.6": "Event reason code (typically 'MODIFIED')",
+    "SCH.25": "Filler status code (Booked/Confirmed)",
+    "AIS": "Service modification details",
+    "AIG": "Resource group modification details if applicable",
+    "AIL": "Location modification details if applicable",
+    "AIP": "Personnel modification details",
+    "NTE": "Reason for modification often included",
+    "requiredDataQuality": "High - accurate service/resource modifications prevent conflicts and ensure proper care delivery"
   }
 }

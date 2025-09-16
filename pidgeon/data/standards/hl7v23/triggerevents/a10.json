@@ -1,24 +1,54 @@
 {
   "triggerEvent": "A10",
-  "name": "TODO: Define trigger event name for A10",
-  "description": "TODO: Define description for A10 trigger event",
+  "name": "Patient Arriving - Tracking",
+  "description": "Patient tracking notification when patient arrives at destination location but does not involve official census bed change",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A10",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "NK1",
+      "PV1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Complete patient movement tracking by notifying systems when patient arrives at temporary or destination location",
+  "timing": "Sent when patient arrives at destination following a previous A09 (patient departing) event",
+  "responseMessage": "ACK^A10^ACK",
+  "realWorldScenarios": [
+    "Patient arrives in radiology for scheduled imaging",
+    "Arrival in operating room for surgery",
+    "Check-in at physical therapy department",
+    "Arrival at another campus facility",
+    "Return from external consultation",
+    "Arrival back in room after procedure"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "EVN.1": "A10",
+    "EVN.2": "Current timestamp",
+    "EVN.6": "Arrival timestamp",
+    "PV1.3": "Official location (census bed still maintained)",
+    "PV1.11": "Current temporary/actual location",
+    "trackingStatus": "Arrived at destination",
+    "pairedEvent": "Usually follows A09 (patient departing) event",
+    "requiredDataQuality": "Medium - completes tracking cycle for patient safety and workflow"
   }
 }

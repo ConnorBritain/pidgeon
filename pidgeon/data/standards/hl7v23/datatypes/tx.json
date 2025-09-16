@@ -1,17 +1,79 @@
 {
   "dataType": "TX",
-  "name": "TODO: Define data type name for TX", 
-  "description": "TODO: Define description for TX data type",
+  "name": "Text Data",
+  "description": "The TX data type is used for extended text fields that may contain multiple lines, formatting, and special characters. It allows for narrative text, clinical notes, comments, and other free-form text content that may exceed the length limitations of ST fields. TX fields can contain line breaks, formatting characters, and support rich text representation for clinical documentation.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
-  "components": {
-    "TODO": "Define components for composite types"
+  "category": "primitive",
+  "length": 65536,
+  "constraints": {
+    "formatting": "May contain multiple lines and formatting characters",
+    "lineBreaks": "Supports \\r\\n, \\n, or \\r line separators",
+    "characterSets": "Supports multiple character sets including escape sequences",
+    "encoding": "May contain HL7 escape sequences for special characters",
+    "whitespace": "Preserves leading and trailing whitespace within lines"
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "usage": [
+    "Clinical notes and observations",
+    "Extended comments and narrative text",
+    "Report text and impression sections",
+    "Patient instructions and discharge summaries",
+    "Diagnostic interpretations and recommendations",
+    "Free-form documentation fields"
+  ],
+  "examples": [
+    "Patient presents with chest pain radiating to left arm.\\r\\nVital signs stable.\\r\\nRecommend cardiology consult.",
+    "Discharge Instructions:\\r\\n1. Take medications as prescribed\\r\\n2. Follow up in 2 weeks\\r\\n3. Return if symptoms worsen",
+    "IMPRESSION: Acute myocardial infarction\\r\\nRECOMMENDATIONS: Immediate cardiac catheterization",
+    "Patient education provided regarding diabetic diet.\\r\\nDemonstrated proper glucose monitoring technique.\\r\\nPatient verbalized understanding."
+  ],
+  "commonFields": [
+    "NTE.3 - Comment text in Notes and Comments",
+    "OBX.5 - Observation Value for text results",
+    "TXA.2 - Document Type for transcription documents",
+    "Various narrative and comment fields throughout HL7 messages"
+  ],
+  "generationHints": {
+    "typical": "Use realistic clinical narrative text with proper medical terminology",
+    "structure": "Include line breaks for readability and organization",
+    "content": "Medical observations, instructions, interpretations, and documentation",
+    "length": "Vary from short comments to longer clinical narratives",
+    "terminology": "Use appropriate medical vocabulary and abbreviations"
+  },
+  "formattingRules": {
+    "lineBreaks": "Use \\r\\n for line separators in HL7 messages",
+    "specialCharacters": "Escape HL7 reserved characters using escape sequences",
+    "whitespace": "Trailing whitespace within lines is preserved",
+    "encoding": "Follow HL7 character set and escape sequence rules",
+    "caseSensitivity": "Text content is case-sensitive"
+  },
+  "clinicalContext": {
+    "narrativeTypes": [
+      "Clinical impressions and assessments",
+      "Patient education and instructions",
+      "Diagnostic interpretations",
+      "Treatment recommendations",
+      "Progress notes and observations"
+    ],
+    "structure": "Often includes headers, numbered lists, and formatted sections",
+    "audience": "Healthcare providers, patients, and care coordinators"
+  },
+  "validationRules": {
+    "lengthCheck": "Should not exceed maximum length constraints",
+    "characterValidation": "All characters must be valid within specified character set",
+    "escapeSequences": "HL7 escape sequences must be properly formatted",
+    "lineBreakConsistency": "Use consistent line break formatting throughout field"
+  },
+  "relatedDataTypes": {
+    "ST": "String - for shorter text fields without formatting",
+    "FT": "Formatted Text - for text with specific formatting requirements",
+    "ED": "Encapsulated Data - for complex formatted documents",
+    "NTE": "Notes segment - often contains TX data type fields"
+  },
+  "implementationNotes": {
+    "storage": "Requires adequate database field size for large text content",
+    "display": "May require text area controls or rich text rendering",
+    "transmission": "Large TX fields may impact message size and transmission time",
+    "indexing": "Consider full-text search capabilities for clinical text retrieval"
   }
 }

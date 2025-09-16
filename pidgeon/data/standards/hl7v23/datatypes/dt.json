@@ -1,17 +1,68 @@
 {
   "dataType": "DT",
-  "name": "TODO: Define data type name for DT", 
-  "description": "TODO: Define description for DT data type",
+  "name": "Date",
+  "description": "The DT data type specifies a date using the Gregorian calendar. As of HL7 v2.3, the month and day components are optional, allowing for variable precision from year-only to full date specification. This provides flexibility for healthcare scenarios where exact dates may not be known or relevant.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
-  "components": {
-    "TODO": "Define components for composite types"
+  "category": "primitive",
+  "length": 8,
+  "constraints": {
+    "format": "YYYY[MM[DD]] - year is required, month and day are optional",
+    "calendar": "Gregorian calendar only",
+    "precision": "Precision determined by number of characters included",
+    "v23change": "As of v2.3, month and day are no longer required (changed from v2.2)"
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "usage": [
+    "Patient birth dates in PID.7 - Date/Time of Birth (date portion)",
+    "Admission dates in PV1.44 - Admit Date/Time (date portion)",
+    "Insurance policy effective dates",
+    "Procedure dates in PR1.5 - Procedure Date",
+    "Any date field without time component"
+  ],
+  "examples": [
+    "19980412",
+    "199804",
+    "1998",
+    "20231215",
+    "202312"
+  ],
+  "commonFields": [
+    "PID.7 - Date/Time of Birth (date portion)",
+    "PV1.44 - Admit Date/Time (date portion)",
+    "PR1.5 - Procedure Date",
+    "Insurance policy dates",
+    "Various date-only fields"
+  ],
+  "generationHints": {
+    "typical": "Use realistic dates appropriate for healthcare contexts",
+    "format": "YYYYMMDD is the most common precision level",
+    "ranges": {
+      "birthDate": "1900-present",
+      "admissionDate": "Recent dates within last few years",
+      "procedureDate": "Recent dates for current episodes"
+    },
+    "precision": "Match precision to clinical context (full date vs approximate)"
+  },
+  "precisionLevels": {
+    "YYYY": "Year only (1998)",
+    "YYYYMM": "Year and month (199804)",
+    "YYYYMMDD": "Complete date (19980412)"
+  },
+  "validationRules": {
+    "yearRange": "Year must be reasonable (e.g., 1800-2100)",
+    "monthRange": "Month must be 01-12 when included",
+    "dayRange": "Day must be 01-31 when included, appropriate for the month",
+    "leapYear": "February 29 only valid in leap years",
+    "format": "Must follow YYYY[MM[DD]] pattern exactly"
+  },
+  "versionChanges": {
+    "v22": "Format was YYYYMMDD - month and day were required",
+    "v23": "Month and day became optional - format became YYYY[MM[DD]]",
+    "flexibility": "Allows for approximate dates when exact date unknown"
+  },
+  "relatedDataTypes": {
+    "TS": "Timestamp - includes both date and time components",
+    "TM": "Time - time-only data type",
+    "DTM": "Date/Time - combined date and time in later versions"
   }
 }

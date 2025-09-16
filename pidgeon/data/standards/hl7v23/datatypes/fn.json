@@ -1,17 +1,163 @@
 {
   "dataType": "FN",
-  "name": "TODO: Define data type name for FN", 
-  "description": "TODO: Define description for FN data type",
+  "name": "Family Name",
+  "description": "The FN data type is used to represent family names or surnames with enhanced support for complex naming conventions. It provides components for surname, own surname prefix, own surname, surname prefix from partner/spouse, and surname from partner/spouse. This data type accommodates diverse cultural naming practices and family name structures found in international healthcare environments, supporting compound surnames and heritage naming conventions.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "FN.1": {
+      "name": "Surname",
+      "dataType": "ST",
+      "description": "The primary surname or family name. This is the main family name component used for identification and alphabetic sorting.",
+      "length": 50,
+      "usage": "required",
+      "position": 1
+    },
+    "FN.2": {
+      "name": "Own Surname Prefix",
+      "dataType": "ST",
+      "description": "A prefix that precedes the person's own surname (e.g., 'von', 'de', 'van'). Common in European naming conventions to indicate nobility, geographic origin, or family heritage.",
+      "length": 20,
+      "usage": "optional",
+      "position": 2
+    },
+    "FN.3": {
+      "name": "Own Surname",
+      "dataType": "ST",
+      "description": "The person's original or birth surname, separate from any married name. Used when distinguishing between birth name and current name.",
+      "length": 50,
+      "usage": "optional",
+      "position": 3
+    },
+    "FN.4": {
+      "name": "Surname Prefix From Partner/Spouse",
+      "dataType": "ST",
+      "description": "A prefix for the surname acquired from a partner or spouse (e.g., 'de', 'von'). Used when the person has taken a partner's surname with its associated prefix.",
+      "length": 20,
+      "usage": "optional",
+      "position": 4
+    },
+    "FN.5": {
+      "name": "Surname From Partner/Spouse",
+      "dataType": "ST",
+      "description": "The surname acquired from a partner or spouse through marriage or partnership. Supports cultures where individuals adopt their partner's family name.",
+      "length": 50,
+      "usage": "optional",
+      "position": 5
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 192,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "primarySurname": "FN.1 (Surname) is typically required for meaningful identification",
+    "culturalSensitivity": "Structure accommodates diverse international naming conventions",
+    "namingLogic": "Components should reflect actual family name structure and cultural practices"
+  },
+  "usage": [
+    "Patient identification with complex family names",
+    "Healthcare provider names with cultural prefixes",
+    "International patient registration systems",
+    "Family name tracking across generations",
+    "Cultural heritage preservation in naming",
+    "Legal name documentation and verification"
+  ],
+  "examples": [
+    "SMITH^^^^",
+    "GARCIA-LOPEZ^^^^",
+    "VAN DER BERG^van der^BERG^^",
+    "MARTINEZ^^MARTINEZ^de^LOPEZ",
+    "O'CONNOR^^^^",
+    "JOHNSON^^BROWN^von^WEBER"
+  ],
+  "commonFields": [
+    "PID.5.1 - Patient Name family name component",
+    "XPN.1 - Extended Person Name family name",
+    "Provider and staff name family components",
+    "Next of kin family name identification",
+    "Various person name fields requiring detailed family name structure"
+  ],
+  "generationHints": {
+    "typical": "Use realistic family names appropriate for diverse cultural backgrounds",
+    "simple": "Most names use only FN.1 (primary surname)",
+    "compound": "Some cultures use hyphenated or compound surnames",
+    "prefixes": ["von", "van", "de", "del", "da", "di", "le", "la", "el"],
+    "cultural": "Consider international naming conventions and heritage patterns"
+  },
+  "culturalPatterns": {
+    "western": {
+      "description": "Western European and North American naming patterns",
+      "structure": "Simple surname, occasional prefixes (von, de, van)",
+      "examples": ["SMITH", "van der BERG", "de LA CRUZ"]
+    },
+    "hispanic": {
+      "description": "Hispanic and Latin American compound surnames",
+      "structure": "Paternal surname + maternal surname, often hyphenated",
+      "examples": ["GARCIA-LOPEZ", "MARTINEZ RODRIGUEZ", "FERNANDEZ-SILVA"]
+    },
+    "hyphenated": {
+      "description": "Hyphenated surnames from marriage or heritage",
+      "structure": "Combined surnames with hyphen separator",
+      "examples": ["JOHNSON-SMITH", "BROWN-WILSON", "TAYLOR-JONES"]
+    },
+    "noble": {
+      "description": "Names with nobility or geographic prefixes",
+      "structure": "Prefix + surname indicating heritage or origin",
+      "examples": ["von HABSBURG", "de BOURBON", "van NASSAU"]
+    }
+  },
+  "namingConventions": {
+    "prefixes": {
+      "von": "German/Austrian nobility indicator",
+      "van": "Dutch/Flemish geographic origin",
+      "de": "Spanish/French/Italian origin or nobility",
+      "del": "Spanish compound meaning 'of the'",
+      "da": "Portuguese/Italian origin meaning 'from'",
+      "le/la": "French definite articles in surnames",
+      "el": "Spanish definite article in surnames"
+    },
+    "compoundRules": "Multiple surnames may indicate both paternal and maternal lineage",
+    "marriageConventions": "Some cultures combine birth and spousal surnames"
+  },
+  "validationRules": {
+    "primaryRequired": "FN.1 (Surname) should typically be populated",
+    "logicalStructure": "Component usage should reflect actual naming practices",
+    "culturalConsistency": "Prefix and surname combinations should be culturally appropriate",
+    "lengthValidation": "All components must respect maximum length constraints",
+    "characterSets": "Support international character sets for global names"
+  },
+  "internationalSupport": {
+    "characterSets": "Supports Unicode for international characters",
+    "diacritics": "Accommodates accented characters and special symbols",
+    "scripts": "Can handle Latin, Cyrillic, and other alphabetic scripts",
+    "sorting": "Enables proper alphabetic sorting across cultures",
+    "display": "Supports culturally appropriate name display formats"
+  },
+  "relatedDataTypes": {
+    "XPN": "Extended Person Name - uses FN for detailed family name structure",
+    "PN": "Person Name - simpler family name representation",
+    "ST": "String - used for all family name components",
+    "CN": "Composite ID Number and Name - may include family name information"
+  },
+  "implementationNotes": {
+    "complexity": "Handles complex international family name structures",
+    "flexibility": "Accommodates various cultural naming conventions",
+    "display": "Consider culturally appropriate formatting for name display",
+    "sorting": "Implement proper sorting algorithms for international names",
+    "validation": "Validate against cultural naming patterns where appropriate"
+  },
+  "clinicalConsiderations": {
+    "identification": "Critical for accurate patient identification across cultures",
+    "matching": "Supports sophisticated name matching algorithms",
+    "heritage": "Preserves cultural heritage information in healthcare records",
+    "legal": "Maintains legal name accuracy for healthcare documentation",
+    "family": "Enables family relationship tracking and genealogy"
+  },
+  "useCases": {
+    "patientRegistration": "International patient registration with complex names",
+    "providerCredentialing": "Healthcare provider identification across cultures",
+    "familyTracking": "Tracking family relationships and heritage",
+    "legalDocumentation": "Maintaining legal name accuracy in medical records",
+    "culturalSensitivity": "Respecting diverse naming traditions in healthcare"
   }
 }

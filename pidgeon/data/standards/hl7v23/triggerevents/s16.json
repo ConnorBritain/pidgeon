@@ -1,24 +1,54 @@
 {
   "triggerEvent": "S16",
-  "name": "TODO: Define trigger event name for S16",
-  "description": "TODO: Define description for S16 trigger event",
+  "name": "Notification of Appointment Discontinuation",
+  "description": "Notification sent when an appointment in progress is stopped or remaining occurrences of a parent appointment will not occur",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "10",
+  "chapterName": "Scheduling",
+  "messageStructure": "SIU^S16",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "SCH"
+    ],
+    "optional": [
+      "NTE",
+      "PID",
+      "PV1",
+      "PV2",
+      "OBX",
+      "DG1",
+      "RGS",
+      "AIS",
+      "AIG",
+      "AIL",
+      "AIP"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Notify systems when an appointment that has already begun must be stopped or when remaining occurrences of recurring appointments will not take place",
+  "timing": "Sent when decision is made to discontinue an in-progress appointment or stop future occurrences of a parent appointment",
+  "responseMessage": "ACK^S16^ACK",
+  "realWorldScenarios": [
+    "Surgery discontinued mid-procedure due to patient complications",
+    "Recurring physical therapy sessions stopped due to patient recovery",
+    "Ongoing clinical trial appointments discontinued due to adverse effects",
+    "Series of chemotherapy treatments halted per oncologist decision",
+    "Long-term monitoring appointments discontinued after condition resolution",
+    "Dialysis session stopped early due to patient distress"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "MSH.9": "SIU^S16",
+    "SCH.1": "Appointment ID being discontinued",
+    "SCH.2": "Filler appointment ID",
+    "SCH.6": "Event reason code (typically 'DISCONTINUED')",
+    "SCH.11.4": "Discontinuation date/time",
+    "SCH.25": "Filler status code (Discontinued)",
+    "NTE": "Reason for discontinuation often included",
+    "AIS": "Service discontinuation details if applicable",
+    "AIG": "Resource group discontinuation if applicable",
+    "AIL": "Location discontinuation if applicable",
+    "AIP": "Personnel discontinuation if applicable",
+    "requiredDataQuality": "Critical - discontinuation affects patient safety, billing, and resource planning"
   }
 }

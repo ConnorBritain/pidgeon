@@ -1,27 +1,285 @@
 {
   "segment": "PD1",
-  "name": "TODO: Define segment name for PD1",
-  "description": "TODO: Define description for PD1 segment",
+  "name": "Patient Additional Demographic",
+  "description": "The Patient Additional Demographic segment (PD1) contains demographic information that is likely to change about the patient. This segment is particularly important for ADT (Admit, Discharge, Transfer) workflows and includes information such as primary care provider, patient primary facility, student indicator, handicap, living will status, organ donor status, separate bill, duplicate patient indicator, and publicity code. The PD1 segment supplements the basic demographic information provided in the PID segment with additional healthcare-specific demographic details.",
   "standard": "hl7v23",
   "version": "2.3",
-  "usage": "TODO",
+  "usage": "O",
   "cardinality": {
     "min": 0,
     "max": 1,
-    "note": "TODO: Define cardinality rules"
+    "note": "Optional segment providing additional patient demographics beyond PID"
   },
-  "messageTypes": ["TODO: Define message types"],
+  "messageTypes": ["ADT^A01", "ADT^A02", "ADT^A03", "ADT^A04", "ADT^A05", "ADT^A06", "ADT^A07", "ADT^A08", "ADT^A09", "ADT^A10", "ADT^A11", "ADT^A12", "ADT^A13", "ADT^A14", "ADT^A15", "ADT^A16", "ADT^A17", "ADT^A18", "ADT^A21", "ADT^A22", "ADT^A23", "ADT^A25", "ADT^A26", "ADT^A27", "ADT^A28", "ADT^A29", "ADT^A31", "ADT^A32", "ADT^A33", "ADT^A37", "ADT^A38", "ADT^A44", "ADT^A45", "ADT^A47", "ADT^A49", "ADT^A50", "ADT^A51", "ADT^A52", "ADT^A53", "ADT^A54", "ADT^A55"],
   "fields": {
-    "TODO": "Complete field definitions needed"
+    "PD1.1": {
+      "name": "Living Dependency",
+      "description": "This field contains a code defining the living dependency of the patient (e.g., spouse dependent, medical supervision required, small children dependent).",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "SP", "description": "Spouse dependent"},
+        {"code": "M", "description": "Medical supervision required"},
+        {"code": "C", "description": "Small children dependent"},
+        {"code": "S", "description": "Spouse dependent"},
+        {"code": "N", "description": "Not applicable"},
+        {"code": "U", "description": "Unknown"},
+        {"code": "O", "description": "Other"}
+      ],
+      "generationHint": "Use N (not applicable) for most cases, SP for married patients with dependent spouse"
+    },
+    "PD1.2": {
+      "name": "Living Arrangement",
+      "description": "This field contains a code defining the living arrangement of the patient (e.g., alone, family, institution, relative, spouse only).",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "A", "description": "Alone"},
+        {"code": "F", "description": "Family"},
+        {"code": "I", "description": "Institution"},
+        {"code": "R", "description": "Relative"},
+        {"code": "S", "description": "Spouse only"},
+        {"code": "U", "description": "Unknown"}
+      ],
+      "generationHint": "F (family) most common, A (alone) for elderly, I (institution) for nursing homes"
+    },
+    "PD1.3": {
+      "name": "Patient Primary Facility",
+      "description": "This field contains the patient's primary healthcare facility. This is useful when a patient is seen at multiple facilities within a healthcare system.",
+      "dataType": "XON",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Primary care clinic or main hospital where patient receives most care"
+    },
+    "PD1.4": {
+      "name": "Patient Primary Care Provider Name & ID No.",
+      "description": "This field contains the patient's primary care provider. This is the healthcare provider responsible for the overall care of the patient.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Family medicine physician, internist, or pediatrician serving as PCP"
+    },
+    "PD1.5": {
+      "name": "Student Indicator",
+      "description": "This field indicates whether the patient is a student. This information can be important for billing and insurance purposes.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "F", "description": "Full-time student"},
+        {"code": "P", "description": "Part-time student"},
+        {"code": "N", "description": "Not a student"}
+      ],
+      "generationHint": "N for most patients, F for college-age patients, P for adult learners"
+    },
+    "PD1.6": {
+      "name": "Handicap",
+      "description": "This field indicates the patient's handicap status or disability. This information is important for care planning and facility accommodations.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes - handicapped"},
+        {"code": "N", "description": "No - not handicapped"},
+        {"code": "U", "description": "Unknown"}
+      ],
+      "generationHint": "N for most patients, Y for patients requiring accessibility accommodations"
+    },
+    "PD1.7": {
+      "name": "Living Will Code",
+      "description": "This field indicates whether the patient has a living will and the status of that living will.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes - has living will"},
+        {"code": "N", "description": "No - no living will"},
+        {"code": "U", "description": "Unknown"},
+        {"code": "I", "description": "No - but information was provided"}
+      ],
+      "generationHint": "U for most patients, Y for elderly patients, N with specific documentation"
+    },
+    "PD1.8": {
+      "name": "Organ Donor Code",
+      "description": "This field indicates whether the patient is an organ donor.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes - organ donor"},
+        {"code": "N", "description": "No - not an organ donor"},
+        {"code": "U", "description": "Unknown"},
+        {"code": "F", "description": "Yes - but family can override"}
+      ],
+      "generationHint": "U for most cases, Y for younger adult patients, N for patients with religious restrictions"
+    },
+    "PD1.9": {
+      "name": "Separate Bill",
+      "description": "This field indicates whether the patient should receive a separate bill for services.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes - separate bill"},
+        {"code": "N", "description": "No - consolidated bill"}
+      ],
+      "generationHint": "N for most patients, Y for patients with special billing arrangements"
+    },
+    "PD1.10": {
+      "name": "Duplicate Patient",
+      "description": "This field indicates whether this patient record is a duplicate of another patient record in the system.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Usually empty unless patient record consolidation is needed"
+    },
+    "PD1.11": {
+      "name": "Publicity Code",
+      "description": "This field contains a user-defined code to indicate what level of publicity is allowed (e.g., No Publicity, Family Only).",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "F", "description": "Family only"},
+        {"code": "N", "description": "No publicity"},
+        {"code": "O", "description": "Other"},
+        {"code": "U", "description": "Unknown"}
+      ],
+      "generationHint": "F for most patients, N for high-profile patients or sensitive cases"
+    },
+    "PD1.12": {
+      "name": "Protection Indicator",
+      "description": "This field indicates whether the patient is in a protection program (e.g., witness protection).",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes - protected"},
+        {"code": "N", "description": "No - not protected"}
+      ],
+      "generationHint": "N for virtually all patients, Y only for special protection cases"
+    }
   },
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": {
+      "commonFields": ["PD1.3", "PD1.4", "PD1.5", "PD1.7", "PD1.8", "PD1.11"],
+      "extensions": ["Primary care clinic linkage", "MyChart portal preferences", "Patient portal communications"],
+      "notes": "Epic emphasizes primary care provider relationships and patient portal integration"
+    },
+    "cerner": {
+      "commonFields": ["PD1.2", "PD1.3", "PD1.4", "PD1.6", "PD1.7", "PD1.8"],
+      "extensions": ["Care team assignments", "Health maintenance tracking", "Patient engagement metrics"],
+      "notes": "Cerner focuses on care coordination and health maintenance workflows"
+    },
+    "allscripts": {
+      "commonFields": ["PD1.4", "PD1.5", "PD1.7", "PD1.8"],
+      "extensions": ["Basic demographics supplementation", "Insurance coordination"],
+      "notes": "Allscripts provides essential demographic supplementation for practice management"
+    },
+    "nextgen": {
+      "commonFields": ["PD1.3", "PD1.4", "PD1.5", "PD1.9"],
+      "extensions": ["Practice-specific customizations", "Billing arrangement tracking"],
+      "notes": "NextGen emphasizes practice workflow and billing process integration"
+    }
   },
   "crossReferences": {
-    "fhir": ["TODO: Map to FHIR resources"],
-    "related": ["TODO: Identify related segments"]
+    "fhir": [
+      "Patient.generalPractitioner",
+      "Patient.managingOrganization",
+      "Patient.contact",
+      "Patient.extension.living-will",
+      "Patient.extension.organ-donor",
+      "Patient.extension.student-status",
+      "Patient.extension.disability-status"
+    ],
+    "related": ["PID", "PV1", "PV2", "GT1", "IN1", "NOK"]
   },
+  "examples": [
+    "PD1||F|12345^MAIN HOSPITAL^L|67890^SMITH^JOHN^A^MD^DR|F|N|Y|Y|N||F|N",
+    "PD1|SP~C|A|98765^COMMUNITY CLINIC^L|11111^JOHNSON^MARY^B^MD^DR|N|Y|U|N|N||N|N",
+    "PD1||I|55555^NURSING HOME^L|22222^BROWN^ROBERT^C^MD^DR|N|Y|Y|U|Y||F|Y"
+  ],
+  "notes": [
+    "PD1 segment is optional but provides valuable supplemental patient information",
+    "Primary care provider information (PD1.4) is crucial for care coordination",
+    "Living will and organ donor status (PD1.7, PD1.8) are important for end-of-life planning",
+    "Student indicator (PD1.5) affects insurance and billing processing",
+    "Handicap information (PD1.6) is essential for facility planning and accommodations",
+    "Publicity code (PD1.11) is important for patient privacy and media relations"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "fieldPopulation": {
+      "required": [],
+      "recommended": ["PD1.3", "PD1.4"],
+      "situational": ["PD1.5", "PD1.6", "PD1.7", "PD1.8", "PD1.11", "PD1.12"]
+    },
+    "dataConsistency": {
+      "livingArrangement": "Should align with patient age and social situation",
+      "studentStatus": "Should align with patient age (typically 16-30 for active students)",
+      "primaryCareProvider": "Should be active provider with appropriate specialty",
+      "livingWill": "More common in patients over 65 or with serious medical conditions"
+    },
+    "businessRules": {
+      "primaryFacility": "Should match the healthcare system where PCP practices",
+      "organDonor": "May have religious or cultural constraints",
+      "protectionIndicator": "Requires special security protocols when Y",
+      "publicityCode": "Affects visitor policies and information sharing",
+      "separateBill": "Requires coordination with billing and insurance systems"
+    },
+    "messageFlow": {
+      "triggers": ["Patient registration", "Demographic updates", "PCP changes", "Care transitions"],
+      "responses": ["Registration confirmations", "Care team notifications", "Billing system updates"],
+      "workflow": "Typically follows PID segment in ADT messages for comprehensive patient demographics"
+    }
   }
 }

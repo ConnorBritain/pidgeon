@@ -1,22 +1,77 @@
 {
   "table": "0201",
-  "name": "TODO: Define table name for 0201",
-  "description": "TODO: Define description for table 0201",
+  "name": "Telecommunication Use Code",
+  "description": "Codes specifying the primary use or purpose of a telecommunication number for proper routing and context",
   "standard": "hl7v23",
-  "version": "2.3", 
-  "type": "TODO: user_defined|hl7_defined",
+  "version": "2.3",
+  "type": "hl7_defined",
   "values": [
     {
-      "code": "TODO", 
-      "description": "TODO: Add all valid codes and descriptions",
-      "definition": "TODO: Define meaning"
+      "code": "PRN",
+      "description": "Primary Residence Number",
+      "definition": "Primary home telephone number for the person"
+    },
+    {
+      "code": "ORN",
+      "description": "Other Residence Number",
+      "definition": "Alternative or secondary home telephone number"
+    },
+    {
+      "code": "WPN",
+      "description": "Work Number",
+      "definition": "Primary business or work telephone number"
+    },
+    {
+      "code": "VHN",
+      "description": "Vacation Home Number",
+      "definition": "Telephone number at vacation or secondary residence"
+    },
+    {
+      "code": "ASN",
+      "description": "Answering Service Number",
+      "definition": "Number for answering service or message center"
+    },
+    {
+      "code": "EMR",
+      "description": "Emergency Number",
+      "definition": "Emergency contact telephone number"
+    },
+    {
+      "code": "NET",
+      "description": "Network (email) Address",
+      "definition": "Email address or network communication identifier"
+    },
+    {
+      "code": "BPN",
+      "description": "Beeper Number",
+      "definition": "Pager or beeper communication number"
+    },
+    {
+      "code": "PRS",
+      "description": "Person",
+      "definition": "Personal telecommunications device"
     }
   ],
-  "usedIn": ["TODO: List segments.fields that reference this table"],
+  "usedIn": [
+    "XTN.2",
+    "TN.2"
+  ],
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": "Supports standard codes with additional internal categorization for mobile devices",
+    "cerner": "Standard implementation with validation for common telecommunications types",
+    "allscripts": "Supports primary codes (PRN, WPN, EMR, NET)"
   },
   "generationRules": {
-    "TODO": "Define realistic distribution for synthetic data"
+    "distribution": {
+      "PRN": 0.35,
+      "WPN": 0.25,
+      "NET": 0.20,
+      "EMR": 0.10,
+      "ORN": 0.05,
+      "BPN": 0.03,
+      "ASN": 0.01,
+      "VHN": 0.01
+    },
+    "realistic": "Primary residence and work numbers are most common, email addresses increasingly important, emergency contacts for high-priority patients"
   }
 }

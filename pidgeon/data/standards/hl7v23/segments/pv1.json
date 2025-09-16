@@ -332,6 +332,19 @@
       "generationHint": "Format: <financial_class>^<effective_date>, common: I^, M^, D^"
     }
   },
+  "examples": [
+    "PV1|1|I|ICU^201^A^MAIN^O||PA123456|ER^101^1^MAIN^V|12345^SMITH^JOHN^MD|67890^JONES^MARY^MD||MED|OR^3^1^MAIN^T|Y||1|A0||54321^BROWN^DAVID^MD||V123456789^^^VN|I^",
+    "PV1|1|O|CLINIC^A^1^WEST^O|||11111^DOE^JANE^MD|22222^WILSON^BOB^MD||CAR||||7||||V987654321^^^VN|P^",
+    "PV1|1|E|ER^TRAUMA^1^MAIN^O|||33333^GARCIA^MARIA^MD|||ER||||7|A1||44444^TAYLOR^CHRIS^MD||V555666777^^^VN|I^",
+    "PV1||I|MED^305^B^EAST^O||||||MED||||||||||||"
+  ],
+  "notes": [
+    "PV1 segment is required for all ADT message types involving patient visits",
+    "PV1.2 (Patient Class) is the only required field in HL7 v2.3",
+    "PV1.3 (Assigned Patient Location) should be populated for inpatient admits",
+    "Physician fields (PV1.7, PV1.8, PV1.17) can be repeated for multiple doctors",
+    "Location format uses ^-delimited components: unit^room^bed^facility^status"
+  ],
   "crossReferences": {
     "fhir": [
       "Encounter.class",

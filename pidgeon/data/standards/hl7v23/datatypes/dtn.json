@@ -1,17 +1,79 @@
 {
   "dataType": "DTN",
-  "name": "TODO: Define data type name for DTN", 
-  "description": "TODO: Define description for DTN data type",
+  "name": "Day Type and Number",
+  "description": "The DTN data type is used to represent specific days with numeric values, commonly used for scheduling, billing cycles, and temporal calculations in healthcare environments. It combines day type classification with associated numeric values to support complex scheduling algorithms, billing period calculations, and calendar-based healthcare operations. DTN enables precise specification of day-based rules and calculations essential for healthcare workflow management and financial operations.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "DTN.1": {
+      "name": "Day Type",
+      "dataType": "IS",
+      "description": "Specifies the type or classification of the day (e.g., weekday, weekend, holiday, business day). Determines how the day should be treated in scheduling and calculation algorithms.",
+      "length": 20,
+      "usage": "optional",
+      "position": 1,
+      "table": "0149"
+    },
+    "DTN.2": {
+      "name": "Number of Days",
+      "dataType": "NM",
+      "description": "The numeric value associated with the day type, such as number of days in a period, day sequence number, or calculation factor. Used for temporal calculations and scheduling algorithms.",
+      "length": 3,
+      "usage": "optional",
+      "position": 2
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 23,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "dayType": "Day type should reference valid values from table 0149",
+    "numericValidation": "Number of days should be a valid numeric value appropriate for the context",
+    "logicalConsistency": "Day type and numeric value should form a logical combination"
+  },
+  "usage": [
+    "Healthcare scheduling algorithms and calendar calculations",
+    "Billing cycle definitions and financial period calculations",
+    "Appointment scheduling rules and availability calculations",
+    "Treatment regimen scheduling and medication timing",
+    "Staff scheduling and workforce management algorithms",
+    "Healthcare facility operating schedule definitions"
+  ],
+  "examples": [
+    "WEEKDAY^5",
+    "WEEKEND^2",
+    "BUSINESS^22",
+    "HOLIDAY^1",
+    "CALENDAR^30",
+    "WORKING^21"
+  ],
+  "commonFields": [
+    "Scheduling rule definitions in appointment systems",
+    "Billing cycle specifications in financial systems",
+    "Treatment frequency calculations in medication orders",
+    "Staff scheduling patterns and rotation definitions",
+    "Healthcare facility calendar and operating schedule rules",
+    "Insurance billing period and coverage calculations"
+  ],
+  "generationHints": {
+    "typical": "Use realistic day type and number combinations appropriate for healthcare scheduling",
+    "dayTypes": ["WEEKDAY", "WEEKEND", "BUSINESS", "HOLIDAY", "CALENDAR", "WORKING"],
+    "numbers": "Use appropriate numeric values (1-31 for days, 5 for weekdays, 2 for weekends)",
+    "context": "Ensure day type and number combinations make logical sense for healthcare operations",
+    "realistic": "Generate values that would be used in actual healthcare scheduling and billing systems"
+  },
+  "relatedDataTypes": {
+    "IS": "Coded Value - used for day type component",
+    "NM": "Numeric - used for number of days component",
+    "DT": "Date - alternative for specific date representations",
+    "TS": "Time Stamp - related to specific date and time specifications",
+    "DR": "Date/Time Range - related to date range calculations"
+  },
+  "implementationNotes": {
+    "scheduling": "Supports complex scheduling algorithms and calendar-based calculations",
+    "billing": "Enables precise billing cycle and financial period calculations",
+    "flexibility": "Accommodates various healthcare scheduling and temporal calculation needs",
+    "validation": "Validate day type codes against specified HL7 tables for consistency",
+    "algorithms": "Design algorithms to handle different day type classifications appropriately"
   }
 }

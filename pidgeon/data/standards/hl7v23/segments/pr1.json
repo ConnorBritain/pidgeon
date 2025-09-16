@@ -1,27 +1,311 @@
 {
   "segment": "PR1",
-  "name": "TODO: Define segment name for PR1",
-  "description": "TODO: Define description for PR1 segment",
+  "name": "Procedures",
+  "description": "The Procedures segment (PR1) contains information about patient procedures including surgical procedures, therapeutic procedures, and diagnostic procedures. This segment is essential for clinical documentation, billing, quality reporting, and care coordination. It provides detailed procedure coding using standard medical coding systems.",
   "standard": "hl7v23",
   "version": "2.3",
-  "usage": "TODO",
+  "usage": "O",
   "cardinality": {
     "min": 0,
     "max": 1,
-    "note": "TODO: Define cardinality rules"
+    "note": "PR1 provides procedure details when procedures are performed"
   },
-  "messageTypes": ["TODO: Define message types"],
+  "messageTypes": ["ADT^A01", "ADT^A04", "ADT^A08", "DFT^P03", "ORU^R01", "SIU^S12"],
   "fields": {
-    "TODO": "Complete field definitions needed"
+    "PR1.1": {
+      "name": "Set ID - PR1",
+      "description": "This field contains the set ID for the PR1 segment. It is used to identify different PR1 segments within a message.",
+      "dataType": "SI",
+      "usage": "O",
+      "maxLength": 4,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Sequential number starting at 1 for each procedure",
+      "example": "1"
+    },
+    "PR1.2": {
+      "name": "Procedure Coding Method",
+      "description": "This field contains the coding method used for the procedure code in PR1.3.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["ICD9CM", "ICD10PCS", "CPT4", "HCPCS", "SNOMED"],
+      "generationHint": "Use standard procedure coding system",
+      "example": "CPT4"
+    },
+    "PR1.3": {
+      "name": "Procedure Code",
+      "description": "This field contains the actual procedure code using the coding method specified in PR1.2.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {"min": 1, "max": 1},
+      "validValues": ["CPT codes", "ICD-10-PCS codes", "HCPCS codes"],
+      "generationHint": "Use appropriate procedure code with description",
+      "example": "99213^Office Visit Established Patient^CPT4"
+    },
+    "PR1.4": {
+      "name": "Procedure Description",
+      "description": "This field contains a free text description of the procedure.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 40,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Human-readable procedure description",
+      "example": "Routine Follow-up Visit"
+    },
+    "PR1.5": {
+      "name": "Procedure Date/Time",
+      "description": "This field contains the date and time when the procedure was performed.",
+      "dataType": "TS",
+      "usage": "R",
+      "maxLength": 26,
+      "cardinality": {"min": 1, "max": 1},
+      "generationHint": "Format: YYYYMMDDHHMMSS for precise procedure timing",
+      "example": "20230315143000"
+    },
+    "PR1.6": {
+      "name": "Procedure Functional Type",
+      "description": "This field indicates the functional type or purpose of the procedure.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["A", "D", "E", "L", "P", "T"],
+      "generationHint": "A=Anesthesia, D=Diagnostic, E=Emergency, L=Laboratory, P=Primary, T=Therapeutic",
+      "example": "D"
+    },
+    "PR1.7": {
+      "name": "Procedure Minutes",
+      "description": "This field contains the duration of the procedure in minutes.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 4,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Integer representing procedure duration",
+      "example": "45"
+    },
+    "PR1.8": {
+      "name": "Anesthesiologist",
+      "description": "This field identifies the anesthesiologist who provided anesthesia for the procedure.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Anesthesiologist identifier in XCN format",
+      "example": "67890^Williams^David^M^^^MD^NPI^1111111111"
+    },
+    "PR1.9": {
+      "name": "Anesthesia Code",
+      "description": "This field contains the code for the type of anesthesia used during the procedure.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["G", "L", "N", "R", "S"],
+      "generationHint": "G=General, L=Local, N=None, R=Regional, S=Spinal",
+      "example": "L"
+    },
+    "PR1.10": {
+      "name": "Anesthesia Minutes",
+      "description": "This field contains the duration of anesthesia in minutes.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 4,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Integer representing anesthesia duration",
+      "example": "60"
+    },
+    "PR1.11": {
+      "name": "Surgeon",
+      "description": "This field identifies the primary surgeon who performed the procedure.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Primary surgeon identifier in XCN format",
+      "example": "12345^Smith^John^A^^^MD^NPI^1234567890"
+    },
+    "PR1.12": {
+      "name": "Procedure Practitioner",
+      "description": "This field identifies other practitioners involved in the procedure.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Additional practitioner identifier in XCN format",
+      "example": "54321^Johnson^Sarah^M^^^MD^NPI^9876543210"
+    },
+    "PR1.13": {
+      "name": "Consent Code",
+      "description": "This field indicates the type of consent obtained for the procedure.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["WRITTEN", "VERBAL", "IMPLIED", "EMERGENCY"],
+      "generationHint": "Type of consent obtained",
+      "example": "WRITTEN^Written Consent^CONSENT_TYPE"
+    },
+    "PR1.14": {
+      "name": "Procedure Priority",
+      "description": "This field indicates the priority level of the procedure.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["E", "R", "S", "T", "U"],
+      "generationHint": "E=Emergency, R=Routine, S=Stat, T=Timing Critical, U=Urgent",
+      "example": "R"
+    },
+    "PR1.15": {
+      "name": "Associated Diagnosis Code",
+      "description": "This field contains diagnosis codes associated with or justifying the procedure.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["ICD-10-CM codes", "ICD-9-CM codes"],
+      "generationHint": "Principal or associated diagnosis",
+      "example": "Z51.11^Encounter for chemotherapy^ICD10"
+    },
+    "PR1.16": {
+      "name": "Procedure DRG Type",
+      "description": "This field indicates the DRG type used for procedure classification.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["MS-DRG", "APR-DRG", "AP-DRG"],
+      "generationHint": "DRG classification system",
+      "example": "MS-DRG"
+    },
+    "PR1.17": {
+      "name": "Tissue Type Code",
+      "description": "This field contains codes for tissue types involved in the procedure.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["SNOMED CT tissue codes", "Local tissue codes"],
+      "generationHint": "Tissue classification for pathology",
+      "example": "85756007^Tissue sample^SNOMED"
+    },
+    "PR1.18": {
+      "name": "Procedure Identifier",
+      "description": "This field contains a unique identifier for the specific procedure instance.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Unique procedure instance identifier",
+      "example": "PROC20230315001^HOSPITAL_SYSTEM"
+    },
+    "PR1.19": {
+      "name": "Procedure Action Code",
+      "description": "This field indicates what action is being taken with this procedure record.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["A", "D", "U", "X"],
+      "generationHint": "A=Add, D=Delete, U=Update, X=No change",
+      "example": "A"
+    }
   },
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": {
+      "commonFields": ["PR1.1", "PR1.3", "PR1.5", "PR1.11", "PR1.15"],
+      "extensions": ["Enhanced CPT coding", "Real-time coding validation", "Integrated billing"],
+      "notes": "Epic provides comprehensive procedure coding with built-in compliance checking"
+    },
+    "cerner": {
+      "commonFields": ["PR1.1", "PR1.3", "PR1.5", "PR1.7", "PR1.11", "PR1.18"],
+      "extensions": ["Automated documentation", "Procedure templates", "Outcome tracking"],
+      "notes": "Cerner emphasizes automation and standardized procedure documentation"
+    },
+    "meditech": {
+      "commonFields": ["PR1.3", "PR1.5", "PR1.11", "PR1.14", "PR1.15"],
+      "extensions": ["Priority-based scheduling", "Resource allocation", "Cost tracking"],
+      "notes": "Meditech focuses on scheduling optimization and resource management"
+    }
   },
   "crossReferences": {
-    "fhir": ["TODO: Map to FHIR resources"],
-    "related": ["TODO: Identify related segments"]
+    "fhir": [
+      "Procedure.identifier",
+      "Procedure.status",
+      "Procedure.code",
+      "Procedure.subject",
+      "Procedure.performedDateTime",
+      "Procedure.performer",
+      "Procedure.reasonCode",
+      "Procedure.note",
+      "Procedure.focalDevice",
+      "Procedure.usedReference"
+    ],
+    "related": [
+      "PID (Patient Identification)",
+      "PV1 (Patient Visit)",
+      "DG1 (Diagnosis)",
+      "OBX (Observation/Result)",
+      "DRG (Diagnosis Related Group)",
+      "GT1 (Guarantor)",
+      "IN1 (Insurance)"
+    ]
   },
+  "examples": [
+    {
+      "name": "Routine Office Visit",
+      "segment": "PR1|1|CPT4|99213^Office Visit Established Patient^CPT4|Routine Follow-up|20230315143000|D|15||N||12345^Smith^John^A^^^MD^NPI^1234567890|||R|I10^Essential Hypertension^ICD10|||VISIT20230315001^CLINIC_SYSTEM|A",
+      "description": "Standard outpatient office visit with hypertension follow-up"
+    },
+    {
+      "name": "Surgical Procedure",
+      "segment": "PR1|1|CPT4|47562^Laparoscopic Cholecystectomy^CPT4|Minimally Invasive Gallbladder Removal|20230315083000|P|180|67890^Williams^David^M^^^MD^NPI^1111111111|G|200|54321^Johnson^Sarah^M^^^MD^NPI^9876543210|78901^Brown^Lisa^K^^^MD^NPI^2222222222|WRITTEN^Written Consent^CONSENT_TYPE|R|K80.20^Cholelithiasis^ICD10|MS-DRG||SURG20230315001^HOSPITAL_SYSTEM|A",
+      "description": "Laparoscopic gallbladder surgery with general anesthesia and multiple practitioners"
+    },
+    {
+      "name": "Emergency Procedure",
+      "segment": "PR1|1|CPT4|36415^Venipuncture^CPT4|Blood Draw for Labs|20230315201500|D|5||N||11111^Davis^Robert^C^^^RN^NPI^3333333333|||E|R06.02^Shortness of Breath^ICD10|||EMRG20230315001^ER_SYSTEM|A",
+      "description": "Emergency venipuncture for diagnostic workup"
+    },
+    {
+      "name": "Complex Cardiovascular Procedure",
+      "segment": "PR1|1|CPT4|92982^Percutaneous Coronary Intervention^CPT4|Cardiac Catheterization with Stent|20230315100000|P|240|89012^Thompson^Mark^J^^^MD^NPI^4444444444|L|260|23456^Anderson^Patricia^L^^^MD^NPI^5555555555|34567^Wilson^James^R^^^MD^NPI^6666666666|WRITTEN^Written Consent^CONSENT_TYPE|U|I25.10^Coronary Artery Disease^ICD10|MS-DRG|24000007^Coronary Vessel^SNOMED|CARD20230315001^CATH_LAB|A",
+      "description": "Cardiac catheterization with coronary stent placement"
+    }
+  ],
+  "notes": [
+    "PR1 segments are essential for clinical documentation and billing workflows",
+    "Procedure codes must align with current coding standards (CPT, ICD-10-PCS, HCPCS)",
+    "Multiple PR1 segments may be used for multiple procedures during a single encounter",
+    "Timing information is critical for surgical scheduling and resource allocation",
+    "Anesthesia details support billing and clinical continuity requirements",
+    "Associated diagnosis codes justify medical necessity for procedures",
+    "Practitioner identification ensures proper crediting and liability tracking"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "fieldPopulation": {
+      "required": ["PR1.3", "PR1.5"],
+      "recommended": ["PR1.1", "PR1.4", "PR1.6", "PR1.11", "PR1.15"],
+      "situational": ["PR1.8", "PR1.9", "PR1.10", "PR1.12", "PR1.13"]
+    },
+    "dataConsistency": {
+      "procedureCodeMethod": "PR1.2 and PR1.3 must use compatible coding systems",
+      "timingValidation": "PR1.5 should align with visit dates and scheduling",
+      "anesthesiaCoherence": "PR1.8, PR1.9, PR1.10 should be consistent when anesthesia is used",
+      "practitionerValidation": "All practitioner fields should use valid provider identifiers"
+    },
+    "businessRules": {
+      "codingCompliance": "Procedure codes must be current and billable",
+      "consentRequirements": "Invasive procedures typically require documented consent",
+      "anesthesiaDocumentation": "Surgical procedures often require anesthesia details",
+      "diagnosisJustification": "Procedures should have supporting diagnosis codes"
+    },
+    "messageFlow": {
+      "triggers": ["Procedure scheduling", "Procedure completion", "Billing submission"],
+      "responses": ["Clinical documentation", "Billing records", "Quality reporting"],
+      "workflow": "Usually accompanies ADT messages or stands alone in procedure-focused messages"
+    }
   }
 }

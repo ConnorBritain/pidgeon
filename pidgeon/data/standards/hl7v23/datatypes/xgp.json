@@ -1,17 +1,112 @@
 {
   "dataType": "XGP",
-  "name": "TODO: Define data type name for XGP", 
-  "description": "TODO: Define description for XGP data type",
+  "name": "General Purpose",
+  "description": "The XGP data type is a flexible, general-purpose composite data type designed to accommodate various structured data requirements that are not covered by other specific HL7 data types. It provides a framework for representing custom or specialized data structures while maintaining HL7 message integrity and interoperability. XGP enables healthcare systems to extend HL7 messaging capabilities for unique organizational needs, vendor-specific requirements, and evolving healthcare data standards.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "XGP.1": {
+      "name": "Set ID",
+      "dataType": "SI",
+      "description": "Sequential identifier for multiple instances of the general purpose data type within a message. Enables ordering and identification of repeated XGP elements.",
+      "length": 4,
+      "usage": "optional",
+      "position": 1
+    },
+    "XGP.2": {
+      "name": "Data Type",
+      "dataType": "ID",
+      "description": "Identifies the specific type or category of data being represented. Provides context for interpreting the remaining components appropriately.",
+      "length": 20,
+      "usage": "optional",
+      "position": 2,
+      "table": "0499"
+    },
+    "XGP.3": {
+      "name": "Data Value",
+      "dataType": "ST",
+      "description": "The primary data value or content. This component contains the main information being conveyed in the general purpose structure.",
+      "length": 999,
+      "usage": "optional",
+      "position": 3
+    },
+    "XGP.4": {
+      "name": "Data Description",
+      "dataType": "ST",
+      "description": "Human-readable description or label for the data value. Provides context and meaning for understanding the data content.",
+      "length": 199,
+      "usage": "optional",
+      "position": 4
+    },
+    "XGP.5": {
+      "name": "Data Source",
+      "dataType": "ST",
+      "description": "Identifies the source system, application, or authority responsible for the data. Provides traceability and validation context.",
+      "length": 199,
+      "usage": "optional",
+      "position": 5
+    },
+    "XGP.6": {
+      "name": "Date/Time Stamp",
+      "dataType": "TS",
+      "description": "Timestamp indicating when the data was created, modified, or became effective. Supports temporal tracking and versioning.",
+      "length": 26,
+      "usage": "optional",
+      "position": 6
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 1447,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "dataType": "Data type should reference valid values from table 0499 when applicable",
+    "flexibility": "Structure should accommodate various data requirements while maintaining interoperability",
+    "documentation": "Data description should provide sufficient context for interpretation",
+    "traceability": "Data source should enable validation and accountability"
+  },
+  "usage": [
+    "Vendor-specific extensions and custom data structures",
+    "Organization-specific healthcare metrics and quality indicators",
+    "Specialized clinical research and trial data collection",
+    "Custom reporting and analytics data requirements",
+    "Extended patient demographics and social determinants",
+    "Proprietary medical device and equipment data exchange"
+  ],
+  "examples": [
+    "1^QUALITY_METRIC^95.5^Patient Satisfaction Score^Survey System^20240315120000",
+    "2^RESEARCH_DATA^POSITIVE^Genetic Marker Status^Lab System^20240318080000",
+    "3^CUSTOM_FIELD^HIGH_RISK^Fall Risk Assessment^Clinical System^20240320100000",
+    "4^VENDOR_DATA^CATEGORY_A^Device Classification^Equipment DB^20240322140000",
+    "5^ANALYTICS^75.2^Readmission Risk Score^Predictive Model^20240325090000",
+    "6^EXTENSION^VALUE123^Custom Identifier^Local System^20240327110000"
+  ],
+  "commonFields": [
+    "Custom fields in vendor-specific message extensions",
+    "Organization-specific quality metrics and outcome measures",
+    "Research data collection and clinical trial information",
+    "Extended patient demographic and social determinant fields",
+    "Proprietary medical device data and equipment information",
+    "Custom reporting and analytics data requirements"
+  ],
+  "generationHints": {
+    "typical": "Use realistic data types and values appropriate for healthcare extensions",
+    "dataTypes": ["QUALITY_METRIC", "RESEARCH_DATA", "CUSTOM_FIELD", "VENDOR_DATA", "ANALYTICS", "EXTENSION"],
+    "values": "Generate contextually appropriate values based on the specified data type",
+    "descriptions": "Provide meaningful descriptions that explain the data purpose and content",
+    "sources": "Use realistic system names and data sources for healthcare environments"
+  },
+  "relatedDataTypes": {
+    "SI": "Sequence ID - used for set identification",
+    "ID": "Coded Value - used for data type specification",
+    "ST": "String - used for data value, description, and source components",
+    "TS": "Time Stamp - used for temporal tracking",
+    "CM": "Composite - similar general-purpose composite data type"
+  },
+  "implementationNotes": {
+    "flexibility": "Provides extensibility for unique healthcare data requirements",
+    "standardization": "Should be used judiciously to maintain HL7 interoperability",
+    "documentation": "Requires clear documentation for interpretation and implementation",
+    "governance": "Organizations should establish governance for XGP usage and data types",
+    "migration": "Consider migration to standard HL7 data types when available"
   }
 }

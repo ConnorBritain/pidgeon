@@ -1,22 +1,48 @@
 {
   "table": "0204",
-  "name": "TODO: Define table name for 0204",
-  "description": "TODO: Define description for table 0204",
+  "name": "Organizational Name Type",
+  "description": "Codes specifying the type or classification of an organizational name for proper identification and context",
   "standard": "hl7v23",
-  "version": "2.3", 
-  "type": "TODO: user_defined|hl7_defined",
+  "version": "2.3",
+  "type": "hl7_defined",
   "values": [
     {
-      "code": "TODO", 
-      "description": "TODO: Add all valid codes and descriptions",
-      "definition": "TODO: Define meaning"
+      "code": "A",
+      "description": "Alias name",
+      "definition": "Alternative or alias name for the organization"
+    },
+    {
+      "code": "L",
+      "description": "Legal name",
+      "definition": "Official legal name as registered with government authorities"
+    },
+    {
+      "code": "D",
+      "description": "Display name",
+      "definition": "Preferred name for display purposes"
+    },
+    {
+      "code": "SL",
+      "description": "Stock exchange listing name",
+      "definition": "Name used for stock exchange trading purposes"
     }
   ],
-  "usedIn": ["TODO: List segments.fields that reference this table"],
+  "usedIn": [
+    "XON.7",
+    "XCN.10"
+  ],
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": "Supports standard codes with additional internal organizational categorization",
+    "cerner": "Standard implementation with validation for common organization types",
+    "allscripts": "Supports primary codes (L, D, A)"
   },
   "generationRules": {
-    "TODO": "Define realistic distribution for synthetic data"
+    "distribution": {
+      "L": 0.50,
+      "D": 0.30,
+      "A": 0.15,
+      "SL": 0.05
+    },
+    "realistic": "Legal names most common for healthcare organizations, display names for user interfaces, aliases for known-as names"
   }
 }

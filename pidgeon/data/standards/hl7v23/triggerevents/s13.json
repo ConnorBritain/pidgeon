@@ -1,24 +1,52 @@
 {
   "triggerEvent": "S13",
-  "name": "TODO: Define trigger event name for S13",
-  "description": "TODO: Define description for S13 trigger event",
+  "name": "Notification of Appointment Rescheduling",
+  "description": "Notification sent when an existing appointment has been rescheduled to a different date or time",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "10",
+  "chapterName": "Scheduling",
+  "messageStructure": "SIU^S13",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "SCH"
+    ],
+    "optional": [
+      "NTE",
+      "PID",
+      "PV1",
+      "PV2",
+      "OBX",
+      "DG1",
+      "RGS",
+      "AIS",
+      "AIG",
+      "AIL",
+      "AIP"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Notify auxiliary applications and systems that an existing appointment has been moved to a different date/time slot",
+  "timing": "Sent immediately after an appointment is rescheduled to new date/time in the scheduling system",
+  "responseMessage": "ACK^S13^ACK",
+  "realWorldScenarios": [
+    "Patient requests appointment change due to schedule conflict",
+    "Provider reschedules due to emergency coverage needs",
+    "Surgery rescheduled due to equipment maintenance",
+    "Clinic appointment moved due to provider illness",
+    "Radiology appointment rescheduled for better preparation time",
+    "Follow-up visit moved earlier due to clinical urgency"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "MSH.9": "SIU^S13",
+    "SCH.1": "Original appointment ID being rescheduled",
+    "SCH.2": "Filler appointment ID",
+    "SCH.6": "Event reason code (typically 'RESCHEDULED')",
+    "SCH.11.4": "New start date/time",
+    "SCH.11.5": "New end date/time",
+    "SCH.25": "Filler status code (Rescheduled)",
+    "NTE": "Rescheduling reason/notes often included",
+    "originalDateTime": "Previous appointment date/time for reference",
+    "requiredDataQuality": "High - rescheduling accuracy critical for patient communication and resource management"
   }
 }

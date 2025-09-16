@@ -1,24 +1,67 @@
 {
   "triggerEvent": "M02",
-  "name": "TODO: Define trigger event name for M02",
-  "description": "TODO: Define description for M02 trigger event",
+  "name": "Master File - Staff Practitioner",
+  "description": "Master file updates for healthcare staff and practitioner information including credentials, privileges, and contact data",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "8",
+  "chapterName": "Master Files",
+  "messageStructure": "MFN^M02",
+  "hl7Reference": "HL7 v2.3 Chapter 8 Master Files - HL7.eu/HL7v2x/v23/std23",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "MFI",
+      "MFE",
+      "STF"
+    ],
+    "optional": [
+      "PRA",
+      "ORG"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Synchronize healthcare staff and practitioner master data across all clinical and administrative systems",
+  "timing": "Sent when staff information changes, including new hires, terminations, credential updates, or privilege modifications",
+  "responseMessage": "MFK^M02^MFK",
+  "standardNotes": [
+    "M02 specifically handles staff practitioner master file updates",
+    "STF segment contains core staff identification and demographic information",
+    "PRA segment contains practitioner-specific data including specialties and credentials",
+    "ORG segment provides organizational affiliation details",
+    "Critical for maintaining accurate provider directories and clinical access controls"
+  ],
+  "realWorldScenarios": [
+    "New physician hired and needs access to all clinical systems",
+    "Nurse practitioner receives additional certification requiring privilege updates",
+    "Physician changes contact information after office relocation",
+    "Staff member terminated and access needs to be revoked across systems",
+    "Locum physician temporary credentials activated for coverage period",
+    "Resident physician rotation requires updated department assignments"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "MSH.9": "MFN^M02",
+    "MFI.1": "Staff Practitioner master file identifier",
+    "MFI.3": "File-level event code (REP, UPD)",
+    "MFE.1": "Record-level event code (MAD, MUP, MDL)",
+    "MFE.4": "Primary key value (staff ID)",
+    "STF.1": "STF - Primary Key Value (Staff ID)",
+    "STF.2": "Staff ID Code",
+    "STF.3": "Staff Name",
+    "STF.4": "Staff Type",
+    "STF.5": "Sex",
+    "STF.6": "Date of Birth",
+    "PRA.1": "PRA - Primary Key Value (Set ID)",
+    "PRA.2": "Practitioner Group",
+    "PRA.3": "Practitioner Category",
+    "PRA.4": "Provider Billing",
+    "PRA.5": "Specialty",
+    "requiredDataQuality": "Critical - staff data accuracy affects patient safety, billing, and regulatory compliance",
+    "tableReferences": {
+      "MFI.3": "HL7-0178 (File Level Event Code)",
+      "MFE.1": "HL7-0180 (Record Level Event Code)",
+      "STF.4": "HL7-0182 (Staff Type)",
+      "STF.5": "HL7-0001 (Sex)",
+      "PRA.3": "HL7-0186 (Practitioner Category)"
+    }
   }
 }

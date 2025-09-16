@@ -1,17 +1,194 @@
 {
   "dataType": "XON",
-  "name": "TODO: Define data type name for XON", 
-  "description": "TODO: Define description for XON data type",
+  "name": "Extended Composite Name and Identification Number for Organizations",
+  "description": "The XON data type is used to identify organizations with comprehensive naming and identification capabilities. It provides detailed organization identification including names, ID numbers, type codes, and assigning authorities. XON supports complex organizational hierarchies, multiple identifier types, and various naming conventions commonly used in healthcare for hospitals, laboratories, pharmacies, insurance companies, and other healthcare entities.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "XON.1": {
+      "name": "Organization Name",
+      "dataType": "ST",
+      "description": "The name of the organization. This is the primary identifier by which the organization is commonly known.",
+      "length": 50,
+      "usage": "optional",
+      "position": 1
+    },
+    "XON.2": {
+      "name": "Organization Name Type Code",
+      "dataType": "IS",
+      "description": "Specifies the type of name being represented (e.g., legal name, display name, alias). Provides context for how the organization name should be interpreted.",
+      "length": 20,
+      "usage": "optional",
+      "position": 2,
+      "table": "0204"
+    },
+    "XON.3": {
+      "name": "ID Number",
+      "dataType": "NM",
+      "description": "A numeric identifier assigned to the organization by an assigning authority. Used for unique identification within a specific context.",
+      "length": 4,
+      "usage": "optional",
+      "position": 3
+    },
+    "XON.4": {
+      "name": "Identifier Check Digit",
+      "dataType": "ST",
+      "description": "Check digit for the ID number to verify accuracy. Used for validation of the organization identifier.",
+      "length": 1,
+      "usage": "optional",
+      "position": 4
+    },
+    "XON.5": {
+      "name": "Check Digit Scheme",
+      "dataType": "ID",
+      "description": "The algorithm used to generate the check digit. Specifies the validation method for the organization identifier.",
+      "length": 3,
+      "usage": "optional",
+      "position": 5,
+      "table": "0061"
+    },
+    "XON.6": {
+      "name": "Assigning Authority",
+      "dataType": "HD",
+      "description": "The organization or system that assigned the ID number. Hierarchic designator for the authority responsible for the identifier.",
+      "length": 227,
+      "usage": "optional",
+      "position": 6
+    },
+    "XON.7": {
+      "name": "Identifier Type Code",
+      "dataType": "ID",
+      "description": "Specifies the type of identifier being used (e.g., NPI, CLIA, DEA). Indicates the nature and purpose of the organization identifier.",
+      "length": 5,
+      "usage": "optional",
+      "position": 7,
+      "table": "0203"
+    },
+    "XON.8": {
+      "name": "Assigning Facility",
+      "dataType": "HD",
+      "description": "The specific facility or location within the assigning authority where the identifier was assigned. Provides additional context for identifier assignment.",
+      "length": 227,
+      "usage": "optional",
+      "position": 8
+    },
+    "XON.9": {
+      "name": "Name Representation Code",
+      "dataType": "ID",
+      "description": "Specifies the character set and encoding used for the organization name. Supports international character sets and naming conventions.",
+      "length": 1,
+      "usage": "optional",
+      "position": 9,
+      "table": "0465"
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 540,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "identification": "At least one of Organization Name or ID Number should be populated for meaningful identification",
+    "checkDigitLogic": "If check digit is present, check digit scheme should also be specified",
+    "authorityContext": "Assigning Authority provides essential context for identifier interpretation"
+  },
+  "usage": [
+    "Hospital and healthcare facility identification",
+    "Laboratory and diagnostic center names",
+    "Pharmacy and supplier organization details",
+    "Insurance company and payer identification",
+    "Regulatory and accreditation body references",
+    "Healthcare network and system identification"
+  ],
+  "examples": [
+    "GENERAL HOSPITAL^L^12345^9^MOD10^HOSPITAL_REG^NPI^^A",
+    "CITY LAB^D^^^^CLIA^CLIA123456^^A",
+    "MERCY MEDICAL CENTER^L^789^1^MOD11^STATE_REG^HOSPITAL^^A",
+    "CENTRAL PHARMACY^A^456^^^^DEA^DEA789^^A",
+    "BLUE CROSS BLUE SHIELD^L^^^^INSURANCE^PAYER123^^A"
+  ],
+  "commonFields": [
+    "MSH.3 - Sending Application organization",
+    "MSH.4 - Sending Facility organization",
+    "MSH.5 - Receiving Application organization",
+    "MSH.6 - Receiving Facility organization",
+    "OBR.15 - Specimen Source organization",
+    "Various organization identification fields throughout HL7 messages"
+  ],
+  "generationHints": {
+    "typical": "Use realistic healthcare organization names with appropriate identification numbers",
+    "hospitals": "General Hospital, Medical Center, Regional Medical, Community Hospital",
+    "labs": "Clinical Laboratory, Diagnostic Center, Pathology Associates, Reference Lab",
+    "pharmacies": "Community Pharmacy, Hospital Pharmacy, Retail Pharmacy, Specialty Pharmacy",
+    "identifierTypes": ["NPI", "CLIA", "DEA", "TIN", "STATE", "MEDICARE"],
+    "nameTypes": ["L - Legal", "D - Display", "A - Alias", "S - Stock Exchange"]
+  },
+  "organizationTypes": {
+    "hospitals": {
+      "description": "Acute care hospitals and medical centers",
+      "identifierTypes": ["NPI", "MEDICARE", "STATE"],
+      "namePatterns": ["General Hospital", "Medical Center", "Regional Medical", "Community Hospital"]
+    },
+    "laboratories": {
+      "description": "Clinical and diagnostic laboratories",
+      "identifierTypes": ["CLIA", "CAP", "NPI"],
+      "namePatterns": ["Clinical Laboratory", "Diagnostic Center", "Pathology Associates", "Reference Lab"]
+    },
+    "pharmacies": {
+      "description": "Retail and institutional pharmacies",
+      "identifierTypes": ["DEA", "NABP", "NPI"],
+      "namePatterns": ["Community Pharmacy", "Hospital Pharmacy", "Specialty Pharmacy"]
+    },
+    "insurance": {
+      "description": "Insurance companies and health plans",
+      "identifierTypes": ["PAYER", "TIN", "HIOS"],
+      "namePatterns": ["Blue Cross", "Health Plan", "Medical Insurance", "Managed Care"]
+    }
+  },
+  "nameTypes": {
+    "L": "Legal - official registered name of the organization",
+    "D": "Display - name commonly used for display purposes",
+    "A": "Alias - alternative name or doing business as (DBA) name",
+    "S": "Stock Exchange - name used for trading purposes",
+    "C": "Customary - name commonly used in practice"
+  },
+  "identifierTypes": {
+    "NPI": "National Provider Identifier - unique healthcare provider identification",
+    "CLIA": "Clinical Laboratory Improvement Amendments - laboratory certification number",
+    "DEA": "Drug Enforcement Administration - controlled substance registration",
+    "TIN": "Tax Identification Number - federal tax identifier",
+    "MEDICARE": "Medicare Provider Number - CMS provider identification",
+    "STATE": "State License Number - state-issued organizational license"
+  },
+  "validationRules": {
+    "minimumData": "Either XON.1 (Organization Name) or XON.3 (ID Number) should be populated",
+    "checkDigitConsistency": "If XON.4 is present, XON.5 should specify the validation algorithm",
+    "identifierValidation": "ID numbers should follow format rules for the specified identifier type",
+    "authorityValidation": "Assigning Authority should be valid and recognized organization",
+    "nameTypeValidation": "Name Type Code should reference valid table values"
+  },
+  "healthcareContext": {
+    "interoperability": "Essential for identifying healthcare organizations in message exchange",
+    "credentialing": "Supports organizational credentialing and verification processes",
+    "networking": "Enables identification of healthcare network participants",
+    "compliance": "Facilitates regulatory compliance and reporting requirements",
+    "billing": "Critical for healthcare billing and claims processing"
+  },
+  "relatedDataTypes": {
+    "XCN": "Extended Composite ID Number and Name for Persons - for individual identification",
+    "HD": "Hierarchic Designator - used for assigning authorities and facilities",
+    "CX": "Extended Composite ID - for patient identifiers",
+    "EI": "Entity Identifier - for general entity identification"
+  },
+  "implementationNotes": {
+    "flexibility": "Supports various organizational identification scenarios in healthcare",
+    "standardization": "Aligns with healthcare industry standards for organization identification",
+    "integration": "Facilitates integration with provider directories and organizational databases",
+    "scalability": "Designed to handle complex organizational hierarchies and relationships",
+    "international": "Supports international character sets for global healthcare organizations"
+  },
+  "regulatoryConsiderations": {
+    "hipaa": "Supports HIPAA-compliant organization identification",
+    "accreditation": "Accommodates various accreditation body requirements",
+    "licensing": "Supports state and federal licensing identification needs",
+    "certification": "Enables tracking of organizational certifications and credentials"
   }
 }

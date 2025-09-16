@@ -1,27 +1,293 @@
 {
   "segment": "ROL",
-  "name": "TODO: Define segment name for ROL",
-  "description": "TODO: Define description for ROL segment",
+  "name": "Role",
+  "description": "The Role segment (ROL) contains information about the functional roles played by the person identified in the previous segments. This segment is used across multiple message types to define provider roles and relationships, essential for care team coordination and accountability. The ROL segment can specify attending physicians, consulting physicians, referring physicians, primary care providers, nurses, and other healthcare team members. It provides critical information for understanding care relationships, billing responsibilities, and communication pathways within healthcare workflows.",
   "standard": "hl7v23",
   "version": "2.3",
-  "usage": "TODO",
+  "usage": "O",
   "cardinality": {
     "min": 0,
-    "max": 1,
-    "note": "TODO: Define cardinality rules"
+    "max": "*",
+    "note": "Multiple ROL segments can be used for different roles and relationships"
   },
-  "messageTypes": ["TODO: Define message types"],
+  "messageTypes": ["ADT^A01", "ADT^A02", "ADT^A03", "ADT^A04", "ADT^A05", "ADT^A06", "ADT^A07", "ADT^A08", "ADT^A09", "ADT^A10", "ADT^A11", "ADT^A12", "ADT^A13", "ADT^A14", "ADT^A15", "ADT^A16", "ADT^A17", "ADT^A18", "ADT^A21", "ADT^A22", "ADT^A23", "ADT^A25", "ADT^A26", "ADT^A27", "ADT^A28", "ADT^A29", "ADT^A31", "ADT^A32", "ADT^A33", "ADT^A37", "ADT^A38", "ADT^A44", "ADT^A45", "ADT^A47", "ADT^A49", "ADT^A50", "ADT^A51", "ADT^A52", "ADT^A53", "ADT^A54", "ADT^A55", "ORM^O01", "ORU^R01", "ORR^O02", "ORS^O06", "OMN^O07", "OMD^O03", "OMG^O19", "OML^O21", "SIU^S12", "SIU^S13", "SIU^S14", "SIU^S15", "SIU^S16", "SIU^S17", "SIU^S18", "SIU^S19", "SIU^S20", "SIU^S21", "SIU^S22", "SIU^S23", "SIU^S24", "SIU^S26"],
   "fields": {
-    "TODO": "Complete field definitions needed"
+    "ROL.1": {
+      "name": "Role Instance ID",
+      "description": "This field contains a unique identifier for this instance of the role relationship. This allows for tracking and updating specific role assignments.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "System-generated unique ID for role tracking: ROL<timestamp><sequence>"
+    },
+    "ROL.2": {
+      "name": "Action Code",
+      "description": "This field indicates what action is being taken with respect to this role (add, delete, update, no change).",
+      "dataType": "ID",
+      "usage": "R",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "AD", "description": "Add"},
+        {"code": "DE", "description": "Delete"},
+        {"code": "UP", "description": "Update"},
+        {"code": "UC", "description": "Unchanged"}
+      ],
+      "generationHint": "AD for new role assignments, UP for role changes, UC for existing roles"
+    },
+    "ROL.3": {
+      "name": "Role - ROL",
+      "description": "This field contains the functional role that the person specified in ROL.4 plays with respect to the patient.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "AT", "description": "Attending physician"},
+        {"code": "AD", "description": "Admitting physician"},
+        {"code": "CP", "description": "Consulting provider"},
+        {"code": "RP", "description": "Referring provider"},
+        {"code": "RT", "description": "Referred to provider"},
+        {"code": "PP", "description": "Primary care provider"},
+        {"code": "EP", "description": "Emergency contact person"},
+        {"code": "PR", "description": "Primary responsible provider"},
+        {"code": "AI", "description": "Assistant/Intern"},
+        {"code": "TN", "description": "Technician"},
+        {"code": "TR", "description": "Transcriptionist"},
+        {"code": "VP", "description": "Verifying provider"},
+        {"code": "FHCP", "description": "Family health care professional"},
+        {"code": "DIS", "description": "Discharging provider"}
+      ],
+      "generationHint": "AT (attending) most common in hospital, PP (primary care) in ambulatory settings"
+    },
+    "ROL.4": {
+      "name": "Role Person",
+      "description": "This field contains identification and demographic information about the person who fulfills this role.",
+      "dataType": "XCN",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 1,
+        "max": "*"
+      },
+      "generationHint": "Provider name with ID, title, and credentials: ID^Last^First^Middle^Suffix^Prefix^Degree"
+    },
+    "ROL.5": {
+      "name": "Role Begin Date/Time",
+      "description": "This field contains the date and time when this role assignment began.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "When role assignment started - admission time for attending, referral time for consultants"
+    },
+    "ROL.6": {
+      "name": "Role End Date/Time",
+      "description": "This field contains the date and time when this role assignment ended or is expected to end.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "When role assignment ended - discharge time, transfer time, or consultation completion"
+    },
+    "ROL.7": {
+      "name": "Role Duration",
+      "description": "This field contains the expected duration of the role assignment.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "TEMP", "description": "Temporary"},
+        {"code": "PERM", "description": "Permanent"},
+        {"code": "EPIS", "description": "Episode"},
+        {"code": "ONGO", "description": "Ongoing"}
+      ],
+      "generationHint": "EPIS for hospital stay roles, ONGO for primary care relationships"
+    },
+    "ROL.8": {
+      "name": "Role Action Reason",
+      "description": "This field contains the reason for the role action specified in ROL.2.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "ADMIT", "description": "Patient admission"},
+        {"code": "TRANS", "description": "Transfer of care"},
+        {"code": "DISCH", "description": "Patient discharge"},
+        {"code": "REFER", "description": "Referral"},
+        {"code": "CONSULT", "description": "Consultation request"},
+        {"code": "COVER", "description": "Coverage assignment"},
+        {"code": "SCHED", "description": "Scheduled assignment"}
+      ],
+      "generationHint": "ADMIT for new admissions, CONSULT for specialist referrals, COVER for call coverage"
+    },
+    "ROL.9": {
+      "name": "Provider Type",
+      "description": "This field further categorizes the type of provider fulfilling this role.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "PHYS", "description": "Physician"},
+        {"code": "NURS", "description": "Nurse"},
+        {"code": "PHARM", "description": "Pharmacist"},
+        {"code": "THER", "description": "Therapist"},
+        {"code": "TECH", "description": "Technician"},
+        {"code": "SOCIAL", "description": "Social worker"},
+        {"code": "ADMIN", "description": "Administrative"},
+        {"code": "CLERG", "description": "Clergy"},
+        {"code": "DIET", "description": "Dietitian"}
+      ],
+      "generationHint": "PHYS for physicians, NURS for nursing roles, PHARM for pharmacy consultations"
+    },
+    "ROL.10": {
+      "name": "Organization Unit Type",
+      "description": "This field identifies the type of organizational unit where this role is being performed.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "DEPT", "description": "Department"},
+        {"code": "WARD", "description": "Ward"},
+        {"code": "UNIT", "description": "Unit"},
+        {"code": "SERV", "description": "Service"},
+        {"code": "CLIN", "description": "Clinic"},
+        {"code": "ICU", "description": "Intensive care unit"},
+        {"code": "ER", "description": "Emergency room"},
+        {"code": "OR", "description": "Operating room"}
+      ],
+      "generationHint": "DEPT for departmental assignments, WARD for nursing units, ICU for critical care"
+    },
+    "ROL.11": {
+      "name": "Address",
+      "description": "This field contains the address information for the person in the role.",
+      "dataType": "XAD",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Professional address where the role performer can be contacted"
+    },
+    "ROL.12": {
+      "name": "Phone",
+      "description": "This field contains the phone number(s) for the person in the role.",
+      "dataType": "XTN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Professional phone numbers including office, pager, mobile, and fax"
+    }
   },
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": {
+      "commonFields": ["ROL.2", "ROL.3", "ROL.4", "ROL.5", "ROL.6", "ROL.9"],
+      "extensions": ["Provider directory integration", "Care team workflows", "Role-based messaging"],
+      "notes": "Epic provides comprehensive role management with care team coordination and messaging workflows"
+    },
+    "cerner": {
+      "commonFields": ["ROL.2", "ROL.3", "ROL.4", "ROL.5", "ROL.8", "ROL.9"],
+      "extensions": ["Provider credentialing integration", "Role hierarchy management", "Coverage tracking"],
+      "notes": "Cerner emphasizes provider credentialing and hierarchical role relationships"
+    },
+    "allscripts": {
+      "commonFields": ["ROL.2", "ROL.3", "ROL.4", "ROL.9"],
+      "extensions": ["Basic role tracking", "Provider scheduling integration"],
+      "notes": "Allscripts provides essential role management for practice workflow coordination"
+    },
+    "nextgen": {
+      "commonFields": ["ROL.2", "ROL.3", "ROL.4", "ROL.5", "ROL.12"],
+      "extensions": ["Practice management integration", "Provider communication tracking"],
+      "notes": "NextGen focuses on practice-based role management and provider communication"
+    }
   },
   "crossReferences": {
-    "fhir": ["TODO: Map to FHIR resources"],
-    "related": ["TODO: Identify related segments"]
+    "fhir": [
+      "Practitioner.identifier",
+      "PractitionerRole.practitioner",
+      "PractitionerRole.role",
+      "PractitionerRole.period",
+      "PractitionerRole.organization",
+      "PractitionerRole.location",
+      "PractitionerRole.telecom",
+      "CareTeam.participant.role",
+      "CareTeam.participant.member",
+      "CareTeam.period"
+    ],
+    "related": ["PID", "PV1", "PV2", "PD1", "PRD", "CTD", "STF"]
   },
+  "examples": [
+    "ROL|ROL001^HIS|AD|AT^Attending physician|12345^SMITH^JOHN^A^MD^DR||20241215080000||ADMIT^Patient admission|PHYS^Physician|DEPT^Department|123 MAIN ST^^ANYTOWN^ST^12345|^WPN^PH^^^555^1234567",
+    "ROL|ROL002^HIS|UP|CP^Consulting provider|67890^JOHNSON^MARY^B^MD^DR||20241215100000|20241218100000|CONSULT^Consultation request|PHYS^Physician|CLIN^Clinic||^WPN^PH^^^555^7654321",
+    "ROL||AD|PP^Primary care provider|11111^BROWN^ROBERT^C^MD^DR||20240101000000||ONGO^Ongoing|PHYS^Physician|CLIN^Clinic|456 ELM ST^^HOMETOWN^ST^54321|^WPN^PH^^^555^9876543"
+  ],
+  "notes": [
+    "ROL segment defines provider roles and relationships critical for care coordination",
+    "Action Code (ROL.2), Role (ROL.3), and Role Person (ROL.4) are required fields",
+    "Multiple ROL segments can describe different roles for the same provider or different providers",
+    "Role begin/end dates help track temporary assignments and care transitions",
+    "Provider type and organization unit provide additional context for role assignments",
+    "Contact information supports care team communication and coordination"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "fieldPopulation": {
+      "required": ["ROL.2", "ROL.3", "ROL.4"],
+      "recommended": ["ROL.5", "ROL.9", "ROL.12"],
+      "situational": ["ROL.1", "ROL.6", "ROL.7", "ROL.8", "ROL.10", "ROL.11"]
+    },
+    "dataConsistency": {
+      "actionCodeLogic": "Action code should align with role assignment context (AD for new, UP for changes)",
+      "roleProviderAlignment": "Role should match provider type and credentials",
+      "dateSequencing": "Begin date should precede end date when both are present",
+      "contactInformation": "Address and phone should be professional/work-related"
+    },
+    "businessRules": {
+      "roleHierarchy": "Attending physicians have primary responsibility, consulting providers are secondary",
+      "credentialValidation": "Provider credentials should match their assigned roles",
+      "coverageRequirements": "Critical roles should have coverage assignments during off-hours",
+      "communicationPaths": "Role assignments should include appropriate contact information",
+      "temporalLogic": "Role durations should align with episode of care or ongoing relationships"
+    },
+    "messageFlow": {
+      "triggers": ["Provider assignments", "Care team changes", "Referrals", "Consultations", "Coverage arrangements"],
+      "responses": ["Care team notifications", "Provider directory updates", "Communication routing updates"],
+      "workflow": "Essential for care coordination, billing, communication, and provider accountability"
+    }
   }
 }

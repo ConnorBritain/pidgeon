@@ -1,17 +1,188 @@
 {
   "dataType": "XCN",
-  "name": "TODO: Define data type name for XCN", 
-  "description": "TODO: Define description for XCN data type",
+  "name": "Extended Composite ID Number and Name for Persons",
+  "description": "The XCN data type is used for identifying persons with enhanced capabilities beyond the basic CN data type. It provides comprehensive person identification including ID numbers, names, professional designations, and assigning authorities. XCN replaces CN for person identification as of HL7 v2.3 and supports complex naming scenarios, multiple identifier types, and detailed professional credential representation.",
   "standard": "hl7v23",
   "version": "2.3",
-  "category": "TODO: primitive|composite",
+  "category": "composite",
   "components": {
-    "TODO": "Define components for composite types"
+    "XCN.1": {
+      "name": "ID Number",
+      "dataType": "ST",
+      "description": "The person's identifier within the specified assigning authority. This is the unique ID assigned to the person by an organization or system.",
+      "length": 15,
+      "usage": "optional",
+      "position": 1
+    },
+    "XCN.2": {
+      "name": "Family Name",
+      "dataType": "ST",
+      "description": "The person's surname or family name. The primary component of the person's legal name.",
+      "length": 50,
+      "usage": "optional",
+      "position": 2
+    },
+    "XCN.3": {
+      "name": "Given Name",
+      "dataType": "ST",
+      "description": "The person's first name or given name. The personal name by which the person is commonly known.",
+      "length": 30,
+      "usage": "optional",
+      "position": 3
+    },
+    "XCN.4": {
+      "name": "Middle Initial or Name",
+      "dataType": "ST",
+      "description": "The person's middle name or initial. May include multiple middle names or initials.",
+      "length": 30,
+      "usage": "optional",
+      "position": 4
+    },
+    "XCN.5": {
+      "name": "Suffix",
+      "dataType": "ST",
+      "description": "Name suffix such as Jr., Sr., III, etc. Generational or honorary suffixes that follow the person's name.",
+      "length": 20,
+      "usage": "optional",
+      "position": 5
+    },
+    "XCN.6": {
+      "name": "Prefix",
+      "dataType": "ST",
+      "description": "Name prefix such as Dr., Prof., Hon., etc. Professional or courtesy titles that precede the person's name.",
+      "length": 20,
+      "usage": "optional",
+      "position": 6
+    },
+    "XCN.7": {
+      "name": "Degree",
+      "dataType": "ST",
+      "description": "Academic degree or professional designation such as MD, RN, PhD, etc. Educational qualifications and professional certifications.",
+      "length": 20,
+      "usage": "optional",
+      "position": 7
+    },
+    "XCN.8": {
+      "name": "Source Table",
+      "dataType": "IS",
+      "description": "Identifies the source table or coding system from which the ID number is drawn. Provides context for the identifier type.",
+      "length": 4,
+      "usage": "optional",
+      "position": 8,
+      "table": "0297"
+    },
+    "XCN.9": {
+      "name": "Assigning Authority",
+      "dataType": "HD",
+      "description": "The organization or system that assigned the ID number. Hierarchic designator for the authority responsible for the identifier.",
+      "length": 227,
+      "usage": "optional",
+      "position": 9
+    },
+    "XCN.10": {
+      "name": "Name Type Code",
+      "dataType": "ID",
+      "description": "Specifies the type of name being represented (e.g., legal name, display name, alias). Indicates the context and usage of the name.",
+      "length": 1,
+      "usage": "optional",
+      "position": 10,
+      "table": "0200"
+    },
+    "XCN.11": {
+      "name": "Identifier Check Digit",
+      "dataType": "ST",
+      "description": "Check digit for the ID number to verify accuracy. Used for validation of the identifier value.",
+      "length": 1,
+      "usage": "optional",
+      "position": 11
+    },
+    "XCN.12": {
+      "name": "Check Digit Scheme",
+      "dataType": "ID",
+      "description": "The algorithm used to generate the check digit. Specifies the validation method for the identifier.",
+      "length": 3,
+      "usage": "optional",
+      "position": 12,
+      "table": "0061"
+    }
   },
-  "length": "TODO: Define max length",
-  "usage": "TODO: Define where this data type is used",
-  "examples": ["TODO: Add realistic examples"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+  "length": 444,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "identification": "At least one of ID Number or Family Name should be populated for meaningful identification",
+    "checkDigitLogic": "If check digit is present, check digit scheme should also be specified",
+    "nameTypeContext": "Name Type Code provides context for how the name should be interpreted"
+  },
+  "usage": [
+    "Physician and provider identification",
+    "Healthcare professional credentials and licensing",
+    "Patient next of kin and emergency contacts",
+    "Care team member identification",
+    "Medical staff directory and credentialing",
+    "Professional service provider identification"
+  ],
+  "examples": [
+    "12345^SMITH^JOHN^A^JR^DR^MD^^HOSPITAL^L^9^MOD10",
+    "DOC001^DOE^JANE^^^DR^RN^STAFF^NURSING^D^^",
+    "NPI1234567890^JOHNSON^ROBERT^B^III^PROF^PhD^NPI^NPI^L^^",
+    "^WILSON^MARY^C^^MS^BSN^^^A^^",
+    "EMP789^BROWN^DAVID^^^DR^MD^EMPLOYEE^FACILITY^L^5^MOD11"
+  ],
+  "commonFields": [
+    "ORC.12 - Ordering Provider identification",
+    "PV1.7 - Attending Doctor identification",
+    "PV1.8 - Referring Doctor identification",
+    "ROL.4 - Role Person identification",
+    "Various healthcare provider and person identification fields"
+  ],
+  "generationHints": {
+    "typical": "Use realistic healthcare provider names with appropriate professional credentials",
+    "providers": "Include relevant medical degrees (MD, DO, RN, NP, PA) and specialties",
+    "identifiers": "Use realistic provider IDs, NPI numbers, and employee identifiers",
+    "authorities": "Include appropriate assigning authorities (hospitals, medical boards, registries)",
+    "nameTypes": ["L - Legal", "D - Display", "A - Alias", "M - Maiden"],
+    "degrees": ["MD", "DO", "RN", "NP", "PA", "PhD", "BSN", "MSN", "DDS", "PharmD"]
+  },
+  "nameTypes": {
+    "L": "Legal - official legal name",
+    "D": "Display - name for display purposes",
+    "A": "Alias - alternative name or pseudonym",
+    "M": "Maiden - maiden name (typically for women)",
+    "C": "Customary - name commonly used",
+    "B": "Business - name used in business context"
+  },
+  "professionalContext": {
+    "healthcare": "Primary use for healthcare provider identification and credentialing",
+    "licensing": "Supports professional licensing and certification tracking",
+    "credentialing": "Enables comprehensive provider credentialing processes",
+    "directories": "Used in medical staff directories and provider databases",
+    "billing": "Supports provider identification in billing and claims processing"
+  },
+  "validationRules": {
+    "minimumData": "At least XCN.1 (ID Number) or XCN.2 (Family Name) should be populated",
+    "checkDigitConsistency": "If XCN.11 is present, XCN.12 should specify the validation algorithm",
+    "authorityValidation": "Assigning Authority should be valid and recognized organization",
+    "nameTypeValidation": "Name Type Code should reference valid table values",
+    "professionalCredentials": "Degrees and titles should be appropriate for healthcare context"
+  },
+  "enhancementsOverCN": {
+    "assigningAuthority": "XCN.9 provides clear identification of the organization that assigned the ID",
+    "nameType": "XCN.10 specifies the context and usage of the name being represented",
+    "checkDigitSupport": "XCN.11 and XCN.12 provide identifier validation capabilities",
+    "standardization": "More standardized approach to person identification in healthcare",
+    "interoperability": "Better support for cross-system person identification"
+  },
+  "relatedDataTypes": {
+    "CN": "Composite ID Number and Name - predecessor to XCN",
+    "XPN": "Extended Person Name - for detailed name representation without ID",
+    "HD": "Hierarchic Designator - used for assigning authority",
+    "CX": "Extended Composite ID - for patient identifiers with check digits"
+  },
+  "implementationNotes": {
+    "replacement": "Replaces CN data type for person identification as of HL7 v2.3",
+    "flexibility": "Supports various person identification scenarios in healthcare",
+    "professional": "Designed specifically for healthcare professional identification",
+    "standards": "Aligns with healthcare industry standards for provider identification",
+    "integration": "Facilitates integration with provider directories and credentialing systems"
   }
 }

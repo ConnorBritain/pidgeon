@@ -1,27 +1,461 @@
 {
   "segment": "IN1",
-  "name": "TODO: Define segment name for IN1",
-  "description": "TODO: Define description for IN1 segment",
+  "name": "Insurance",
+  "description": "The IN1 segment contains insurance policy coverage information necessary to produce properly pro-rated and patient and insurance bills. Multiple IN1 segments may be included in a message to communicate multiple insurance policies for the same patient, with IN1.1 indicating the sequence/priority of the insurance coverage.",
   "standard": "hl7v23",
   "version": "2.3",
-  "usage": "TODO",
+  "usage": "O",
   "cardinality": {
     "min": 0,
-    "max": 1,
-    "note": "TODO: Define cardinality rules"
+    "max": "*",
+    "note": "Multiple IN1 segments can appear for multiple insurance policies with different priorities"
   },
-  "messageTypes": ["TODO: Define message types"],
+  "messageTypes": [
+    "ADT^A01", "ADT^A02", "ADT^A03", "ADT^A04", "ADT^A05", "ADT^A06", "ADT^A07", "ADT^A08",
+    "ADT^A09", "ADT^A10", "ADT^A11", "ADT^A12", "ADT^A13", "ADT^A14", "ADT^A15", "ADT^A16",
+    "ADT^A17", "ADT^A18", "ADT^A21", "ADT^A22", "ADT^A23", "ADT^A24", "ADT^A25", "ADT^A26",
+    "ADT^A27", "ADT^A28", "ADT^A29", "ADT^A31", "ADT^A32", "ADT^A33", "ADT^A37", "ADT^A38"
+  ],
   "fields": {
-    "TODO": "Complete field definitions needed"
-  },
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "IN1.1": {
+      "name": "Set ID - IN1",
+      "description": "This field contains the number that identifies this insurance transaction. For the first occurrence of the segment, the sequence number shall be one (1 = primary insurance), two (2 = secondary insurance), etc.",
+      "dataType": "SI",
+      "usage": "R",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Sequential priority number: 1 = primary, 2 = secondary, 3 = tertiary"
+    },
+    "IN1.2": {
+      "name": "Insurance Plan ID",
+      "description": "This field contains the insurance company's plan identification. This field is used to identify the insurance plan under which the patient is covered.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MEDICARE", "description": "Medicare"},
+        {"code": "MEDICAID", "description": "Medicaid"},
+        {"code": "BCBS", "description": "Blue Cross Blue Shield"},
+        {"code": "AETNA", "description": "Aetna"},
+        {"code": "CIGNA", "description": "Cigna"},
+        {"code": "UHC", "description": "United Healthcare"},
+        {"code": "HUMANA", "description": "Humana"},
+        {"code": "KAISER", "description": "Kaiser Permanente"},
+        {"code": "ANTHEM", "description": "Anthem"},
+        {"code": "SELFPAY", "description": "Self Pay"}
+      ],
+      "generationHint": "Format: <plan_code>^<plan_name>^<coding_system>, e.g., 'BCBS^Blue Cross Blue Shield^LOCAL'"
+    },
+    "IN1.3": {
+      "name": "Insurance Company ID",
+      "description": "This field contains the insurance company identifier. This is typically a payer ID used for electronic billing and claim processing.",
+      "dataType": "CX",
+      "usage": "R",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 1,
+        "max": "*"
+      },
+      "generationHint": "Format: <payer_id>^<check_digit>^<identifier_type>, e.g., '12345^^^PI'"
+    },
+    "IN1.4": {
+      "name": "Insurance Company Name",
+      "description": "This field contains the name of the insurance company. This is used for identification and billing purposes.",
+      "dataType": "XON",
+      "usage": "O",
+      "maxLength": 45,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <organization_name>^<organization_name_type>^<id_number>"
+    },
+    "IN1.5": {
+      "name": "Insurance Company Address",
+      "description": "This field contains the insurance company's address. Used for billing and correspondence purposes.",
+      "dataType": "XAD",
+      "usage": "O",
+      "maxLength": 106,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <street>^<other_designation>^<city>^<state>^<zip>^<country>^<address_type>"
+    },
+    "IN1.6": {
+      "name": "Insurance Co Contact Person",
+      "description": "This field contains the name of the insurance company contact person. Used for inquiries and claim resolution.",
+      "dataType": "XPN",
+      "usage": "O",
+      "maxLength": 48,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <family_name>^<given_name>^<middle_name>^<suffix>^<prefix>^<degree>"
+    },
+    "IN1.7": {
+      "name": "Insurance Co Phone Number",
+      "description": "This field contains the insurance company's phone number. Used for inquiries and prior authorizations.",
+      "dataType": "XTN",
+      "usage": "O",
+      "maxLength": 40,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <phone_number>^<telecom_use_code>^<telecom_equipment_type>, e.g., '8005551234^WPN^PH'"
+    },
+    "IN1.8": {
+      "name": "Group Number",
+      "description": "This field contains the group number under which the insured is covered. This is typically the employer group number or plan group identifier.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 12,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Alphanumeric group identifier, e.g., 'GRP123456', 'EMP789', 'CORP001'"
+    },
+    "IN1.9": {
+      "name": "Group Name",
+      "description": "This field contains the name of the group under which the insured is covered. This is typically the employer name or organization name.",
+      "dataType": "XON",
+      "usage": "O",
+      "maxLength": 45,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Organization name format, typically employer or group sponsor name"
+    },
+    "IN1.10": {
+      "name": "Insured's Group Emp ID",
+      "description": "This field contains the insured person's employee identification number as assigned by the group or employer.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <employee_id>^<check_digit>^<identifier_type>, e.g., 'EMP987654^^^EI'"
+    },
+    "IN1.11": {
+      "name": "Insured's Group Emp Name",
+      "description": "This field contains the name of the employer or group under which the insured is covered.",
+      "dataType": "XON",
+      "usage": "O",
+      "maxLength": 45,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Employer organization name"
+    },
+    "IN1.12": {
+      "name": "Plan Effective Date",
+      "description": "This field contains the date on which the insurance plan becomes effective for this insured person.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: YYYYMMDD, typically current year or earlier"
+    },
+    "IN1.13": {
+      "name": "Plan Expiration Date",
+      "description": "This field contains the date on which the insurance plan expires for this insured person.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: YYYYMMDD, should be after IN1.12 effective date"
+    },
+    "IN1.14": {
+      "name": "Authorization Information",
+      "description": "This field contains authorization information required for services, procedures, or referrals under this insurance plan.",
+      "dataType": "AUI",
+      "usage": "O",
+      "maxLength": 55,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Authorization number format: AUTH123456 or PREAUTH789012"
+    },
+    "IN1.15": {
+      "name": "Plan Type",
+      "description": "This field indicates the type of insurance plan. Values from user-defined table 0086 - plan type.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "HMO", "description": "Health Maintenance Organization"},
+        {"code": "PPO", "description": "Preferred Provider Organization"},
+        {"code": "POS", "description": "Point of Service"},
+        {"code": "EPO", "description": "Exclusive Provider Organization"},
+        {"code": "IND", "description": "Indemnity"},
+        {"code": "GOV", "description": "Government"},
+        {"code": "WC", "description": "Workers Compensation"},
+        {"code": "AUTO", "description": "Automobile"},
+        {"code": "OTH", "description": "Other"}
+      ],
+      "generationHint": "Most common: HMO, PPO, POS, IND for commercial insurance"
+    },
+    "IN1.16": {
+      "name": "Name Of Insured",
+      "description": "This field contains the name of the insured person. This may be different from the patient if the patient is a dependent.",
+      "dataType": "XPN",
+      "usage": "O",
+      "maxLength": 48,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Name of primary insured (may be patient or subscriber)"
+    },
+    "IN1.17": {
+      "name": "Insured's Relationship To Patient",
+      "description": "This field describes the relationship of the insured person to the patient. Values from user-defined table 0063 - relationship.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "SEL", "description": "Self"},
+        {"code": "SPO", "description": "Spouse"},
+        {"code": "CHD", "description": "Child"},
+        {"code": "PAR", "description": "Parent"},
+        {"code": "DOM", "description": "Life partner"},
+        {"code": "SIB", "description": "Sibling"},
+        {"code": "GCH", "description": "Grandchild"},
+        {"code": "DEP", "description": "Handicapped dependent"},
+        {"code": "OTH", "description": "Other"}
+      ],
+      "generationHint": "Most common: SEL (self), SPO (spouse), CHD (child), PAR (parent)"
+    },
+    "IN1.18": {
+      "name": "Insured's Date Of Birth",
+      "description": "This field contains the date of birth of the insured person. Used for identification and verification purposes.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: YYYYMMDDHHMMSS, often just date portion used"
+    },
+    "IN1.19": {
+      "name": "Insured's Address",
+      "description": "This field contains the address of the insured person. May be different from the patient address if the patient is a dependent.",
+      "dataType": "XAD",
+      "usage": "O",
+      "maxLength": 106,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Address of primary insured person"
+    },
+    "IN1.20": {
+      "name": "Assignment Of Benefits",
+      "description": "This field indicates whether benefits are assigned to the provider. Values: Y (benefits assigned), N (benefits not assigned).",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes, benefits assigned"},
+        {"code": "N", "description": "No, benefits not assigned"}
+      ],
+      "generationHint": "Usually Y for institutional claims, varies for professional claims"
+    },
+    "IN1.21": {
+      "name": "Coordination Of Benefits",
+      "description": "This field indicates the coordination of benefits priority when multiple insurance policies exist. Values from user-defined table 0173.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "CO", "description": "Coordination"},
+        {"code": "IN", "description": "Independent"}
+      ],
+      "generationHint": "CO when multiple insurances coordinate benefits, IN when independent"
+    },
+    "IN1.22": {
+      "name": "Coord Of Ben. Priority",
+      "description": "This field contains the coordination of benefits priority number. Used when IN1.21 indicates coordination.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Priority number: 1 = primary, 2 = secondary, etc."
+    },
+    "IN1.23": {
+      "name": "Notice Of Admission Flag",
+      "description": "This field indicates whether the insurance company requires notification of admission. Values: Y (notification required), N (notification not required).",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Notification required"},
+        {"code": "N", "description": "Notification not required"}
+      ],
+      "generationHint": "Y for managed care plans, N for indemnity plans typically"
+    },
+    "IN1.24": {
+      "name": "Notice Of Admission Date",
+      "description": "This field contains the date by which the insurance company must be notified of admission.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: YYYYMMDD, typically admission date or within 24-48 hours"
+    },
+    "IN1.25": {
+      "name": "Report Of Eligibility Flag",
+      "description": "This field indicates whether eligibility has been verified with the insurance company. Values: Y (verified), N (not verified).",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Eligibility verified"},
+        {"code": "N", "description": "Eligibility not verified"}
+      ],
+      "generationHint": "Y when real-time eligibility check completed successfully"
+    },
+    "IN1.26": {
+      "name": "Report Of Eligibility Date",
+      "description": "This field contains the date on which eligibility was verified with the insurance company.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: YYYYMMDD, date of eligibility verification"
+    },
+    "IN1.27": {
+      "name": "Release Information Code",
+      "description": "This field indicates whether the patient has authorized release of information to the insurance company. Values: Y (authorized), N (not authorized).",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Information release authorized"},
+        {"code": "N", "description": "Information release not authorized"},
+        {"code": "I", "description": "Informed consent to release information for conditions related to payment"},
+        {"code": "U", "description": "Unknown"}
+      ],
+      "generationHint": "Usually Y or I for billing purposes, N requires special handling"
+    },
+    "IN1.28": {
+      "name": "Pre-Admit Cert (PAC)",
+      "description": "This field contains the pre-admission certification number when required by the insurance plan.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 15,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Certification number format: PAC123456, CERT789012, or similar"
+    }
   },
   "crossReferences": {
-    "fhir": ["TODO: Map to FHIR resources"],
-    "related": ["TODO: Identify related segments"]
+    "fhir": [
+      "Coverage.class",
+      "Coverage.subscriber",
+      "Coverage.beneficiary",
+      "Coverage.payor",
+      "Coverage.period"
+    ],
+    "related": ["PID", "PV1", "GT1", "NK1", "IN2", "IN3"]
   },
+  "examples": [
+    "IN1|1|BCBS^Blue Cross Blue Shield^LOCAL|12345^^^PI|BLUE CROSS BLUE SHIELD OF OHIO|123 INSURANCE WAY^^COLUMBUS^OH^43215^USA|JONES^MARY^A||8005551234^WPN^PH|GRP123456|ABC CORPORATION|EMP987654^^^EI|ABC CORPORATION|20220101|20231231||HMO|DOE^JOHN^Q|SEL^Self^HL70063|19801015|123 MAIN ST^^CLEVELAND^OH^44101^USA|Y|CO|1|Y|20220815|Y|20220815|Y|PAC123456",
+    "IN1|2|MEDICARE^Medicare^CMS|MEDICARE^^^PI|MEDICARE|PO BOX 1234^^BALTIMORE^MD^21244^USA|||||||20220101||GOV|DOE^JOHN^Q|SEL^Self^HL70063|19450315|123 MAIN ST^^CLEVELAND^OH^44101^USA|Y|IN||N||Y|20220815|Y|"
+  ],
+  "notes": [
+    "IN1 segment can appear multiple times for multiple insurance policies",
+    "IN1.1 (Set ID) indicates insurance priority: 1 = primary, 2 = secondary, etc.",
+    "IN1.2 (Insurance Plan ID) and IN1.3 (Insurance Company ID) are required",
+    "Coordination of benefits (IN1.21-IN1.22) is crucial for proper claim processing",
+    "Prior authorization information (IN1.14, IN1.28) is important for managed care plans",
+    "Eligibility verification flags (IN1.25-IN1.26) help ensure coverage before service"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "required": ["IN1.1", "IN1.2", "IN1.3"],
+    "conditional": {
+      "IN1.4": "Should be provided for insurance company identification",
+      "IN1.16": "Required if insured is different from patient",
+      "IN1.17": "Required if IN1.16 is present",
+      "IN1.22": "Should be present if IN1.21 = CO",
+      "IN1.24": "Should be present if IN1.23 = Y",
+      "IN1.26": "Should be present if IN1.25 = Y"
+    },
+    "relationships": {
+      "IN1.12_IN1.13": "Expiration date must be after effective date if both present",
+      "IN1.21_IN1.22": "COB priority should be present if coordination = CO",
+      "IN1.23_IN1.24": "Admission notification date should align with flag",
+      "IN1.25_IN1.26": "Eligibility verification date should align with flag"
+    },
+    "validation": {
+      "IN1.15": "Must be valid user-defined table 0086 plan type code",
+      "IN1.17": "Must be valid user-defined table 0063 relationship code",
+      "IN1.20": "Must be Y or N if present",
+      "IN1.21": "Must be valid user-defined table 0173 COB code",
+      "IN1.23": "Must be Y or N if present",
+      "IN1.25": "Must be Y or N if present",
+      "IN1.27": "Must be valid information release code"
+    }
   }
 }

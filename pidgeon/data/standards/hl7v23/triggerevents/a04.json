@@ -1,24 +1,53 @@
 {
   "triggerEvent": "A04",
-  "name": "TODO: Define trigger event name for A04",
-  "description": "TODO: Define description for A04 trigger event",
+  "name": "Register Patient",
+  "description": "Patient registration notification for outpatient encounters where patient is not assigned to a bed",
   "standard": "hl7v23",
   "version": "2.3",
-  "chapter": "TODO: Define chapter number",
-  "chapterName": "TODO: Define chapter name",
-  "messageStructure": "TODO: Define message structure",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A04",
   "segments": {
-    "required": ["TODO: List required segments"],
-    "optional": ["TODO: List optional segments"]
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "NK1",
+      "PV1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
   },
-  "businessPurpose": "TODO: Define business purpose",
-  "timing": "TODO: When this trigger is sent",
-  "responseMessage": "TODO: Expected response message",
-  "realWorldScenarios": ["TODO: Add realistic scenarios"],
-  "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
-  },
+  "businessPurpose": "Notify receiving applications that a patient has arrived for an episode of care that does not involve bed assignment",
+  "timing": "Sent when patient arrives for outpatient visit and check-in process is completed",
+  "responseMessage": "ACK^A04^ACK",
+  "realWorldScenarios": [
+    "Outpatient clinic visit registration",
+    "Emergency department arrival (before bed assignment)",
+    "Ambulatory surgery check-in",
+    "Laboratory visit registration",
+    "Radiology appointment check-in",
+    "Physical therapy session registration"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "EVN.1": "A04",
+    "EVN.2": "Current timestamp",
+    "EVN.6": "Current timestamp",
+    "PV1.2": "O (Outpatient) or E (Emergency)",
+    "PV1.4": "Registration or appointment type",
+    "PV1.44": "Admit date/time (arrival time)",
+    "requiredDataQuality": "Medium - basic demographics and visit information needed"
   }
 }

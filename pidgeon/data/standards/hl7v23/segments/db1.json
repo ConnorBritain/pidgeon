@@ -1,27 +1,193 @@
 {
   "segment": "DB1",
-  "name": "TODO: Define segment name for DB1",
-  "description": "TODO: Define description for DB1 segment",
+  "name": "Disability",
+  "description": "The Disability segment (DB1) contains information about a patient's disabilities. This segment is important for ADT (Admit, Discharge, Transfer) workflows and care planning, providing essential information about functional limitations, accommodations needed, and accessibility requirements. The DB1 segment helps healthcare organizations ensure appropriate care delivery, facility planning, and compliance with disability-related regulations such as the Americans with Disabilities Act (ADA).",
   "standard": "hl7v23",
   "version": "2.3",
-  "usage": "TODO",
+  "usage": "O",
   "cardinality": {
     "min": 0,
-    "max": 1,
-    "note": "TODO: Define cardinality rules"
+    "max": "*",
+    "note": "Multiple DB1 segments can be used for different disabilities"
   },
-  "messageTypes": ["TODO: Define message types"],
+  "messageTypes": ["ADT^A01", "ADT^A02", "ADT^A03", "ADT^A04", "ADT^A05", "ADT^A06", "ADT^A07", "ADT^A08", "ADT^A09", "ADT^A10", "ADT^A11", "ADT^A12", "ADT^A13", "ADT^A14", "ADT^A15", "ADT^A16", "ADT^A17", "ADT^A18", "ADT^A21", "ADT^A22", "ADT^A23", "ADT^A25", "ADT^A26", "ADT^A27", "ADT^A28", "ADT^A29", "ADT^A31", "ADT^A32", "ADT^A33", "ADT^A37", "ADT^A38", "ADT^A44", "ADT^A45", "ADT^A47", "ADT^A49", "ADT^A50", "ADT^A51", "ADT^A52", "ADT^A53", "ADT^A54", "ADT^A55"],
   "fields": {
-    "TODO": "Complete field definitions needed"
+    "DB1.1": {
+      "name": "Set ID - DB1",
+      "description": "This field contains the sequence number for the DB1 segment when multiple disability segments are present.",
+      "dataType": "SI",
+      "usage": "R",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Sequential numbering: 1, 2, 3, etc. for multiple disabilities"
+    },
+    "DB1.2": {
+      "name": "Disabled Person Code",
+      "description": "This field indicates whether the patient is classified as a disabled person according to legal or institutional definitions.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes - disabled person"},
+        {"code": "N", "description": "No - not disabled"},
+        {"code": "U", "description": "Unknown"}
+      ],
+      "generationHint": "Y for patients with documented disabilities, N for confirmed non-disabled"
+    },
+    "DB1.3": {
+      "name": "Disabled Person Identifier",
+      "description": "This field contains a unique identifier for the disabled person, which may be assigned by a government agency or healthcare organization.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Government disability ID number or organizational disability identifier"
+    },
+    "DB1.4": {
+      "name": "Disability Indicator",
+      "description": "This field indicates the presence and nature of a disability. This is a more specific indicator than the general disabled person code.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes - has disability"},
+        {"code": "N", "description": "No - no disability"}
+      ],
+      "generationHint": "Y for documented functional limitations or impairments"
+    },
+    "DB1.5": {
+      "name": "Disability Start Date",
+      "description": "This field contains the date when the disability was first recognized or diagnosed.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Date of disability onset, injury, or diagnosis"
+    },
+    "DB1.6": {
+      "name": "Disability End Date",
+      "description": "This field contains the date when the disability ended or is expected to end, if applicable.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Usually empty for permanent disabilities, populated for temporary impairments"
+    },
+    "DB1.7": {
+      "name": "Disability Return to Work Date",
+      "description": "This field contains the date when the person is expected to return to work following a disability.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Projected return-to-work date for work-related injuries or temporary disabilities"
+    },
+    "DB1.8": {
+      "name": "Disability Unable to Work Date",
+      "description": "This field contains the date when the person became unable to work due to the disability.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Date when work disability began, important for workers' compensation cases"
+    }
   },
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": {
+      "commonFields": ["DB1.1", "DB1.2", "DB1.4", "DB1.5"],
+      "extensions": ["Accommodation tracking", "Accessibility planning", "Care coordination alerts"],
+      "notes": "Epic integrates disability information with care planning and facility management"
+    },
+    "cerner": {
+      "commonFields": ["DB1.1", "DB1.2", "DB1.4", "DB1.5", "DB1.6"],
+      "extensions": ["ADA compliance tracking", "Accommodation workflows", "Care team notifications"],
+      "notes": "Cerner emphasizes compliance and accommodation management for disabled patients"
+    },
+    "allscripts": {
+      "commonFields": ["DB1.1", "DB1.2", "DB1.4"],
+      "extensions": ["Basic disability flagging", "Special needs alerts"],
+      "notes": "Allscripts provides essential disability tracking for care delivery modifications"
+    },
+    "nextgen": {
+      "commonFields": ["DB1.1", "DB1.2", "DB1.4", "DB1.7", "DB1.8"],
+      "extensions": ["Work status tracking", "Return-to-work planning"],
+      "notes": "NextGen focuses on work-related disability management and return-to-work coordination"
+    }
   },
   "crossReferences": {
-    "fhir": ["TODO: Map to FHIR resources"],
-    "related": ["TODO: Identify related segments"]
+    "fhir": [
+      "Patient.extension.disability",
+      "Condition.category",
+      "Condition.clinicalStatus",
+      "Condition.onset",
+      "Condition.abatement",
+      "CareTeam.reasonCode",
+      "Flag.category"
+    ],
+    "related": ["PID", "PV1", "PD1", "GT1", "IN1", "DG1"]
   },
+  "examples": [
+    "DB1|1|Y|DIS123456^STATE^L|Y|19951015|||",
+    "DB1|1|Y|WC789012^WORKERS_COMP^L|Y|20230301|20240301|20240201|20230301",
+    "DB1|2|Y||Y|19801122||||"
+  ],
+  "notes": [
+    "DB1 segment helps ensure appropriate accommodations and care for disabled patients",
+    "Set ID (DB1.1) is the only required field, making this a flexible segment",
+    "Disability dates help track temporary vs. permanent disabilities",
+    "Work-related date fields are important for workers' compensation and occupational health",
+    "Multiple DB1 segments can document different types or aspects of disabilities",
+    "Information supports ADA compliance and accessibility planning"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "fieldPopulation": {
+      "required": ["DB1.1"],
+      "recommended": ["DB1.2", "DB1.4", "DB1.5"],
+      "situational": ["DB1.3", "DB1.6", "DB1.7", "DB1.8"]
+    },
+    "dataConsistency": {
+      "disabilityIndicatorAlignment": "Disabled Person Code (DB1.2) and Disability Indicator (DB1.4) should be consistent",
+      "dateLogic": "Start date should precede end date and return-to-work date",
+      "workStatusConsistency": "Work-related dates should align with disability type and duration",
+      "identifierValidation": "Disability identifiers should follow issuing authority format"
+    },
+    "businessRules": {
+      "accommodationTracking": "Disabilities requiring accommodations should trigger care planning workflows",
+      "complianceRequirements": "Disability information must comply with ADA and HIPAA regulations",
+      "careCoordination": "Disability status should be communicated to relevant care team members",
+      "temporaryDisabilities": "Temporary disabilities should have appropriate follow-up scheduling",
+      "workRelatedInjuries": "Work-related disabilities require coordination with occupational health services"
+    },
+    "messageFlow": {
+      "triggers": ["Patient registration", "Disability assessment", "Accommodation requests", "Care plan updates"],
+      "responses": ["Accommodation alerts", "Care team notifications", "Facility planning updates"],
+      "workflow": "Critical for care planning, accommodation management, and regulatory compliance"
+    }
   }
 }

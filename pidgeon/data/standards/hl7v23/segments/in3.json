@@ -1,27 +1,430 @@
 {
   "segment": "IN3",
-  "name": "TODO: Define segment name for IN3",
-  "description": "TODO: Define description for IN3 segment",
+  "name": "Insurance Additional Information",
+  "description": "The Insurance Additional Information segment (IN3) contains additional insurance information that supplements the basic insurance data provided in the IN1 and IN2 segments. This segment is essential for complex billing workflows, prior authorization processes, and managed care operations. The IN3 segment supports advanced insurance features including certification numbers, pre-authorization details, penalty information, and special insurance program requirements. It is particularly important for healthcare organizations managing multiple insurance plans and complex reimbursement scenarios.",
   "standard": "hl7v23",
   "version": "2.3",
-  "usage": "TODO",
+  "usage": "O",
   "cardinality": {
     "min": 0,
-    "max": 1,
-    "note": "TODO: Define cardinality rules"
+    "max": "*",
+    "note": "Multiple IN3 segments can be used for different insurance plans or authorization details"
   },
-  "messageTypes": ["TODO: Define message types"],
+  "messageTypes": ["ADT^A01", "ADT^A02", "ADT^A03", "ADT^A04", "ADT^A05", "ADT^A06", "ADT^A07", "ADT^A08", "ADT^A09", "ADT^A10", "ADT^A11", "ADT^A12", "ADT^A13", "ADT^A14", "ADT^A15", "ADT^A16", "ADT^A17", "ADT^A18", "ADT^A21", "ADT^A22", "ADT^A23", "ADT^A25", "ADT^A26", "ADT^A27", "ADT^A28", "ADT^A29", "ADT^A31", "ADT^A32", "ADT^A33", "ADT^A37", "ADT^A38", "ADT^A44", "ADT^A45", "ADT^A47", "ADT^A49", "ADT^A50", "ADT^A51", "ADT^A52", "ADT^A53", "ADT^A54", "ADT^A55", "DFT^P03", "BAR^P01", "BAR^P02"],
   "fields": {
-    "TODO": "Complete field definitions needed"
+    "IN3.1": {
+      "name": "Set ID - IN3",
+      "description": "This field contains the sequence number for the IN3 segment when multiple insurance additional information segments are present.",
+      "dataType": "SI",
+      "usage": "R",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Sequential numbering: 1, 2, 3, etc. for multiple insurance additional information records"
+    },
+    "IN3.2": {
+      "name": "Certification Number",
+      "description": "This field contains the certification number assigned by the insurance plan for pre-authorized services or treatments.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Pre-authorization or certification numbers like AUTH123456^BCBS or CERT789012^AETNA"
+    },
+    "IN3.3": {
+      "name": "Certified By",
+      "description": "This field identifies the person or organization that provided the certification for the insurance coverage.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Insurance company representative, case manager, or medical director who approved authorization"
+    },
+    "IN3.4": {
+      "name": "Certification Required",
+      "description": "This field indicates whether certification is required for this insurance plan or specific service.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes - certification required"},
+        {"code": "N", "description": "No - certification not required"}
+      ],
+      "generationHint": "Y for managed care plans requiring pre-authorization, N for traditional fee-for-service"
+    },
+    "IN3.5": {
+      "name": "Penalty",
+      "description": "This field contains information about penalties applied for non-compliance with insurance requirements.",
+      "dataType": "MOP",
+      "usage": "O",
+      "maxLength": 23,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Penalty amounts for unauthorized services or out-of-network usage"
+    },
+    "IN3.6": {
+      "name": "Certification Date/Time",
+      "description": "This field contains the date and time when the insurance certification was obtained or approved.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Date when pre-authorization was approved by insurance company"
+    },
+    "IN3.7": {
+      "name": "Certification Modify Date/Time",
+      "description": "This field contains the date and time when the insurance certification was last modified or updated.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "When authorization was modified, extended, or updated"
+    },
+    "IN3.8": {
+      "name": "Operator",
+      "description": "This field identifies the person who entered or modified the insurance certification information.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Registration staff, case manager, or billing personnel who processed authorization"
+    },
+    "IN3.9": {
+      "name": "Certification Begin Date",
+      "description": "This field contains the date when the insurance certification becomes effective.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Start date for authorized services coverage"
+    },
+    "IN3.10": {
+      "name": "Certification End Date",
+      "description": "This field contains the date when the insurance certification expires.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "End date for authorized services coverage"
+    },
+    "IN3.11": {
+      "name": "Days",
+      "description": "This field contains the number of days for which the certification is valid.",
+      "dataType": "DTN",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Duration of authorization in days: 30, 60, 90 for different service types"
+    },
+    "IN3.12": {
+      "name": "Non-Concur Code/Description",
+      "description": "This field contains codes or descriptions for situations where there is disagreement about the necessity or appropriateness of care.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MED_NECESSITY", "description": "Medical necessity questioned"},
+        {"code": "ALTERNATIVE_TX", "description": "Alternative treatment recommended"},
+        {"code": "EXPERIMENTAL", "description": "Experimental or investigational"},
+        {"code": "NOT_COVERED", "description": "Service not covered"},
+        {"code": "PRIOR_AUTH_REQ", "description": "Prior authorization required"},
+        {"code": "SECOND_OPINION", "description": "Second opinion required"}
+      ],
+      "generationHint": "Used when insurance company disagrees with provider recommendations"
+    },
+    "IN3.13": {
+      "name": "Non-Concur Effective Date/Time",
+      "description": "This field contains the date and time when the non-concur status becomes effective.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "When insurance disagreement or denial becomes effective"
+    },
+    "IN3.14": {
+      "name": "Physician Reviewer",
+      "description": "This field identifies the physician who reviewed the case for the insurance company.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Insurance company medical director or physician reviewer"
+    },
+    "IN3.15": {
+      "name": "Certification Contact",
+      "description": "This field contains contact information for the person or department responsible for certification issues.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 48,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Phone number or contact information for authorization department"
+    },
+    "IN3.16": {
+      "name": "Certification Contact Phone Number",
+      "description": "This field contains the phone number for contacting the certification authority.",
+      "dataType": "XTN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Direct phone line to insurance authorization department"
+    },
+    "IN3.17": {
+      "name": "Appeal Reason",
+      "description": "This field contains the reason for appealing an insurance decision or denial.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MEDICAL_NECESSITY", "description": "Medical necessity appeal"},
+        {"code": "COVERAGE_DISPUTE", "description": "Coverage interpretation dispute"},
+        {"code": "EMERGENCY_CARE", "description": "Emergency care circumstances"},
+        {"code": "PROVIDER_ERROR", "description": "Provider billing error"},
+        {"code": "PLAN_MISINTERPRETATION", "description": "Insurance plan misinterpretation"},
+        {"code": "NEW_INFORMATION", "description": "Additional clinical information provided"}
+      ],
+      "generationHint": "Used when appealing insurance denials or adverse determinations"
+    },
+    "IN3.18": {
+      "name": "Certification Agency",
+      "description": "This field identifies the agency or organization responsible for certification decisions.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "BCBS", "description": "Blue Cross Blue Shield"},
+        {"code": "AETNA", "description": "Aetna Health Plans"},
+        {"code": "CIGNA", "description": "Cigna Healthcare"},
+        {"code": "HUMANA", "description": "Humana Inc."},
+        {"code": "UHCR", "description": "UnitedHealthcare"},
+        {"code": "ANTHEM", "description": "Anthem Inc."},
+        {"code": "KAISER", "description": "Kaiser Permanente"},
+        {"code": "CMS", "description": "Centers for Medicare & Medicaid Services"}
+      ],
+      "generationHint": "Insurance company or government agency making certification decisions"
+    },
+    "IN3.19": {
+      "name": "Certification Agency Phone Number",
+      "description": "This field contains the phone number for the certification agency.",
+      "dataType": "XTN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Main contact number for insurance company certification department"
+    },
+    "IN3.20": {
+      "name": "Pre-Certification Requirement",
+      "description": "This field contains information about pre-certification requirements for specific services or procedures.",
+      "dataType": "ICD",
+      "usage": "O",
+      "maxLength": 40,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Specific procedures or diagnoses requiring pre-certification"
+    },
+    "IN3.21": {
+      "name": "Case Manager",
+      "description": "This field identifies the case manager assigned to coordinate care and insurance approvals.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 48,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Insurance company case manager name for complex cases"
+    },
+    "IN3.22": {
+      "name": "Second Opinion Date",
+      "description": "This field contains the date when a second opinion was obtained or is required.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Date second opinion was obtained for insurance approval"
+    },
+    "IN3.23": {
+      "name": "Second Opinion Status",
+      "description": "This field indicates the status of the second opinion requirement.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "R", "description": "Required"},
+        {"code": "O", "description": "Obtained"},
+        {"code": "N", "description": "Not required"},
+        {"code": "P", "description": "Pending"}
+      ],
+      "generationHint": "R for procedures requiring second opinion, O when completed"
+    },
+    "IN3.24": {
+      "name": "Second Opinion Documentation Received",
+      "description": "This field indicates whether second opinion documentation has been received by the insurance company.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes - documentation received"},
+        {"code": "N", "description": "No - documentation not received"},
+        {"code": "P", "description": "Partial documentation received"}
+      ],
+      "generationHint": "Y when insurance has received all required second opinion documentation"
+    },
+    "IN3.25": {
+      "name": "Second Opinion Physician",
+      "description": "This field identifies the physician who provided the second opinion.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Independent physician providing second opinion for insurance approval"
+    }
   },
   "vendorVariations": {
-    "TODO": "Research vendor-specific implementations"
+    "epic": {
+      "commonFields": ["IN3.1", "IN3.2", "IN3.4", "IN3.6", "IN3.9", "IN3.10", "IN3.17", "IN3.18"],
+      "extensions": ["Authorization workflow automation", "Prior auth decision support", "Appeal management tracking"],
+      "notes": "Epic provides comprehensive authorization workflows with automated prior auth and appeal tracking"
+    },
+    "cerner": {
+      "commonFields": ["IN3.1", "IN3.2", "IN3.3", "IN3.6", "IN3.12", "IN3.14", "IN3.21"],
+      "extensions": ["Case management integration", "Utilization review workflows", "Physician reviewer tracking"],
+      "notes": "Cerner emphasizes clinical review processes and case management coordination"
+    },
+    "allscripts": {
+      "commonFields": ["IN3.1", "IN3.2", "IN3.4", "IN3.6", "IN3.9", "IN3.10"],
+      "extensions": ["Basic authorization tracking", "Coverage verification alerts"],
+      "notes": "Allscripts provides essential authorization management for practice-based workflows"
+    },
+    "athenahealth": {
+      "commonFields": ["IN3.1", "IN3.2", "IN3.4", "IN3.17", "IN3.18", "IN3.20"],
+      "extensions": ["Revenue cycle optimization", "Prior auth automation", "Denial management"],
+      "notes": "Athenahealth focuses on revenue cycle and automated prior authorization processes"
+    }
   },
   "crossReferences": {
-    "fhir": ["TODO: Map to FHIR resources"],
-    "related": ["TODO: Identify related segments"]
+    "fhir": [
+      "Coverage.extension.prior-authorization",
+      "Coverage.extension.certification",
+      "CoverageEligibilityRequest.purpose",
+      "CoverageEligibilityResponse.insurance.coverage",
+      "Claim.supportingInfo",
+      "ClaimResponse.adjudication",
+      "Task.for",
+      "Task.reasonCode"
+    ],
+    "related": ["IN1", "IN2", "GT1", "PID", "PV1", "DG1", "PR1"]
   },
+  "examples": [
+    "IN3|1|AUTH123456^BCBS|12345^SMITH^JOHN^A^MD^DR|Y||20241215120000|20241215130000|67890^JONES^MARY^B^RN||20241215|20250315|90||||555-123-4567||||BCBS^Blue Cross Blue Shield|555-987-6543||JOHNSON^SUSAN|||",
+    "IN3|2|CERT789012^AETNA||Y|250.00^USD|20241210100000||11111^CASE^MANAGER^||20241210|20241231|21|SECOND_OPINION^Second opinion required|20241212120000|22222^REVIEWER^PHYSICIAN^MD|Authorization Dept|555-456-7890|MEDICAL_NECESSITY^Medical necessity appeal|AETNA^Aetna Health Plans|555-654-3210||WILLIAMS^ROBERT|20241218|R|N|33333^OPINION^PROVIDER^MD",
+    "IN3|3|||N||||||||||||||||||||||||"
+  ],
+  "notes": [
+    "IN3 segment provides detailed insurance authorization and certification information",
+    "Set ID (IN3.1) is the only required field, making this a flexible supplemental segment",
+    "Critical for prior authorization workflows and managed care operations",
+    "Supports complex appeals processes and second opinion requirements",
+    "Essential for revenue cycle management and insurance compliance",
+    "Case manager and physician reviewer fields support care coordination"
+  ],
   "generationRules": {
-    "TODO": "Define generation and validation rules"
+    "fieldPopulation": {
+      "required": ["IN3.1"],
+      "recommended": ["IN3.2", "IN3.4", "IN3.6", "IN3.9", "IN3.10", "IN3.18"],
+      "situational": ["IN3.3", "IN3.5", "IN3.12", "IN3.14", "IN3.17", "IN3.20", "IN3.21"]
+    },
+    "dataConsistency": {
+      "certificationDates": "Begin date (IN3.9) should precede end date (IN3.10)",
+      "authorizationFlow": "Certification number should align with certification agency",
+      "reviewerAlignment": "Physician reviewer should match certification agency",
+      "contactConsistency": "Contact information should be consistent with certification agency"
+    },
+    "businessRules": {
+      "authorizationRequirements": "Managed care plans typically require certification (IN3.4 = Y)",
+      "timelinessRules": "Pre-authorizations should be obtained before service dates",
+      "appealProcesses": "Appeals should reference specific denial reasons and provide supporting documentation",
+      "caseManagement": "Complex cases should have assigned case managers for coordination",
+      "complianceTracking": "All authorization activities should be documented for audit purposes"
+    },
+    "messageFlow": {
+      "triggers": ["Insurance verification", "Prior authorization requests", "Certification updates", "Appeal submissions"],
+      "responses": ["Authorization confirmations", "Denial notifications", "Case manager assignments", "Review requirements"],
+      "workflow": "Essential for managed care operations, prior authorization, and revenue cycle management"
+    }
   }
 }
