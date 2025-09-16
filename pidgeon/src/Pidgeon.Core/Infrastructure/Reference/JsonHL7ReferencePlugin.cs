@@ -31,7 +31,9 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
     private readonly ILogger<JsonHL7ReferencePlugin> _logger;
     private readonly IMemoryCache _cache;
     private readonly HL7VersionConfig _config;
-    private readonly string _dataBasePath;
+    private string _dataBasePath;
+    private bool _isInitialized;
+    private readonly object _initLock = new object();
     
     private static readonly Regex HL7PathPattern = new(@"^[A-Z]{2,3}(\.\d+){0,2}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex TablePattern = new(@"^\d{4}$", RegexOptions.Compiled);
@@ -53,20 +55,45 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
         _config = config ?? throw new ArgumentNullException(nameof(config));
         _logger = logger;
         _cache = cache;
-        
-        // Try multiple paths to find data directory
-        var possiblePaths = new[]
+
+        // Defer expensive initialization to first use
+        _dataBasePath = string.Empty; // Will be initialized lazily
+        _isInitialized = false;
+    }
+
+    /// <summary>
+    /// Lazy initialization of data paths and logging. Only called when plugin is first used.
+    /// </summary>
+    private void EnsureInitialized()
+    {
+        if (_isInitialized)
+            return;
+
+        lock (_initLock)
         {
-            Path.Combine(AppContext.BaseDirectory, "data", "standards", _config.DataPath),
-            Path.Combine(Directory.GetCurrentDirectory(), "data", "standards", _config.DataPath),
-            Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "data", "standards", _config.DataPath)
-        };
-        
-        _dataBasePath = possiblePaths.FirstOrDefault(Directory.Exists) 
-                        ?? possiblePaths[0]; // fallback to first path
-                        
-        _logger.LogInformation($"JsonHL7ReferencePlugin ({_config.StandardName}) using data path: {_dataBasePath}");
-        _logger.LogInformation($"Segments directory exists: {Directory.Exists(Path.Combine(_dataBasePath, "segments"))}");
+            if (_isInitialized)
+                return;
+
+            _logger.LogDebug("Initializing JsonHL7ReferencePlugin for {StandardName}...", _config.StandardName);
+
+            // Try multiple paths to find data directory
+            var possiblePaths = new[]
+            {
+                Path.Combine(AppContext.BaseDirectory, "data", "standards", _config.DataPath),
+                Path.Combine(Directory.GetCurrentDirectory(), "data", "standards", _config.DataPath),
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "data", "standards", _config.DataPath)
+            };
+
+            _dataBasePath = possiblePaths.FirstOrDefault(Directory.Exists)
+                            ?? possiblePaths[0]; // fallback to first path
+
+            _logger.LogInformation("JsonHL7ReferencePlugin ({StandardName}) using data path: {DataPath}",
+                _config.StandardName, _dataBasePath);
+            _logger.LogInformation("Segments directory exists: {Exists}",
+                Directory.Exists(Path.Combine(_dataBasePath, "segments")));
+
+            _isInitialized = true;
+        }
     }
 
     public bool CanHandle(string path)
@@ -152,6 +179,9 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
             return Result<StandardElement>.Failure($"Invalid HL7 path format: '{path}'. Expected format: PID.3.5 or MSH.3");
         }
 
+        // Initialize on first use (lazy loading)
+        EnsureInitialized();
+
         var normalizedPath = path.ToUpperInvariant();
         var cacheKey = $"{StandardIdentifier}:element:{normalizedPath}";
 
@@ -186,6 +216,9 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
         {
             return Result<IReadOnlyList<StandardElement>>.Success(Array.Empty<StandardElement>());
         }
+
+        // Initialize on first use (lazy loading)
+        EnsureInitialized();
 
         try
         {
@@ -223,6 +256,9 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
 
     public async Task<Result<IReadOnlyList<StandardElement>>> ListChildrenAsync(string parentPath, CancellationToken cancellationToken = default)
     {
+        // Initialize on first use (lazy loading)
+        EnsureInitialized();
+
         try
         {
             var parentPathUpper = parentPath.ToUpperInvariant();
@@ -252,6 +288,9 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
 
     public async Task<Result<IReadOnlyList<StandardElement>>> ListTopLevelElementsAsync(CancellationToken cancellationToken = default)
     {
+        // Initialize on first use (lazy loading)
+        EnsureInitialized();
+
         try
         {
             var results = new List<StandardElement>();
@@ -313,6 +352,9 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
 
     public async Task<Result<IReadOnlyList<string>>> GetSuggestionsAsync(string path, CancellationToken cancellationToken = default)
     {
+        // Initialize on first use (lazy loading)
+        EnsureInitialized();
+
         var suggestions = new List<string>();
 
         try
@@ -361,6 +403,9 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
 
     public async Task<Result<StandardElement>> GetVendorVariationAsync(string path, string vendor, CancellationToken cancellationToken = default)
     {
+        // Initialize on first use (lazy loading)
+        EnsureInitialized();
+
         var lookupResult = await LookupAsync(path, cancellationToken);
         if (lookupResult.IsFailure)
         {
@@ -392,9 +437,12 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
     // IAdvancedStandardReferencePlugin implementation
     public async Task<Result> InitializeAsync(CancellationToken cancellationToken = default)
     {
+        // Initialize on first use (lazy loading)
+        EnsureInitialized();
+
         try
         {
-            // TODO: For now, this is a placeholder - in real implementation would verify data files exist
+            // Initialization is now handled by lazy loading
             await Task.Yield();
             
             _logger.LogInformation("HL7 v2.3 reference plugin initialized");
@@ -409,6 +457,9 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
 
     public async Task<Result> PreloadElementsAsync(IEnumerable<string> paths, CancellationToken cancellationToken = default)
     {
+        // Initialize on first use (lazy loading)
+        EnsureInitialized();
+
         var loadTasks = paths.Select(async path =>
         {
             try
