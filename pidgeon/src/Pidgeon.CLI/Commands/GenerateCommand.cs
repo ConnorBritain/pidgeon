@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
+using Pidgeon.CLI.Services;
 using Pidgeon.Core;
 using Pidgeon.Core.Application.Services.Generation;
 using Pidgeon.Core.Application.Interfaces.Generation;
@@ -20,8 +21,9 @@ public class GenerateCommand : CommandBuilderBase
 
     public GenerateCommand(
         ILogger<GenerateCommand> logger,
-        IMessageGenerationService messageGenerationService) 
-        : base(logger)
+        IMessageGenerationService messageGenerationService,
+        FirstTimeUserService firstTimeUserService)
+        : base(logger, firstTimeUserService)
     {
         _messageGenerationService = messageGenerationService;
     }

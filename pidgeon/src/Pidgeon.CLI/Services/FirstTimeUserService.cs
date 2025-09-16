@@ -86,6 +86,66 @@ public class FirstTimeUserService(
     }
 
     /// <summary>
+    /// Creates a minimal default configuration for auto-graduation.
+    /// Used when experienced users run productive commands without going through setup.
+    /// </summary>
+    public async Task<Result<bool>> CreateMinimalConfigAsync()
+    {
+        try
+        {
+            // Ensure directory exists
+            Directory.CreateDirectory(_configPath);
+
+            var configFile = Path.Combine(_configPath, "pidgeon.config.json");
+
+            // Create wise default configuration (git-style)
+            var config = new
+            {
+                firstRun = DateTime.UtcNow,
+                version = "1.0.0",
+                setupType = "auto-graduated",
+                telemetry = new { enabled = false },
+                preferences = new
+                {
+                    defaultStandard = "hl7",
+                    outputFormat = "console",
+                    validationMode = "compatibility",
+                    aiAssistance = "disabled"
+                },
+                generation = new
+                {
+                    defaultCount = 1,
+                    includeOptionalFields = true,
+                    seedStrategy = "random"
+                },
+                deidentification = new
+                {
+                    dateShiftDays = 30,
+                    preserveFormat = true,
+                    crossMessageConsistency = true
+                },
+                validation = new
+                {
+                    strictMode = false,
+                    showWarnings = true,
+                    stopOnFirstError = false
+                }
+            };
+
+            var json = JsonSerializer.Serialize(config, JsonOptions);
+            await File.WriteAllTextAsync(configFile, json);
+
+            _logger.LogInformation("Created minimal configuration for auto-graduation");
+            return Result<bool>.Success(true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create minimal configuration");
+            return Result<bool>.Failure($"Configuration creation failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>
     /// Runs welcome orientation - demo and introduction only (no configuration).
     /// </summary>
     public async Task<Result<bool>> RunWelcomeOrientationAsync()

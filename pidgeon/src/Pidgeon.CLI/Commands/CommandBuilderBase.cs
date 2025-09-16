@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
+using Pidgeon.CLI.Services;
 using Pidgeon.Core;
 using System.CommandLine;
 
@@ -15,10 +16,17 @@ namespace Pidgeon.CLI.Commands;
 public abstract class CommandBuilderBase
 {
     protected readonly ILogger Logger;
+    protected readonly FirstTimeUserService? FirstTimeUserService;
 
     protected CommandBuilderBase(ILogger logger)
     {
         Logger = logger;
+    }
+
+    protected CommandBuilderBase(ILogger logger, FirstTimeUserService firstTimeUserService)
+    {
+        Logger = logger;
+        FirstTimeUserService = firstTimeUserService;
     }
 
     /// <summary>
@@ -176,9 +184,67 @@ public abstract class CommandBuilderBase
     }
 
     /// <summary>
-    /// Creates a command with standard exception handling wrapper.
+    /// Auto-graduates first-time users by creating minimal config on productive commands.
+    /// Should be called by all productive commands before executing main logic.
     /// </summary>
-    protected static void SetCommandAction(Command command, Func<ParseResult, CancellationToken, Task<int>> action)
+    protected async Task<bool> TryAutoGraduateUserAsync()
+    {
+        if (FirstTimeUserService == null) return true;
+
+        try
+        {
+            // Check if this is a first-time user
+            if (await FirstTimeUserService.IsFirstTimeUserAsync())
+            {
+                // Create minimal config to graduate them
+                var result = await FirstTimeUserService.CreateMinimalConfigAsync();
+                if (result.IsFailure)
+                {
+                    Logger.LogWarning("Failed to create minimal config for auto-graduation: {Error}", result.Error);
+                    return false;
+                }
+
+                Logger.LogDebug("Auto-graduated first-time user to experienced status");
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "Error during auto-graduation check");
+            return true; // Don't block the command if auto-graduation fails
+        }
+    }
+
+    /// <summary>
+    /// Creates a command with auto-graduation and standard exception handling.
+    /// Default behavior for most commands. Use SetInfoCommandAction for info-only commands.
+    /// </summary>
+    protected void SetCommandAction(Command command, Func<ParseResult, CancellationToken, Task<int>> action)
+    {
+        command.SetAction(async (parseResult, cancellationToken) =>
+        {
+            try
+            {
+                // Auto-graduate first-time users on productive commands
+                await TryAutoGraduateUserAsync();
+
+                // Execute the main command logic
+                return await action(parseResult, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"An unexpected error occurred: {ex.Message}");
+                return 1;
+            }
+        });
+    }
+
+    /// <summary>
+    /// Creates a command without auto-graduation for info/help commands.
+    /// Use this for lookup, info, help commands that shouldn't graduate users.
+    /// </summary>
+    protected static void SetInfoCommandAction(Command command, Func<ParseResult, CancellationToken, Task<int>> action)
     {
         command.SetAction(async (parseResult, cancellationToken) =>
         {

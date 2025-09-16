@@ -61,17 +61,22 @@ internal class Program
                 return 0;
             }
             
-            // For first-time users, show a subtle suggestion (not forced)
-            if (args.Length == 0 && await firstTimeService.IsFirstTimeUserAsync())
+            // Show banner when no arguments provided
+            if (args.Length == 0)
             {
-                Console.WriteLine();
-                Console.WriteLine("👋 New to Pidgeon?");
-                Console.WriteLine("   • pidgeon welcome - See what Pidgeon can do");
-                Console.WriteLine("   • pidgeon --init  - Set up your machine");
-                Console.WriteLine("   • pidgeon generate ADT^A01 - Dive right in");
-                Console.WriteLine();
-                // Continue to show help as normal
-                args = new[] { "--help" };
+                var bannerService = host.Services.GetRequiredService<BannerService>();
+
+                // For first-time users, show welcome banner
+                if (await firstTimeService.IsFirstTimeUserAsync())
+                {
+                    bannerService.DisplayWelcome();
+                }
+                else
+                {
+                    // For returning users, show standard banner with quick start
+                    bannerService.DisplayBanner(showQuickStart: true);
+                }
+                return 0;
             }
             
             // Create the root command with all subcommands
@@ -120,6 +125,7 @@ internal class Program
                 
                 // Add console services
                 services.AddSingleton<IConsoleOutput, ConsoleOutput>();
+                services.AddSingleton<BannerService>();
             });
     }
 

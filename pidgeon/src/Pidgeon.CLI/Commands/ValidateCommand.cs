@@ -3,6 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
+using Pidgeon.CLI.Services;
 using Pidgeon.Core.Application.Interfaces;
 using Pidgeon.Core.Application.Interfaces.Standards;
 using Pidgeon.Core.Domain.Validation;
@@ -19,8 +20,9 @@ public class ValidateCommand : CommandBuilderBase
 
     public ValidateCommand(
         ILogger<ValidateCommand> logger,
-        IMessageValidationService validationService) 
-        : base(logger)
+        IMessageValidationService validationService,
+        FirstTimeUserService firstTimeUserService)
+        : base(logger, firstTimeUserService)
     {
         _validationService = validationService;
     }
