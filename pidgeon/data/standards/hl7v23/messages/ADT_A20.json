@@ -1,0 +1,44 @@
+{
+  "messageType": "ADT",
+  "triggerEvent": "A20",
+  "name": "Bed Status Update",
+  "description": "Sent to communicate bed status changes and bed management information",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Patient Administration",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'ADT^A20'"]
+    },
+    {
+      "type": "segment",
+      "segment": "EVN",
+      "name": "Event Type",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "NPU",
+      "name": "Bed Status Update",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": "unbounded"}
+    }
+  ],
+  "useCases": [
+    "Bed availability status updates",
+    "Bed cleaning and maintenance status",
+    "Bed assignment and reservation",
+    "Census and capacity management"
+  ],
+  "examples": [
+    "MSH|^~\\&|BED|HOSPITAL|||20231202070000||ADT^A20|MSG000020|P|2.3",
+    "EVN|A20|20231202070000|||BED123^MANAGER^SYSTEM",
+    "NPU|3E^301^A^HOSPITAL^R|O||20231202070000|HK123^JONES^CLEANING"
+  ]
+}

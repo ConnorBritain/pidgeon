@@ -1,0 +1,36 @@
+{
+  "triggerEvent": "A03",
+  "name": "Discharge/End Visit",
+  "description": "Signals the end of a patient's stay in a healthcare facility and that patient status has changed to discharged",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A03",
+  "businessPurpose": "Notify receiving applications that a patient's encounter has ended and discharge processing has been completed",
+  "timing": "Sent when discharge orders are processed and patient status changes to discharged",
+  "responseMessage": "ACK^A03^ACK",
+  "segments": {
+    "required": [
+      "MSH",
+      "EVN",
+      "PID",
+      "PV1"
+    ],
+    "optional": [
+      "NK1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
+  }
+}

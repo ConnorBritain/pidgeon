@@ -1,0 +1,44 @@
+{
+  "messageType": "QRY",
+  "triggerEvent": "R02",
+  "name": "Query for Results of Observation",
+  "description": "Sent to query specific observation results and clinical data",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Query Management",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'QRY^R02'"]
+    },
+    {
+      "type": "segment",
+      "segment": "QRD",
+      "name": "Query Definition",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "QRF",
+      "name": "Query Filter",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    }
+  ],
+  "useCases": [
+    "Laboratory result queries",
+    "Clinical observation lookups",
+    "Diagnostic test result requests",
+    "Historical result retrieval"
+  ],
+  "examples": [
+    "MSH|^~\\&|EMR|HOSPITAL|||20231201220000||QRY^R02|QRY000003|P|2.3",
+    "QRD|20231201220000|R|I|QRY000003|||1^RD|12345678|RES^CBC",
+    "QRF|OBR|LAB001^20231201120000|||||||OBX.3^OBX.5"
+  ]
+}

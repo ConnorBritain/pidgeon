@@ -1,0 +1,31 @@
+{
+  "triggerEvent": "R01",
+  "name": "Observation Result/Unsolicited Transmission",
+  "description": "Unsolicited transmission of observation results from laboratory, radiology, or other ancillary services",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "7",
+  "chapterName": "Observation Reporting",
+  "messageStructure": "ORU^R01",
+  "businessPurpose": "Transmit observation results, laboratory values, radiology reports, and other clinical findings",
+  "timing": "Sent when results are available, verified, and ready for clinical review",
+  "responseMessage": "ACK^R01^ACK",
+  "segments": {
+    "required": [
+      "MSH",
+      "PID",
+      "OBR",
+      "OBX"
+    ],
+    "optional": [
+      "PD1",
+      "NK1",
+      "NTE",
+      "PV1",
+      "PV2",
+      "ORC",
+      "CTI",
+      "DSC"
+    ]
+  }
+}

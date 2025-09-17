@@ -33,11 +33,17 @@
     },
     {
       "type": "segment",
+      "segment": "PD1",
+      "name": "Additional Demographics",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
       "segment": "NK1",
       "name": "Next of Kin/Associated Parties",
       "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "notes": ["Commonly included for admitted patients"]
+      "cardinality": {"min": 0, "max": 0}
     },
     {
       "type": "segment",
@@ -56,56 +62,117 @@
     },
     {
       "type": "segment",
+      "segment": "DB1",
+      "name": "Disability Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "segment",
       "segment": "OBX",
       "name": "Observation/Result",
       "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "notes": ["May include admission vitals or observations"]
+      "cardinality": {"min": 0, "max": 0}
     },
     {
       "type": "segment",
       "segment": "AL1",
       "name": "Patient Allergy Information",
       "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "notes": ["Important for patient safety"]
+      "cardinality": {"min": 0, "max": 0}
     },
     {
       "type": "segment",
       "segment": "DG1",
       "name": "Diagnosis",
       "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "notes": ["Admission diagnosis commonly included"]
+      "cardinality": {"min": 0, "max": 0}
     },
     {
       "type": "segment",
-      "segment": "PR1",
-      "name": "Procedures",
+      "segment": "DRG",
+      "name": "Diagnosis Related Group",
       "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"}
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "group",
+      "name": "PROCEDURE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0},
+      "structure": [
+        {
+          "type": "segment",
+          "segment": "PR1",
+          "name": "Procedures",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": 1}
+        },
+        {
+          "type": "segment",
+          "segment": "ROL",
+          "name": "Role",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 0}
+        }
+      ]
     },
     {
       "type": "segment",
       "segment": "GT1",
       "name": "Guarantor",
       "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"}
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "group",
+      "name": "INSURANCE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0},
+      "structure": [
+        {
+          "type": "segment",
+          "segment": "IN1",
+          "name": "Insurance",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": 1}
+        },
+        {
+          "type": "segment",
+          "segment": "IN2",
+          "name": "Insurance Additional Information",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1}
+        },
+        {
+          "type": "segment",
+          "segment": "IN3",
+          "name": "Insurance Additional Information - Certification",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1}
+        }
+      ]
     },
     {
       "type": "segment",
-      "segment": "IN1",
-      "name": "Insurance",
+      "segment": "ACC",
+      "name": "Accident Information",
       "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "notes": ["Very commonly included for billing"]
+      "cardinality": {"min": 0, "max": 1}
     },
     {
       "type": "segment",
-      "segment": "IN2",
-      "name": "Insurance Additional Information",
+      "segment": "UB1",
+      "name": "Universal Bill Information",
       "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"}
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "UB2",
+      "name": "Universal Bill 92 Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
     }
   ],
   "useCases": [

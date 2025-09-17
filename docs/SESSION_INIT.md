@@ -114,15 +114,16 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 ## 📚 **ESSENTIAL READING LIST**
 
 ### **🚨 CRITICAL - Read Every Session**
-1. **`docs/roadmap/PIDGEON_ROADMAP.md`** - Complete P0-P2 roadmap with all success metrics
-2. **`docs/roadmap/features/NORTHSTAR.md`** - Core value proposition and user focus
-3. **`docs/roadmap/CLI_DEVELOPMENT_STATUS.md`** - **[CRITICAL]** Current CLI analysis with segment field gaps
-4. **`docs/roadmap/data_integrity/data_mvp.md`** - **[CRITICAL]** 80/20 data strategy and MVP priorities
-5. **`docs/roadmap/data_integrity/HL7_REFERENCE_GUIDE.md`** - **[DEFINITIVE]** Official HL7 v2.3 standards compliance
-6. **`docs/roadmap/data_integrity/HL7_PRIORITY_ITEMS.md`** - **[MVP CRITICAL]** Rank-ordered priority items for systematic development
-7. **`docs/DATA_SPRINT.md`** - **[ACTIVE SPRINT]** Current data migration process and multi-agent coordination
-8. **`pidgeon/data/standards/hl7v23/_TEMPLATES/README.md`** - **[MANDATORY]** JSON template patterns for ALL data work
-9. **`pidgeon/data/standards/hl7v23/_TEMPLATES/CLEANUP.md`** - **[REQUIRED]** Data file remediation process
+1. **`docs/HL7_LIBRARY_PROCESS.md`** - **[GROUND TRUTH]** MANDATORY workflow for hallucination-free data using hl7-dictionary library
+2. **`docs/roadmap/PIDGEON_ROADMAP.md`** - Complete P0-P2 roadmap with all success metrics
+3. **`docs/roadmap/features/NORTHSTAR.md`** - Core value proposition and user focus
+4. **`docs/roadmap/CLI_DEVELOPMENT_STATUS.md`** - **[CRITICAL]** Current CLI analysis with segment field gaps
+5. **`docs/roadmap/data_integrity/data_mvp.md`** - **[CRITICAL]** 80/20 data strategy and MVP priorities
+6. **`docs/roadmap/data_integrity/HL7_REFERENCE_GUIDE.md`** - **[DEFINITIVE]** Official HL7 v2.3 standards compliance
+7. **`docs/roadmap/data_integrity/HL7_PRIORITY_ITEMS.md`** - **[MVP CRITICAL]** Rank-ordered priority items for systematic development
+8. **`docs/DATA_SPRINT.md`** - **[ACTIVE SPRINT]** Current data migration process and multi-agent coordination
+9. **`pidgeon/data/standards/hl7v23/_TEMPLATES/README.md`** - **[MANDATORY]** JSON template patterns for ALL data work
+10. **`pidgeon/data/standards/hl7v23/_TEMPLATES/CLEANUP.md`** - **[REQUIRED]** Data file remediation process
 8. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI command structure and examples
 9. **`docs/DEVELOPMENT.md`** - Current status and P0 development plan
 10. **`docs/RULES.md`** - Sacred architectural principles and error handling
@@ -158,8 +159,11 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 - [ ] Confirm all data work follows template patterns and standards compliance
 
 ### **Before Any Data Work**
+- [ ] **MANDATORY**: Read `docs/HL7_LIBRARY_PROCESS.md` for ground truth validation workflow
+- [ ] **MANDATORY**: Research using `node dev-tools/research-hl7-dictionary.js` BEFORE creating templates
 - [ ] **MANDATORY**: Read `docs/DATA_SPRINT.md` for current process and coordination
 - [ ] **MANDATORY**: Use appropriate `_TEMPLATES/` pattern (segment, table, datatype, message)
+- [ ] **MANDATORY**: Validate using `node scripts/validate-against-hl7-dictionary.js` AFTER creating templates
 - [ ] Reference `data_mvp.md` for 80/20 priority guidance and critical table list
 - [ ] Reference `HL7_PRIORITY_ITEMS.md` for rank-ordered MVP development priorities
 - [ ] Use `HL7_REFERENCE_GUIDE.md` for official standards compliance verification
@@ -216,6 +220,9 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 - "What template should I use for segments?" → *pidgeon/data/standards/hl7v23/_TEMPLATES/segment_template.json*
 
 ### **Agent Can Begin Work When**:
+- [ ] **MANDATORY**: Understands HL7_LIBRARY_PROCESS.md workflow (research → create → validate)
+- [ ] **MANDATORY**: Can use research tool: `node dev-tools/research-hl7-dictionary.js`
+- [ ] **MANDATORY**: Can use validation tool: `node scripts/validate-against-hl7-dictionary.js`
 - [ ] Understands CLI lookup critical gap (40% effectiveness) from CLI_DEVELOPMENT_STATUS.md
 - [ ] Knows 80/20 data strategy and priorities from data_mvp.md
 - [ ] Can navigate official HL7 v2.3 standards using HL7_REFERENCE_GUIDE.md
@@ -224,6 +231,7 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 - [ ] Knows tables 0002, 0005, 0006, 0004, 0007, 0023 exist and are complete
 - [ ] Can use appropriate template (segment_template.json for segment work)
 - [ ] Follows STOP-THINK-ACT error resolution methodology
+- [ ] **ZERO TOLERANCE**: Never creates templates without research and validation
 
 ---
 

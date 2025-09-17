@@ -1,0 +1,178 @@
+{
+  "segment": "ORC",
+  "name": "Common Order",
+  "description": "Contains common order information that applies to many types of orders including lab, radiology, and pharmacy orders",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "unbounded"
+  },
+  "fields": {
+    "ORC.1": {
+      "name": "Order Control",
+      "description": "Action requested or reported for this order",
+      "dataType": "ID",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "table": "0119",
+      "examples": ["NW", "OC", "CA", "DC", "SC"]
+    },
+    "ORC.2": {
+      "name": "Placer Order Number",
+      "description": "Unique identifier assigned by the placer of the order",
+      "dataType": "EI",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["ORD123456", "LAB789012"]
+    },
+    "ORC.3": {
+      "name": "Filler Order Number",
+      "description": "Unique identifier assigned by the filler of the order",
+      "dataType": "EI",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["LAB456789", "RAD987654"]
+    },
+    "ORC.4": {
+      "name": "Placer Group Number",
+      "description": "Identifier for a group of related orders from the placer",
+      "dataType": "EI",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["GRP123", "BATCH789"]
+    },
+    "ORC.5": {
+      "name": "Order Status",
+      "description": "Current status of the order",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0038",
+      "examples": ["A", "CA", "CM", "DC", "ER", "HD", "IP", "RP", "SC"]
+    },
+    "ORC.6": {
+      "name": "Response Flag",
+      "description": "Indicates level of response required",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0121",
+      "examples": ["E", "R", "N", "O", "D"]
+    },
+    "ORC.7": {
+      "name": "Quantity/Timing",
+      "description": "Timing and quantity specifications for the order",
+      "dataType": "TQ",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["1^QD^D", "2^BID^D", "PRN"]
+    },
+    "ORC.8": {
+      "name": "Parent Order",
+      "description": "Parent order information if this is a child order",
+      "dataType": "CM_EIP",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "ORC.9": {
+      "name": "Date/Time of Transaction",
+      "description": "Date and time the order transaction occurred",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815143000", "20221201120000"]
+    },
+    "ORC.10": {
+      "name": "Entered By",
+      "description": "Person who entered the order",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["12345^JONES^MARY^NURSE", "67890^SMITH^JOHN^CLERK"]
+    },
+    "ORC.11": {
+      "name": "Verified By",
+      "description": "Person who verified the order",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["11111^BROWN^SUSAN^MD", "22222^DAVIS^ROBERT^PHARM"]
+    },
+    "ORC.12": {
+      "name": "Ordering Provider",
+      "description": "Provider who placed the order",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["33333^WILSON^JAMES^MD", "44444^TAYLOR^LISA^NP"]
+    },
+    "ORC.13": {
+      "name": "Enterer's Location",
+      "description": "Location where the order was entered",
+      "dataType": "PL",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["ICU^201^A^MAIN^P", "ER^101^B^WEST^P"]
+    },
+    "ORC.14": {
+      "name": "Call Back Phone Number",
+      "description": "Phone number for callback regarding this order",
+      "dataType": "TN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 2},
+      "examples": ["555-1234", "800-HOSPITAL"]
+    },
+    "ORC.15": {
+      "name": "Order Effective Date/Time",
+      "description": "Date and time when the order becomes effective",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220816080000", "20221202060000"]
+    },
+    "ORC.16": {
+      "name": "Order Control Code Reason",
+      "description": "Reason for the order control action",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["STAT^Urgent", "ROUTINE^Standard priority"]
+    },
+    "ORC.17": {
+      "name": "Entering Organization",
+      "description": "Organization that entered the order",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["MAIN^Main Hospital", "CLINIC^Outpatient Clinic"]
+    },
+    "ORC.18": {
+      "name": "Entering Device",
+      "description": "Device or system that entered the order",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["CPOE^Computerized Provider Order Entry", "EMR^Electronic Medical Record"]
+    },
+    "ORC.19": {
+      "name": "Action By",
+      "description": "Person responsible for the action specified in order control",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["55555^GARCIA^CARLOS^TECH", "66666^MARTINEZ^ANNA^RN"]
+    }
+  },
+  "examples": [
+    "ORC|NW|ORD123456|LAB456789||A||1^QD^D|||20220815143000|12345^JONES^MARY^NURSE||33333^WILSON^JAMES^MD|ICU^201^A^MAIN^P|555-1234|20220816080000||||",
+    "ORC|CA|LAB789012|RAD987654||CA|E|PRN|||20221201120000|67890^SMITH^JOHN^CLERK|11111^BROWN^SUSAN^MD|44444^TAYLOR^LISA^NP|ER^101^B^WEST^P||||||"
+  ],
+  "notes": [
+    "ORC.1 (Order Control) is required to specify the action being taken",
+    "ORC.7 (Quantity/Timing) is required for timing specifications",
+    "Commonly used with OBR, RXO, RXE segments for different order types",
+    "Multiple ORC segments can represent different actions on the same order"
+  ]
+}

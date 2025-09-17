@@ -1,0 +1,120 @@
+{
+  "messageType": "ORD",
+  "triggerEvent": "O02",
+  "name": "Dietary Order Acknowledgment",
+  "description": "Sent to acknowledge receipt and status of dietary and nutrition order requests",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Order Management",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'ORD^O02'"]
+    },
+    {
+      "type": "segment",
+      "segment": "MSA",
+      "name": "Message Acknowledgment",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "ERR",
+      "name": "Error",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "NTE",
+      "name": "Notes and Comments",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "group",
+      "name": "RESPONSE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "structure": [
+        {
+          "type": "group",
+          "name": "PATIENT",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "PID",
+              "name": "Patient Identification",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "NTE",
+              "name": "Notes and Comments",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 0}
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "name": "ORDER_DIET",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": "unbounded"},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "ORC",
+              "name": "Common Order",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            },
+            {
+              "type": "group",
+              "name": "ORDER_DETAIL",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 1},
+              "structure": [
+                {
+                  "type": "segment",
+                  "segment": "ODS",
+                  "name": "Dietary Orders, Supplements, and Preferences",
+                  "usage": "R",
+                  "cardinality": {"min": 1, "max": "unbounded"}
+                },
+                {
+                  "type": "segment",
+                  "segment": "NTE",
+                  "name": "Notes and Comments",
+                  "usage": "O",
+                  "cardinality": {"min": 0, "max": 0}
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "useCases": [
+    "Food service order confirmations",
+    "Dietary restriction acknowledgments",
+    "Nutrition therapy order status",
+    "Special diet request responses"
+  ],
+  "examples": [
+    "MSH|^~\\&|DIET|HOSPITAL|||20231201150000||ORD^O02|MSG000015|P|2.3",
+    "MSA|AA|MSG000002|Dietary order accepted|",
+    "PID|||12345678^^^HOSPITAL^MR||DOE^JOHN^MIDDLE||19800101|M",
+    "ORC|OK|DIET001|||||||20231201150000|||NUT123^ANDERSON^CAROL",
+    "ODS|D|1^Regular Diet^DIET|||20231201180000"
+  ]
+}

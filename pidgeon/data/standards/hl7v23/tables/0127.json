@@ -1,0 +1,54 @@
+{
+  "table": "0127",
+  "name": "Allergen Type",
+  "description": "Type of allergen causing allergic reaction or sensitivity",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "type": "user_defined",
+  "values": [
+    {
+      "code": "AA",
+      "description": "Animal Allergy",
+      "definition": "Allergic reaction to animals, animal dander, or animal products"
+    },
+    {
+      "code": "DA",
+      "description": "Drug allergy",
+      "definition": "Allergic reaction to medications or pharmaceutical products"
+    },
+    {
+      "code": "EA",
+      "description": "Environmental Allergy",
+      "definition": "Allergic reaction to environmental factors such as dust, mold, or chemicals"
+    },
+    {
+      "code": "FA",
+      "description": "Food allergy",
+      "definition": "Allergic reaction to foods or food additives"
+    },
+    {
+      "code": "LA",
+      "description": "Pollen Allergy",
+      "definition": "Allergic reaction to pollen from trees, grasses, or weeds"
+    },
+    {
+      "code": "MA",
+      "description": "Miscellaneous allergy",
+      "definition": "Allergic reaction not fitting other specific categories"
+    },
+    {
+      "code": "MC",
+      "description": "Miscellaneous contraindication",
+      "definition": "Contraindication not related to allergies but important for patient safety"
+    },
+    {
+      "code": "PA",
+      "description": "Plant Allergy",
+      "definition": "Allergic reaction to plants or plant products excluding pollen"
+    }
+  ],
+  "usedIn": [
+    "AL1.3"
+  ],
+  "notes": "User-defined table for categorizing allergens and contraindications in allergy information"
+}

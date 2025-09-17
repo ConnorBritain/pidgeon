@@ -1,10 +1,17 @@
 # HL7 v2.3 Reference Guide - Definitive Standards Documentation
 
-## 🎯 **Primary Reference Source**
+## 🎯 **Primary Reference Sources**
 
-**Authoritative HL7 v2.3 Documentation**: https://www.hl7.eu/HL7v2x/v23/std23/hl7.htm
+### **1. Ground Truth Library (PREFERRED)**: `hl7-dictionary` npm package
+**Battle-tested FOSS library**: Comprehensive HL7 v2.x data with 100% accuracy
+- **86 Data Types**, **140+ Segments**, **500+ Tables**
+- **Process**: `docs/HL7_LIBRARY_PROCESS.md` - MANDATORY workflow for all data work
+- **Tools**: Research + validation scripts eliminate hallucinations
 
-This is our **definitive north star** for all HL7 v2.3 segment definitions, field specifications, and standards compliance. This documentation is complete, concise, thorough, and represents the actual HL7 standards as defined by the governing body.
+### **2. Official Documentation (FALLBACK)**: https://www.hl7.eu/HL7v2x/v23/std23/hl7.htm
+**Authoritative HL7 v2.3 Documentation**: For complex scenarios not covered by library
+
+**Priority**: Always use library tools first, official docs for edge cases only.
 
 ---
 

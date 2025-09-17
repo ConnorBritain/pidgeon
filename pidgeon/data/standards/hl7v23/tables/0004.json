@@ -1,0 +1,59 @@
+{
+  "table": "0004",
+  "name": "Patient Class",
+  "description": "Patient categorization by site and service type",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "type": "user_defined",
+  "values": [
+    {
+      "code": "B",
+      "description": "Obstetrics",
+      "definition": "Patient receiving obstetric or maternity care services"
+    },
+    {
+      "code": "C",
+      "description": "Commercial Account",
+      "definition": "Patient under commercial insurance or account arrangement"
+    },
+    {
+      "code": "E",
+      "description": "Emergency",
+      "definition": "Patient receiving emergency department services"
+    },
+    {
+      "code": "I",
+      "description": "Inpatient",
+      "definition": "Patient admitted as an inpatient to the facility"
+    },
+    {
+      "code": "N",
+      "description": "Not Applicable",
+      "definition": "Patient class classification is not applicable"
+    },
+    {
+      "code": "O",
+      "description": "Outpatient",
+      "definition": "Patient receiving outpatient or ambulatory services"
+    },
+    {
+      "code": "P",
+      "description": "Preadmit",
+      "definition": "Patient registered for future admission or services"
+    },
+    {
+      "code": "R",
+      "description": "Recurring patient",
+      "definition": "Patient with recurring or repeated visits to the facility"
+    },
+    {
+      "code": "U",
+      "description": "Unknown",
+      "definition": "Patient class is unknown or unspecified"
+    }
+  ],
+  "usedIn": [
+    "PV1.2"
+  ],
+  "notes": "User-defined table without consistent industry-wide definition, subject to site-specific variations"
+}

@@ -1,0 +1,168 @@
+{
+  "segment": "OBX",
+  "name": "Observation/Result",
+  "description": "Transmits a single observation or observation fragment with clinical results",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "R",
+  "cardinality": {
+    "min": 0,
+    "max": "unbounded"
+  },
+  "fields": {
+    "OBX.1": {
+      "name": "Set ID - OBX",
+      "description": "Sequence number for OBX segments within an OBR group",
+      "dataType": "SI",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["1", "2", "3"]
+    },
+    "OBX.2": {
+      "name": "Value Type",
+      "description": "Format type of the observation value in OBX.5",
+      "dataType": "ID",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "table": "0125",
+      "validValues": ["NM", "ST", "CE", "CF", "TX", "FT", "SN", "DT", "TM", "TS"],
+      "examples": ["NM", "ST", "CE"]
+    },
+    "OBX.3": {
+      "name": "Observation Identifier",
+      "description": "Unique identifier for the observation (recommend LOINC codes)",
+      "dataType": "CE",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["33747-0^Hemoglobin^LN", "2345-7^Glucose^LN", "CBC^Complete Blood Count^L"]
+    },
+    "OBX.4": {
+      "name": "Observation Sub-ID",
+      "description": "Distinguishes multiple OBX segments with same observation ID",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["1", "2", "PRE", "POST"]
+    },
+    "OBX.5": {
+      "name": "Observation Value",
+      "description": "The actual observation result - data type specified by OBX.2",
+      "dataType": "VARIES",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["12.5", "Normal", "POS^Positive^HL70136"]
+    },
+    "OBX.6": {
+      "name": "Units",
+      "description": "Units of measurement for the observation value",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["g/dL", "mg/dL", "mmol/L", "%"]
+    },
+    "OBX.7": {
+      "name": "References Range",
+      "description": "Reference (normal) range for the observation value",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["12.0-15.5", "<10", ">5.0", "Normal"]
+    },
+    "OBX.8": {
+      "name": "Abnormal Flags",
+      "description": "Indicates normalcy/abnormality of the result",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0078",
+      "validValues": ["L", "H", "LL", "HH", "N", "A", "AA", "<", ">"],
+      "examples": ["N", "H", "L"]
+    },
+    "OBX.9": {
+      "name": "Probability",
+      "description": "Probability that observation is true (0-1 range)",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["0.95", "0.85"]
+    },
+    "OBX.10": {
+      "name": "Nature of Abnormal Test",
+      "description": "Nature of abnormal test result context",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0080",
+      "validValues": ["A", "N", "R", "S"],
+      "examples": ["N", "A"]
+    },
+    "OBX.11": {
+      "name": "Observation Result Status",
+      "description": "Current completion status of results for this observation",
+      "dataType": "ID",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "table": "0085",
+      "validValues": ["C", "D", "F", "I", "P", "R", "S", "X", "U", "W"],
+      "examples": ["F", "P", "I"]
+    },
+    "OBX.12": {
+      "name": "Date Last Obs Normal Values",
+      "description": "Date last normal values were observed",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815143000"]
+    },
+    "OBX.13": {
+      "name": "User Defined Access Checks",
+      "description": "User-defined access checks for observation",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["ACCESS1", "CHECKS"]
+    },
+    "OBX.14": {
+      "name": "Date/Time of the Observation",
+      "description": "Date/time when observation was made",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815143000", "202208151430"]
+    },
+    "OBX.15": {
+      "name": "Producer's ID",
+      "description": "Identifies the producer/department of the observation",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["LAB^Clinical Laboratory", "RAD^Radiology"]
+    },
+    "OBX.16": {
+      "name": "Responsible Observer",
+      "description": "Person responsible for the observation",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["67890^JONES^MARY^MD", "12345^SMITH^JOHN^MT"]
+    },
+    "OBX.17": {
+      "name": "Observation Method",
+      "description": "Method or equipment used for observation",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["AUTO^Automated method", "MICRO^Microscopy"]
+    }
+  },
+  "examples": [
+    "OBX|1|NM|33747-0^Hemoglobin^LN||12.5|g/dL|12.0-15.5|N|||F|||67890^JONES^MARY^MD|AUTO^Automated",
+    "OBX|2|ST|2345-7^Glucose^LN||85|mg/dL|70-100|N|||F|||12345^SMITH^JOHN^MT|",
+    "OBX|3|CE|87340-7^Culture^LN||POS^Positive^HL70136||||A|||F|||33333^GARCIA^LUIS^MD|CULTURE^Culture method"
+  ],
+  "notes": [
+    "OBX.2 (Value Type) and OBX.3 (Observation Identifier) are required",
+    "OBX.11 (Result Status) is required - F=Final, P=Preliminary, I=In progress",
+    "OBX.8 (Abnormal Flags) uses table 0078 - N=Normal, H=High, L=Low"
+  ]
+}

@@ -1,0 +1,366 @@
+{
+  "segment": "OBR",
+  "name": "Observation Request",
+  "description": "Transmits information about an exam, diagnostic study, or assessment specific to an order or result",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "R",
+  "cardinality": {
+    "min": 1,
+    "max": 1
+  },
+  "fields": {
+    "OBR.1": {
+      "name": "Set ID - OBR",
+      "description": "Sequence number for this transaction",
+      "dataType": "SI",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["1", "2"]
+    },
+    "OBR.2": {
+      "name": "Placer Order Number",
+      "description": "Order number assigned by placer (ordering application)",
+      "dataType": "EI",
+      "usage": "C",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["ORD123456^LAB", "REQ789012^RAD"]
+    },
+    "OBR.3": {
+      "name": "Filler Order Number",
+      "description": "Order number assigned by filler (receiving application)",
+      "dataType": "EI",
+      "usage": "C",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["FIL789012^LAB", "ACC456789^RAD"]
+    },
+    "OBR.4": {
+      "name": "Universal Service ID",
+      "description": "Identifier code for the requested observation/test/battery",
+      "dataType": "CE",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["CBC^Complete Blood Count^L", "BMP^Basic Metabolic Panel^L", "CHEST^Chest X-Ray^R"]
+    },
+    "OBR.5": {
+      "name": "Priority",
+      "description": "Deprecated in v2.3 - use ORC segment for priority",
+      "dataType": "ID",
+      "usage": "X",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    "OBR.6": {
+      "name": "Requested Date/Time",
+      "description": "Deprecated in v2.3 - use ORC segment for timing",
+      "dataType": "TS",
+      "usage": "X",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    "OBR.7": {
+      "name": "Observation Date/Time",
+      "description": "Clinically relevant date/time of observation or specimen collection",
+      "dataType": "TS",
+      "usage": "C",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815143000", "202208151430"]
+    },
+    "OBR.8": {
+      "name": "Observation End Date/Time",
+      "description": "End date/time for observations occurring over time period",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815153000"]
+    },
+    "OBR.9": {
+      "name": "Collection Volume",
+      "description": "Volume of specimen collected",
+      "dataType": "CQ",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["10^ML", "5^CC"]
+    },
+    "OBR.10": {
+      "name": "Collector Identifier",
+      "description": "Person who collected specimen or performed observation",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": ["12345^SMITH^JOHN^MD", "67890^JONES^MARY^RN"]
+    },
+    "OBR.11": {
+      "name": "Specimen Action Code",
+      "description": "Action to be taken with specimens",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0065",
+      "validValues": ["A", "G", "L", "O", "P", "R", "S"],
+      "examples": ["L", "O"]
+    },
+    "OBR.12": {
+      "name": "Danger Code",
+      "description": "Hazards associated with specimen collection/analysis",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0070",
+      "examples": ["BHZ^Biological hazard", "INF^Infectious"]
+    },
+    "OBR.13": {
+      "name": "Relevant Clinical Info",
+      "description": "Additional clinical information for laboratory interpretation",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["Patient fasting", "On anticoagulants"]
+    },
+    "OBR.14": {
+      "name": "Specimen Received Date/Time",
+      "description": "Date/time specimen was received in lab",
+      "dataType": "TS",
+      "usage": "C",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815144500"]
+    },
+    "OBR.15": {
+      "name": "Specimen Source",
+      "description": "Site and method of specimen collection",
+      "dataType": "CM_SPS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["Blood^EDTA^Venipuncture", "Urine^None^Clean catch"]
+    },
+    "OBR.16": {
+      "name": "Ordering Provider",
+      "description": "Provider who ordered the observation",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": ["98765^GARCIA^MARIA^MD"]
+    },
+    "OBR.17": {
+      "name": "Order Callback Phone Number",
+      "description": "Phone number for order-related callbacks",
+      "dataType": "XTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 2},
+      "examples": ["(216) 555-1234^WPN^PH"]
+    },
+    "OBR.18": {
+      "name": "Placer Field 1",
+      "description": "Placer-defined field for additional information",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "OBR.19": {
+      "name": "Placer Field 2",
+      "description": "Placer-defined field for additional information",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "OBR.20": {
+      "name": "Filler Field 1",
+      "description": "Filler-defined field for additional information",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "OBR.21": {
+      "name": "Filler Field 2",
+      "description": "Filler-defined field for additional information",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "OBR.22": {
+      "name": "Results Rpt/Status Chng - Date/Time",
+      "description": "Date/time results were reported or status changed",
+      "dataType": "TS",
+      "usage": "C",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815160000"]
+    },
+    "OBR.23": {
+      "name": "Charge To Practice",
+      "description": "Financial information for charging purposes",
+      "dataType": "CM_MOC",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "OBR.24": {
+      "name": "Diagnostic Serv Sect ID",
+      "description": "Section of diagnostic service performing test",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0074",
+      "validValues": ["CH", "HM", "LAB", "RAD", "RX", "AU", "BG", "BLB", "CG", "CP", "CT", "GE", "IC", "LAB", "MB", "MCB", "MYC", "NMR", "NMS", "OSL", "OUS", "OTH", "PHY", "PAT", "RAD", "RUS", "RX", "SP", "SR", "TX", "VR", "VUS", "XRC"],
+      "examples": ["CH", "HM", "RAD"]
+    },
+    "OBR.25": {
+      "name": "Result Status",
+      "description": "Status of results for this order",
+      "dataType": "ID",
+      "usage": "C",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0123",
+      "validValues": ["O", "P", "F", "A", "C", "R", "S", "X", "Y", "Z"],
+      "examples": ["F", "P", "C"]
+    },
+    "OBR.26": {
+      "name": "Parent Result",
+      "description": "Link to parent observation for reflex testing",
+      "dataType": "CM_PRL",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "OBR.27": {
+      "name": "Quantity/Timing",
+      "description": "Quantity and timing information for the order",
+      "dataType": "TQ",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["1^PRN"]
+    },
+    "OBR.28": {
+      "name": "Result Copies To",
+      "description": "Additional recipients for results",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": ["55555^TAYLOR^CHRIS^MD"]
+    },
+    "OBR.29": {
+      "name": "Parent Number",
+      "description": "Parent order number for reflex tests",
+      "dataType": "CM_EIP",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "OBR.30": {
+      "name": "Transportation Mode",
+      "description": "Method of specimen transportation",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0124",
+      "examples": ["CART", "PORT", "WALK"]
+    },
+    "OBR.31": {
+      "name": "Reason for Study",
+      "description": "Clinical reason for ordering the study",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": ["R06.00^Dyspnea^ICD10", "I25.10^CAD^ICD10"]
+    },
+    "OBR.32": {
+      "name": "Principal Result Interpreter",
+      "description": "Person primarily responsible for interpreting results",
+      "dataType": "CM_NDL",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "OBR.33": {
+      "name": "Assistant Result Interpreter",
+      "description": "Additional person interpreting results",
+      "dataType": "CM_NDL",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"}
+    },
+    "OBR.34": {
+      "name": "Technician",
+      "description": "Technician who performed the test",
+      "dataType": "CM_NDL",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"}
+    },
+    "OBR.35": {
+      "name": "Transcriptionist",
+      "description": "Person who transcribed the results",
+      "dataType": "CM_NDL",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"}
+    },
+    "OBR.36": {
+      "name": "Scheduled Date/Time",
+      "description": "Date/time the observation is scheduled",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220816090000"]
+    },
+    "OBR.37": {
+      "name": "Number of Sample Containers",
+      "description": "Number of containers for this specimen",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["1", "2"]
+    },
+    "OBR.38": {
+      "name": "Transport Logistics of Collected Sample",
+      "description": "Special transport requirements",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": ["FROZEN^Keep frozen"]
+    },
+    "OBR.39": {
+      "name": "Collector's Comment",
+      "description": "Comments from specimen collector",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": ["QNS^Quantity not sufficient"]
+    },
+    "OBR.40": {
+      "name": "Transport Arrangement Responsibility",
+      "description": "Who is responsible for transport arrangements",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["LAB^Laboratory", "WARD^Nursing ward"]
+    },
+    "OBR.41": {
+      "name": "Transport Arranged",
+      "description": "Whether transport has been arranged",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0224",
+      "validValues": ["A", "N"],
+      "examples": ["A", "N"]
+    },
+    "OBR.42": {
+      "name": "Escort Required",
+      "description": "Whether escort is required for patient",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0225",
+      "validValues": ["R", "N"],
+      "examples": ["R", "N"]
+    },
+    "OBR.43": {
+      "name": "Planned Patient Transport Comment",
+      "description": "Comments about planned patient transport",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": ["WHEELCHAIR^Wheelchair required"]
+    }
+  },
+  "examples": [
+    "OBR|1|ORD123456^LAB|FIL789012^LAB|CBC^Complete Blood Count^L|||20220815143000|||12345^SMITH^JOHN^MD|L||Patient fasting|20220815144500|Blood^EDTA^Venipuncture|98765^GARCIA^MARIA^MD|(216) 555-1234^WPN^PH||||20220815160000||CH|F||||55555^TAYLOR^CHRIS^MD||||20220816090000|1|||A|N|",
+    "OBR|1||ACC456789^RAD|CHEST^Chest X-Ray^R|||20220815100000||||||||||||RAD|F||||||||||||||||||"
+  ],
+  "notes": [
+    "OBR.4 (Universal Service ID) is required - identifies the test/procedure",
+    "OBR.24 (Diagnostic Service Section ID) references table 0074 for department codes",
+    "OBR.25 (Result Status) uses table 0123 - F=Final, P=Preliminary, C=Corrected"
+  ]
+}

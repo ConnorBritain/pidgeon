@@ -1,0 +1,439 @@
+{
+  "table": "0006",
+  "name": "Religion",
+  "description": "Person's religious affiliation",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "type": "user_defined",
+  "values": [
+    {
+      "code": "ABC",
+      "description": "Christian: American Baptist Church",
+      "definition": "American Baptist Church denomination"
+    },
+    {
+      "code": "AGN",
+      "description": "Agnostic",
+      "definition": "Person who believes the existence of God is unknowable"
+    },
+    {
+      "code": "AME",
+      "description": "Christian: African Methodist Episcopal Zion",
+      "definition": "African Methodist Episcopal Zion denomination"
+    },
+    {
+      "code": "AMT",
+      "description": "Christian: African Methodist Episcopal",
+      "definition": "African Methodist Episcopal denomination"
+    },
+    {
+      "code": "ANG",
+      "description": "Christian: Anglican",
+      "definition": "Anglican Christian denomination"
+    },
+    {
+      "code": "AOG",
+      "description": "Christian: Assembly of God",
+      "definition": "Assembly of God Pentecostal denomination"
+    },
+    {
+      "code": "ATH",
+      "description": "Atheist",
+      "definition": "Person who does not believe in the existence of God"
+    },
+    {
+      "code": "BAH",
+      "description": "Baha'i",
+      "definition": "Follower of Baha'i faith"
+    },
+    {
+      "code": "BAP",
+      "description": "Christian: Baptist",
+      "definition": "Baptist Christian denomination"
+    },
+    {
+      "code": "BMA",
+      "description": "Buddhist: Mahayana",
+      "definition": "Mahayana school of Buddhism"
+    },
+    {
+      "code": "BOT",
+      "description": "Buddhist: Other",
+      "definition": "Other Buddhist schools and traditions"
+    },
+    {
+      "code": "BRE",
+      "description": "Brethren",
+      "definition": "Brethren Christian denomination"
+    },
+    {
+      "code": "BTA",
+      "description": "Buddhist: Tantrayana",
+      "definition": "Tantrayana (Vajrayana) school of Buddhism"
+    },
+    {
+      "code": "BTH",
+      "description": "Buddhist: Theravada",
+      "definition": "Theravada school of Buddhism"
+    },
+    {
+      "code": "BUD",
+      "description": "Buddhist",
+      "definition": "General Buddhist religion and philosophy"
+    },
+    {
+      "code": "CAT",
+      "description": "Christian: Roman Catholic",
+      "definition": "Roman Catholic Christian denomination"
+    },
+    {
+      "code": "CFR",
+      "description": "Chinese Folk Religionist",
+      "definition": "Follower of Chinese folk religion traditions"
+    },
+    {
+      "code": "CHR",
+      "description": "Christian",
+      "definition": "General Christian faith tradition"
+    },
+    {
+      "code": "CHS",
+      "description": "Christian: Christian Science",
+      "definition": "Christian Science denomination"
+    },
+    {
+      "code": "CMA",
+      "description": "Christian: Christian Missionary Alliance",
+      "definition": "Christian Missionary Alliance denomination"
+    },
+    {
+      "code": "CNF",
+      "description": "Confucian",
+      "definition": "Follower of Confucian philosophy and ethics"
+    },
+    {
+      "code": "COC",
+      "description": "Christian: Church of Christ",
+      "definition": "Church of Christ denomination"
+    },
+    {
+      "code": "COG",
+      "description": "Christian: Church of God",
+      "definition": "Church of God denomination"
+    },
+    {
+      "code": "COI",
+      "description": "Christian: Church of God in Christ",
+      "definition": "Church of God in Christ denomination"
+    },
+    {
+      "code": "COL",
+      "description": "Christian: Congregational",
+      "definition": "Congregational Christian denomination"
+    },
+    {
+      "code": "COM",
+      "description": "Christian: Community",
+      "definition": "Community Christian churches"
+    },
+    {
+      "code": "COP",
+      "description": "Christian: Other Pentecostal",
+      "definition": "Other Pentecostal denominations"
+    },
+    {
+      "code": "COT",
+      "description": "Christian: Other",
+      "definition": "Other Christian denominations not specified"
+    },
+    {
+      "code": "CRR",
+      "description": "Christian: Christian Reformed",
+      "definition": "Christian Reformed denomination"
+    },
+    {
+      "code": "DOC",
+      "description": "Disciples of Christ",
+      "definition": "Disciples of Christ denomination"
+    },
+    {
+      "code": "EOT",
+      "description": "Christian: Eastern Orthodox",
+      "definition": "Eastern Orthodox Christian denomination"
+    },
+    {
+      "code": "EPI",
+      "description": "Christian: Episcopalian",
+      "definition": "Episcopalian (Anglican) Christian denomination"
+    },
+    {
+      "code": "ERL",
+      "description": "Ethnic Religionist",
+      "definition": "Follower of ethnic or tribal religious traditions"
+    },
+    {
+      "code": "EVC",
+      "description": "Christian: Evangelical Church",
+      "definition": "Evangelical Christian denomination"
+    },
+    {
+      "code": "FRQ",
+      "description": "Christian: Friends",
+      "definition": "Friends (Quaker) denomination"
+    },
+    {
+      "code": "FUL",
+      "description": "Christian: Full Gospel",
+      "definition": "Full Gospel Christian denomination"
+    },
+    {
+      "code": "FWB",
+      "description": "Christian: Free Will Baptist",
+      "definition": "Free Will Baptist denomination"
+    },
+    {
+      "code": "GRE",
+      "description": "Christian: Greek Orthodox",
+      "definition": "Greek Orthodox Christian denomination"
+    },
+    {
+      "code": "HIN",
+      "description": "Hindu",
+      "definition": "Follower of Hinduism religion"
+    },
+    {
+      "code": "HOT",
+      "description": "Hindu: Other",
+      "definition": "Other Hindu traditions and schools"
+    },
+    {
+      "code": "HSH",
+      "description": "Hindu: Shaivites",
+      "definition": "Shaivite school of Hinduism"
+    },
+    {
+      "code": "HVA",
+      "description": "Hindu: Vaishnavites",
+      "definition": "Vaishnavite school of Hinduism"
+    },
+    {
+      "code": "JAI",
+      "description": "Jain",
+      "definition": "Follower of Jainism religion"
+    },
+    {
+      "code": "JCO",
+      "description": "Jewish: Conservative",
+      "definition": "Conservative Judaism denomination"
+    },
+    {
+      "code": "JEW",
+      "description": "Jewish",
+      "definition": "General Jewish religion and tradition"
+    },
+    {
+      "code": "JOR",
+      "description": "Jewish: Orthodox",
+      "definition": "Orthodox Judaism denomination"
+    },
+    {
+      "code": "JOT",
+      "description": "Jewish: Other",
+      "definition": "Other Jewish denominations and movements"
+    },
+    {
+      "code": "JRC",
+      "description": "Jewish: Reconstructionist",
+      "definition": "Reconstructionist Judaism denomination"
+    },
+    {
+      "code": "JRF",
+      "description": "Jewish: Reform",
+      "definition": "Reform Judaism denomination"
+    },
+    {
+      "code": "JRN",
+      "description": "Jewish: Renewal",
+      "definition": "Jewish Renewal movement"
+    },
+    {
+      "code": "JWN",
+      "description": "Christian: Jehovah's Witness",
+      "definition": "Jehovah's Witness denomination"
+    },
+    {
+      "code": "LMS",
+      "description": "Christian: Lutheran Missouri Synod",
+      "definition": "Lutheran Missouri Synod denomination"
+    },
+    {
+      "code": "LUT",
+      "description": "Christian: Lutheran",
+      "definition": "Lutheran Christian denomination"
+    },
+    {
+      "code": "MEN",
+      "description": "Christian: Mennonite",
+      "definition": "Mennonite Christian denomination"
+    },
+    {
+      "code": "MET",
+      "description": "Christian: Methodist",
+      "definition": "Methodist Christian denomination"
+    },
+    {
+      "code": "MOM",
+      "description": "Christian: Latter-day Saints",
+      "definition": "Church of Jesus Christ of Latter-day Saints"
+    },
+    {
+      "code": "MOS",
+      "description": "Muslim",
+      "definition": "Follower of Islam religion"
+    },
+    {
+      "code": "MOT",
+      "description": "Muslim: Other",
+      "definition": "Other Islamic denominations and schools"
+    },
+    {
+      "code": "MSH",
+      "description": "Muslim: Shiite",
+      "definition": "Shiite school of Islam"
+    },
+    {
+      "code": "MSU",
+      "description": "Muslim: Sunni",
+      "definition": "Sunni school of Islam"
+    },
+    {
+      "code": "NAM",
+      "description": "Native American",
+      "definition": "Native American spiritual traditions"
+    },
+    {
+      "code": "NAZ",
+      "description": "Christian: Church of the Nazarene",
+      "definition": "Church of the Nazarene denomination"
+    },
+    {
+      "code": "NOE",
+      "description": "Nonreligious",
+      "definition": "Person without religious affiliation"
+    },
+    {
+      "code": "NRL",
+      "description": "New Religionist",
+      "definition": "Follower of new religious movements"
+    },
+    {
+      "code": "ORT",
+      "description": "Christian: Orthodox",
+      "definition": "Orthodox Christian denomination"
+    },
+    {
+      "code": "OTH",
+      "description": "Other",
+      "definition": "Religious affiliation not listed elsewhere"
+    },
+    {
+      "code": "PEN",
+      "description": "Christian: Pentecostal",
+      "definition": "Pentecostal Christian denomination"
+    },
+    {
+      "code": "PRC",
+      "description": "Christian: Other Protestant",
+      "definition": "Other Protestant denominations"
+    },
+    {
+      "code": "PRE",
+      "description": "Christian: Presbyterian",
+      "definition": "Presbyterian Christian denomination"
+    },
+    {
+      "code": "PRO",
+      "description": "Christian: Protestant",
+      "definition": "General Protestant Christian denomination"
+    },
+    {
+      "code": "REC",
+      "description": "Christian: Reformed Church",
+      "definition": "Reformed Church denomination"
+    },
+    {
+      "code": "REO",
+      "description": "Christian: Reorganized Church of Jesus Christ-LDS",
+      "definition": "Reorganized Church of Jesus Christ of Latter Day Saints"
+    },
+    {
+      "code": "SAA",
+      "description": "Christian: Salvation Army",
+      "definition": "Salvation Army denomination"
+    },
+    {
+      "code": "SEV",
+      "description": "Christian: Seventh Day Adventist",
+      "definition": "Seventh Day Adventist denomination"
+    },
+    {
+      "code": "SHN",
+      "description": "Shintoist",
+      "definition": "Follower of Shinto religion"
+    },
+    {
+      "code": "SIK",
+      "description": "Sikh",
+      "definition": "Follower of Sikhism religion"
+    },
+    {
+      "code": "SOU",
+      "description": "Christian: Southern Baptist",
+      "definition": "Southern Baptist denomination"
+    },
+    {
+      "code": "SPI",
+      "description": "Spiritist",
+      "definition": "Follower of Spiritism"
+    },
+    {
+      "code": "UCC",
+      "description": "Christian: United Church of Christ",
+      "definition": "United Church of Christ denomination"
+    },
+    {
+      "code": "UMD",
+      "description": "Christian: United Methodist",
+      "definition": "United Methodist denomination"
+    },
+    {
+      "code": "UNI",
+      "description": "Christian: Unitarian",
+      "definition": "Unitarian denomination"
+    },
+    {
+      "code": "UNU",
+      "description": "Christian: Unitarian Universalist",
+      "definition": "Unitarian Universalist denomination"
+    },
+    {
+      "code": "VAR",
+      "description": "Unknown",
+      "definition": "Religious affiliation is unknown"
+    },
+    {
+      "code": "WES",
+      "description": "Christian: Wesleyan",
+      "definition": "Wesleyan denomination"
+    },
+    {
+      "code": "WMC",
+      "description": "Christian: Wesleyan Methodist",
+      "definition": "Wesleyan Methodist denomination"
+    }
+  ],
+  "usedIn": [
+    "PID.17"
+  ],
+  "notes": "User-defined table allows customization for cultural and geographic diversity"
+}

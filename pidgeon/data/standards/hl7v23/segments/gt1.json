@@ -1,0 +1,463 @@
+{
+  "segment": "GT1",
+  "name": "Guarantor",
+  "description": "Contains financial guarantor information for patient billing and responsibility",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "unbounded"
+  },
+  "fields": {
+    "GT1.1": {
+      "name": "Set ID - Guarantor",
+      "description": "Sequence number for guarantor segments within message",
+      "dataType": "SI",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["1", "2", "3"]
+    },
+    "GT1.2": {
+      "name": "Guarantor Number",
+      "description": "Unique identifier for the guarantor",
+      "dataType": "CX",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["GTR123456", "GUAR789012"]
+    },
+    "GT1.3": {
+      "name": "Guarantor Name",
+      "description": "Name of the financial guarantor",
+      "dataType": "XPN",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["SMITH^JOHN^Q", "DOE^JANE^MARIE"]
+    },
+    "GT1.4": {
+      "name": "Guarantor Spouse Name",
+      "description": "Name of guarantor's spouse",
+      "dataType": "XPN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["SMITH^MARY^ANN", "DOE^ROBERT^J"]
+    },
+    "GT1.5": {
+      "name": "Guarantor Address",
+      "description": "Address of the guarantor",
+      "dataType": "XAD",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["123 MAIN ST^^CLEVELAND^OH^44101"]
+    },
+    "GT1.6": {
+      "name": "Guarantor Ph Num- Home",
+      "description": "Home phone number of guarantor",
+      "dataType": "XTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": ["(216) 555-1234^PRN^PH"]
+    },
+    "GT1.7": {
+      "name": "Guarantor Ph Num-Business",
+      "description": "Business phone number of guarantor",
+      "dataType": "XTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": ["(216) 555-9876^WPN^PH"]
+    },
+    "GT1.8": {
+      "name": "Guarantor Date/Time of Birth",
+      "description": "Birth date and time of guarantor",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["19750425", "19821203"]
+    },
+    "GT1.9": {
+      "name": "Guarantor Sex",
+      "description": "Gender of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0001",
+      "examples": ["M", "F"]
+    },
+    "GT1.10": {
+      "name": "Guarantor Type",
+      "description": "Type of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0068"
+    },
+    "GT1.11": {
+      "name": "Guarantor Relationship",
+      "description": "Guarantor's relationship to patient",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0063",
+      "examples": ["SEL", "SPO", "PAR"]
+    },
+    "GT1.12": {
+      "name": "Guarantor SSN",
+      "description": "Social Security Number of guarantor",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["123-45-6789"]
+    },
+    "GT1.13": {
+      "name": "Guarantor Date - Begin",
+      "description": "Date guarantor responsibility begins",
+      "dataType": "DT",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220101", "20230701"]
+    },
+    "GT1.14": {
+      "name": "Guarantor Date - End",
+      "description": "Date guarantor responsibility ends",
+      "dataType": "DT",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20221231", "20240630"]
+    },
+    "GT1.15": {
+      "name": "Guarantor Priority",
+      "description": "Priority ranking of guarantor",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["1", "2", "3"]
+    },
+    "GT1.16": {
+      "name": "Guarantor Employer Name",
+      "description": "Name of guarantor's employer",
+      "dataType": "XPN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["ACME Corporation", "City Hospital"]
+    },
+    "GT1.17": {
+      "name": "Guarantor Employer Address",
+      "description": "Address of guarantor's employer",
+      "dataType": "XAD",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["456 WORK ST^^AKRON^OH^44301"]
+    },
+    "GT1.18": {
+      "name": "Guarantor Employ Phone Number",
+      "description": "Employer phone number for guarantor",
+      "dataType": "XTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": ["(330) 555-WORK^WPN^PH"]
+    },
+    "GT1.19": {
+      "name": "Guarantor Employee ID Number",
+      "description": "Employee ID number for guarantor",
+      "dataType": "CX",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["EMP12345", "STAFF67890"]
+    },
+    "GT1.20": {
+      "name": "Guarantor Employment Status",
+      "description": "Employment status of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0066"
+    },
+    "GT1.21": {
+      "name": "Guarantor Organization",
+      "description": "Organization associated with guarantor",
+      "dataType": "XON",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["Self Pay", "Insurance Company"]
+    },
+    "GT1.22": {
+      "name": "Guarantor Billing Hold Flag",
+      "description": "Flag indicating billing hold for guarantor",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0136",
+      "examples": ["Y", "N"]
+    },
+    "GT1.23": {
+      "name": "Guarantor Credit Rating Code",
+      "description": "Credit rating code for guarantor",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["EXCELLENT^Excellent credit", "POOR^Poor credit"]
+    },
+    "GT1.24": {
+      "name": "Guarantor Death Date And Time",
+      "description": "Date and time of guarantor's death",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20221025143000"]
+    },
+    "GT1.25": {
+      "name": "Guarantor Death Flag",
+      "description": "Flag indicating if guarantor is deceased",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0136",
+      "examples": ["Y", "N"]
+    },
+    "GT1.26": {
+      "name": "Guarantor Charge Adjustment Code",
+      "description": "Charge adjustment code for guarantor",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "GT1.27": {
+      "name": "Guarantor Household Annual Income",
+      "description": "Annual household income of guarantor",
+      "dataType": "CP",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["50000.00^USD", "75000.00^USD"]
+    },
+    "GT1.28": {
+      "name": "Guarantor Household Size",
+      "description": "Number of people in guarantor's household",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["2", "4", "1"]
+    },
+    "GT1.29": {
+      "name": "Guarantor Employer ID Number",
+      "description": "Employer identification number",
+      "dataType": "CX",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["EIN123456789"]
+    },
+    "GT1.30": {
+      "name": "Guarantor Marital Status Code",
+      "description": "Marital status of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["M", "S", "D"]
+    },
+    "GT1.31": {
+      "name": "Guarantor Hire Effective Date",
+      "description": "Date guarantor was hired by employer",
+      "dataType": "DT",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220101", "20210615"]
+    },
+    "GT1.32": {
+      "name": "Employment Stop Date",
+      "description": "Date guarantor's employment ended",
+      "dataType": "DT",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20221231"]
+    },
+    "GT1.33": {
+      "name": "Living Dependency",
+      "description": "Living dependency status of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0223"
+    },
+    "GT1.34": {
+      "name": "Ambulatory Status",
+      "description": "Ambulatory status of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0009"
+    },
+    "GT1.35": {
+      "name": "Citizenship",
+      "description": "Citizenship of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0171"
+    },
+    "GT1.36": {
+      "name": "Primary Language",
+      "description": "Primary language of guarantor",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["EN^English", "ES^Spanish"]
+    },
+    "GT1.37": {
+      "name": "Living Arrangement",
+      "description": "Living arrangement of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0220"
+    },
+    "GT1.38": {
+      "name": "Publicity Indicator",
+      "description": "Publicity restrictions for guarantor",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "GT1.39": {
+      "name": "Protection Indicator",
+      "description": "Protection indicator for guarantor",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0136",
+      "examples": ["Y", "N"]
+    },
+    "GT1.40": {
+      "name": "Student Indicator",
+      "description": "Student status of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0231"
+    },
+    "GT1.41": {
+      "name": "Religion",
+      "description": "Religious affiliation of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0006"
+    },
+    "GT1.42": {
+      "name": "Mother's Maiden Name",
+      "description": "Mother's maiden name of guarantor",
+      "dataType": "XPN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["JOHNSON^MARY"]
+    },
+    "GT1.43": {
+      "name": "Nationality Code",
+      "description": "Nationality of guarantor",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["USA^United States"]
+    },
+    "GT1.44": {
+      "name": "Ethnic Group",
+      "description": "Ethnic group of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0189"
+    },
+    "GT1.45": {
+      "name": "Contact Person's Name",
+      "description": "Name of contact person for guarantor",
+      "dataType": "XPN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["BROWN^SARAH^CONTACT"]
+    },
+    "GT1.46": {
+      "name": "Contact Person's Telephone Number",
+      "description": "Phone number for contact person",
+      "dataType": "XTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["(440) 555-HELP^PRN^PH"]
+    },
+    "GT1.47": {
+      "name": "Contact Reason",
+      "description": "Reason for contacting person",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "GT1.48": {
+      "name": "Contact Relationship Code",
+      "description": "Relationship of contact person to guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0063"
+    },
+    "GT1.49": {
+      "name": "Job Title",
+      "description": "Job title of guarantor",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["Manager", "Engineer", "Teacher"]
+    },
+    "GT1.50": {
+      "name": "Job Code/Class",
+      "description": "Job classification code",
+      "dataType": "JCC",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "GT1.51": {
+      "name": "Guarantor Employer's Organization Name",
+      "description": "Organization name of guarantor's employer",
+      "dataType": "XON",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["ACME Corporation", "State Government"]
+    },
+    "GT1.52": {
+      "name": "Handicap",
+      "description": "Handicap information for guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0310"
+    },
+    "GT1.53": {
+      "name": "Job Status",
+      "description": "Employment status of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0311"
+    },
+    "GT1.54": {
+      "name": "Guarantor Financial Class",
+      "description": "Financial class of guarantor",
+      "dataType": "FC",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "GT1.55": {
+      "name": "Guarantor Race",
+      "description": "Race of guarantor",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0005"
+    }
+  },
+  "examples": [
+    "GT1|1|GTR123456|SMITH^JOHN^Q|SMITH^MARY^ANN|123 MAIN ST^^CLEVELAND^OH^44101|(216) 555-1234^PRN^PH|(216) 555-9876^WPN^PH|19750425|M||SEL|123-45-6789|20220101|20221231|1",
+    "GT1|2||DOE^JANE^MARIE||456 ELM ST^^AKRON^OH^44301|(330) 555-4321^PRN^PH||19821203|F||PAR|987-65-4321|20230101||2"
+  ],
+  "notes": [
+    "GT1.1 (Set ID) is required for segment sequencing",
+    "GT1.3 (Guarantor Name) is required to identify the financial guarantor",
+    "Multiple GT1 segments can represent different guarantors with priority ordering"
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "messageType": "OSR",
+  "triggerEvent": "Q06",
+  "name": "Query Response for Order Status",
+  "description": "Sent to provide order status information in response to order status queries",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Query Management",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'OSR^Q06'"]
+    },
+    {
+      "type": "segment",
+      "segment": "MSA",
+      "name": "Message Acknowledgment",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "QRD",
+      "name": "Query Definition",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "QRF",
+      "name": "Query Filter",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "group",
+      "name": "ORDER",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": "unbounded"},
+      "structure": [
+        {
+          "type": "segment",
+          "segment": "ORC",
+          "name": "Common Order",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": 1}
+        },
+        {
+          "type": "group",
+          "name": "ORDER_DETAIL",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "OBR",
+              "name": "Observation Request",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "NTE",
+              "name": "Notes and Comments",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 0}
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "useCases": [
+    "Order status report delivery",
+    "Order tracking information response",
+    "Order progress status updates",
+    "Order completion confirmations"
+  ],
+  "examples": [
+    "MSH|^~\\&|LAB|HOSPITAL|||20231202000000||OSR^Q06|OSR000001|P|2.3",
+    "MSA|AA|QRY000004|Order status query processed|",
+    "QRD|20231201230000|R|I|QRY000004|||1^RD|ORD001|STA",
+    "ORC|IP|ORD001|||||||20231201150000|||DOC123^SMITH^JANE",
+    "OBR|1|ORD001||CBC^Complete Blood Count^LN|||20231201150000||||||||DOC123^SMITH^JANE"
+  ]
+}

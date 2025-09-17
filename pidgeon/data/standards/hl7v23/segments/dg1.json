@@ -1,0 +1,180 @@
+{
+  "segment": "DG1",
+  "name": "Diagnosis",
+  "description": "Contains diagnosis information including codes, descriptions, and clinical data",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "unbounded"
+  },
+  "fields": {
+    "DG1.1": {
+      "name": "Set ID - Diagnosis",
+      "description": "Sequence number for diagnosis segments within message",
+      "dataType": "SI",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["1", "2", "3"]
+    },
+    "DG1.2": {
+      "name": "Diagnosis Coding Method",
+      "description": "Coding system used for diagnosis",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0053",
+      "examples": ["I9", "I10"]
+    },
+    "DG1.3": {
+      "name": "Diagnosis Code",
+      "description": "Coded diagnosis using specified coding method",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0051",
+      "examples": ["I25.10^CAD^ICD10", "K59.00^Constipation^ICD10"]
+    },
+    "DG1.4": {
+      "name": "Diagnosis Description",
+      "description": "Text description of the diagnosis",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["Coronary artery disease", "Type 2 diabetes", "Hypertension"]
+    },
+    "DG1.5": {
+      "name": "Diagnosis Date/Time",
+      "description": "Date and time diagnosis was made",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815143000", "20221201120000"]
+    },
+    "DG1.6": {
+      "name": "Diagnosis Type",
+      "description": "Type or category of diagnosis",
+      "dataType": "IS",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "table": "0052",
+      "examples": ["A", "P", "W"]
+    },
+    "DG1.7": {
+      "name": "Major Diagnostic Category",
+      "description": "Major diagnostic category for DRG grouping",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0118"
+    },
+    "DG1.8": {
+      "name": "Diagnostic Related Group",
+      "description": "DRG code for billing and classification",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0055",
+      "examples": ["247^Percutaneous Cardiovascular Procedures"]
+    },
+    "DG1.9": {
+      "name": "DRG Approval Indicator",
+      "description": "Indicates if DRG assignment is approved",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["Y", "N"]
+    },
+    "DG1.10": {
+      "name": "DRG Grouper Review Code",
+      "description": "Review code from DRG grouper software",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0056"
+    },
+    "DG1.11": {
+      "name": "Outlier Type",
+      "description": "Type of outlier for DRG classification",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0083"
+    },
+    "DG1.12": {
+      "name": "Outlier Days",
+      "description": "Number of outlier days beyond DRG threshold",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["5", "12"]
+    },
+    "DG1.13": {
+      "name": "Outlier Cost",
+      "description": "Cost associated with outlier days",
+      "dataType": "CP",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["5000.00^USD"]
+    },
+    "DG1.14": {
+      "name": "Grouper Version and Type",
+      "description": "Version and type of DRG grouper software used",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["V38", "3M41"]
+    },
+    "DG1.15": {
+      "name": "Diagnosis Priority",
+      "description": "Priority or ranking of this diagnosis",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["1", "2", "3"]
+    },
+    "DG1.16": {
+      "name": "Diagnosing Clinician",
+      "description": "Clinician who made the diagnosis",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "examples": ["12345^SMITH^JOHN^MD", "67890^DOE^JANE^MD"]
+    },
+    "DG1.17": {
+      "name": "Diagnosis Classification",
+      "description": "Classification category for the diagnosis",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0228"
+    },
+    "DG1.18": {
+      "name": "Confidential Indicator",
+      "description": "Indicates if diagnosis information is confidential",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0136",
+      "examples": ["Y", "N"]
+    },
+    "DG1.19": {
+      "name": "Attestation Date/Time",
+      "description": "Date and time diagnosis was attested by clinician",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815150000"]
+    }
+  },
+  "examples": [
+    "DG1|1|I10|I25.10^CAD^ICD10|Coronary artery disease|20220815143000|A|||||||||||12345^SMITH^JOHN^MD||N|20220815150000",
+    "DG1|2|I10|E11.9^Type 2 diabetes^ICD10|Type 2 diabetes mellitus|20220815143000|P|||||||||||67890^DOE^JANE^MD||N|20220815150000"
+  ],
+  "notes": [
+    "DG1.1 (Set ID) is required for segment sequencing",
+    "DG1.6 (Diagnosis Type) is required - A=Admitting, P=Primary, W=Working",
+    "Multiple DG1 segments can represent different diagnoses or comorbidities"
+  ]
+}

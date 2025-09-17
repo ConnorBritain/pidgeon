@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "hl7-dictionary": "^1.0.1"
+  }
+}

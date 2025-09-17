@@ -1,0 +1,222 @@
+{
+  "segment": "MSH",
+  "name": "Message Header",
+  "description": "Defines message intent, source, destination, and syntax specifications",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "R",
+  "cardinality": {
+    "min": 1,
+    "max": 1
+  },
+  "fields": {
+    "MSH.1": {
+      "name": "Field Separator",
+      "description": "Separator between segment ID and first field",
+      "dataType": "ST",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "maxLength": 1,
+      "validValues": ["|"],
+      "examples": ["|"]
+    },
+    "MSH.2": {
+      "name": "Encoding Characters",
+      "description": "Component, repetition, escape, and subcomponent separators",
+      "dataType": "ST",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "maxLength": 4,
+      "validValues": ["^~\\&"],
+      "examples": ["^~\\&"]
+    },
+    "MSH.3": {
+      "name": "Sending Application",
+      "description": "Uniquely identifies the sending application",
+      "dataType": "HD",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "maxLength": 180,
+      "examples": ["LAB", "EPIC", "CERNER"]
+    },
+    "MSH.4": {
+      "name": "Sending Facility",
+      "description": "Identifies the sending facility",
+      "dataType": "HD",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "maxLength": 180,
+      "examples": ["MAIN", "LAB-01", "WEST"]
+    },
+    "MSH.5": {
+      "name": "Receiving Application",
+      "description": "Uniquely identifies the receiving application",
+      "dataType": "HD",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "maxLength": 180,
+      "examples": ["HIS", "EMR", "LIS"]
+    },
+    "MSH.6": {
+      "name": "Receiving Facility",
+      "description": "Identifies the receiving facility",
+      "dataType": "HD",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "maxLength": 180,
+      "examples": ["UNIT-1", "BLDG4", "EAST"]
+    },
+    "MSH.7": {
+      "name": "Date/Time of Message",
+      "description": "Timestamp when message was created",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["200202150930", "20220815143022"]
+    },
+    "MSH.8": {
+      "name": "Security",
+      "description": "Security classification and handling instructions",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "maxLength": 40
+    },
+    "MSH.9": {
+      "name": "Message Type",
+      "description": "Message type, trigger event, and message structure",
+      "dataType": "CM_MSG",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["ADT^A01", "ORU^R01", "ORM^O01"],
+      "components": {
+        "MSH.9.1": {
+          "name": "Message Type",
+          "description": "HL7 message type code",
+          "dataType": "ID",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": 1},
+          "table": "0076"
+        },
+        "MSH.9.2": {
+          "name": "Trigger Event",
+          "description": "HL7 trigger event code",
+          "dataType": "ID",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": 1},
+          "table": "0003"
+        }
+      }
+    },
+    "MSH.10": {
+      "name": "Message Control ID",
+      "description": "Unique identifier for message instance",
+      "dataType": "ST",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "maxLength": 20,
+      "examples": ["MSG001234", "CNTRL-3456"]
+    },
+    "MSH.11": {
+      "name": "Processing ID",
+      "description": "Indicates production, training, or debugging mode",
+      "dataType": "PT",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "table": "0103",
+      "components": {
+        "MSH.11.1": {
+          "name": "Processing ID",
+          "description": "P=Production, T=Training, D=Debugging",
+          "dataType": "ID",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": 1},
+          "validValues": ["P", "T", "D"]
+        },
+        "MSH.11.2": {
+          "name": "Processing Mode",
+          "description": "Archive, restore, initial load, etc.",
+          "dataType": "ID",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "table": "0207"
+        }
+      }
+    },
+    "MSH.12": {
+      "name": "Version ID",
+      "description": "HL7 version number",
+      "dataType": "ID",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "table": "0104",
+      "validValues": ["2.3"],
+      "examples": ["2.3"]
+    },
+    "MSH.13": {
+      "name": "Sequence Number",
+      "description": "Sequence number for message flow control",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "MSH.14": {
+      "name": "Continuation Pointer",
+      "description": "Continuation of a fragmented message",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "maxLength": 180
+    },
+    "MSH.15": {
+      "name": "Accept Acknowledgment Type",
+      "description": "Conditions for application acknowledgment",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0155",
+      "validValues": ["AL", "NE", "ER", "SU"]
+    },
+    "MSH.16": {
+      "name": "Application Acknowledgment Type",
+      "description": "Conditions for application acknowledgment",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0155",
+      "validValues": ["AL", "NE", "ER", "SU"]
+    },
+    "MSH.17": {
+      "name": "Country Code",
+      "description": "Country of origin for the message",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0212"
+    },
+    "MSH.18": {
+      "name": "Character Set",
+      "description": "Character set used in the message",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0211",
+      "validValues": ["ASCII", "8859/1", "8859/2", "ISO IR-87"]
+    },
+    "MSH.19": {
+      "name": "Principal Language of Message",
+      "description": "Primary language used in the message",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    }
+  },
+  "examples": [
+    "MSH|^~\\&|LAB|MAIN|HIS|UNIT-1|200202150930||ORU^R01|MSG001234|P|2.3",
+    "MSH|^~\\&|EPIC|WEST|EMR|BLDG4|20220815143022||ADT^A01|CNTRL-3456|T|2.3"
+  ],
+  "notes": [
+    "MSH must be the first segment in every HL7 message",
+    "MSH.1 and MSH.2 define encoding rules for the entire message"
+  ]
+}

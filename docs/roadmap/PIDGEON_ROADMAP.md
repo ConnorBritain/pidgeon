@@ -71,14 +71,16 @@
 
 ### **🔄 Data Work Process**
 **For ALL data creation or modification:**
-1. **Read Data Integrity Framework**: `data_mvp.md` for priorities, `HL7_REFERENCE_GUIDE.md` for standards
-2. **Read Templates First**: `_TEMPLATES/README.md` and `_TEMPLATES/CLEANUP.md`
-3. **Use Appropriate Template**: Copy exact template, fill specific values
-4. **Verify Standards Compliance**: Cross-reference official HL7 v2.3 documentation per guide
-5. **Follow 80/20 Strategy**: Focus on high-impact elements per MVP strategy
-6. **Validate Compatibility**: Check against `COMPATIBILITY_ANALYSIS.md`
-7. **Test CLI Integration**: Verify lookup functionality works
-8. **NO EXCEPTIONS**: Template compliance AND standards verification mandatory
+1. **MANDATORY**: Read `docs/HL7_LIBRARY_PROCESS.md` for ground truth workflow
+2. **MANDATORY**: Research using `node dev-tools/research-hl7-dictionary.js` BEFORE creating
+3. **Read Data Integrity Framework**: `data_mvp.md` for priorities, `HL7_REFERENCE_GUIDE.md` for standards
+4. **Read Templates First**: `_TEMPLATES/README.md` and `_TEMPLATES/CLEANUP.md`
+5. **Use Appropriate Template**: Copy exact template, fill specific values using library research
+6. **MANDATORY**: Validate using `node scripts/validate-against-hl7-dictionary.js` AFTER creating
+7. **Follow 80/20 Strategy**: Focus on high-impact elements per MVP strategy
+8. **Validate Compatibility**: Check against `COMPATIBILITY_ANALYSIS.md`
+9. **Test CLI Integration**: Verify lookup functionality works
+10. **NO EXCEPTIONS**: Library research + validation + template compliance mandatory
 
 ### **📊 Current Template Compliance Status**
 - ✅ **Tables**: 20/20 critical tables use rich structure (exceeds template)

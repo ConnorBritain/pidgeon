@@ -2,8 +2,22 @@
 
 **Purpose**: Systematic, high-quality recreation of HL7 v2.3 JSON definitions using pristine templates while maintaining official standards compliance.
 
-**Status**: ACTIVE - Template-based clean slate approach initiated
+**Status**: ACTIVE - Ground truth library process established with 80% automated validation
 **Priority**: CRITICAL - Enables CLI lookup functionality excellence
+
+## 🚀 **ENHANCED GROUND TRUTH PROCESS**
+
+**Breakthrough**: hl7-dictionary library provides **battle-tested FOSS data** for 80% of our development needs:
+
+| Directory | Library Coverage | Automation Level |
+|-----------|------------------|------------------|
+| **datatypes/** | ✅ **100%** (86 types) | Research + Validation |
+| **segments/** | ✅ **100%** (140+ segments) | Research + Validation |
+| **tables/** | ✅ **100%** (500+ tables) | Research + Validation |
+| **messages/** | ✅ **100%** (50+ messages) | Research + Validation |
+| **triggerevents/** | ❌ **0%** | Manual HL7 docs required |
+
+**Result**: Zero hallucinations, 100% standards compliance, dramatically faster development for 4/5 directories.
 
 ---
 
@@ -14,9 +28,11 @@ Transform 1,025 bloated, schema-driven JSON files into lean, template-compliant 
 
 ### **Quality Standards**
 - **100% template compliance** - Every file follows `_TEMPLATES/` structure exactly
-- **Official HL7 v2.3 accuracy** - All content verified against https://www.hl7.eu/HL7v2x/v23/std23/hl7.htm
+- **Ground truth accuracy** - Library validation for 80% of data, official HL7 docs for remainder
+- **Zero hallucinations** - Mandatory research and validation for all data creation
 - **Lookup optimization** - Clean field paths, searchable descriptions, proper cross-references
 - **Zero YAGNI violations** - No generation artifacts, vendor bloat, or over-engineering
+- **Automated validation** - All library-supported files must pass validation before commit
 
 ---
 
@@ -25,25 +41,40 @@ Transform 1,025 bloated, schema-driven JSON files into lean, template-compliant 
 ### **Step 1: Research Phase (Do NOT Skip)**
 For each file to create:
 
-1. **Review backup file** in `_backup/{category}/filename.json`
+1. **MANDATORY**: Use HL7 Library Research Tool (80% Coverage)
+   ```bash
+   # LIBRARY SUPPORTED (4/5 directories):
+   node dev-tools/research-hl7-dictionary.js datatype <NAME>    # ✅ 86 types
+   node dev-tools/research-hl7-dictionary.js segment <NAME>     # ✅ 140+ segments
+   node dev-tools/research-hl7-dictionary.js table <NUM>       # ✅ 500+ tables
+   node dev-tools/research-hl7-dictionary.js message <TYPE>    # ✅ 50+ messages
+
+   # MANUAL RESEARCH REQUIRED (1/5 directories):
+   node dev-tools/research-hl7-dictionary.js triggerevent <CODE>  # ❌ Use HL7 docs
+   ```
+   - Get official component structure and requirements
+   - Understand data types and cardinality
+   - **Zero tolerance**: Never skip research phase
+   - Follow `docs/HL7_LIBRARY_PROCESS.md` workflow
+
+2. **Review backup file** in `_backup/{category}/filename.json`
    - Understand existing field structure
    - Extract essential information
    - Note current YAGNI violations to avoid
 
-2. **Check priority order** in `docs/roadmap/data_integrity/HL7_PRIORITY_ITEMS.md`
+3. **Check priority order** in `docs/roadmap/data_integrity/HL7_PRIORITY_ITEMS.md`
    - Verify item is in current development tier
    - Understand interdependencies and prerequisites
    - Follow MVP critical path for maximum impact
-
-3. **Consult official HL7 v2.3 standard** at https://www.hl7.eu/HL7v2x/v23/std23/hl7.htm
-   - Verify field definitions and usage codes
-   - Confirm cardinality and data types
-   - Check official examples and constraints
 
 4. **Reference template** in `_TEMPLATES/{category}_template.json`
    - Follow structure exactly
    - Apply quality guidelines from `_TEMPLATES/README.md`
    - Use validation checklist from `_TEMPLATES/CLEANUP.md`
+
+5. **FALLBACK ONLY**: Consult official HL7 v2.3 standard at https://www.hl7.eu/HL7v2x/v23/std23/hl7.htm
+   - Use only for edge cases not covered by library
+   - Library is the preferred ground truth source
 
 ### **Step 2: Creation Phase (Template-First)**
 1. **Copy appropriate template** as starting point
@@ -82,9 +113,29 @@ Apply complete checklist from `_TEMPLATES/CLEANUP.md`:
 - [ ] Component paths (XXX.Y.Z addressing)
 - [ ] Pattern detection ready
 
-### **Step 4: Completion Phase**
+### **Step 4: Validation Phase (MANDATORY)**
+1. **Validate using library tool** (80% Coverage):
+   ```bash
+   # LIBRARY SUPPORTED (automatic validation):
+   node scripts/validate-against-hl7-dictionary.js datatype <NAME>  # ✅ Full validation
+   node scripts/validate-against-hl7-dictionary.js segment <NAME>   # ✅ Full validation
+   node scripts/validate-against-hl7-dictionary.js table <NUM>     # ✅ Full validation
+   node scripts/validate-against-hl7-dictionary.js message <TYPE>  # ✅ Full validation
+
+   # Table formats supported:
+   node scripts/validate-against-hl7-dictionary.js table 1    # Validates 0001.json
+   node scripts/validate-against-hl7-dictionary.js table 0001 # Also works
+
+   # MANUAL VALIDATION REQUIRED:
+   # triggerevents: Use HL7 v2.3 documentation for manual verification
+   ```
+2. **Fix any validation errors** before proceeding
+3. **ZERO TOLERANCE**: All library validation must pass (80% automated)
+4. **Manual verification required** for triggerevents using official HL7 docs
+
+### **Step 5: Completion Phase**
 1. **Save new file** to appropriate directory (`segments/`, `tables/`, etc.)
-2. **Delete corresponding backup** from `_backup/{category}/filename.json`
+2. **Delete corresponding backup** from `_backup/{category}/filename.json` ONLY after validation passes
 3. **Track progress** - shrinking backup folders show completion
 
 ---
@@ -93,9 +144,11 @@ Apply complete checklist from `_TEMPLATES/CLEANUP.md`:
 
 ### **Forbidden Shortcuts**
 - ❌ **Don't copy-paste between files** - each requires individual research
-- ❌ **Don't assume field meanings** - verify against official HL7 standard
+- ❌ **Don't assume field meanings** - verify against library or official HL7 standard
+- ❌ **Don't skip library research** - 80% of data has ground truth validation available
 - ❌ **Don't skip template validation** - every field must follow patterns
 - ❌ **Don't include YAGNI** - if unsure, exclude rather than bloat
+- ❌ **Don't create templates without validation** - zero tolerance for unvalidated data
 
 ### **Required References**
 Every file creation MUST reference:

@@ -1,0 +1,120 @@
+{
+  "messageType": "ADT",
+  "triggerEvent": "A03",
+  "name": "Discharge/End Visit",
+  "description": "Sent when a patient is discharged from the healthcare facility, ending their stay",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Patient Administration",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'ADT^A03'"]
+    },
+    {
+      "type": "segment",
+      "segment": "EVN",
+      "name": "Event Type",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["EVN.1 must be 'A03'"]
+    },
+    {
+      "type": "segment",
+      "segment": "PID",
+      "name": "Patient Identification",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["PID.3 Patient Identifier List is critical for patient matching"]
+    },
+    {
+      "type": "segment",
+      "segment": "PD1",
+      "name": "Additional Demographics",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "PV1",
+      "name": "Patient Visit",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["PV1.36 discharge disposition required", "PV1.45 discharge date/time critical"]
+    },
+    {
+      "type": "segment",
+      "segment": "PV2",
+      "name": "Patient Visit - Additional Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "DB1",
+      "name": "Disability Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "segment",
+      "segment": "DG1",
+      "name": "Diagnosis",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "segment",
+      "segment": "DRG",
+      "name": "Diagnosis Related Group",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "group",
+      "name": "PROCEDURE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0},
+      "structure": [
+        {
+          "type": "segment",
+          "segment": "PR1",
+          "name": "Procedures",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": 1}
+        },
+        {
+          "type": "segment",
+          "segment": "ROL",
+          "name": "Role",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 0}
+        }
+      ]
+    },
+    {
+      "type": "segment",
+      "segment": "OBX",
+      "name": "Observation/Result",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    }
+  ],
+  "useCases": [
+    "Inpatient discharge to home",
+    "Transfer to skilled nursing facility",
+    "Discharge against medical advice (AMA)",
+    "Emergency department discharge",
+    "Outpatient visit completion"
+  ],
+  "examples": [
+    "MSH|^~\\&|EPIC|HOSPITAL|||20231201180000||ADT^A03|123456791|P|2.3",
+    "EVN|A03|20231201180000",
+    "PID|||12345678^^^HOSPITAL^MR||DOE^JOHN^MIDDLE||19800101|M",
+    "PV1||I|3E^301^A^HOSPITAL^R||||||||||||||01^Home^HL70112||||||||||||||||20231201180000"
+  ]
+}

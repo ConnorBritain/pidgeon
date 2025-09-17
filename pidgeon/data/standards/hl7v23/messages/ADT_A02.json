@@ -1,0 +1,83 @@
+{
+  "messageType": "ADT",
+  "triggerEvent": "A02",
+  "name": "Transfer a Patient",
+  "description": "Sent when a patient is transferred from one location to another within the same healthcare facility",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Patient Administration",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'ADT^A02'"]
+    },
+    {
+      "type": "segment",
+      "segment": "EVN",
+      "name": "Event Type",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["EVN.1 must be 'A02'"]
+    },
+    {
+      "type": "segment",
+      "segment": "PID",
+      "name": "Patient Identification",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["PID.3 Patient Identifier List is critical for patient matching"]
+    },
+    {
+      "type": "segment",
+      "segment": "PD1",
+      "name": "Additional Demographics",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "PV1",
+      "name": "Patient Visit",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["PV1.3 shows new assigned location", "PV1.6 shows prior patient location"]
+    },
+    {
+      "type": "segment",
+      "segment": "PV2",
+      "name": "Patient Visit - Additional Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "DB1",
+      "name": "Disability Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "segment",
+      "segment": "OBX",
+      "name": "Observation/Result",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    }
+  ],
+  "useCases": [
+    "Room-to-room transfer within same unit",
+    "Transfer between departments (ICU to med/surg)",
+    "Transfer to different nursing unit",
+    "Bed change within same room"
+  ],
+  "examples": [
+    "MSH|^~\\&|EPIC|HOSPITAL|||20231201130000||ADT^A02|123456790|P|2.3",
+    "EVN|A02|20231201130000",
+    "PID|||12345678^^^HOSPITAL^MR||DOE^JOHN^MIDDLE||19800101|M",
+    "PV1||I|3E^301^A^HOSPITAL^R||||||||||||||||||||||||||||||||||20231201120000"
+  ]
+}

@@ -2,11 +2,11 @@
 
 **Purpose**: Rank-ordered critical items for systematic data development, prioritized by MVP necessity and interdependency analysis.
 
-**Strategy**: Build foundation ’ Enable core workflows ’ Complete ecosystem
+**Strategy**: Build foundation ï¿½ Enable core workflows ï¿½ Complete ecosystem
 
 ---
 
-## <¯ **SEGMENTS** (Priority: CRITICAL - Foundation for all lookup functionality)
+## <ï¿½ **SEGMENTS** (Priority: CRITICAL - Foundation for all lookup functionality)
 
 ### **Tier 1: Core Foundation** (MVP Blockers - Build First)
 1. **MSH** - Message Header (ALL messages depend on this)
@@ -38,7 +38,7 @@
 
 ---
 
-## =Ã **TABLES** (Priority: HIGH - Enable coded value validation)
+## =ï¿½ **TABLES** (Priority: HIGH - Enable coded value validation)
 
 ### **Tier 1: Universal References** (Used across multiple segments)
 1. **Table 0001** - Administrative Sex (PID.8 - universal patient data)
@@ -102,7 +102,7 @@
 
 ---
 
-## =ç **MESSAGES** (Priority: LOW - Build after segments/tables complete)
+## =ï¿½ **MESSAGES** (Priority: LOW - Build after segments/tables complete)
 
 ### **Tier 1: Core ADT** (Patient administration - highest volume)
 1. **ADT^A01** - Admit/Visit Notification (Hospital admissions)
@@ -127,7 +127,7 @@
 
 ---
 
-## ¡ **TRIGGER EVENTS** (Priority: LOWEST - Simple mappings to messages)
+## ï¿½ **TRIGGER EVENTS** (Priority: LOWEST - Simple mappings to messages)
 
 ### **Tier 1: Patient Administration** (ADT workflows)
 1. **A01** - Admit/Visit Notification
@@ -152,7 +152,7 @@
 
 ---
 
-## <¯ **Development Strategy by Interdependency**
+## <ï¿½ **Development Strategy by Interdependency**
 
 ### **Phase 1: Foundation** (Build in this exact order)
 1. **Core Data Types** (ST, ID, NM, CX, XPN) - Everything depends on these
@@ -174,7 +174,7 @@
 
 ---
 
-## =Ê **MVP Success Criteria**
+## =ï¿½ **MVP Success Criteria**
 
 ### **Phase 1 Complete** (Foundation MVP)
 -  Basic patient identification and demographics (PID + core tables)
@@ -195,3 +195,35 @@
 -  Ready for real-world healthcare integration projects
 
 **Target**: Phase 1 complete enables 60% of healthcare integration testing scenarios. Phase 2 reaches 85%. Phase 3 achieves 95%+ coverage.
+
+---
+
+## ðŸ“‹ **COMPREHENSIVE PRIORITY REFERENCES**
+
+### **Complete Development Roadmaps Available**
+
+After completing the main priority items listed above, developers can find **COMPREHENSIVE** priority orderings with full coverage in:
+
+ðŸ“ **`docs/roadmap/data_priority/`**
+- **`datatype_priority.md`** - Complete 86 datatypes with foundational dependency ordering
+- **`segment_priority.md`** - Complete 140+ segments with clinical workflow criticality
+- **`table_priority.md`** - Complete 396 tables with cross-reference frequency analysis
+- **`message_priority.md`** - Complete 240+ messages with healthcare workflow ordering
+- **`triggerevent_priority.md`** - Complete 130+ trigger events with clinical event frequency
+
+### **Enhanced Development Process**
+
+Each comprehensive priority file includes:
+- âœ… **Ground truth validation** using `hl7-dictionary` library (80% automated coverage)
+- âœ… **Research â†’ Create â†’ Validate workflow** with zero tolerance for validation failures
+- âœ… **Critical dependency mapping** showing blocking relationships between categories
+- âœ… **MVP milestone tracking** with weekly completion targets and clinical workflow enablement
+- âœ… **Template compliance requirements** linking to `_TEMPLATES/` patterns
+
+### **Usage Guidance**
+
+**For MVP Development**: Follow this document's tiered approach for fastest time-to-value.
+
+**For Complete Coverage**: Reference the `data_priority/` files for systematic development of the full HL7 v2.3 standard.
+
+**For Quality Assurance**: Use the ground truth validation tools documented in `docs/HL7_LIBRARY_PROCESS.md` to ensure zero hallucinations and 100% standards compliance.
