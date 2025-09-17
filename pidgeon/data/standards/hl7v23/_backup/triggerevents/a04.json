@@ -1,0 +1,53 @@
+{
+  "triggerEvent": "A04",
+  "name": "Register Patient",
+  "description": "Patient registration notification for outpatient encounters where patient is not assigned to a bed",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A04",
+  "segments": {
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "NK1",
+      "PV1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
+  },
+  "businessPurpose": "Notify receiving applications that a patient has arrived for an episode of care that does not involve bed assignment",
+  "timing": "Sent when patient arrives for outpatient visit and check-in process is completed",
+  "responseMessage": "ACK^A04^ACK",
+  "realWorldScenarios": [
+    "Outpatient clinic visit registration",
+    "Emergency department arrival (before bed assignment)",
+    "Ambulatory surgery check-in",
+    "Laboratory visit registration",
+    "Radiology appointment check-in",
+    "Physical therapy session registration"
+  ],
+  "generationRules": {
+    "EVN.1": "A04",
+    "EVN.2": "Current timestamp",
+    "EVN.6": "Current timestamp",
+    "PV1.2": "O (Outpatient) or E (Emergency)",
+    "PV1.4": "Registration or appointment type",
+    "PV1.44": "Admit date/time (arrival time)",
+    "requiredDataQuality": "Medium - basic demographics and visit information needed"
+  }
+}

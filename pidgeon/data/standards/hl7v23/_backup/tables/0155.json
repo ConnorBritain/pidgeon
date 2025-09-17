@@ -1,0 +1,48 @@
+{
+  "table": "0155",
+  "name": "Accept/Application acknowledgement code",
+  "description": "HL7-defined table specifying the acknowledgement status codes for application-level message processing",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "Control/Query",
+  "type": "hl7_defined",
+  "values": [
+    {
+      "code": "AA",
+      "description": "Application Accept",
+      "definition": "Message accepted and processed successfully by receiving application"
+    },
+    {
+      "code": "AE",
+      "description": "Application Error",
+      "definition": "Message rejected due to application errors, modified version may be resent"
+    },
+    {
+      "code": "AR",
+      "description": "Application Reject",
+      "definition": "Message rejected and not processed, may resend same message later"
+    }
+  ],
+  "usedIn": [
+    "MSA.1"
+  ],
+  "notes": "Used in MSA-1 (Message Acknowledgment) field to indicate application-level processing status. Essential for reliable message processing workflows.",
+  "vendorVariations": {
+    "epic": "Standard implementation with detailed error messaging in ERR segments for AE/AR responses",
+    "cerner": "Uses standard codes with organization-specific error handling procedures",
+    "allscripts": "Standard implementation with configurable retry mechanisms for AR responses"
+  },
+  "generationRules": {
+    "distribution": {
+      "AA": 0.85,
+      "AE": 0.10,
+      "AR": 0.05
+    },
+    "messageContext": {
+      "ACK_messages": ["AA", "AE", "AR"],
+      "successful_processing": ["AA"],
+      "validation_errors": ["AE"],
+      "system_rejections": ["AR"]
+    }
+  }
+}

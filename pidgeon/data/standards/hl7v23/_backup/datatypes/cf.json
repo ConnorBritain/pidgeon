@@ -1,0 +1,108 @@
+{
+  "dataType": "CF",
+  "name": "Coded Element with Formatted Values",
+  "description": "The CF data type is used to represent coded values that include both structured coded information and formatted display text. It combines the precision of coded data with human-readable formatted presentation, enabling systems to maintain both machine-processable codes and user-friendly display formats. CF is particularly useful for complex medical terminology, financial data, and measurement values that require both coded precision and formatted presentation.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "composite",
+  "components": {
+    "CF.1": {
+      "name": "Identifier",
+      "dataType": "ST",
+      "description": "The unique identifier or code value. This is the machine-readable coded identifier used for data processing and system interoperability.",
+      "length": 20,
+      "usage": "optional",
+      "position": 1
+    },
+    "CF.2": {
+      "name": "Formatted Text",
+      "dataType": "FT",
+      "description": "The formatted text representation of the coded value. Provides human-readable display formatting with rich text capabilities for user interfaces.",
+      "length": 65536,
+      "usage": "optional",
+      "position": 2
+    },
+    "CF.3": {
+      "name": "Name of Coding System",
+      "dataType": "ST",
+      "description": "The name or identifier of the coding system or vocabulary used for the identifier. Specifies the authoritative source for the coded value.",
+      "length": 20,
+      "usage": "optional",
+      "position": 3
+    },
+    "CF.4": {
+      "name": "Alternate Identifier",
+      "dataType": "ST",
+      "description": "An alternative identifier for the same concept from a different coding system. Enables cross-system terminology mapping and interoperability.",
+      "length": 20,
+      "usage": "optional",
+      "position": 4
+    },
+    "CF.5": {
+      "name": "Alternate Formatted Text",
+      "dataType": "FT",
+      "description": "Alternative formatted text representation, potentially from a different coding system or for different display contexts. Supports multiple presentation formats.",
+      "length": 65536,
+      "usage": "optional",
+      "position": 5
+    },
+    "CF.6": {
+      "name": "Name of Alternate Coding System",
+      "dataType": "ST",
+      "description": "The name or identifier of the alternate coding system used for the alternate identifier. Specifies the source authority for alternative coding.",
+      "length": 20,
+      "usage": "optional",
+      "position": 6
+    }
+  },
+  "length": 131152,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "codingSystem": "Coding system names should reference recognized healthcare terminologies",
+    "formatting": "Formatted text should support rich text formatting capabilities",
+    "consistency": "Identifier and formatted text should represent the same concept"
+  },
+  "usage": [
+    "Medical terminology with rich formatting requirements",
+    "Financial amounts with currency formatting and display",
+    "Measurement values with units and precision formatting",
+    "Diagnostic codes with detailed formatted descriptions",
+    "Laboratory results with formatted reference ranges",
+    "Clinical observations with structured presentation"
+  ],
+  "examples": [
+    "401.9^Essential Hypertension (Primary)^ICD9^I10^Essential (primary) hypertension^ICD10",
+    "250.00^Type 2 Diabetes Mellitus^ICD9^E11.9^Type 2 diabetes mellitus without complications^ICD10",
+    "USD100.50^$100.50 USD^CURRENCY^10050^One hundred dollars and fifty cents^TEXT",
+    "CHG001^Emergency Department Visit Level 4^LOCAL^99284^ED Visit Level 4^CPT",
+    "LAB001^Complete Blood Count with Differential^LOCAL^85025^CBC with automated differential^CPT"
+  ],
+  "commonFields": [
+    "Financial transaction codes with formatted monetary amounts",
+    "Laboratory test codes with formatted result presentations",
+    "Medication codes with complex dosing format requirements",
+    "Diagnostic procedure codes with rich description formatting",
+    "Clinical terminology requiring both coded precision and display formatting"
+  ],
+  "generationHints": {
+    "typical": "Combine standard healthcare codes with formatted display presentations",
+    "codingSystems": ["ICD9", "ICD10", "CPT", "HCPCS", "SNOMED", "LOINC", "LOCAL"],
+    "formatting": "Include clear, readable formatted text that enhances code meaning",
+    "monetary": "Use proper currency symbols and decimal formatting for financial data",
+    "clinical": "Provide medically accurate formatted descriptions for healthcare codes"
+  },
+  "relatedDataTypes": {
+    "CE": "Coded Element - simpler coded value without formatted text capabilities",
+    "CNE": "Coded with No Exceptions - more restrictive coded element variant",
+    "CWE": "Coded with Exceptions - allows text when codes are unavailable",
+    "FT": "Formatted Text - used for the formatted text components",
+    "ST": "String - used for identifier and coding system components"
+  },
+  "implementationNotes": {
+    "complexity": "More complex than simple coded elements due to formatting capabilities",
+    "performance": "Formatted text components may impact message size and processing time",
+    "compatibility": "Not all systems support rich text formatting capabilities",
+    "fallback": "Systems should gracefully handle formatting when rich text is not supported",
+    "standardization": "Use consistent formatting conventions across the organization"
+  }
+}

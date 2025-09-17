@@ -1,0 +1,31 @@
+{
+  "dataType": "XX",
+  "name": "Data Type Name",
+  "description": "Clear description of what this data type represents and when to use it",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "primitive|composite",
+  "length": 50,
+  "components": {
+    "XX.1": {
+      "name": "Component Name",
+      "dataType": "ST",
+      "description": "Component purpose and content",
+      "length": 20,
+      "usage": "required|optional",
+      "position": 1
+    }
+  },
+  "usage": [
+    "Primary field where used",
+    "Secondary field where used"
+  ],
+  "examples": [
+    "value1^value2^value3",
+    "simplevalue"
+  ],
+  "constraints": {
+    "encoding": "How components are separated",
+    "validation": "Key validation rules"
+  }
+}

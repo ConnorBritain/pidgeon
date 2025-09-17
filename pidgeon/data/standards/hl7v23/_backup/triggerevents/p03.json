@@ -1,0 +1,65 @@
+{
+  "triggerEvent": "P03",
+  "name": "Post Detail Financial Transaction",
+  "description": "Posts detailed financial transaction data to patient accounts for billing and revenue cycle processing",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "6",
+  "chapterName": "Financial Management",
+  "messageStructure": "DFT^P03",
+  "hl7Reference": "HL7 v2.3 Chapter 6 Financial Management - HL7.eu/HL7v2x/v23/std23",
+  "segments": {
+    "required": [
+      "MSH",
+      "EVN",
+      "PID",
+      "FT1"
+    ],
+    "optional": [
+      "PV1",
+      "OBX",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3"
+    ]
+  },
+  "businessPurpose": "Transmit detailed financial transactions including charges, adjustments, and payments to patient accounting systems",
+  "timing": "Sent when financial transactions occur that need to be posted to patient accounts",
+  "responseMessage": "ACK^P03^ACK",
+  "standardNotes": [
+    "DFT message carries detailed financial transaction data",
+    "FT1 segment contains the core transaction details",
+    "Use for charges, credits, adjustments, and payments",
+    "EVN.2 should contain the transaction posting date/time"
+  ],
+  "realWorldScenarios": [
+    "Laboratory charge posted to patient account after test completion",
+    "Insurance payment allocation to specific patient charges",
+    "Adjustment for contractual allowance on procedure billing",
+    "Copayment collection at point of service",
+    "Late charge assessment for overdue account balances",
+    "Charity care write-off for qualified patient accounts"
+  ],
+    "generationRules": {
+    "MSH.9": "DFT^P03",
+    "EVN.1": "P03",
+    "EVN.2": "Transaction posting date/time",
+    "PID": "Patient identification for account association",
+    "FT1.1": "Set ID for financial transaction",
+    "FT1.4": "Transaction date",
+    "FT1.5": "Transaction posting date",
+    "FT1.6": "Transaction type (table HL7-0017)",
+    "FT1.7": "Transaction code",
+    "FT1.10": "Transaction quantity",
+    "FT1.11": "Transaction amount",
+    "FT1.12": "Transaction amount - unit",
+    "requiredDataQuality": "Critical - financial accuracy affects billing, compliance, and revenue integrity",
+    "tableReferences": {
+      "FT1.6": "HL7-0017 (Transaction Type)",
+      "FT1.7": "Transaction Code (CPT/HCPCS)"
+    }
+  }
+}

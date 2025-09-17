@@ -1,0 +1,405 @@
+{
+  "segment": "TXA",
+  "name": "Transcription Document Header",
+  "description": "The Transcription Document Header segment (TXA) contains information about transcribed documents. This segment is used to convey metadata about clinical documents such as discharge summaries, operative reports, radiology reports, pathology reports, and other transcribed clinical documentation. It provides document identification, status, authorship, and administrative details essential for document management workflows.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "R",
+  "cardinality": {
+    "min": 1,
+    "max": 1,
+    "note": "TXA is required when transmitting transcription documents"
+  },
+  "messageTypes": [
+    "TXU^T12", "TXU^T13", "TXU^T14", "TXU^T15", "TXU^T16", "TXU^T17",
+    "CRM^C01", "CRM^C02", "CRM^C03", "CRM^C04", "CRM^C05", "CRM^C06", "CRM^C07", "CRM^C08"
+  ],
+  "fields": {
+    "TXA.1": {
+      "name": "Set ID - TXA",
+      "description": "This field contains the sequence number for the TXA segment when multiple documents are present in a single message.",
+      "dataType": "SI",
+      "usage": "R",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Sequential numbering: 1, 2, 3, etc. for multiple documents"
+    },
+    "TXA.2": {
+      "name": "Document Type",
+      "description": "This field identifies the type of document being transmitted. Values from HL7 Table 0270 - document type.",
+      "dataType": "IS",
+      "usage": "R",
+      "maxLength": 30,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "AR", "description": "Autopsy report"},
+        {"code": "CD", "description": "Cardiology"},
+        {"code": "CN", "description": "Consultation"},
+        {"code": "DI", "description": "Diagnostic imaging"},
+        {"code": "DS", "description": "Discharge summary"},
+        {"code": "ED", "description": "Emergency department report"},
+        {"code": "HP", "description": "History and physical examination"},
+        {"code": "OP", "description": "Operative report"},
+        {"code": "PC", "description": "Psychiatric consultation"},
+        {"code": "PH", "description": "Psychiatric history and physical examination"},
+        {"code": "PN", "description": "Procedure note"},
+        {"code": "PR", "description": "Progress report"},
+        {"code": "SP", "description": "Surgical pathology"},
+        {"code": "TS", "description": "Transfer summary"},
+        {"code": "RF", "description": "Referral"},
+        {"code": "CR", "description": "Cytopathology report"},
+        {"code": "RP", "description": "Radiology report"},
+        {"code": "LP", "description": "Laboratory report"}
+      ],
+      "generationHint": "Common types: DS (discharge), OP (operative), RP (radiology), HP (H&P)"
+    },
+    "TXA.3": {
+      "name": "Document Content Presentation",
+      "description": "This field describes how the document content is presented. Values from HL7 Table 0191 - type of referenced data.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "AP", "description": "Other application data, typically uninterpreted binary data"},
+        {"code": "AU", "description": "Audio data"},
+        {"code": "FT", "description": "Formatted text"},
+        {"code": "IM", "description": "Image data"},
+        {"code": "NS", "description": "Non-scanned image"},
+        {"code": "SD", "description": "Scanned document"},
+        {"code": "SI", "description": "Scanned image"},
+        {"code": "TX", "description": "Machine readable text document"}
+      ],
+      "generationHint": "Most common: FT (formatted text), TX (plain text), SD (scanned document)"
+    },
+    "TXA.4": {
+      "name": "Activity Date/Time",
+      "description": "This field contains the date and time when the clinical activity (procedure, examination, etc.) that the document describes took place.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Date/time of the clinical event being documented"
+    },
+    "TXA.5": {
+      "name": "Primary Activity Provider Code/Name",
+      "description": "This field identifies the healthcare provider who performed the primary clinical activity being documented.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 120,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Attending physician, surgeon, or primary provider for the documented activity"
+    },
+    "TXA.6": {
+      "name": "Origination Date/Time",
+      "description": "This field contains the date and time when the document was originally created or dictated.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "When document was first created/dictated - may differ from transcription time"
+    },
+    "TXA.7": {
+      "name": "Transcription Date/Time",
+      "description": "This field contains the date and time when the document was transcribed.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "When document was actually typed/transcribed"
+    },
+    "TXA.8": {
+      "name": "Edit Date/Time",
+      "description": "This field contains the date and time when the document was last edited or revised.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Most recent edit timestamp for version control"
+    },
+    "TXA.9": {
+      "name": "Originator Code/Name",
+      "description": "This field identifies the person who originally authored or dictated the document content.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 120,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Document author - physician dictating the report"
+    },
+    "TXA.10": {
+      "name": "Assigned Document Authenticator",
+      "description": "This field identifies the healthcare provider assigned to authenticate (sign) the document.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 120,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Provider responsible for signing/authenticating the document"
+    },
+    "TXA.11": {
+      "name": "Transcriptionist Code/Name",
+      "description": "This field identifies the person who transcribed the document.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 120,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Medical transcriptionist or transcription service"
+    },
+    "TXA.12": {
+      "name": "Unique Document Number",
+      "description": "This field contains a unique identifier for the document across all systems and versions.",
+      "dataType": "EI",
+      "usage": "R",
+      "maxLength": 30,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Permanent document identifier - format: DOC<date><sequence>^<system>"
+    },
+    "TXA.13": {
+      "name": "Parent Document Number",
+      "description": "This field contains the unique document number of a parent document when this document is an addendum or correction.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 30,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Reference to original document for addenda and corrections"
+    },
+    "TXA.14": {
+      "name": "Placer Order Number",
+      "description": "This field contains the placer order number when the document is associated with a specific order.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 22,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Link to ordering system identifier for document"
+    },
+    "TXA.15": {
+      "name": "Filler Order Number",
+      "description": "This field contains the filler order number when the document is associated with a specific order.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 22,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Link to fulfilling system identifier for document"
+    },
+    "TXA.16": {
+      "name": "Unique Document File Name",
+      "description": "This field contains the file name or path where the document is stored in the system.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 30,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "System file name or storage location reference"
+    },
+    "TXA.17": {
+      "name": "Document Completion Status",
+      "description": "This field indicates the current completion status of the document. Values from HL7 Table 0271 - document completion status.",
+      "dataType": "ID",
+      "usage": "R",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "DI", "description": "Dictated"},
+        {"code": "DO", "description": "Documented"},
+        {"code": "IP", "description": "In Progress"},
+        {"code": "IN", "description": "Incomplete"},
+        {"code": "PA", "description": "Pre-authenticated"},
+        {"code": "AU", "description": "Authenticated"},
+        {"code": "LA", "description": "Legally authenticated"}
+      ],
+      "generationHint": "Status progression: DI → DO → PA → AU → LA"
+    },
+    "TXA.18": {
+      "name": "Document Confidentiality Status",
+      "description": "This field indicates the confidentiality level of the document. Values from HL7 Table 0272 - document confidentiality status.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "1", "description": "ASTM Level 1"},
+        {"code": "2", "description": "ASTM Level 2"},
+        {"code": "3", "description": "ASTM Level 3"},
+        {"code": "R", "description": "Restricted"},
+        {"code": "U", "description": "Usual control"},
+        {"code": "V", "description": "Very restricted"}
+      ],
+      "generationHint": "Most common: U (usual control), R (restricted for sensitive cases)"
+    },
+    "TXA.19": {
+      "name": "Document Availability Status",
+      "description": "This field indicates whether the document is currently available for viewing. Values from HL7 Table 0273 - document availability status.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "AV", "description": "Available for patient care"},
+        {"code": "CA", "description": "Deleted"},
+        {"code": "OB", "description": "Obsolete"},
+        {"code": "UN", "description": "Unavailable for patient care"}
+      ],
+      "generationHint": "Most documents are AV (available) unless deleted or obsoleted"
+    },
+    "TXA.20": {
+      "name": "Document Storage Status",
+      "description": "This field indicates how and where the document is stored. Values from HL7 Table 0275 - document storage status.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "AC", "description": "Active"},
+        {"code": "AA", "description": "Active and archived"},
+        {"code": "AR", "description": "Archived (not active)"},
+        {"code": "PU", "description": "Purged"}
+      ],
+      "generationHint": "Active documents: AC (active), AA (active + archived)"
+    },
+    "TXA.21": {
+      "name": "Document Change Reason",
+      "description": "This field contains the reason for any change to the document content or status.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 30,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Free text reason for document revisions or status changes"
+    },
+    "TXA.22": {
+      "name": "Authentication Person, Time Stamp",
+      "description": "This field contains information about who authenticated the document and when.",
+      "dataType": "PPN",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Electronic signature details including timestamp"
+    },
+    "TXA.23": {
+      "name": "Distributed Copies (Code and Name of Recipient)",
+      "description": "This field identifies recipients who should receive copies of the document.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 120,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Distribution list for document copies (consulting physicians, etc.)"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "DocumentReference.masterIdentifier",
+      "DocumentReference.status",
+      "DocumentReference.type",
+      "DocumentReference.category",
+      "DocumentReference.author",
+      "DocumentReference.authenticator",
+      "DocumentReference.created",
+      "DocumentReference.indexed",
+      "DocumentReference.content",
+      "DocumentReference.securityLabel"
+    ],
+    "related": ["EVN", "PID", "PV1", "OBR", "OBX", "NTE"]
+  },
+  "examples": [
+    "TXA|1|DS|FT|20250115120000|12345^SMITH^JOHN^MD|||20250115130000|67890^JOHNSON^MARY^MD|11111^BROWN^ROBERT^MD|22222^TRANSCRIBE^SERVICE^|DOC20250115001^HIS|||||DO|U|AV|AC||98765^WILSON^DAVID^MD^20250115140000|33333^REFERRING^PHYSICIAN^MD",
+    "TXA|1|OP|TX|20250115080000|54321^SURGEON^CHIEF^MD||20250115100000|20250115103000|54321^SURGEON^CHIEF^MD|44444^ATTENDING^PHYSICIAN^MD|55555^TRANSCRIPTION^DEPT^|DOC20250115002^HIS||ORD20250115001^ORM|||AU|R|AV|AC|Corrected medication dosage|77777^ATTENDING^PHYSICIAN^MD^20250115150000|"
+  ],
+  "notes": [
+    "TXA segment is essential for clinical document management workflows",
+    "Set ID (TXA.1), Document Type (TXA.2), Unique Document Number (TXA.12), and Completion Status (TXA.17) are required",
+    "Document lifecycle: creation → transcription → review → authentication → distribution",
+    "Multiple timestamps track document workflow from origination through authentication",
+    "Confidentiality and availability status control access to sensitive documents",
+    "Parent document relationships support addenda and correction workflows",
+    "Authentication details provide legal signature requirements for clinical documents"
+  ],
+  "generationRules": {
+    "required": ["TXA.1", "TXA.2", "TXA.12", "TXA.17"],
+    "conditional": {
+      "TXA.4": "Should be provided for procedure-related documents",
+      "TXA.5": "Important for identifying responsible providers",
+      "TXA.6": "Origination time helps with document workflow tracking",
+      "TXA.9": "Author identification is critical for clinical responsibility",
+      "TXA.10": "Authenticator required for legal document validity"
+    },
+    "relationships": {
+      "TXA.6_TXA.7": "Transcription time should be after or equal to origination time",
+      "TXA.7_TXA.8": "Edit time should be after transcription time",
+      "TXA.17_authentication": "Authenticated documents should have authenticator information",
+      "TXA.2_TXA.18": "Psychiatric documents often have higher confidentiality levels"
+    },
+    "validation": {
+      "TXA.2": "Must be valid HL7 Table 0270 document type",
+      "TXA.17": "Must be valid HL7 Table 0271 completion status",
+      "TXA.18": "Must be valid HL7 Table 0272 confidentiality status when present",
+      "TXA.19": "Must be valid HL7 Table 0273 availability status when present",
+      "TXA.20": "Must be valid HL7 Table 0275 storage status when present"
+    }
+  }
+}

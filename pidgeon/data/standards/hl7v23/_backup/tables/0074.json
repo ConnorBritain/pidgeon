@@ -1,0 +1,224 @@
+{
+  "table": "0074",
+  "name": "Diagnostic service section ID",
+  "description": "HL7-defined table specifying sections of diagnostic services where observations may be performed",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "Observation Reporting",
+  "type": "hl7_defined",
+  "values": [
+    {
+      "code": "AU",
+      "description": "Audiology",
+      "definition": "Hearing and auditory function testing"
+    },
+    {
+      "code": "BG",
+      "description": "Blood gas",
+      "definition": "Blood gas analysis and arterial blood gas testing"
+    },
+    {
+      "code": "BLB",
+      "description": "Blood bank",
+      "definition": "Blood banking and transfusion medicine"
+    },
+    {
+      "code": "CG",
+      "description": "Cytogenetics",
+      "definition": "Chromosome analysis and genetic testing"
+    },
+    {
+      "code": "CH",
+      "description": "Chemistry",
+      "definition": "Clinical chemistry and biochemistry testing"
+    },
+    {
+      "code": "CP",
+      "description": "Cytopathology",
+      "definition": "Cellular pathology and microscopic examination"
+    },
+    {
+      "code": "CT",
+      "description": "CAT scan",
+      "definition": "Computed tomography imaging"
+    },
+    {
+      "code": "CTH",
+      "description": "Cardiac catheterization",
+      "definition": "Invasive cardiac procedures and catheterization"
+    },
+    {
+      "code": "CUS",
+      "description": "Cardiac ultrasound",
+      "definition": "Echocardiography and cardiac imaging"
+    },
+    {
+      "code": "EC",
+      "description": "Electrocardiac",
+      "definition": "Electrocardiography, EKG, Holter monitoring"
+    },
+    {
+      "code": "EN",
+      "description": "Electroneuro",
+      "definition": "EEG, EMG, evoked potentials, sleep studies"
+    },
+    {
+      "code": "GE",
+      "description": "Gastroenterology",
+      "definition": "Digestive system procedures and endoscopy"
+    },
+    {
+      "code": "HM",
+      "description": "Hematology",
+      "definition": "Blood cell analysis and coagulation studies"
+    },
+    {
+      "code": "ICU",
+      "description": "Bedside ICU monitoring",
+      "definition": "Intensive care unit monitoring and testing"
+    },
+    {
+      "code": "IMG",
+      "description": "Diagnostic imaging",
+      "definition": "General radiology and medical imaging"
+    },
+    {
+      "code": "IMM",
+      "description": "Immunology",
+      "definition": "Immune system testing and serology"
+    },
+    {
+      "code": "LAB",
+      "description": "Laboratory",
+      "definition": "General laboratory testing"
+    },
+    {
+      "code": "MB",
+      "description": "Microbiology",
+      "definition": "Infectious disease testing and cultures"
+    },
+    {
+      "code": "MCB",
+      "description": "Mycobacteriology",
+      "definition": "Tuberculosis and mycobacterial testing"
+    },
+    {
+      "code": "MYC",
+      "description": "Mycology",
+      "definition": "Fungal testing and identification"
+    },
+    {
+      "code": "NMR",
+      "description": "Nuclear magnetic resonance",
+      "definition": "MRI and nuclear magnetic resonance imaging"
+    },
+    {
+      "code": "NMS",
+      "description": "Nuclear medicine scan",
+      "definition": "Nuclear medicine imaging and scans"
+    },
+    {
+      "code": "NRS",
+      "description": "Nursing service",
+      "definition": "Nursing assessments and measurements"
+    },
+    {
+      "code": "OSL",
+      "description": "Outside lab",
+      "definition": "External laboratory testing"
+    },
+    {
+      "code": "OTH",
+      "description": "Other",
+      "definition": "Other diagnostic service not elsewhere classified"
+    },
+    {
+      "code": "OUS",
+      "description": "OB ultrasound",
+      "definition": "Obstetric ultrasound imaging"
+    },
+    {
+      "code": "PF",
+      "description": "Pulmonary function",
+      "definition": "Respiratory function testing"
+    },
+    {
+      "code": "PHR",
+      "description": "Pharmacy",
+      "definition": "Pharmaceutical services and drug monitoring"
+    },
+    {
+      "code": "RAD",
+      "description": "Radiology",
+      "definition": "Diagnostic radiology and X-ray imaging"
+    },
+    {
+      "code": "RT",
+      "description": "Radiation therapy",
+      "definition": "Therapeutic radiation treatment"
+    },
+    {
+      "code": "RUS",
+      "description": "Radiology ultrasound",
+      "definition": "General ultrasound imaging"
+    },
+    {
+      "code": "RX",
+      "description": "Radiograph",
+      "definition": "X-ray imaging"
+    },
+    {
+      "code": "SP",
+      "description": "Surgical pathology",
+      "definition": "Tissue examination and surgical specimens"
+    },
+    {
+      "code": "SR",
+      "description": "Serology",
+      "definition": "Antibody and antigen testing"
+    },
+    {
+      "code": "TX",
+      "description": "Toxicology",
+      "definition": "Drug and toxin testing"
+    },
+    {
+      "code": "VUS",
+      "description": "Vascular ultrasound",
+      "definition": "Vascular imaging and Doppler studies"
+    },
+    {
+      "code": "XRC",
+      "description": "Cineradiograph",
+      "definition": "Motion picture X-ray imaging"
+    }
+  ],
+  "usedIn": [
+    "OBR.24",
+    "OM4.1"
+  ],
+  "generationRules": {
+    "distribution": {
+      "LAB": 0.25,
+      "RAD": 0.15,
+      "CH": 0.10,
+      "HM": 0.08,
+      "MB": 0.07,
+      "CT": 0.06,
+      "RUS": 0.05,
+      "EC": 0.04,
+      "BG": 0.03,
+      "IMM": 0.03,
+      "CP": 0.02,
+      "SP": 0.02,
+      "NMR": 0.02,
+      "IMG": 0.08
+    },
+    "messageContext": {
+      "ORU^R01": ["LAB", "CH", "HM", "MB", "IMM", "BG"],
+      "lab_orders": ["LAB", "CH", "HM", "MB", "TX", "SR"],
+      "radiology_orders": ["RAD", "CT", "NMR", "RUS", "IMG"],
+      "cardiology_orders": ["EC", "CUS", "CTH"]
+    }
+  }
+}

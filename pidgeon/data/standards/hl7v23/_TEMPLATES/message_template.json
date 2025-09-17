@@ -1,0 +1,35 @@
+{
+  "messageType": "XXX",
+  "triggerEvent": "Y00",
+  "name": "Message Name",
+  "description": "Clear description of when this message is sent and its purpose",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Patient Administration|Orders|Results|etc",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'XXX^Y00'"]
+    },
+    {
+      "type": "segment",
+      "segment": "EVN",
+      "name": "Event Type",
+      "usage": "R|O",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["EVN.1 must be 'Y00'"]
+    }
+  ],
+  "useCases": [
+    "Primary use case",
+    "Secondary use case"
+  ],
+  "examples": [
+    "MSH|^~\\&|...",
+    "EVN|Y00|..."
+  ]
+}

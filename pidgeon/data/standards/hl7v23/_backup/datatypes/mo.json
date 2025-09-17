@@ -1,0 +1,145 @@
+{
+  "dataType": "MO",
+  "name": "Money",
+  "description": "The MO data type is used to represent monetary amounts with associated currency information. It provides a standardized way to express financial values in healthcare transactions including service charges, insurance payments, copayments, deductibles, and other monetary amounts. The MO data type ensures that monetary values are always accompanied by their currency designation to prevent ambiguity in financial data exchange.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "composite",
+  "components": {
+    "MO.1": {
+      "name": "Quantity",
+      "dataType": "NM",
+      "description": "The monetary amount or value. This component contains the numeric value of the money amount, including decimal precision as appropriate.",
+      "length": 16,
+      "usage": "optional",
+      "position": 1
+    },
+    "MO.2": {
+      "name": "Denomination",
+      "dataType": "ID",
+      "description": "The currency code or denomination for the monetary amount. Specifies the currency in which the amount is expressed (e.g., USD, EUR, CAD).",
+      "length": 3,
+      "usage": "optional",
+      "position": 2,
+      "table": "0302"
+    }
+  },
+  "length": 20,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "currencyRequired": "Currency denomination should be specified for meaningful monetary representation",
+    "precisionHandling": "Decimal precision should follow standard financial practices for the specified currency",
+    "iso4217Compliance": "Currency codes should follow ISO 4217 standard where applicable"
+  },
+  "usage": [
+    "Healthcare service charges and billing amounts",
+    "Insurance copayments, deductibles, and coinsurance",
+    "Pharmaceutical and supply costs",
+    "Payment amounts and financial transactions",
+    "Budget allocations and cost tracking",
+    "Price information in charge description master"
+  ],
+  "examples": [
+    "125.00^USD",
+    "50.75^USD",
+    "1000.00^USD",
+    "25.50^CAD",
+    "750.00^EUR",
+    "15.00^USD",
+    "2500.99^USD"
+  ],
+  "commonFields": [
+    "Financial transaction amounts in billing segments",
+    "Insurance payment and adjustment amounts",
+    "Copayment and deductible amounts in insurance segments",
+    "Charge amounts in charge description master (CDM)",
+    "Various monetary fields throughout HL7 financial messages"
+  ],
+  "generationHints": {
+    "typical": "Use realistic healthcare monetary amounts appropriate for services, procedures, and supplies",
+    "serviceCharges": "Range from small copays ($10-50) to major procedures ($1000-100000)",
+    "currencies": ["USD", "CAD", "EUR", "GBP", "AUD", "JPY"],
+    "precision": "Use appropriate decimal precision (typically 2 decimal places for major currencies)",
+    "context": "Consider the healthcare context when generating realistic amounts"
+  },
+  "monetaryTypes": {
+    "copayments": {
+      "description": "Patient copayment amounts",
+      "typicalRange": "$5.00 - $75.00",
+      "examples": ["15.00^USD", "25.00^USD", "50.00^USD"]
+    },
+    "procedures": {
+      "description": "Medical procedure charges",
+      "typicalRange": "$100.00 - $50,000.00",
+      "examples": ["250.00^USD", "1500.00^USD", "15000.00^USD"]
+    },
+    "medications": {
+      "description": "Pharmaceutical costs",
+      "typicalRange": "$5.00 - $5,000.00",
+      "examples": ["12.50^USD", "150.00^USD", "2500.00^USD"]
+    },
+    "deductibles": {
+      "description": "Insurance deductible amounts",
+      "typicalRange": "$500.00 - $10,000.00",
+      "examples": ["1000.00^USD", "2500.00^USD", "5000.00^USD"]
+    }
+  },
+  "currencyStandards": {
+    "iso4217": "International standard for currency codes",
+    "commonCodes": {
+      "USD": "United States Dollar",
+      "EUR": "Euro",
+      "GBP": "British Pound Sterling",
+      "CAD": "Canadian Dollar",
+      "AUD": "Australian Dollar",
+      "JPY": "Japanese Yen"
+    },
+    "formatting": "Follow local formatting conventions for each currency"
+  },
+  "validationRules": {
+    "numericValidation": "MO.1 must be a valid numeric value when populated",
+    "currencyValidation": "MO.2 should reference valid ISO 4217 currency codes",
+    "precisionCheck": "Decimal precision should be appropriate for the specified currency",
+    "rangeValidation": "Amounts should be within reasonable ranges for healthcare transactions",
+    "negativeValues": "Consider whether negative values are appropriate for the specific use case"
+  },
+  "financialContext": {
+    "billing": "Core component of healthcare billing and claims processing",
+    "insurance": "Essential for insurance calculation and payment processing",
+    "accounting": "Supports healthcare financial accounting and reporting",
+    "compliance": "Meets financial reporting and audit requirements",
+    "interoperability": "Enables consistent monetary representation across systems"
+  },
+  "internationalSupport": {
+    "multiCurrency": "Supports international healthcare transactions",
+    "exchangeRates": "May require currency conversion capabilities",
+    "localFormatting": "Should accommodate local currency formatting conventions",
+    "regulations": "Must comply with local financial reporting regulations"
+  },
+  "relatedDataTypes": {
+    "NM": "Numeric - used for the quantity component",
+    "ID": "Coded Value - used for currency denomination",
+    "CP": "Composite Price - for complex pricing structures using MO",
+    "ST": "String - for unstructured monetary representations"
+  },
+  "implementationNotes": {
+    "precision": "Implement appropriate decimal precision handling for financial calculations",
+    "rounding": "Follow standard financial rounding practices",
+    "storage": "Use appropriate data types for storing monetary values without precision loss",
+    "display": "Format monetary values according to local currency conventions",
+    "calculation": "Ensure accurate financial calculations and currency handling"
+  },
+  "complianceConsiderations": {
+    "auditing": "Monetary amounts may be subject to financial auditing requirements",
+    "reporting": "Required for various healthcare financial reporting",
+    "taxation": "May have implications for tax reporting and compliance",
+    "regulations": "Must comply with healthcare financial regulations and standards"
+  },
+  "useCases": {
+    "patientBilling": "Patient statements and billing information",
+    "insuranceProcessing": "Claims processing and payment calculations",
+    "providerPayments": "Provider reimbursement and payment processing",
+    "costAccounting": "Healthcare cost tracking and analysis",
+    "budgeting": "Financial planning and budget management"
+  }
+}

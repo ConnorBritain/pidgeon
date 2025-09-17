@@ -1,0 +1,52 @@
+{
+  "triggerEvent": "A02",
+  "name": "Transfer Patient",
+  "description": "Patient transfer notification issued as a result of the patient changing assigned physical location",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A02",
+  "segments": {
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "NK1",
+      "PV1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
+  },
+  "businessPurpose": "Notify receiving applications that a patient has been transferred from one physical location to another within or between healthcare facilities",
+  "timing": "Sent when patient physical location changes and bed assignment is updated",
+  "responseMessage": "ACK^A02^ACK",
+  "realWorldScenarios": [
+    "ICU to medical floor transfer",
+    "Emergency department to inpatient unit",
+    "Room to room transfer within same unit",
+    "Inter-facility transfer",
+    "Department to department transfer"
+  ],
+  "generationRules": {
+    "EVN.1": "A02",
+    "EVN.2": "Current timestamp",
+    "EVN.6": "Current timestamp",
+    "PV1.2": "Current patient class (I|E|O)",
+    "PV1.3": "New assigned location",
+    "PV1.6": "Previous assigned location",
+    "requiredDataQuality": "High - accurate location tracking essential for patient safety"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "triggerEvent": "O04",
+  "name": "Dietary Order Acknowledgment",
+  "description": "Response message acknowledging receipt and status of dietary orders from food service systems",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "4",
+  "chapterName": "Order Entry",
+  "messageStructure": "ORD^O04",
+  "segments": {
+    "required": [
+      "MSH",
+      "MSA",
+      "ORC"
+    ],
+    "optional": [
+      "NTE",
+      "PID",
+      "ODS",
+      "ODT"
+    ]
+  },
+  "businessPurpose": "Acknowledge dietary order receipt and communicate order status changes back to the ordering system",
+  "timing": "Sent by food service system in response to dietary order messages (O03)",
+  "responseMessage": "ACK^O04^ACK",
+  "realWorldScenarios": [
+    "Kitchen confirms diabetic diet order received and scheduled",
+    "Food service acknowledges texture-modified diet for dysphagia patient",
+    "Dietary department confirms NPO order and suspends meal delivery",
+    "Kitchen reports inability to fulfill kosher meal request - substitution offered",
+    "Food service acknowledges allergy alert and implements dairy-free protocols",
+    "Dietary system confirms order cancellation for discharged patient"
+  ],
+  "generationRules": {
+    "MSH.9": "ORD^O04",
+    "MSA.1": "AA|AE|AR (Application Accept|Error|Reject)",
+    "MSA.2": "Original message control ID from dietary order",
+    "ORC.1": "OK|CR|UC (Order OK|Cancelled|Unable to Cancel)",
+    "ORC.5": "Order status (A|IP|CM|CA|DC|ER|HD|RP)",
+    "ORC.16": "Order control code reason",
+    "ODS.1": "Acknowledged diet type",
+    "ODT.1": "Confirmed tray instructions",
+    "requiredDataQuality": "High - dietary acknowledgment affects meal planning and patient nutrition"
+  }
+}

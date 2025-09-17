@@ -1,0 +1,45 @@
+{
+  "triggerEvent": "R01",
+  "name": "Observation Result/Unsolicited Transmission",
+  "description": "Unsolicited transmission of observations/results from laboratory, radiology, or other ancillary services",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "7",
+  "chapterName": "Observation Reporting",
+  "messageStructure": "ORU^R01",
+  "segments": {
+    "required": [
+      "MSH",
+      "PID",
+      "OBR"
+    ],
+    "optional": [
+      "NTE",
+      "PV1",
+      "PV2",
+      "ORC",
+      "OBX",
+      "CTI"
+    ]
+  },
+  "businessPurpose": "Transmit observation results, laboratory values, radiology reports, and other clinical findings",
+  "timing": "Sent when results are available, verified, and ready for clinical review",
+  "responseMessage": "ACK^R01^ACK",
+  "realWorldScenarios": [
+    "Laboratory test results (CBC with differential, BMP)",
+    "Microbiology culture results",
+    "Radiology reports (X-ray interpretation, CT findings)",
+    "Pathology biopsy results",
+    "Vital signs measurements",
+    "EKG interpretations"
+  ],
+  "generationRules": {
+    "MSH.9": "ORU^R01",
+    "OBR.4": "Universal Service ID for the test/procedure",
+    "OBR.25": "Result Status (F|P|C|R|X)",
+    "OBX.2": "Value Type (NM|ST|CE|DT|TM|TS)",
+    "OBX.5": "Observation Value",
+    "OBX.11": "Observation Result Status (F|P|C|D|X)",
+    "requiredDataQuality": "Critical - result accuracy directly impacts patient care"
+  }
+}

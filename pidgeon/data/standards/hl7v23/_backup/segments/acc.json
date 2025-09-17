@@ -1,0 +1,29 @@
+{
+  "segment": "ACC",
+  "name": "Accident",
+  "description": "TODO: The ACC segment contains patient information relative to an accident in which the patient has been involved.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": 1,
+    "note": "TODO: Define cardinality rules for ACC segment"
+  },
+  "messageTypes": [
+    "TODO: Define message types that use ACC segment"
+  ],
+  "fields": {
+    "TODO": "Complete field definitions for ACC segment needed"
+  },
+  "vendorVariations": {
+    "TODO": "Research vendor-specific implementations"
+  },
+  "crossReferences": {
+    "fhir": ["TODO: Map to FHIR resources"],
+    "related": ["TODO: Identify related segments"]
+  },
+  "generationRules": {
+    "TODO": "Define generation and validation rules"
+  }
+}

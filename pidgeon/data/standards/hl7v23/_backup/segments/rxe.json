@@ -1,0 +1,370 @@
+{
+  "segment": "RXE",
+  "name": "Pharmacy/Treatment Encoded Order",
+  "description": "The RXE segment contains the pharmacy or treatment application's encoding of the medication order. This segment defines the pharmacy's interpretation of the prescription including dispensing information, administration instructions, and drug identification.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "R",
+  "cardinality": {
+    "min": 1,
+    "max": 1,
+    "note": "RXE segment is required and appears once per encoded pharmacy order"
+  },
+  "messageTypes": [
+    "RDE^O11", "RDS^O13", "RGV^O15", "RAS^O17"
+  ],
+  "fields": {
+    "RXE.1": {
+      "name": "Quantity/Timing",
+      "description": "This field was withdrawn in later versions and should not be used in HL7 v2.3. Timing information should be conveyed in other segments.",
+      "dataType": "TQ",
+      "usage": "X",
+      "maxLength": 0,
+      "cardinality": {
+        "min": 0,
+        "max": 0
+      },
+      "generationHint": "Not used in v2.3 - leave empty"
+    },
+    "RXE.2": {
+      "name": "Give Code",
+      "description": "This field identifies the medical substance or treatment that has been ordered to be given to the patient, as encoded by the pharmacy or treatment supplier. This is equivalent to OBR-4-universal service ID in function.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 100,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "00006-0174-31", "description": "Amoxicillin 500mg Capsule", "system": "NDC"},
+        {"code": "00074-3949-02", "description": "Lisinopril 10mg Tablet", "system": "NDC"},
+        {"code": "00172-4368-70", "description": "Atorvastatin 20mg Tablet", "system": "NDC"},
+        {"code": "00781-1506-01", "description": "Metformin 500mg Tablet", "system": "NDC"},
+        {"code": "00093-0058-01", "description": "Levothyroxine 50mcg Tablet", "system": "NDC"},
+        {"code": "50458-600-01", "description": "Omeprazole 20mg Capsule", "system": "NDC"}
+      ],
+      "generationHint": "Format: <ndc_code>^<drug_name>^NDC or local formulary codes"
+    },
+    "RXE.3": {
+      "name": "Give Amount - Minimum",
+      "description": "This field contains the minimum amount of the medication to be given per dose. This is the numeric value that corresponds to RXE.5 (Give Units).",
+      "dataType": "NM",
+      "usage": "R",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Numeric dose amount: 1, 2.5, 10, 250, 500"
+    },
+    "RXE.4": {
+      "name": "Give Amount - Maximum",
+      "description": "This field contains the maximum amount of the medication to be given per dose when a range is specified. Used for PRN or range dosing.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Used for range dosing: if min=5 and max=10, dosing is 5-10 mg"
+    },
+    "RXE.5": {
+      "name": "Give Units",
+      "description": "This field contains the units for the give amount specified in RXE.3 and RXE.4. This field is required and specifies the dosage units.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "mg", "description": "milligram"},
+        {"code": "g", "description": "gram"},
+        {"code": "mcg", "description": "microgram"},
+        {"code": "mL", "description": "milliliter"},
+        {"code": "tab", "description": "tablet"},
+        {"code": "cap", "description": "capsule"},
+        {"code": "units", "description": "units"},
+        {"code": "mEq", "description": "milliequivalent"},
+        {"code": "drops", "description": "drops"},
+        {"code": "puff", "description": "puff"}
+      ],
+      "generationHint": "Most common: mg, tab, cap, mL for liquid medications"
+    },
+    "RXE.6": {
+      "name": "Give Dosage Form",
+      "description": "This field contains the dosage form of the medication (tablet, capsule, liquid, etc.). This provides additional clarity about the physical form of the medication.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "TAB", "description": "Tablet"},
+        {"code": "CAP", "description": "Capsule"},
+        {"code": "SOLN", "description": "Solution"},
+        {"code": "SUSP", "description": "Suspension"},
+        {"code": "INJ", "description": "Injection"},
+        {"code": "CREAM", "description": "Cream"},
+        {"code": "OINT", "description": "Ointment"},
+        {"code": "PATCH", "description": "Patch"},
+        {"code": "SUPP", "description": "Suppository"},
+        {"code": "INHALER", "description": "Inhaler"}
+      ],
+      "generationHint": "Should match the physical form: TAB for tablets, CAP for capsules"
+    },
+    "RXE.7": {
+      "name": "Provider's Administration Instructions",
+      "description": "This field contains the provider's instructions for how the medication should be administered. This is repeatable for multiple instruction components.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "PO", "description": "By mouth"},
+        {"code": "IM", "description": "Intramuscular"},
+        {"code": "IV", "description": "Intravenous"},
+        {"code": "SQ", "description": "Subcutaneous"},
+        {"code": "TOP", "description": "Topical"},
+        {"code": "BID", "description": "Twice daily"},
+        {"code": "TID", "description": "Three times daily"},
+        {"code": "QID", "description": "Four times daily"},
+        {"code": "QD", "description": "Once daily"},
+        {"code": "PRN", "description": "As needed"}
+      ],
+      "generationHint": "Common combinations: PO BID (by mouth twice daily), IM Q8H (intramuscular every 8 hours)"
+    },
+    "RXE.8": {
+      "name": "Deliver-to Location",
+      "description": "This field was withdrawn in later versions. Location information should be conveyed through other mechanisms.",
+      "dataType": "LA1",
+      "usage": "X",
+      "maxLength": 0,
+      "cardinality": {
+        "min": 0,
+        "max": 0
+      },
+      "generationHint": "Not used in v2.3 - leave empty"
+    },
+    "RXE.9": {
+      "name": "Substitution Status",
+      "description": "This field indicates whether generic substitution is allowed for the prescribed medication.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "0", "description": "Substitution not allowed by prescriber"},
+        {"code": "1", "description": "Substitution allowed - generic drug"},
+        {"code": "2", "description": "Substitution allowed - therapeutic"},
+        {"code": "G", "description": "A generic substitution was dispensed"},
+        {"code": "N", "description": "No substitute was dispensed"},
+        {"code": "T", "description": "A therapeutic substitution was dispensed"}
+      ],
+      "generationHint": "Most common: 1 (generic substitution allowed), 0 (no substitution)"
+    },
+    "RXE.10": {
+      "name": "Dispense Amount",
+      "description": "This field contains the amount to be dispensed as encoded by the pharmacy or treatment supplier. This is the total quantity that will be given to the patient.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Common dispense amounts: 30, 60, 90 (day supply), or unit counts like 100, 120"
+    },
+    "RXE.11": {
+      "name": "Dispense Units",
+      "description": "This field contains the units for the dispense amount. This must be in simple units that reflect the actual quantity of the substance dispensed.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "tab", "description": "tablets"},
+        {"code": "cap", "description": "capsules"},
+        {"code": "mL", "description": "milliliters"},
+        {"code": "g", "description": "grams"},
+        {"code": "each", "description": "each"},
+        {"code": "vial", "description": "vials"},
+        {"code": "bottle", "description": "bottles"},
+        {"code": "tube", "description": "tubes"}
+      ],
+      "generationHint": "Should match dispense amount: tab for tablet count, mL for liquid volume"
+    },
+    "RXE.12": {
+      "name": "Number of Refills",
+      "description": "This field contains the number of refills authorized by the prescriber. This is the total number of refills allowed, not remaining.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Common values: 0 (no refills), 1, 3, 5, 11 (PRN refills up to 1 year)"
+    },
+    "RXE.13": {
+      "name": "Ordering Provider's DEA Number",
+      "description": "This field contains the DEA number of the prescribing provider. Used for controlled substance prescriptions and provider identification.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <DEA_number>^<provider_name>, e.g., 'AB1234567^SMITH^JOHN^MD'"
+    },
+    "RXE.14": {
+      "name": "Pharmacist/Treatment Supplier's Verifier ID",
+      "description": "This field identifies the pharmacist or treatment supplier who verified the prescription/order. Uses extended composite ID and name format.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <id>^<last_name>^<first_name>^<credentials>, e.g., '12345^JONES^MARY^PharmD'"
+    },
+    "RXE.15": {
+      "name": "Prescription Number",
+      "description": "This field contains the prescription number as assigned by the pharmacy or treatment application. This is unique within the pharmacy system.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Pharmacy-assigned unique identifier: RX123456789, 2024001234"
+    },
+    "RXE.16": {
+      "name": "Number of Refills Remaining",
+      "description": "This field contains the number of refills remaining for the prescription. This decrements with each refill dispensed.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Should be <= RXE.12 (total refills authorized)"
+    },
+    "RXE.17": {
+      "name": "Number of Refills/Doses Dispensed",
+      "description": "This field contains the number of refills or doses that have been dispensed to date for this prescription.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Running count of dispensed refills: 0, 1, 2, etc."
+    },
+    "RXE.18": {
+      "name": "D/T of Most Recent Refill or Dose Dispensed",
+      "description": "This field contains the date and time of the most recent refill or dose dispensed to the patient.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: YYYYMMDDHHMMSS, e.g., '20241215143000' for Dec 15, 2024 2:30 PM"
+    },
+    "RXE.19": {
+      "name": "Total Daily Dose",
+      "description": "This field contains the total daily dose of the medication when calculated from the individual dose and frequency instructions.",
+      "dataType": "CQ",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <quantity>^<units>, e.g., '1000^mg' for 1000mg total daily"
+    },
+    "RXE.20": {
+      "name": "Needs Human Review",
+      "description": "This field indicates whether the prescription requires human review before dispensing due to clinical decision support alerts or other factors.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes - human review required"},
+        {"code": "N", "description": "No - human review not required"}
+      ],
+      "generationHint": "Y if drug interactions, allergies, or other alerts require pharmacist review"
+    },
+    "RXE.21": {
+      "name": "Special Dispensing Instructions",
+      "description": "This field contains special instructions for dispensing the medication, such as refrigeration requirements, patient counseling notes, or handling precautions.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "REFRIG", "description": "Refrigerate"},
+        {"code": "COUNSEL", "description": "Counsel patient"},
+        {"code": "MUD", "description": "May cause drowsiness"},
+        {"code": "FOOD", "description": "Take with food"},
+        {"code": "EMPTY", "description": "Take on empty stomach"},
+        {"code": "AVOID_SUN", "description": "Avoid sun exposure"}
+      ],
+      "generationHint": "Common instructions: REFRIG for insulin, COUNSEL for new medications"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "MedicationRequest.medication",
+      "MedicationRequest.dosageInstruction",
+      "MedicationDispense.quantity"
+    ],
+    "related": ["RXO", "RXD", "RXC", "ORC"]
+  },
+  "generationRules": {
+    "required": ["RXE.2", "RXE.3", "RXE.5"],
+    "conditional": {
+      "RXE.11": "Required if RXE.10 is present",
+      "RXE.13": "Required for controlled substances",
+      "RXE.15": "Required for dispensed prescriptions"
+    },
+    "relationships": {
+      "RXE.16_RXE.12": "Refills remaining must be <= total refills",
+      "RXE.17_RXE.12": "Refills dispensed should track with total authorized",
+      "RXE.3_RXE.5": "Give amount must have corresponding units"
+    },
+    "validation": {
+      "RXE.9": "Must be valid substitution status code",
+      "RXE.13": "DEA format: 2 letters + 7 digits",
+      "RXE.20": "Must be Y or N if present"
+    }
+  }
+}

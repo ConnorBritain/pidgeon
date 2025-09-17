@@ -1,0 +1,57 @@
+{
+  "triggerEvent": "M01",
+  "name": "Master File - Not Otherwise Specified",
+  "description": "General master file record update for data not covered by specific master file message types",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "8",
+  "chapterName": "Master Files",
+  "messageStructure": "MFN^M01",
+  "hl7Reference": "HL7 v2.3 Chapter 8 Master Files - HL7.eu/HL7v2x/v23/std23",
+  "segments": {
+    "required": [
+      "MSH",
+      "MFI",
+      "MFE"
+    ],
+    "optional": [
+      "ZXX"
+    ]
+  },
+  "businessPurpose": "Distribute master file updates for reference data not covered by specific master file message types (M02-M06)",
+  "timing": "Sent when master file records need to be synchronized across systems for general reference data",
+  "responseMessage": "MFK^M01^MFK",
+  "standardNotes": [
+    "M01 is the generic master file message for data not fitting other specific types",
+    "MFI segment defines the master file being updated",
+    "MFE segment contains the specific record action (add, update, delete)",
+    "Z-segments (ZXX) carry the actual master file data content",
+    "Each institution defines Z-segment structure for their specific needs"
+  ],
+  "realWorldScenarios": [
+    "Hospital department list updates distributed to all clinical systems",
+    "Insurance plan master data synchronized across billing systems",
+    "Custom lookup tables updated for organization-specific reference data",
+    "Vendor master file updates for equipment or supply catalogs",
+    "Location master updates for room assignments and facility codes",
+    "Staff privilege codes updated for clinical access control systems"
+  ],
+  "generationRules": {
+    "MSH.9": "MFN^M01",
+    "MFI.1": "Master file identifier",
+    "MFI.2": "Master file application identifier",
+    "MFI.3": "File-level event code (REP, UPD)",
+    "MFI.4": "Entered date/time",
+    "MFI.5": "Effective date/time",
+    "MFI.6": "Response level code",
+    "MFE.1": "Record-level event code (MAD, MUP, MDL)",
+    "MFE.2": "MFN control ID",
+    "MFE.3": "Effective date/time",
+    "MFE.4": "Primary key value",
+    "requiredDataQuality": "High - master file accuracy affects all downstream systems and processes",
+    "tableReferences": {
+      "MFI.3": "HL7-0178 (File Level Event Code)",
+      "MFE.1": "HL7-0180 (Record Level Event Code)"
+    }
+  }
+}

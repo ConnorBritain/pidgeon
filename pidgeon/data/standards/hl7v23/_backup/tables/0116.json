@@ -1,0 +1,67 @@
+{
+  "table": "0116",
+  "name": "Bed status",
+  "description": "HL7-defined table specifying the state of a bed in an inpatient setting to determine patient assignment eligibility",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "Patient Administration",
+  "type": "hl7_defined",
+  "values": [
+    {
+      "code": "C",
+      "description": "Closed",
+      "definition": "Bed is closed and unavailable for patient assignment"
+    },
+    {
+      "code": "H",
+      "description": "Housekeeping",
+      "definition": "Bed requires housekeeping services before patient assignment"
+    },
+    {
+      "code": "I",
+      "description": "Isolated",
+      "definition": "Bed is designated for isolation purposes"
+    },
+    {
+      "code": "K",
+      "description": "Contaminated",
+      "definition": "Bed is contaminated and requires decontamination"
+    },
+    {
+      "code": "O",
+      "description": "Occupied",
+      "definition": "Bed is currently occupied by a patient"
+    },
+    {
+      "code": "U",
+      "description": "Unoccupied",
+      "definition": "Bed is available for patient assignment"
+    }
+  ],
+  "usedIn": [
+    "PV1.3",
+    "DLD.2"
+  ],
+  "notes": "Case-sensitive code system used to determine if a patient may be assigned to a bed. Essential for bed management and patient placement workflows.",
+  "vendorVariations": {
+    "epic": "Supports standard codes with additional internal bed status categories for specialized units",
+    "cerner": "Uses standard values with organization-specific extensions for different care areas",
+    "allscripts": "Standard implementation with optional department-specific bed status indicators"
+  },
+  "generationRules": {
+    "distribution": {
+      "U": 0.40,
+      "O": 0.35,
+      "H": 0.15,
+      "C": 0.05,
+      "I": 0.03,
+      "K": 0.02
+    },
+    "messageContext": {
+      "bed_management": ["U", "O", "H", "C"],
+      "admission_planning": ["U", "O"],
+      "housekeeping_workflow": ["H", "U", "K"],
+      "infection_control": ["I", "K", "C"]
+    }
+  }
+}

@@ -1,0 +1,376 @@
+{
+  "segment": "IAM",
+  "name": "Patient Adverse Reaction Information",
+  "description": "The Patient Adverse Reaction Information segment (IAM) contains information about patient allergies, adverse reactions, and intolerances. This segment is critical for patient safety, providing essential information to prevent harmful drug interactions and adverse events. The IAM segment captures allergy information including the allergen, reaction severity, reaction type, onset date, and clinical status. This information is vital for clinical decision support systems and medication safety protocols.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "*",
+    "note": "Multiple IAM segments can be used for different allergies and adverse reactions"
+  },
+  "messageTypes": ["ADT^A01", "ADT^A02", "ADT^A03", "ADT^A04", "ADT^A05", "ADT^A06", "ADT^A07", "ADT^A08", "ADT^A09", "ADT^A10", "ADT^A11", "ADT^A12", "ADT^A13", "ADT^A14", "ADT^A15", "ADT^A16", "ADT^A17", "ADT^A18", "ADT^A21", "ADT^A22", "ADT^A23", "ADT^A25", "ADT^A26", "ADT^A27", "ADT^A28", "ADT^A29", "ADT^A31", "ADT^A32", "ADT^A33", "ADT^A37", "ADT^A38", "ADT^A44", "ADT^A45", "ADT^A47", "ADT^A49", "ADT^A50", "ADT^A51", "ADT^A52", "ADT^A53", "ADT^A54", "ADT^A55", "ORU^R01", "CRM^C01", "CRM^C02", "CRM^C03", "CRM^C04", "CRM^C05", "CRM^C06", "CRM^C07", "CRM^C08"],
+  "fields": {
+    "IAM.1": {
+      "name": "Set ID - IAM",
+      "description": "This field contains the sequence number for the IAM segment when multiple allergy segments are present.",
+      "dataType": "SI",
+      "usage": "R",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Sequential numbering: 1, 2, 3, etc. for multiple allergies"
+    },
+    "IAM.2": {
+      "name": "Allergen Type Code",
+      "description": "This field contains a code identifying the general type of allergen (drug allergy, food allergy, environmental allergy, etc.).",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "DA", "description": "Drug allergy"},
+        {"code": "FA", "description": "Food allergy"},
+        {"code": "MA", "description": "Miscellaneous allergy"},
+        {"code": "MC", "description": "Miscellaneous contraindication"},
+        {"code": "EA", "description": "Environmental allergy"},
+        {"code": "AA", "description": "Animal allergy"}
+      ],
+      "generationHint": "DA (drug) most common in hospitals, FA (food) common in all settings"
+    },
+    "IAM.3": {
+      "name": "Allergen Code/Mnemonic/Description",
+      "description": "This field contains the specific allergen that causes the adverse reaction. Can use standard drug codes (RxNorm, NDC) for medications or other coding systems for foods and environmental allergens.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "1191", "description": "Aspirin"},
+        {"code": "7052", "description": "Penicillin"},
+        {"code": "2670", "description": "Codeine"},
+        {"code": "8640", "description": "Sulfonamides"},
+        {"code": "PEANUTS", "description": "Peanuts"},
+        {"code": "SHELLFISH", "description": "Shellfish"},
+        {"code": "LATEX", "description": "Latex"},
+        {"code": "POLLEN", "description": "Pollen"},
+        {"code": "DUST", "description": "Dust mites"},
+        {"code": "IODINE", "description": "Iodine contrast"}
+      ],
+      "generationHint": "Use RxNorm codes for medications, common names for foods and environmental allergens"
+    },
+    "IAM.4": {
+      "name": "Allergy Severity Code",
+      "description": "This field indicates the severity of the allergic reaction.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "SV", "description": "Severe"},
+        {"code": "MO", "description": "Moderate"},
+        {"code": "MI", "description": "Mild"},
+        {"code": "U", "description": "Unknown"}
+      ],
+      "generationHint": "MO (moderate) most common, SV for life-threatening reactions"
+    },
+    "IAM.5": {
+      "name": "Allergy Reaction Code",
+      "description": "This field describes the type of reaction experienced by the patient.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 15,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "RASH", "description": "Skin rash"},
+        {"code": "ITCHING", "description": "Itching/pruritus"},
+        {"code": "SWELLING", "description": "Swelling/angioedema"},
+        {"code": "BREATHING", "description": "Difficulty breathing"},
+        {"code": "ANAPHYLAXIS", "description": "Anaphylactic reaction"},
+        {"code": "NAUSEA", "description": "Nausea/vomiting"},
+        {"code": "DIARRHEA", "description": "Diarrhea"},
+        {"code": "HIVES", "description": "Hives/urticaria"},
+        {"code": "SHOCK", "description": "Anaphylactic shock"}
+      ],
+      "generationHint": "RASH and ITCHING most common, ANAPHYLAXIS for severe drug allergies"
+    },
+    "IAM.6": {
+      "name": "Allergy Action Code",
+      "description": "This field identifies the action to be taken in case of an allergic reaction.",
+      "dataType": "CNE",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "DI", "description": "Discontinue"},
+        {"code": "NI", "description": "No known allergies"},
+        {"code": "UN", "description": "Unconfirmed"},
+        {"code": "CO", "description": "Contraindicated"}
+      ],
+      "generationHint": "DI (discontinue) for confirmed allergies, UN for suspected reactions"
+    },
+    "IAM.7": {
+      "name": "Allergy Unique Identifier",
+      "description": "This field contains a unique identifier for this allergy record.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 80,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "System-generated unique ID for allergy tracking and updates"
+    },
+    "IAM.8": {
+      "name": "Action Reason",
+      "description": "This field contains free text describing the reason for the action specified in IAM.6.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Clinical notes about allergy determination or contraindication reasoning"
+    },
+    "IAM.9": {
+      "name": "Sensitivity to Causative Agent Code",
+      "description": "This field indicates the degree of sensitivity to the causative agent.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "AD", "description": "Adverse reaction"},
+        {"code": "AL", "description": "Allergy"},
+        {"code": "CT", "description": "Contraindication"},
+        {"code": "IN", "description": "Intolerance"}
+      ],
+      "generationHint": "AL for true allergies, IN for intolerances, CT for contraindications"
+    },
+    "IAM.10": {
+      "name": "Allergen Group Code/Mnemonic/Description",
+      "description": "This field contains information about the allergen group or class (e.g., beta-lactam antibiotics, NSAIDs).",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "BETALACTAM", "description": "Beta-lactam antibiotics"},
+        {"code": "NSAID", "description": "Non-steroidal anti-inflammatory drugs"},
+        {"code": "SULFA", "description": "Sulfonamide antibiotics"},
+        {"code": "OPIOID", "description": "Opioid analgesics"},
+        {"code": "CONTRAST", "description": "Contrast agents"},
+        {"code": "NUTS", "description": "Tree nuts"},
+        {"code": "SEAFOOD", "description": "Seafood/shellfish"}
+      ],
+      "generationHint": "Group allergies help identify cross-reactivity risks"
+    },
+    "IAM.11": {
+      "name": "Onset Date",
+      "description": "This field contains the date when the allergic reaction first occurred or was first identified.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Date of first known reaction, often approximate for childhood allergies"
+    },
+    "IAM.12": {
+      "name": "Onset Date Text",
+      "description": "This field contains free text describing the onset of the allergic reaction when a specific date is not available.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Text like 'childhood', 'last year', 'after surgery' when exact date unknown"
+    },
+    "IAM.13": {
+      "name": "Reported Date/Time",
+      "description": "This field contains the date and time when the allergy information was reported to the healthcare system.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "When allergy was documented in the medical record system"
+    },
+    "IAM.14": {
+      "name": "Reported By",
+      "description": "This field identifies who reported the allergy information (patient, family member, previous provider, etc.).",
+      "dataType": "XPN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Patient self-report most common, family for pediatric cases"
+    },
+    "IAM.15": {
+      "name": "Relationship to Patient Code",
+      "description": "This field indicates the relationship of the person reporting the allergy to the patient.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "SEL", "description": "Self"},
+        {"code": "PAR", "description": "Parent"},
+        {"code": "SPO", "description": "Spouse"},
+        {"code": "SIB", "description": "Sibling"},
+        {"code": "PHY", "description": "Physician"},
+        {"code": "OTH", "description": "Other"}
+      ],
+      "generationHint": "SEL for adult self-report, PAR for pediatric cases, PHY for provider documentation"
+    },
+    "IAM.16": {
+      "name": "Alert Device Code",
+      "description": "This field indicates what type of alert device the patient may have for this allergy.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "B", "description": "Bracelet"},
+        {"code": "N", "description": "Necklace"},
+        {"code": "W", "description": "Wallet card"},
+        {"code": "A", "description": "Anklet"},
+        {"code": "O", "description": "Other"}
+      ],
+      "generationHint": "B (bracelet) most common for severe allergies, often empty for mild allergies"
+    },
+    "IAM.17": {
+      "name": "Verification Status",
+      "description": "This field indicates the verification status of the allergy information.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "U", "description": "Unconfirmed"},
+        {"code": "P", "description": "Pending"},
+        {"code": "C", "description": "Confirmed"},
+        {"code": "E", "description": "Erroneous"},
+        {"code": "D", "description": "Doubt raised"}
+      ],
+      "generationHint": "U for patient-reported allergies, C for provider-confirmed reactions"
+    }
+  },
+  "vendorVariations": {
+    "epic": {
+      "commonFields": ["IAM.1", "IAM.2", "IAM.3", "IAM.4", "IAM.5", "IAM.6", "IAM.9", "IAM.17"],
+      "extensions": ["Clinical decision support integration", "Cross-reactivity checking", "Allergy severity scoring"],
+      "notes": "Epic provides comprehensive allergy management with decision support and cross-reactivity analysis"
+    },
+    "cerner": {
+      "commonFields": ["IAM.1", "IAM.2", "IAM.3", "IAM.4", "IAM.5", "IAM.6", "IAM.11", "IAM.13"],
+      "extensions": ["Allergy assessment workflows", "Documentation templates", "Reaction severity tracking"],
+      "notes": "Cerner emphasizes structured allergy documentation and assessment protocols"
+    },
+    "allscripts": {
+      "commonFields": ["IAM.1", "IAM.2", "IAM.3", "IAM.6", "IAM.9"],
+      "extensions": ["Basic allergy alerts", "Drug interaction checking"],
+      "notes": "Allscripts provides essential allergy checking with medication safety focus"
+    },
+    "nextgen": {
+      "commonFields": ["IAM.1", "IAM.2", "IAM.3", "IAM.4", "IAM.6", "IAM.14"],
+      "extensions": ["Patient portal allergy management", "Family history integration"],
+      "notes": "NextGen integrates allergy management with patient engagement tools"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "AllergyIntolerance.code",
+      "AllergyIntolerance.patient",
+      "AllergyIntolerance.clinicalStatus",
+      "AllergyIntolerance.verificationStatus",
+      "AllergyIntolerance.type",
+      "AllergyIntolerance.category",
+      "AllergyIntolerance.criticality",
+      "AllergyIntolerance.onset",
+      "AllergyIntolerance.reaction.substance",
+      "AllergyIntolerance.reaction.manifestation",
+      "AllergyIntolerance.reaction.severity"
+    ],
+    "related": ["PID", "PV1", "AL1", "OBX", "NTE"]
+  },
+  "examples": [
+    "IAM|1|DA^Drug allergy|1191^Aspirin^RxNorm|SV^Severe|RASH~BREATHING|DI^Discontinue|ALL001^HIS|Anaphylactic reaction to aspirin|AL^Allergy|NSAID^Non-steroidal anti-inflammatory drugs|19950315|Childhood reaction|20241215120000|SMITH^JOHN^DOE|SEL^Self|B^Bracelet|C^Confirmed",
+    "IAM|2|FA^Food allergy|PEANUTS^Peanuts|MO^Moderate|SWELLING~HIVES|DI^Discontinue|ALL002^HIS|Facial swelling after eating peanuts|AL^Allergy|NUTS^Tree nuts|20100822||20241215120000|JONES^MARY^ANN|PAR^Parent||U^Unconfirmed",
+    "IAM|3|EA^Environmental allergy|LATEX^Latex|MI^Mild|RASH~ITCHING|CO^Contraindicated|ALL003^HIS|Contact dermatitis from latex gloves|IN^Intolerance||20180910|During medical procedure|20241215120000||PHY^Physician||C^Confirmed"
+  ],
+  "notes": [
+    "IAM segment is critical for patient safety and medication management",
+    "Set ID (IAM.1), Allergen Type (IAM.2), Allergen Code (IAM.3), and Action Code (IAM.6) are required",
+    "Allergy severity and reaction codes help determine clinical response protocols",
+    "Cross-reactivity information in allergen groups prevents related substance exposure",
+    "Verification status helps distinguish confirmed allergies from patient reports",
+    "Alert device information supports patient safety outside healthcare settings"
+  ],
+  "generationRules": {
+    "fieldPopulation": {
+      "required": ["IAM.1", "IAM.2", "IAM.3", "IAM.6"],
+      "recommended": ["IAM.4", "IAM.5", "IAM.9", "IAM.17"],
+      "situational": ["IAM.7", "IAM.10", "IAM.11", "IAM.13", "IAM.14", "IAM.16"]
+    },
+    "dataConsistency": {
+      "allergenTypeAlignment": "Allergen code should match the allergen type (drug codes for DA, food names for FA)",
+      "severityReactionCorrelation": "Severe allergies should have serious reactions like anaphylaxis or breathing difficulty",
+      "actionCodeLogic": "Confirmed allergies should have DI (discontinue) action, suspected allergies may have UN",
+      "verificationStatusConsistency": "Confirmed status should align with provider documentation and reaction history"
+    },
+    "businessRules": {
+      "drugAllergyCrossReactivity": "Drug allergies should check for class-based cross-reactions",
+      "severityEscalation": "Severe allergies require immediate clinical alerts and intervention protocols",
+      "documentationRequirements": "All allergies should have clear documentation of source and verification",
+      "alertDeviceCorrelation": "Severe, life-threatening allergies often have associated alert devices",
+      "familyHistoryConsideration": "Pediatric allergies often reported by parents, adult allergies typically self-reported"
+    },
+    "messageFlow": {
+      "triggers": ["Patient registration", "Allergy discovery", "Reaction events", "Allergy updates", "Medication orders"],
+      "responses": ["Clinical alerts", "Decision support warnings", "Care team notifications", "Medication contraindication alerts"],
+      "workflow": "Critical for medication ordering, procedure planning, and clinical decision support systems"
+    }
+  }
+}

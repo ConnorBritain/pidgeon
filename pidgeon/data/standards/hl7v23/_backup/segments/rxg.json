@@ -1,0 +1,439 @@
+{
+  "segment": "RXG",
+  "name": "Pharmacy/Treatment Give",
+  "description": "The Pharmacy/Treatment Give segment (RXG) contains information about the planned administration of medications to patients. This segment represents the critical bridge between pharmacy dispensing (RXD) and actual administration (RXA), providing detailed instructions for medication giving. The RXG segment is essential for medication administration workflows, specifying what should be given to the patient, when, how, and by whom. It supports complex medication administration scenarios including IV infusions, PRN medications, and multi-dose regimens in hospital and clinical settings.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "*",
+    "note": "Multiple RXG segments can be used for different administration times or complex regimens"
+  },
+  "messageTypes": ["RGV^O15", "RDE^O11", "RDS^O13", "RAS^O17", "ORU^R01"],
+  "fields": {
+    "RXG.1": {
+      "name": "Give Sub-ID Counter",
+      "description": "This field contains a sequence number that identifies this particular 'give' instruction within a series of gives for the same medication order.",
+      "dataType": "NM",
+      "usage": "R",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Sequential numbering: 1, 2, 3, etc. for multiple administration times"
+    },
+    "RXG.2": {
+      "name": "Dispense Sub-ID Counter",
+      "description": "This field contains a sequence number that identifies which dispense event this give instruction is associated with.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Links to corresponding RXD segment for traceability"
+    },
+    "RXG.3": {
+      "name": "Quantity/Timing",
+      "description": "This field specifies when and how much medication should be given, including dose timing and frequency instructions.",
+      "dataType": "TQ",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Timing patterns like Q6H, BID, PRN, or specific times like 0800-1200-1800-2200"
+    },
+    "RXG.4": {
+      "name": "Give Code",
+      "description": "This field contains the medication code for what should be given to the patient. Should use standard medication coding systems.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "50580-506-02", "description": "Acetaminophen 325mg tablet"},
+        {"code": "00093-0058-01", "description": "Amoxicillin 500mg capsule"},
+        {"code": "00781-1506-10", "description": "Atorvastatin 20mg tablet"},
+        {"code": "00074-3368-02", "description": "Furosemide 40mg tablet"},
+        {"code": "00002-3237-02", "description": "Insulin glargine 100 units/mL"},
+        {"code": "00378-0781-05", "description": "Metformin 500mg tablet"},
+        {"code": "00049-0530-66", "description": "Normal Saline 0.9% 1000mL"},
+        {"code": "00409-6138-02", "description": "Morphine sulfate 2mg/mL injection"}
+      ],
+      "generationHint": "Use NDC codes for specific products, RxNorm for generic concepts"
+    },
+    "RXG.5": {
+      "name": "Give Amount - Minimum",
+      "description": "This field contains the minimum amount of medication that should be given in this administration.",
+      "dataType": "NM",
+      "usage": "R",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Numeric dose amount: 1, 2.5, 10, etc. matching the prescribed dose"
+    },
+    "RXG.6": {
+      "name": "Give Amount - Maximum",
+      "description": "This field contains the maximum amount of medication that should be given in this administration, if different from minimum.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Used for PRN medications or sliding scale dosing"
+    },
+    "RXG.7": {
+      "name": "Give Units",
+      "description": "This field specifies the units for the give amount (tablets, mL, mg, units, etc.).",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "TAB", "description": "Tablet"},
+        {"code": "CAP", "description": "Capsule"},
+        {"code": "ML", "description": "Milliliter"},
+        {"code": "MG", "description": "Milligram"},
+        {"code": "G", "description": "Gram"},
+        {"code": "UNITS", "description": "Units"},
+        {"code": "MEQ", "description": "Milliequivalent"},
+        {"code": "MCG", "description": "Microgram"},
+        {"code": "PATCH", "description": "Patch"},
+        {"code": "DROP", "description": "Drop"}
+      ],
+      "generationHint": "Should match the dispense units and be clinically appropriate"
+    },
+    "RXG.8": {
+      "name": "Give Dosage Form",
+      "description": "This field describes the physical form of the medication to be given.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "TAB", "description": "Tablet"},
+        {"code": "CAP", "description": "Capsule"},
+        {"code": "INJ", "description": "Injection"},
+        {"code": "SUSP", "description": "Suspension"},
+        {"code": "SOLN", "description": "Solution"},
+        {"code": "CREA", "description": "Cream"},
+        {"code": "OINT", "description": "Ointment"},
+        {"code": "PATCH", "description": "Patch"},
+        {"code": "SUPP", "description": "Suppository"},
+        {"code": "INHAL", "description": "Inhalation"}
+      ],
+      "generationHint": "Should match the physical form that will be administered"
+    },
+    "RXG.9": {
+      "name": "Administration Notes",
+      "description": "This field contains free text notes and special instructions for medication administration.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Special instructions like 'Give with food', 'Slow IV push', 'Check blood pressure before giving'"
+    },
+    "RXG.10": {
+      "name": "Substitution Status",
+      "description": "This field indicates whether substitution is allowed for this give instruction.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Substitution allowed"},
+        {"code": "N", "description": "No substitution"},
+        {"code": "G", "description": "Generic substitution allowed"}
+      ],
+      "generationHint": "N for brand-specific orders, Y for generic equivalents allowed"
+    },
+    "RXG.11": {
+      "name": "Dispense-to Location",
+      "description": "This field identifies where the medication should be delivered for administration.",
+      "dataType": "LA2",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Room number, nursing unit, or care area where administration will occur"
+    },
+    "RXG.12": {
+      "name": "Needs Human Review",
+      "description": "This field indicates whether this give instruction requires human review before administration.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Requires human review"},
+        {"code": "N", "description": "No review required"}
+      ],
+      "generationHint": "Y for high-risk medications, complex dosing, or patient-specific considerations"
+    },
+    "RXG.13": {
+      "name": "Pharmacy/Treatment Supplier's Special Administration Instructions",
+      "description": "This field contains special administration instructions provided by the pharmacy or treatment supplier.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Pharmacy-specific instructions for preparation, storage, or administration techniques"
+    },
+    "RXG.14": {
+      "name": "Give Per (Time Unit)",
+      "description": "This field specifies the time unit over which the give amount should be administered.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MIN", "description": "Per minute"},
+        {"code": "HR", "description": "Per hour"},
+        {"code": "DAY", "description": "Per day"},
+        {"code": "DOSE", "description": "Per dose"},
+        {"code": "WKLY", "description": "Per week"}
+      ],
+      "generationHint": "HR for infusions, DAY for daily medications, DOSE for single administrations"
+    },
+    "RXG.15": {
+      "name": "Give Rate Amount",
+      "description": "This field contains the rate at which the medication should be given (for infusions and continuous medications).",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 6,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Infusion rate: 50 mL/hr, 2 mg/min, etc."
+    },
+    "RXG.16": {
+      "name": "Give Rate Units",
+      "description": "This field specifies the units for the give rate amount.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "ML/HR", "description": "Milliliters per hour"},
+        {"code": "MG/MIN", "description": "Milligrams per minute"},
+        {"code": "UNITS/HR", "description": "Units per hour"},
+        {"code": "MCG/KG/MIN", "description": "Micrograms per kilogram per minute"},
+        {"code": "DROPS/MIN", "description": "Drops per minute"}
+      ],
+      "generationHint": "Should match the give rate amount and be clinically appropriate for the medication"
+    },
+    "RXG.17": {
+      "name": "Give Strength",
+      "description": "This field contains the strength or concentration of the medication to be given.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Concentration: 10, 25, 100, etc. paired with strength units"
+    },
+    "RXG.18": {
+      "name": "Give Strength Units",
+      "description": "This field specifies the units for the give strength.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MG/ML", "description": "Milligrams per milliliter"},
+        {"code": "MG/TAB", "description": "Milligrams per tablet"},
+        {"code": "UNITS/ML", "description": "Units per milliliter"},
+        {"code": "MCG/ML", "description": "Micrograms per milliliter"},
+        {"code": "MEQ/ML", "description": "Milliequivalents per milliliter"},
+        {"code": "PERCENT", "description": "Percentage strength"}
+      ],
+      "generationHint": "Should describe the concentration of active ingredient in the dosage form"
+    },
+    "RXG.19": {
+      "name": "Substance Lot Number",
+      "description": "This field contains the lot number of the medication substance to be given.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Manufacturer lot number for tracking and recall purposes"
+    },
+    "RXG.20": {
+      "name": "Substance Expiration Date",
+      "description": "This field contains the expiration date of the medication substance to be given.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Expiration date for medication safety and effectiveness"
+    },
+    "RXG.21": {
+      "name": "Substance Manufacturer Name",
+      "description": "This field contains the name of the manufacturer of the medication substance to be given.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "PFZ", "description": "Pfizer Inc."},
+        {"code": "JNJ", "description": "Johnson & Johnson"},
+        {"code": "MRK", "description": "Merck & Co."},
+        {"code": "ABT", "description": "Abbott Laboratories"},
+        {"code": "LLY", "description": "Eli Lilly and Company"},
+        {"code": "BMY", "description": "Bristol-Myers Squibb"},
+        {"code": "TEVA", "description": "Teva Pharmaceuticals"},
+        {"code": "SNDZ", "description": "Sandoz Inc."}
+      ],
+      "generationHint": "Manufacturer information for quality control and safety tracking"
+    },
+    "RXG.22": {
+      "name": "Indication",
+      "description": "This field contains the medical indication or reason for giving this medication.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "I10", "description": "Essential hypertension"},
+        {"code": "E11.9", "description": "Type 2 diabetes mellitus without complications"},
+        {"code": "M79.3", "description": "Panniculitis, unspecified"},
+        {"code": "R50.9", "description": "Fever, unspecified"},
+        {"code": "G93.1", "description": "Anoxic brain damage, not elsewhere classified"},
+        {"code": "PAIN", "description": "Pain management"},
+        {"code": "NAUSEA", "description": "Nausea and vomiting"},
+        {"code": "ANXIETY", "description": "Anxiety"}
+      ],
+      "generationHint": "ICD-10 codes for specific diagnoses, or common terms for symptoms"
+    }
+  },
+  "vendorVariations": {
+    "epic": {
+      "commonFields": ["RXG.1", "RXG.4", "RXG.5", "RXG.7", "RXG.9", "RXG.11", "RXG.15", "RXG.16"],
+      "extensions": ["Smart pump integration", "Barcode medication administration", "Clinical decision support alerts"],
+      "notes": "Epic provides comprehensive medication administration workflows with safety checks and automation"
+    },
+    "cerner": {
+      "commonFields": ["RXG.1", "RXG.4", "RXG.5", "RXG.7", "RXG.12", "RXG.13", "RXG.22"],
+      "extensions": ["Medication reconciliation", "Administration documentation", "Adverse event tracking"],
+      "notes": "Cerner emphasizes medication safety and comprehensive administration documentation"
+    },
+    "allscripts": {
+      "commonFields": ["RXG.1", "RXG.4", "RXG.5", "RXG.7", "RXG.9"],
+      "extensions": ["Basic administration tracking", "Medication timing alerts"],
+      "notes": "Allscripts provides essential medication administration functionality for smaller facilities"
+    },
+    "omnicell": {
+      "commonFields": ["RXG.1", "RXG.4", "RXG.5", "RXG.11", "RXG.19", "RXG.20"],
+      "extensions": ["Automated dispensing cabinet integration", "Inventory tracking", "Diversion monitoring"],
+      "notes": "Omnicell focuses on automated dispensing and medication security workflows"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "MedicationAdministration.medicationCodeableConcept",
+      "MedicationAdministration.dosage.dose",
+      "MedicationAdministration.dosage.rate",
+      "MedicationAdministration.dosage.route",
+      "MedicationAdministration.effectiveDateTime",
+      "MedicationAdministration.performer",
+      "MedicationAdministration.reasonCode",
+      "MedicationAdministration.note",
+      "MedicationAdministration.status"
+    ],
+    "related": ["RXO", "RXE", "RXD", "RXA", "RXR", "RXC", "ORC", "TQ1"]
+  },
+  "examples": [
+    "RXG|1|1|Q6H|50580-506-02^Acetaminophen 325mg tablet^NDC|2||TAB^Tablet|TAB^Tablet|Give with food if stomach upset|N|ICU ROOM 301|N|Administer with meals per protocol|HR||||||Pfizer Inc.|I10^Essential hypertension^ICD10",
+    "RXG|1||STAT|00409-6138-02^Morphine sulfate 2mg/mL injection^NDC|2|4|MG^Milligram|INJ^Injection|For severe pain only - assess pain level before administration|Y|EMERGENCY DEPT|Y|Slow IV push over 2-3 minutes|DOSE|2|MG/MIN||||LOT123456|20251215|Abbott Laboratories|R52^Pain unspecified^ICD10",
+    "RXG|2|1|Continuous|00049-0530-66^Normal Saline 0.9% 1000mL^NDC|1000||ML^Milliliter|SOLN^Solution|Maintain IV access|N|SURGERY RECOVERY|N|Use IV pump for accurate rate control|HR|100|ML/HR|||||Baxter Healthcare|Z51.11^Encounter for antineoplastic chemotherapy^ICD10"
+  ],
+  "notes": [
+    "RXG segment bridges pharmacy dispensing and nursing administration workflows",
+    "Give Sub-ID Counter (RXG.1) and Give Code (RXG.4), Give Amount (RXG.5), Give Units (RXG.7) are required",
+    "Critical for medication administration record (MAR) generation and nursing workflows",
+    "Supports complex administration scenarios including infusions, PRN medications, and sliding scales",
+    "Integration with automated dispensing cabinets and smart pump technology",
+    "Essential for medication safety through barcode scanning and clinical decision support"
+  ],
+  "generationRules": {
+    "fieldPopulation": {
+      "required": ["RXG.1", "RXG.4", "RXG.5", "RXG.7"],
+      "recommended": ["RXG.3", "RXG.8", "RXG.9", "RXG.11", "RXG.22"],
+      "situational": ["RXG.6", "RXG.12", "RXG.15", "RXG.16", "RXG.19", "RXG.20", "RXG.21"]
+    },
+    "dataConsistency": {
+      "doseUnitAlignment": "Give amount should be compatible with give units and dosage form",
+      "rateCalculation": "Give rate amount and units should be mathematically consistent with dose",
+      "timingValidation": "Quantity/timing should align with clinical appropriateness for the medication",
+      "strengthConsistency": "Give strength should match the medication code concentration"
+    },
+    "businessRules": {
+      "medicationSafety": "High-alert medications should require human review (RXG.12 = Y)",
+      "infusionValidation": "IV medications should have appropriate rate specifications",
+      "prnRequirements": "PRN medications should have clear administration criteria in notes",
+      "controlledSubstances": "Controlled substances require enhanced tracking and documentation",
+      "allergyChecking": "Medication codes should be validated against patient allergy profiles"
+    },
+    "messageFlow": {
+      "triggers": ["Pharmacy order processing", "Medication scheduling", "Administration planning", "Care transitions"],
+      "responses": ["Nursing administration alerts", "Automated dispensing cabinet loading", "Smart pump programming", "Documentation updates"],
+      "workflow": "Critical link between pharmacy systems and nursing administration workflows for patient safety"
+    }
+  }
+}

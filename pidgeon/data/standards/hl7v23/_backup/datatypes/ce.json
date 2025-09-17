@@ -1,0 +1,90 @@
+{
+  "dataType": "CE",
+  "name": "Coded Element",
+  "description": "The CE data type transmits codes and the text associated with the code. It is used to represent coded values where both the identifier and its human-readable description need to be communicated. Supports primary and alternate coding systems for flexibility in healthcare data exchange.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "composite",
+  "components": {
+    "CE.1": {
+      "name": "Identifier",
+      "dataType": "ST",
+      "description": "Sequence of characters (the code) that uniquely identifies the item being referenced by the text.",
+      "length": 20,
+      "usage": "required",
+      "position": 1
+    },
+    "CE.2": {
+      "name": "Text",
+      "dataType": "ST",
+      "description": "Name or description of the item in question (e.g., myocardial infarction or X-ray impression). This is the corresponding text assigned by the coding system to the identifier.",
+      "length": 199,
+      "usage": "optional",
+      "position": 2
+    },
+    "CE.3": {
+      "name": "Name of Coding System",
+      "dataType": "ST",
+      "description": "Each coding system is assigned a unique name (coding system identifier). This component identifies the coding scheme being used in the identifier component.",
+      "length": 20,
+      "usage": "optional",
+      "position": 3
+    },
+    "CE.4": {
+      "name": "Alternate Identifier",
+      "dataType": "ST",
+      "description": "Sequence of characters (the code) that uniquely identifies the item being referenced by the text. Different coding schemes will have different elements here.",
+      "length": 20,
+      "usage": "optional",
+      "position": 4
+    },
+    "CE.5": {
+      "name": "Alternate Text",
+      "dataType": "ST",
+      "description": "Name or description of the item in question using an alternate coding system (e.g., myocardial infarction or X-ray impression).",
+      "length": 199,
+      "usage": "optional",
+      "position": 5
+    },
+    "CE.6": {
+      "name": "Name of Alternate Coding System",
+      "dataType": "ST",
+      "description": "Each coding system is assigned a unique name (coding system identifier). This component identifies the alternate coding scheme being used in the alternate identifier component.",
+      "length": 20,
+      "usage": "optional",
+      "position": 6
+    }
+  },
+  "length": 60,
+  "constraints": {
+    "minimum": "To allow all six components to be valued, maximum length must be at least 60",
+    "encoding": "Components separated by ^ (component separator)",
+    "uniqueness": "The combination of identifier, name of coding system, and coding system version ID components will be a unique code for a data item"
+  },
+  "usage": [
+    "Diagnosis codes in DG1 segments",
+    "Procedure codes in PR1 segments",
+    "Observation identifiers in OBR and OBX segments",
+    "Drug codes in RXE, RXD, RXG segments",
+    "Any field requiring coded values with text descriptions"
+  ],
+  "examples": [
+    "F-11380^CREATININE^I9^2148-5^CREATININE^LN",
+    "410.9^ACUTE MYOCARDIAL INFARCTION^ICD9^I21.9^Acute myocardial infarction^ICD10",
+    "87206^CHEST X-RAY^CPT4^^^",
+    "M^MALE^HL70001^^^"
+  ],
+  "commonFields": [
+    "OBR.4 - Universal Service Identifier",
+    "OBX.3 - Observation Identifier",
+    "DG1.3 - Diagnosis Code",
+    "PR1.3 - Procedure Code",
+    "RXE.2 - Give Code"
+  ],
+  "generationHints": {
+    "typical": "Use standard medical coding systems like ICD-9, ICD-10, CPT, LOINC",
+    "codingSystems": ["ICD9", "ICD10", "CPT4", "LOINC", "SNOMED", "HL7xxxx"],
+    "patterns": "Primary identifier should match the coding system; alternate can provide cross-references",
+    "required": "CE.1 (Identifier) should always be populated; text components improve readability"
+  }
+}

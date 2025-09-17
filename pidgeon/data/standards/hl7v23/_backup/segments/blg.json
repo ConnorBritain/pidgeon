@@ -1,0 +1,154 @@
+{
+  "segment": "BLG",
+  "name": "Billing",
+  "description": "The BLG segment contains billing information that is common to all orders and services. This segment communicates billing instructions, charge types, account assignments, and timing information for when charges should be posted. It supports both simple billing scenarios and complex multi-account arrangements used in teaching hospitals, research environments, and managed care settings.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": 1,
+    "note": "BLG segment is optional and appears once per order when billing information needs to be specified"
+  },
+  "messageTypes": ["ORM^O01", "ORU^R01", "DFT^P03", "BAR^P01", "BAR^P02"],
+  "fields": {
+    "BLG.1": {
+      "name": "When to Charge",
+      "description": "This field indicates when the charge for this order should be posted to the patient's account. Contains both a timing code and an optional specific date/time for charge posting.",
+      "dataType": "CM",
+      "usage": "O",
+      "maxLength": 40,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "D", "description": "On discharge"},
+        {"code": "O", "description": "On receipt of order"},
+        {"code": "R", "description": "At time service is completed"},
+        {"code": "S", "description": "At time service is started"},
+        {"code": "T", "description": "At a designated date/time"}
+      ],
+      "generationHint": "Most common: O (receipt), R (completion), S (start of service)"
+    },
+    "BLG.2": {
+      "name": "Charge Type",
+      "description": "This field specifies the type of charge or billing arrangement for this order. Supports various billing models including professional fees, departmental charges, research billing, and no-charge scenarios.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 50,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "CH", "description": "Charge"},
+        {"code": "CO", "description": "Contract"},
+        {"code": "CR", "description": "Credit"},
+        {"code": "DP", "description": "Department"},
+        {"code": "GR", "description": "Grant"},
+        {"code": "NC", "description": "No Charge"},
+        {"code": "PC", "description": "Professional"},
+        {"code": "RS", "description": "Research"}
+      ],
+      "generationHint": "CH for standard billing, NC for teaching/research, PC for professional fees"
+    },
+    "BLG.3": {
+      "name": "Account ID",
+      "description": "This field contains the account number to which charges for this order should be posted. May include check digits and assigning authority for multi-facility environments.",
+      "dataType": "CK",
+      "usage": "O",
+      "maxLength": 100,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Patient account numbers: PAT123456, billing account IDs, or departmental accounts"
+    }
+  },
+  "vendorVariations": {
+    "epic": {
+      "commonFields": ["BLG.1", "BLG.2", "BLG.3"],
+      "extensions": ["Enhanced charge capture", "Multi-account billing", "Automated charge posting rules"],
+      "notes": "Epic's revenue cycle integration provides sophisticated charge capture with real-time posting rules"
+    },
+    "cerner": {
+      "commonFields": ["BLG.1", "BLG.2", "BLG.3"],
+      "extensions": ["Contract-based billing", "Grant accounting", "Department-specific charge routing"],
+      "notes": "Cerner emphasizes flexible billing arrangements for academic medical centers and research facilities"
+    },
+    "allscripts": {
+      "commonFields": ["BLG.1", "BLG.2"],
+      "extensions": ["Basic charge timing", "Professional fee management"],
+      "notes": "Allscripts provides essential billing functionality focused on ambulatory care scenarios"
+    },
+    "meditech": {
+      "commonFields": ["BLG.1", "BLG.2", "BLG.3"],
+      "extensions": ["Departmental cost accounting", "Multi-entity billing", "Service-based charge models"],
+      "notes": "Meditech supports complex billing scenarios for multi-facility healthcare systems"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "Account",
+      "ChargeItem",
+      "Invoice",
+      "Claim.item.productOrService"
+    ],
+    "related": ["FT1", "DG1", "PR1", "ORC", "OBR"]
+  },
+  "examples": [
+    {
+      "name": "Standard Service Charge",
+      "segment": "BLG|O^||CH|PAT123456789^^M11^MRN",
+      "description": "Charge immediately on receipt of order, standard charge type, patient account"
+    },
+    {
+      "name": "Research Study No Charge",
+      "segment": "BLG|S^202501151000||NC|STUDY789^^M11^RESEARCH",
+      "description": "No charge for research study, charge timing at service start"
+    },
+    {
+      "name": "Professional Fee with Delayed Billing",
+      "segment": "BLG|T^202501151600||PC|PROF456789^^M11^PHYSICIAN",
+      "description": "Professional charge posted at designated time to physician account"
+    },
+    {
+      "name": "Departmental Grant Billing",
+      "segment": "BLG|R^||GR|GRANT123456^^M11^NIH",
+      "description": "Grant-funded service billed upon completion to grant account"
+    }
+  ],
+  "notes": [
+    "BLG segment is critical for proper revenue cycle management and charge capture",
+    "When to Charge field enables sophisticated billing timing for complex scenarios",
+    "Charge Type supports various billing models including research and teaching environments",
+    "Account ID allows for flexible charge routing in multi-entity healthcare systems",
+    "Essential for compliance with billing regulations and audit requirements",
+    "Supports both immediate and deferred billing scenarios"
+  ],
+  "generationRules": {
+    "fieldPopulation": {
+      "required": [],
+      "recommended": ["BLG.1", "BLG.2"],
+      "situational": ["BLG.3"]
+    },
+    "dataConsistency": {
+      "chargeTypeAlignment": "BLG.2 Charge Type must align with organizational billing policies",
+      "accountValidation": "BLG.3 Account ID must reference valid billing accounts",
+      "timingLogic": "BLG.1 When to Charge must be consistent with service workflow",
+      "messagetype": "BLG segment usage must align with message type billing context"
+    },
+    "businessRules": {
+      "billingCompliance": "All charges must comply with applicable billing regulations",
+      "accountAssignment": "Account IDs must be properly authorized for the ordering provider",
+      "chargeValidation": "Charge types must be valid for the specific service being ordered",
+      "timingRules": "Charge timing must align with service delivery schedules"
+    },
+    "messageFlow": {
+      "triggers": ["Order placement with billing requirements", "Service completion requiring charges"],
+      "responses": ["Charge posting confirmations", "Billing error notifications"],
+      "workflow": "BLG segment enables proper revenue cycle integration for healthcare orders"
+    }
+  }
+}

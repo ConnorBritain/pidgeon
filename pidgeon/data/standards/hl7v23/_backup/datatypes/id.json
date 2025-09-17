@@ -1,0 +1,62 @@
+{
+  "dataType": "ID",
+  "name": "Coded Value for HL7 Defined Tables",
+  "description": "The ID data type is used for coded values that are defined by HL7 tables. It represents a single code value selected from a predefined list of valid values as specified in HL7 tables. Unlike CE data types, ID fields contain only the code without accompanying text or alternate representations.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "primitive",
+  "length": 200,
+  "constraints": {
+    "codeOnly": "Contains only the code value, not descriptive text",
+    "predefined": "Values must be from HL7-defined tables (Table 0xxx)",
+    "caseSensitive": "Typically case-sensitive depending on the specific table",
+    "noComponents": "Single value only - no component separators"
+  },
+  "usage": [
+    "Administrative sex in PID.8 (Table 0001)",
+    "Multiple birth indicator in PID.24 (Table 0136)",
+    "Event type code in EVN.1 (Table 0003)",
+    "Processing mode in MSH.11 (Table 0103)",
+    "Any field referencing HL7-defined lookup tables"
+  ],
+  "examples": [
+    "M",
+    "F",
+    "Y",
+    "N",
+    "A01",
+    "P",
+    "I",
+    "O"
+  ],
+  "commonFields": [
+    "PID.8 - Administrative Sex (Table 0001)",
+    "PID.24 - Multiple Birth Indicator (Table 0136)",
+    "EVN.1 - Event Type Code (Table 0003)",
+    "MSH.11 - Processing Mode (Table 0103)",
+    "MSH.15 - Accept Acknowledgment Type (Table 0155)"
+  ],
+  "generationHints": {
+    "typical": "Use values from the appropriate HL7 table for the field",
+    "validation": "Always validate against the specific table referenced by the field",
+    "commonTables": {
+      "0001": ["M", "F", "O", "U"],
+      "0003": ["A01", "A02", "A03", "A04", "A05"],
+      "0103": ["P", "T", "D"],
+      "0136": ["Y", "N"],
+      "0155": ["AL", "NE", "SU", "ER"]
+    },
+    "required": "Must use exact case and format as defined in the HL7 table"
+  },
+  "validationRules": {
+    "tableReference": "Value must exist in the referenced HL7 table",
+    "caseMatching": "Must match exact case as defined in table",
+    "length": "Must not exceed maximum length for the specific field",
+    "mandatory": "Some ID fields are required, others are optional"
+  },
+  "relatedDataTypes": {
+    "IS": "User-defined tables (Table 0xxx where xxx > 100)",
+    "CE": "Coded element with text and alternate representations",
+    "ST": "Free text when no coding is available"
+  }
+}

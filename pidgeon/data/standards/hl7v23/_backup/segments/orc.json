@@ -1,0 +1,364 @@
+{
+  "segment": "ORC",
+  "name": "Common Order",
+  "description": "The Common Order segment (ORC) is used to transmit fields that are common to all orders (laboratory, radiology, pharmacy, dietary, supply, etc.). The ORC segment is paired with the order detail segment (e.g., OBR, RXO, RXE) to create a complete order. It provides order control information and identifies the placer and filler applications.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "R",
+  "cardinality": {
+    "min": 1,
+    "max": 1,
+    "note": "ORC segment is required when order information is present"
+  },
+  "messageTypes": [
+    "ORM^O01", "ORU^R01", "RDE^O01", "RDE^O11", "RDS^O13", "RGV^O01", "RAS^O01",
+    "RRD^O02", "RRE^O02", "RRG^O02", "RCI^I05", "VXU^V04"
+  ],
+  "fields": {
+    "ORC.1": {
+      "name": "Order Control",
+      "description": "This field contains the order control code that identifies the function of the order segment. Values from HL7 Table 0119 - order control codes.",
+      "dataType": "ID",
+      "usage": "R",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "NW", "description": "New order"},
+        {"code": "OK", "description": "Order accepted & OK"},
+        {"code": "UA", "description": "Unable to accept order"},
+        {"code": "CA", "description": "Cancel order request"},
+        {"code": "OC", "description": "Order cancelled"},
+        {"code": "CR", "description": "Cancelled as requested"},
+        {"code": "UC", "description": "Unable to cancel"},
+        {"code": "DC", "description": "Discontinue order request"},
+        {"code": "OD", "description": "Order discontinued"},
+        {"code": "DR", "description": "Discontinued as requested"},
+        {"code": "UD", "description": "Unable to discontinue"},
+        {"code": "HD", "description": "Hold order request"},
+        {"code": "OH", "description": "Order held"},
+        {"code": "UH", "description": "Unable to put on hold"},
+        {"code": "RL", "description": "Release previous hold"},
+        {"code": "OE", "description": "Order released"},
+        {"code": "OR", "description": "Released as requested"},
+        {"code": "UR", "description": "Unable to release"},
+        {"code": "RP", "description": "Order replace request"},
+        {"code": "RU", "description": "Replaced unsolicited"},
+        {"code": "RO", "description": "Replacement order"},
+        {"code": "RQ", "description": "Replaced as requested"},
+        {"code": "UM", "description": "Unable to replace"},
+        {"code": "PA", "description": "Parent order"},
+        {"code": "CH", "description": "Child order"},
+        {"code": "XO", "description": "Change order"},
+        {"code": "XX", "description": "Order changed, unsolicited"},
+        {"code": "UX", "description": "Unable to change"},
+        {"code": "XR", "description": "Changed as requested"},
+        {"code": "DE", "description": "Data errors"},
+        {"code": "RE", "description": "Observations to follow"},
+        {"code": "RR", "description": "Request received"},
+        {"code": "SR", "description": "Response to send order status request"},
+        {"code": "SS", "description": "Send order status request"},
+        {"code": "SC", "description": "Status changed"},
+        {"code": "SN", "description": "Send order number"},
+        {"code": "NA", "description": "Number assigned"},
+        {"code": "CN", "description": "Combined result"},
+        {"code": "LI", "description": "Link order to patient care problem or goal"},
+        {"code": "UN", "description": "Unlink order from patient care problem or goal"},
+        {"code": "RF", "description": "Refill order request"},
+        {"code": "AF", "description": "Add on to existing order"}
+      ],
+      "generationHint": "Most common: NW (new order), CA (cancel), DC (discontinue), RP (replace)"
+    },
+    "ORC.2": {
+      "name": "Placer Order Number",
+      "description": "This field is the order number associated with the placing application. This is a unique identifier for the order as assigned by the system placing the order (the placer).",
+      "dataType": "EI",
+      "usage": "C",
+      "maxLength": 22,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <entity_id>^<namespace_id>, e.g., 'ORD123456^LAB'"
+    },
+    "ORC.3": {
+      "name": "Filler Order Number",
+      "description": "This field is the order number associated with the filling application. This is assigned by the system filling the order (the filler) and may be different from the placer order number.",
+      "dataType": "EI",
+      "usage": "C",
+      "maxLength": 22,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <entity_id>^<namespace_id>, e.g., 'FIL789012^RAD'"
+    },
+    "ORC.4": {
+      "name": "Placer Group Number",
+      "description": "This field identifies a group of orders assigned by the placer application. All orders in the group share this common identifier.",
+      "dataType": "EI",
+      "usage": "O",
+      "maxLength": 22,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Group identifier format: <group_id>^<namespace_id>, e.g., 'GRP001^LAB'"
+    },
+    "ORC.5": {
+      "name": "Order Status",
+      "description": "This field defines the status of the order. Values from HL7 Table 0038 - order status.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "A", "description": "Some, but not all, results available"},
+        {"code": "CA", "description": "Order was cancelled"},
+        {"code": "CM", "description": "Order is completed"},
+        {"code": "DC", "description": "Order was discontinued"},
+        {"code": "ER", "description": "Error, order not found"},
+        {"code": "HD", "description": "Order is on hold"},
+        {"code": "IP", "description": "In process, unspecified"},
+        {"code": "RP", "description": "Order has been replaced"},
+        {"code": "SC", "description": "In process, scheduled"}
+      ],
+      "generationHint": "Common statuses: SC (scheduled), IP (in process), CM (complete), CA (cancelled)"
+    },
+    "ORC.6": {
+      "name": "Response Flag",
+      "description": "This field identifies the response required from the receiving system. Values from HL7 Table 0121 - response flag.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "E", "description": "Report exceptions only"},
+        {"code": "R", "description": "Same as E, also Replacement and Parent-Child"},
+        {"code": "D", "description": "Same as R, also other associated segments"},
+        {"code": "F", "description": "Same as D, plus confirmations explicitly"},
+        {"code": "N", "description": "Only the MSA segment is returned"}
+      ],
+      "generationHint": "Most common: E (exceptions), F (full confirmation), N (MSA only)"
+    },
+    "ORC.7": {
+      "name": "Quantity/Timing",
+      "description": "This field contains the quantity and timing of the order. This is a complex field that specifies how much and how often.",
+      "dataType": "TQ",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <quantity>^<interval>^<duration>^<start_time>^<end_time>^<priority>^<condition>^<text>"
+    },
+    "ORC.8": {
+      "name": "Parent",
+      "description": "This field identifies the parent order when the current order is a child order. Contains the placer order number of the parent.",
+      "dataType": "EIP",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Parent order reference format: <placer_order_number>^<placer_application>^<filler_order_number>^<filler_application>"
+    },
+    "ORC.9": {
+      "name": "Date/Time of Transaction",
+      "description": "This field contains the date and time when the order transaction occurred. This is when the order was placed, modified, or status changed.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: YYYYMMDDHHMMSS, typically current timestamp for order transactions"
+    },
+    "ORC.10": {
+      "name": "Entered By",
+      "description": "This field identifies the person who entered the order. Uses extended composite ID number and name format for the ordering provider or clerk.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 120,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <id>^<last_name>^<first_name>^<degree>, e.g., '12345^SMITH^JOHN^MD'"
+    },
+    "ORC.11": {
+      "name": "Verified By",
+      "description": "This field identifies the person who verified the order. This may be different from the person who entered the order.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 120,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Verifying provider format, similar to ORC.10"
+    },
+    "ORC.12": {
+      "name": "Ordering Provider",
+      "description": "This field identifies the provider who is responsible for the order. This is the primary ordering physician or clinician.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 120,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Primary ordering provider, critical for pharmacy and lab orders"
+    },
+    "ORC.13": {
+      "name": "Enterer's Location",
+      "description": "This field identifies the location where the order was entered. Uses point of care location format.",
+      "dataType": "PL",
+      "usage": "O",
+      "maxLength": 80,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <point_of_care>^<room>^<bed>^<facility>^<location_status>^<person_location_type>^<building>^<floor>"
+    },
+    "ORC.14": {
+      "name": "Call Back Phone Number",
+      "description": "This field contains the phone number to call for questions about the order. Multiple phone numbers may be specified.",
+      "dataType": "XTN",
+      "usage": "O",
+      "maxLength": 40,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Contact phone for order inquiries"
+    },
+    "ORC.15": {
+      "name": "Order Effective Date/Time",
+      "description": "This field contains the date and time when the order becomes effective. This may be different from when the order was placed.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "When order should start, may be future date for scheduled orders"
+    },
+    "ORC.16": {
+      "name": "Order Control Code Reason",
+      "description": "This field contains the reason for the order control code. Explains why an order was cancelled, discontinued, etc.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "PATREQ", "description": "Patient request"},
+        {"code": "PHYREQ", "description": "Physician request"},
+        {"code": "DUPORD", "description": "Duplicate order"},
+        {"code": "ENTORD", "description": "Order entered in error"},
+        {"code": "POLICY", "description": "Policy violation"},
+        {"code": "DISCONT", "description": "Discontinued per protocol"},
+        {"code": "ALERGY", "description": "Patient allergy"},
+        {"code": "INTOL", "description": "Patient intolerance"},
+        {"code": "COMPLT", "description": "Order completed"},
+        {"code": "INSTRUCT", "description": "Instructions unclear"}
+      ],
+      "generationHint": "Free text or coded reason for order control action"
+    },
+    "ORC.17": {
+      "name": "Entering Organization",
+      "description": "This field identifies the organization where the order was entered. Uses extended composite name and ID format for organizations.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Organization identifier and name where order originated"
+    },
+    "ORC.18": {
+      "name": "Entering Device",
+      "description": "This field identifies the device or system used to enter the order. This could be a workstation, mobile device, or application identifier.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Device/system identifier: CPOE^Computerized Provider Order Entry^LOCAL"
+    },
+    "ORC.19": {
+      "name": "Action By",
+      "description": "This field identifies the person who performed the action specified by the order control code (e.g., who cancelled the order).",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 120,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Person who performed the order control action"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "ServiceRequest.identifier",
+      "ServiceRequest.status",
+      "ServiceRequest.intent",
+      "ServiceRequest.requester",
+      "ServiceRequest.authoredOn"
+    ],
+    "related": ["OBR", "RXO", "RXE", "OBX", "NTE"]
+  },
+  "examples": [
+    "ORC|NW|ORD123456^LAB|FIL789012^RAD||SC|E|||20220815143000|12345^SMITH^JOHN^MD|67890^JONES^MARY^RN|11111^DOE^JANE^MD|3WEST^301^A^MAINHOSPITAL||||20220815143000|PHYREQ^Physician Request^LOCAL|MAINHOSPITAL^L|CPOE^Computerized Provider Order Entry^LOCAL|",
+    "ORC|CA|ORD234567^PHARM||||||||20220815150000||||||||DUPORD^Duplicate Order^LOCAL||CPOE^Computerized Provider Order Entry^LOCAL|98765^ADMIN^SYSTEM^RN",
+    "ORC|CM|ORD345678^LAB|FIL456789^LAB||CM||||20220815180000|22222^BROWN^ROBERT^MD|||2EAST^205^B^MAINHOSPITAL||||20220815143000|COMPLT^Order Completed^LOCAL|MAINHOSPITAL^L|LIS^Laboratory Information System^LOCAL|"
+  ],
+  "notes": [
+    "ORC segment is required when order detail segments (OBR, RXO, etc.) are present",
+    "ORC.1 (Order Control) is required and drives the order workflow",
+    "Either ORC.2 (Placer) or ORC.3 (Filler) order number should be present for identification",
+    "ORC.12 (Ordering Provider) is critical for clinical responsibility and billing",
+    "Order status progression: NW → SC → IP → CM (or CA/DC for cancelled/discontinued)",
+    "Parent-child relationships (ORC.8) are used for complex multi-part orders"
+  ],
+  "generationRules": {
+    "required": ["ORC.1"],
+    "conditional": {
+      "ORC.2": "Required for new orders from placer application",
+      "ORC.3": "Required for order responses from filler application",
+      "ORC.12": "Should be provided for clinical orders requiring provider identification",
+      "ORC.16": "Should be provided when ORC.1 indicates cancellation, discontinuation, or modification"
+    },
+    "relationships": {
+      "ORC.1_ORC.5": "Order control code and status should be logically consistent",
+      "ORC.2_ORC.3": "At least one order number should be present for order tracking",
+      "ORC.9_ORC.15": "Transaction time typically <= effective time",
+      "ORC.1_ORC.16": "Control code reason should align with control action"
+    },
+    "validation": {
+      "ORC.1": "Must be valid HL7 Table 0119 order control code",
+      "ORC.5": "Must be valid HL7 Table 0038 order status code",
+      "ORC.6": "Must be valid HL7 Table 0121 response flag code"
+    }
+  }
+}

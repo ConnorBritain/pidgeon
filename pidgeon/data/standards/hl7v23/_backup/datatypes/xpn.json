@@ -1,0 +1,122 @@
+{
+  "dataType": "XPN",
+  "name": "Extended Person Name",
+  "description": "The XPN data type is used to specify the names of persons. It replaces the PN data type as of HL7 v2.3 and provides comprehensive support for family names, given names, middle names, prefixes, suffixes, and degrees. Supports multiple character sets for international usage and different name representations.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "composite",
+  "components": {
+    "XPN.1": {
+      "name": "Family Name",
+      "dataType": "ST",
+      "description": "Surname of a person. Allows full specification including differentiation of person's own surname from spouse's surname, and permits distinction of surname prefix (e.g., 'van', 'de') from surname root. If only one name component exists, it is sent in this field.",
+      "length": 50,
+      "usage": "required",
+      "position": 1
+    },
+    "XPN.2": {
+      "name": "Given Name",
+      "dataType": "ST",
+      "description": "First name of the person. Also known as the given name or forename.",
+      "length": 30,
+      "usage": "optional",
+      "position": 2
+    },
+    "XPN.3": {
+      "name": "Middle Initial or Name",
+      "dataType": "ST",
+      "description": "Middle name or middle initial. Multiple middle names may be included by separating them with spaces.",
+      "length": 30,
+      "usage": "optional",
+      "position": 3
+    },
+    "XPN.4": {
+      "name": "Suffix",
+      "dataType": "ST",
+      "description": "Name suffix (e.g., JR, III, Sr). Used for generational suffixes and other name extensions.",
+      "length": 20,
+      "usage": "optional",
+      "position": 4
+    },
+    "XPN.5": {
+      "name": "Prefix",
+      "dataType": "ST",
+      "description": "Name prefix or title (e.g., DR, MR, MS). Professional and courtesy titles that precede the name.",
+      "length": 20,
+      "usage": "optional",
+      "position": 5
+    },
+    "XPN.6": {
+      "name": "Degree",
+      "dataType": "ST",
+      "description": "Academic or professional degree (e.g., MD, PhD, RN). Educational qualifications and professional designations.",
+      "length": 20,
+      "usage": "optional",
+      "position": 6
+    },
+    "XPN.7": {
+      "name": "Name Type Code",
+      "dataType": "ID",
+      "description": "Code that represents the type of name (e.g., legal name, maiden name, alias). Refer to HL7 Table 0200 - Name Type.",
+      "length": 1,
+      "usage": "optional",
+      "position": 7,
+      "table": "0200"
+    },
+    "XPN.8": {
+      "name": "Name Representation Code",
+      "dataType": "ID",
+      "description": "Code that represents how the name is represented (e.g., alphabetic, ideographic, phonetic). Used for international character sets.",
+      "length": 1,
+      "usage": "optional",
+      "position": 8,
+      "table": "0465"
+    }
+  },
+  "length": 200,
+  "constraints": {
+    "singleName": "If person has only one name component, send in XPN.1 (Family Name)",
+    "encoding": "Components separated by ^ (component separator)",
+    "multipleMiddle": "Multiple middle names separated by spaces within XPN.3",
+    "characterSets": "Supports switching between alphabetic, ideographic, and phonetic representations"
+  },
+  "usage": [
+    "Patient names in PID.5 - Patient Name",
+    "Next of kin names in NK1.2 - Name",
+    "Guarantor names in GT1.3 - Guarantor Name",
+    "Provider names in various segments",
+    "Any person name throughout HL7 messages"
+  ],
+  "examples": [
+    "SMITH^JOHN^A^JR^DR^MD^L^A",
+    "DOE^JANE^MARIE^^^RN^^A",
+    "JOHNSON^ROBERT^B^III^MR^^L^A",
+    "GARCIA-LOPEZ^MARIA^ELENA^^DR^MD^^A",
+    "PATEL^RAJESH^^^^MD^^I"
+  ],
+  "commonFields": [
+    "PID.5 - Patient Name",
+    "NK1.2 - Name",
+    "GT1.3 - Guarantor Name",
+    "IN1.16 - Name of Insured",
+    "ROL.4 - Role Person"
+  ],
+  "generationHints": {
+    "typical": "Use realistic names appropriate for healthcare demographics",
+    "nameTypes": ["L - Legal Name", "M - Maiden Name", "A - Alias", "N - Nickname"],
+    "representations": ["A - Alphabetic", "I - Ideographic", "P - Phonetic"],
+    "degrees": ["MD", "RN", "PhD", "DO", "NP", "PA", "LPN"],
+    "prefixes": ["DR", "MR", "MS", "MRS", "REV"],
+    "suffixes": ["JR", "SR", "II", "III", "IV"]
+  },
+  "internationalSupport": {
+    "description": "Supports multiple character sets and name representations for international usage",
+    "characterSets": "JIS X 0202 - ISO 2022 provides escape sequences for switching character sets",
+    "repetitions": "Name field may be repeated for different character set representations",
+    "examples": {
+      "japanese": "Supports both Kanji (ideographic) and Romaji (alphabetic) representations",
+      "arabic": "Supports both Arabic script and Latin transliteration",
+      "chinese": "Supports traditional/simplified Chinese and Pinyin representations"
+    }
+  }
+}

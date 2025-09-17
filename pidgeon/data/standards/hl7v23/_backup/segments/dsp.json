@@ -1,0 +1,27 @@
+{
+  "segment": "DSP",
+  "name": "TODO: Define segment name for DSP",
+  "description": "TODO: Define description for DSP segment",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "TODO",
+  "cardinality": {
+    "min": 0,
+    "max": 1,
+    "note": "TODO: Define cardinality rules"
+  },
+  "messageTypes": ["TODO: Define message types"],
+  "fields": {
+    "TODO": "Complete field definitions needed"
+  },
+  "vendorVariations": {
+    "TODO": "Research vendor-specific implementations"
+  },
+  "crossReferences": {
+    "fhir": ["TODO: Map to FHIR resources"],
+    "related": ["TODO: Identify related segments"]
+  },
+  "generationRules": {
+    "TODO": "Define generation and validation rules"
+  }
+}

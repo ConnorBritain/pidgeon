@@ -1,0 +1,51 @@
+{
+  "triggerEvent": "P02",
+  "name": "Purge Account",
+  "description": "Removes patient account data from the financial system when accounts are no longer needed",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "6",
+  "chapterName": "Financial Management",
+  "messageStructure": "BAR^P02",
+  "hl7Reference": "HL7 v2.3 Chapter 6 Financial Management - HL7.eu/HL7v2x/v23/std23",
+  "segments": {
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "PV1"
+    ]
+  },
+  "businessPurpose": "Remove account data from financial systems for accounts that are no longer needed or have been fully resolved",
+  "timing": "Sent when account data needs to be purged from the system, typically after account closure and resolution",
+  "responseMessage": "ACK^P02^ACK",
+  "standardNotes": [
+    "P02 should only be used for complete account removal from financial systems",
+    "Use after account has been closed with P06 and all billing resolved",
+    "Consider data retention policies before purging account information",
+    "EVN.2 should contain the purge execution date/time"
+  ],
+  "realWorldScenarios": [
+    "Completed patient account with zero balance after final payment",
+    "Duplicate account created in error - purge after data consolidation",
+    "Deceased patient account closure after estate settlement",
+    "Research account closure after study completion and data archival",
+    "System cleanup removing old inactive accounts per retention policy",
+    "Account merger completion requiring old account purge"
+  ],
+    "generationRules": {
+    "MSH.9": "BAR^P02",
+    "EVN.1": "P02",
+    "EVN.2": "Purge execution date/time",
+    "EVN.6": "Purge timestamp",
+    "PID": "Patient identification for account being purged",
+    "PV1": "Visit information if account tied to specific encounter",
+    "requiredDataQuality": "Critical - account purging is irreversible and affects financial reporting and audit trails",
+    "tableReferences": {
+      "EVN.1": "Event Type Code",
+      "PV1.2": "HL7-0004 (Patient Class)"
+    }
+  }
+}

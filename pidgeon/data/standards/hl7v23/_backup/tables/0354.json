@@ -1,0 +1,113 @@
+{
+  "table": "0354",
+  "name": "Message structure",
+  "description": "HL7-defined table specifying the abstract message structure code used in MSH-9.3",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "Control/Query",
+  "type": "hl7_defined",
+  "values": [
+    {
+      "code": "ACK",
+      "description": "General acknowledgement message",
+      "definition": "Standard acknowledgement message structure"
+    },
+    {
+      "code": "ADT_A01",
+      "description": "Admit/Visit notification message",
+      "definition": "ADT message structure for admit, visit, transfer events"
+    },
+    {
+      "code": "ADT_A02",
+      "description": "Transfer a patient message",
+      "definition": "ADT message structure for patient transfers"
+    },
+    {
+      "code": "ADT_A03",
+      "description": "Discharge/End visit message",
+      "definition": "ADT message structure for discharge and visit end events"
+    },
+    {
+      "code": "ADT_A06",
+      "description": "Change outpatient to inpatient message",
+      "definition": "ADT message structure for patient class changes"
+    },
+    {
+      "code": "ADT_A09",
+      "description": "Patient departing - tracking message",
+      "definition": "ADT message structure for patient tracking events"
+    },
+    {
+      "code": "BAR_P01",
+      "description": "Add patient accounts message",
+      "definition": "Billing message structure for adding patient accounts"
+    },
+    {
+      "code": "ORM_O01",
+      "description": "Order message",
+      "definition": "Order message structure for general orders"
+    },
+    {
+      "code": "ORU_R01",
+      "description": "Observation result message",
+      "definition": "Observation message structure for unsolicited results"
+    },
+    {
+      "code": "RDE_O01",
+      "description": "Pharmacy/Treatment encoded order message",
+      "definition": "Pharmacy order message structure for medication orders"
+    },
+    {
+      "code": "SIU_S12",
+      "description": "Notification of new appointment booking",
+      "definition": "Scheduling message structure for appointment notifications"
+    },
+    {
+      "code": "VXQ_V01",
+      "description": "Query for vaccination record",
+      "definition": "Vaccination query message structure"
+    },
+    {
+      "code": "VXR_V03",
+      "description": "Vaccination record response",
+      "definition": "Vaccination response message structure"
+    },
+    {
+      "code": "VXU_V04",
+      "description": "Unsolicited vaccination record update",
+      "definition": "Vaccination update message structure"
+    }
+  ],
+  "usedIn": [
+    "MSH.9.3"
+  ],
+  "notes": "Abstract message structure codes define the overall organization of message segments. Used in MSH-9.3 for message structure identification.",
+  "vendorVariations": {
+    "epic": "Supports all standard message structures with additional internal structures for specialized workflows",
+    "cerner": "Uses standard structures with organization-specific extensions for custom message types",
+    "allscripts": "Standard implementation with optional local message structure variations"
+  },
+  "generationRules": {
+    "distribution": {
+      "ADT_A01": 0.25,
+      "ORU_R01": 0.20,
+      "ORM_O01": 0.15,
+      "ADT_A03": 0.10,
+      "ADT_A02": 0.08,
+      "RDE_O01": 0.07,
+      "ACK": 0.05,
+      "SIU_S12": 0.04,
+      "BAR_P01": 0.03,
+      "VXU_V04": 0.02,
+      "ADT_A06": 0.01
+    },
+    "messageContext": {
+      "patient_administration": ["ADT_A01", "ADT_A02", "ADT_A03", "ADT_A06", "ADT_A09"],
+      "laboratory_results": ["ORU_R01"],
+      "order_management": ["ORM_O01", "RDE_O01"],
+      "scheduling": ["SIU_S12"],
+      "billing": ["BAR_P01"],
+      "immunization": ["VXQ_V01", "VXR_V03", "VXU_V04"]
+    }
+  }
+}

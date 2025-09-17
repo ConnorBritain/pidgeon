@@ -20,11 +20,71 @@
 ## 🏁 **Foundation Status**
 **✅ COMPLETE**: Architectural foundation repair finished (September 2025)
 - ✅ Fixed all domain boundary violations (was 21)
-- ✅ Resolved critical code duplication (was 600+ lines)  
+- ✅ Resolved critical code duplication (was 600+ lines)
 - ✅ Completed all P0-blocking TODOs and FIXMEs
 - ✅ **Architectural Health Score**: 100/100
 
-**Gate 0 Success**: ✅ ACHIEVED - Ready for P0 development
+## 🚨 **CRITICAL DATA FOUNDATION GAP IDENTIFIED (September 16, 2025)**
+**Status**: 🔴 CLI Lookup Only 40% Effective - Missing Segment Fields Block MVP
+- ✅ **Table Foundation**: EXCELLENT (20/20 critical tables complete with rich metadata)
+- 🔴 **Segment Field Coverage**: CRITICAL GAP (PID missing 20+ fields, PV1 incomplete)
+- 🔴 **Message Lookup**: NOT WORKING (pattern recognition broken despite templates existing)
+- 📋 **Template Compliance**: MANDATORY for all data work going forward
+
+### **Immediate P0 Blockers**:
+1. **Complete Missing PID Fields**: PID.16 (Marital Status), PID.10 (Race), PID.17 (Religion)
+2. **Complete Missing PV1 Fields**: PV1.2 (Patient Class), PV1.4 (Admission Type), PV1.14 (Admit Source)
+3. **Fix Message Pattern Recognition**: Enable `pidgeon lookup ADT_A01` functionality
+4. **Template Compliance**: ALL data work must use `pidgeon/data/standards/hl7v23/_TEMPLATES/` patterns
+
+**Gate 0.5 Success**: 🔴 **BLOCKED** - Must complete segment fields before proceeding to P1
+
+## 📋 **MANDATORY DEVELOPMENT STANDARDS (September 16, 2025)**
+
+### **🚨 Template Compliance Requirements**
+**Status**: MANDATORY for all data work - zero exceptions for consistency
+
+**Template Locations**: `pidgeon/data/standards/hl7v23/_TEMPLATES/`
+- **`README.md`**: Design principles and usage patterns
+- **`CLEANUP.md`**: Systematic remediation process for existing files
+- **`COMPATIBILITY_ANALYSIS.md`**: Lookup system integration verification
+
+**Active Sprint Process**: `docs/DATA_SPRINT.md`
+- **Mandatory process**: Systematic template-based data migration
+- **Multi-agent coordination**: Clear workflows for parallel development
+- **Quality gates**: Zero tolerance for template violations
+- **Progress tracking**: Backup file deletion shows completion
+
+**Priority Development Order**: `docs/roadmap/data_integrity/HL7_PRIORITY_ITEMS.md`
+- **Foundation First**: Core segments (MSH, PID, PV1) and universal tables (0001, 0002, 0004)
+- **MVP Critical Path**: 20-50 rank-ordered items per category for systematic development
+- **Interdependency Analysis**: Build dependencies before dependents for clean architecture
+- **Success Metrics**: Phase 1 = 60% coverage, Phase 2 = 85% coverage, Phase 3 = 95%+ coverage
+- **`segment_template.json`**: Template for all segment definitions
+- **`table_template.json`**: Template for all table definitions
+- **`datatype_template.json`**: Template for all data type definitions
+- **`message_template.json`**: Template for all message structures
+
+**Data Integrity Framework**: `docs/roadmap/data_integrity/`
+- **`data_mvp.md`**: 80/20 strategy for data completeness and MVP priorities
+- **`HL7_REFERENCE_GUIDE.md`**: Official HL7 v2.3 standards navigation and compliance framework
+
+### **🔄 Data Work Process**
+**For ALL data creation or modification:**
+1. **Read Data Integrity Framework**: `data_mvp.md` for priorities, `HL7_REFERENCE_GUIDE.md` for standards
+2. **Read Templates First**: `_TEMPLATES/README.md` and `_TEMPLATES/CLEANUP.md`
+3. **Use Appropriate Template**: Copy exact template, fill specific values
+4. **Verify Standards Compliance**: Cross-reference official HL7 v2.3 documentation per guide
+5. **Follow 80/20 Strategy**: Focus on high-impact elements per MVP strategy
+6. **Validate Compatibility**: Check against `COMPATIBILITY_ANALYSIS.md`
+7. **Test CLI Integration**: Verify lookup functionality works
+8. **NO EXCEPTIONS**: Template compliance AND standards verification mandatory
+
+### **📊 Current Template Compliance Status**
+- ✅ **Tables**: 20/20 critical tables use rich structure (exceeds template)
+- 🔴 **Segments**: Most use placeholder "TODO" data (violates template patterns)
+- 🔴 **Messages**: 1/300+ follows template structure
+- 🔴 **Data Types**: Some have JSON parsing errors (violates template format)
 
 ---
 
@@ -295,12 +355,14 @@ pidgeon diff --left old.hl7 --right new.hl7 --ignore MSH-7,PV1.44
 **Duration**: 1-2 weeks  
 **User Story**: "Complete the lookup command to professional-grade reference tool status"
 
-**Phase A: Demo Excellence (Week 1)**
-- **Target**: 31 core files following `DATA_POPULATION_PATTERNS.md` standards
-- **High-Impact Tables**: 0203 (Identifier Type), 0078 (Abnormal Flags), 0125 (Value Type), 0136 (Yes/No)
-- **Essential Data Types**: CE (Coded Element), CX (Extended ID), TS (Timestamp), ST (String)
-- **Core Workflow Extension**: DG1 (Diagnosis), AL1 (Allergy), GT1 (Guarantor), IN1 (Insurance)
-- **Outcome**: 80% of lookup scenarios covered, compelling demo capability
+**Phase A: Data Foundation Repair (Week 1)**
+- **CRITICAL**: Complete missing PID/PV1 segment fields using `pidgeon/data/standards/hl7v23/_TEMPLATES/` patterns
+- **Data Strategy**: Follow `data_mvp.md` 80/20 approach for maximum impact priorities
+- **Standards Compliance**: Use `HL7_REFERENCE_GUIDE.md` for official HL7 v2.3 verification
+- **Template Compliance**: ALL data work must follow `_TEMPLATES/README.md` and `_TEMPLATES/CLEANUP.md` exactly
+- **Priority Fields**: PID.16, PID.10, PID.17, PV1.2, PV1.4, PV1.14 (tables exist, need field definitions)
+- **Message Lookup Fix**: Enable `pidgeon lookup ADT_A01` pattern recognition
+- **Outcome**: CLI lookup effectiveness 40% → 85%, unblock MVP validation
 
 **Phase B: Search & Cross-Reference (Week 2)**
 - **Fix search functionality**: Error handling for malformed JSON stubs
@@ -374,10 +436,13 @@ pidgeon diff --left old.hl7 --right new.hl7 --ignore MSH-7,PV1.44
 ### **🎯 P1 Success Metrics & Gates**
 
 #### **Week 4 Gate: Reference Tool Excellence**
-- ✅ 31 core JSON files populated to DATA_POPULATION_PATTERNS.md standards
+- ✅ Critical segment fields complete following `_TEMPLATES/` patterns exactly
+- ✅ All data work verified against official HL7 v2.3 standards per `HL7_REFERENCE_GUIDE.md`
+- ✅ 80/20 MVP strategy implemented per `data_mvp.md` priorities
+- ✅ CLI lookup effectiveness restored to 85%+ (from current 40%)
+- ✅ Message lookup functionality working (`pidgeon lookup ADT_A01`)
 - ✅ Search functionality working without JSON parsing errors
-- ✅ Demo covers 80% of common lookup scenarios
-- ✅ User feedback: "This is faster than Caristix for daily lookups"
+- ✅ Template compliance AND standards verification enforced for all data work
 
 #### **Week 8 Gate: Configuration Intelligence**
 - ✅ Configuration Manager detecting real vendor pattern changes

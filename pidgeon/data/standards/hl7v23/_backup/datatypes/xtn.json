@@ -1,0 +1,196 @@
+{
+  "dataType": "XTN",
+  "name": "Extended Telecommunications Number",
+  "description": "The XTN data type is used to specify telecommunications contact information including phone numbers, fax numbers, email addresses, and other electronic communication methods. It provides comprehensive support for various telecommunications formats, international numbering, and communication preferences. XTN replaces the simpler TN (Telephone Number) data type and supports modern communication requirements in healthcare environments.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "composite",
+  "components": {
+    "XTN.1": {
+      "name": "Telephone Number",
+      "dataType": "ST",
+      "description": "The complete telephone number including area code and number. May include international dialing codes and extensions.",
+      "length": 199,
+      "usage": "optional",
+      "position": 1
+    },
+    "XTN.2": {
+      "name": "Telecommunication Use Code",
+      "dataType": "ID",
+      "description": "Specifies the intended use of the telecommunications number (e.g., home, work, emergency, pager). Indicates the context and purpose of the contact method.",
+      "length": 3,
+      "usage": "optional",
+      "position": 2,
+      "table": "0201"
+    },
+    "XTN.3": {
+      "name": "Telecommunication Equipment Type",
+      "dataType": "ID",
+      "description": "Indicates the type of telecommunications equipment (e.g., phone, fax, email, pager, cellular). Specifies the communication technology being used.",
+      "length": 8,
+      "usage": "optional",
+      "position": 3,
+      "table": "0202"
+    },
+    "XTN.4": {
+      "name": "Email Address",
+      "dataType": "ST",
+      "description": "Electronic mail address for email communication. Should follow standard email address format (user@domain.com).",
+      "length": 199,
+      "usage": "optional",
+      "position": 4
+    },
+    "XTN.5": {
+      "name": "Country Code",
+      "dataType": "NM",
+      "description": "International country code for telephone numbers. Used for international dialing (e.g., 1 for US/Canada, 44 for UK).",
+      "length": 3,
+      "usage": "optional",
+      "position": 5
+    },
+    "XTN.6": {
+      "name": "Area/City Code",
+      "dataType": "NM",
+      "description": "Area code or city code portion of the telephone number. Regional identifier within the country.",
+      "length": 5,
+      "usage": "optional",
+      "position": 6
+    },
+    "XTN.7": {
+      "name": "Local Number",
+      "dataType": "NM",
+      "description": "The local telephone number without area code. The subscriber number within the local exchange.",
+      "length": 9,
+      "usage": "optional",
+      "position": 7
+    },
+    "XTN.8": {
+      "name": "Extension",
+      "dataType": "NM",
+      "description": "Telephone extension number for reaching a specific person or department within an organization.",
+      "length": 5,
+      "usage": "optional",
+      "position": 8
+    },
+    "XTN.9": {
+      "name": "Any Text",
+      "dataType": "ST",
+      "description": "Additional text or comments about the telecommunications number. May include special dialing instructions or contact notes.",
+      "length": 199,
+      "usage": "optional",
+      "position": 9
+    }
+  },
+  "length": 825,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "contactMethod": "At least one contact method (phone number or email) should be populated",
+    "formatConsistency": "Phone number components should be consistent with the complete number in XTN.1",
+    "emailValidation": "Email addresses should follow standard format validation"
+  },
+  "usage": [
+    "Patient contact information (home, work, cell, email)",
+    "Provider and physician contact details",
+    "Healthcare facility phone and fax numbers",
+    "Emergency contact telecommunications",
+    "Administrative and billing contact information",
+    "Appointment scheduling and communication preferences"
+  ],
+  "examples": [
+    "555-123-4567^WPN^PH^^^555^1234567^^",
+    "john.doe@email.com^^^Internet^X.400^^",
+    "+1-800-555-1234^WPN^PH^^1^800^5551234^^",
+    "555-987-6543^PRN^CP^^^555^9876543^123^Call after 6 PM",
+    "admin@hospital.org^^^Internet^X.400^^^^For administrative inquiries"
+  ],
+  "commonFields": [
+    "PID.13 - Phone Number - Home",
+    "PID.14 - Phone Number - Business",
+    "NK1.5 - Phone Number for next of kin",
+    "PV1.15 - Ambulatory Status contact",
+    "Various contact and telecommunications fields throughout HL7 messages"
+  ],
+  "generationHints": {
+    "typical": "Use realistic phone numbers and email addresses appropriate for healthcare scenarios",
+    "phoneFormats": ["555-123-4567", "1-800-555-1234", "+1-555-123-4567"],
+    "emailFormats": ["name@hospital.org", "patient@email.com", "admin@clinic.net"],
+    "useTypes": ["PRN - Primary", "WPN - Work", "EMR - Emergency", "NET - Network"],
+    "equipmentTypes": ["PH - Phone", "FX - Fax", "CP - Cell Phone", "Internet - Email"]
+  },
+  "telecommunicationUses": {
+    "PRN": "Primary residence number",
+    "WPN": "Work number",
+    "EMR": "Emergency number",
+    "NET": "Network (email) address",
+    "ORN": "Other residence number",
+    "VHN": "Vacation home number",
+    "ASN": "Answering service number"
+  },
+  "equipmentTypes": {
+    "PH": "Telephone",
+    "FX": "Fax",
+    "MD": "Modem",
+    "CP": "Cellular or mobile phone",
+    "SAT": "Satellite phone",
+    "BP": "Beeper/Pager",
+    "Internet": "Internet address (email)",
+    "X.400": "X.400 email address"
+  },
+  "formatPatterns": {
+    "usPhone": {
+      "pattern": "(XXX) XXX-XXXX",
+      "example": "(555) 123-4567",
+      "components": "Area code in parentheses, space, exchange, hyphen, number"
+    },
+    "internationalPhone": {
+      "pattern": "+CC-AAA-XXX-XXXX",
+      "example": "+1-555-123-4567",
+      "components": "Plus sign, country code, area code, local number with hyphens"
+    },
+    "email": {
+      "pattern": "username@domain.extension",
+      "example": "john.doe@hospital.org",
+      "components": "Local part, at symbol, domain name, top-level domain"
+    }
+  },
+  "validationRules": {
+    "phoneNumberValidation": "Phone numbers should follow valid formatting for the specified country",
+    "emailValidation": "Email addresses must follow RFC 5322 standard format",
+    "useCodeValidation": "Telecommunication Use Code should reference valid table values",
+    "equipmentTypeValidation": "Equipment Type should match the type of contact information provided",
+    "internationalFormatting": "International numbers should include proper country and area codes"
+  },
+  "healthcareContext": {
+    "patientCare": "Essential for patient communication and appointment scheduling",
+    "emergencyContact": "Critical for emergency situations and urgent patient care",
+    "providerCommunication": "Facilitates communication between healthcare providers",
+    "administrativeUse": "Supports billing, scheduling, and administrative communications",
+    "compliance": "Meets healthcare communication requirements and patient preferences"
+  },
+  "modernCommunication": {
+    "mobileFirst": "Supports modern mobile-first communication preferences",
+    "emailIntegration": "Accommodates electronic communication and patient portals",
+    "multiChannel": "Enables multiple communication channels for patient engagement",
+    "preferences": "Supports patient communication preferences and opt-in/opt-out requirements",
+    "accessibility": "Accommodates various accessibility needs and communication methods"
+  },
+  "relatedDataTypes": {
+    "TN": "Telephone Number - simpler predecessor to XTN",
+    "ST": "String - used for unstructured telecommunications data",
+    "AD": "Address - often used together with XTN for complete contact information",
+    "XAD": "Extended Address - comprehensive contact information including XTN"
+  },
+  "implementationNotes": {
+    "replacement": "Replaces TN data type for telecommunications as of HL7 v2.3",
+    "flexibility": "Supports various telecommunications scenarios and international formats",
+    "privacy": "Consider privacy requirements for patient telecommunications data",
+    "validation": "Implement appropriate validation for different communication types",
+    "formatting": "Support both structured components and formatted display representations"
+  },
+  "privacyConsiderations": {
+    "hipaa": "Telecommunications data may be subject to HIPAA privacy requirements",
+    "consent": "Patient consent may be required for certain types of communication",
+    "security": "Email and electronic communications should use appropriate security measures",
+    "disclosure": "Consider disclosure limitations for patient contact information"
+  }
+}

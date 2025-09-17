@@ -1,0 +1,53 @@
+{
+  "triggerEvent": "S17",
+  "name": "Notification of Appointment Deletion",
+  "description": "Notification sent when an appointment that was entered in error has been permanently removed from the system",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "10",
+  "chapterName": "Scheduling",
+  "messageStructure": "SIU^S17",
+  "segments": {
+    "required": [
+      "MSH",
+      "SCH"
+    ],
+    "optional": [
+      "NTE",
+      "PID",
+      "PV1",
+      "PV2",
+      "OBX",
+      "DG1",
+      "RGS",
+      "AIS",
+      "AIG",
+      "AIL",
+      "AIP"
+    ]
+  },
+  "businessPurpose": "Remove erroneously scheduled appointments from the system to prevent statistical processing errors and maintain data integrity",
+  "timing": "Sent when an appointment that was entered in error needs to be permanently removed from the schedule",
+  "responseMessage": "ACK^S17^ACK",
+  "realWorldScenarios": [
+    "Duplicate appointment created by scheduler error - remove the duplicate",
+    "Appointment scheduled for wrong patient due to MRN mixup",
+    "Test appointment created during system training - needs permanent removal",
+    "Appointment entered with wrong service type - delete and recreate correctly",
+    "Scheduling system glitch created phantom appointments",
+    "Accidental appointment creation during demonstration or testing"
+  ],
+  "generationRules": {
+    "MSH.9": "SIU^S17",
+    "SCH.1": "Appointment ID being deleted",
+    "SCH.2": "Filler appointment ID",
+    "SCH.6": "Event reason code (typically 'DELETED' or 'ERROR')",
+    "SCH.25": "Filler status code (Deleted)",
+    "NTE": "Reason for deletion often included for audit trail",
+    "AIS": "Service deletion details if applicable",
+    "AIG": "Resource group deletion if applicable",
+    "AIL": "Location deletion if applicable",
+    "AIP": "Personnel deletion if applicable",
+    "requiredDataQuality": "Critical - deletion must be accurate to prevent removal of valid appointments"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "triggerEvent": "A03",
+  "name": "Discharge/End Visit",
+  "description": "Signals the end of a patient's stay in a healthcare facility, changing patient status to discharged",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A03",
+  "segments": {
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "NK1",
+      "PV1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
+  },
+  "businessPurpose": "Notify receiving applications that a patient's encounter has ended and discharge processing has been completed",
+  "timing": "Sent when discharge orders are processed and patient status changes to discharged",
+  "responseMessage": "ACK^A03^ACK",
+  "realWorldScenarios": [
+    "Inpatient discharge to home",
+    "Emergency department discharge",
+    "Discharge to skilled nursing facility",
+    "Discharge against medical advice",
+    "Discharge to another acute care facility",
+    "Death discharge"
+  ],
+  "generationRules": {
+    "EVN.1": "A03",
+    "EVN.2": "Current timestamp",
+    "EVN.6": "Discharge timestamp",
+    "PV1.2": "Patient class at discharge (I|E|O)",
+    "PV1.36": "Discharge disposition code",
+    "PV1.45": "Discharge date/time",
+    "requiredDataQuality": "High - discharge information impacts billing and follow-up care"
+  }
+}

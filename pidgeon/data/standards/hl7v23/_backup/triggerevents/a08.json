@@ -1,0 +1,52 @@
+{
+  "triggerEvent": "A08",
+  "name": "Update Patient Information",
+  "description": "Update patient information notification when patient demographics or encounter details change but no other specific ADT event applies",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A08",
+  "segments": {
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "NK1",
+      "PV1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
+  },
+  "businessPurpose": "Notify receiving systems when patient information has changed but no other specific ADT trigger event is appropriate",
+  "timing": "Sent when patient demographics, contact information, or other non-admission related data changes",
+  "responseMessage": "ACK^A08^ACK",
+  "realWorldScenarios": [
+    "Patient address change during stay",
+    "Insurance information update",
+    "Emergency contact information change",
+    "Patient name correction",
+    "Phone number update",
+    "Marital status change",
+    "Employment information update"
+  ],
+  "generationRules": {
+    "EVN.1": "A08",
+    "EVN.2": "Current timestamp",
+    "EVN.6": "Update timestamp",
+    "PID": "Contains updated patient information",
+    "requiredDataQuality": "High - demographic accuracy critical for patient safety and billing"
+  }
+}

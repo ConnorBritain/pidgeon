@@ -12,10 +12,15 @@
 1. **`docs/roadmap/PIDGEON_ROADMAP.md`** - Master P0-P2 roadmap with success criteria
 2. **`docs/roadmap/features/NORTHSTAR.md`** - North star vision and product focus
 3. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI structure for P0 development
-4. **`docs/DEVELOPMENT.md`** - Current status (foundation complete) and P0 features
-5. **`docs/RULES.md`** - Sacred architectural principles (still enforced)
-6. **`docs/dev_scratchpads/P0.2_DEIDENT_SCRATCHPAD.md`** - **[CURRENT]** P0.2 De-identification sprint
-7. **`docs/roadmap/features/DEIDENT_STRATEGY.md`** - De-identification compliance strategy
+4. **`docs/roadmap/CLI_DEVELOPMENT_STATUS.md`** - **[CRITICAL]** Current CLI status with detailed lookup analysis
+5. **`docs/roadmap/data_integrity/data_mvp.md`** - **[CRITICAL]** 80/20 strategy for data completeness and MVP priorities
+6. **`docs/roadmap/data_integrity/HL7_REFERENCE_GUIDE.md`** - **[DEFINITIVE]** Official HL7 v2.3 standards navigation and compliance framework
+7. **`docs/roadmap/data_integrity/HL7_PRIORITY_ITEMS.md`** - **[MVP CRITICAL]** Rank-ordered 20-50 priority items per category for systematic development
+8. **`docs/DATA_SPRINT.md`** - **[ACTIVE SPRINT]** Current data migration process and multi-agent coordination
+8. **`docs/DEVELOPMENT.md`** - Current status (foundation complete) and P0 features
+9. **`docs/RULES.md`** - Sacred architectural principles (still enforced)
+10. **`pidgeon/data/standards/hl7v23/_TEMPLATES/README.md`** - **[MANDATORY]** JSON template patterns for all data files
+11. **`pidgeon/data/standards/hl7v23/_TEMPLATES/CLEANUP.md`** - **[REQUIRED]** Data file rehabilitation process
 
 ### **Step 2: Assess Current State** ⭐
 **Commands**:
@@ -27,26 +32,26 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 
 ### **Step 3: Validate Understanding** ⭐
 **Confirm you understand**:
-- **Current Phase**: ✅ **P0 MVP COMPLETE** - Ready for P1 expansion (September 12, 2025)
-- **Previous Achievement**: All P0.1-P0.6 features complete + distribution infrastructure
-- **North Star**: "Realistic scenario testing without PHI compliance nightmare"  
-- **Current Focus**: P1 planning and remaining optimization/polish tasks
-- **P0 Features**: All 6 core features COMPLETE (generate✅→deident✅→validate✅→config✅→workflow✅→diff✅)
-- **CLI-First**: One engine, two frontends strategy with Free/Pro/Enterprise gating
-- **Architecture**: Four-domain model + message-level composer pattern proven
+- **Current Phase**: 🔍 **P0 MVP Data Foundation Work** - Critical segment fields missing (September 16, 2025)
+- **Major Finding**: CLI lookup effectiveness reduced from 70% to 40% due to incomplete segment data
+- **North Star**: "Realistic scenario testing without PHI compliance nightmare"
+- **Critical Priority**: Complete missing PID/PV1 segment fields that reference existing tables
+- **Template Compliance**: ALL new data files must follow `_TEMPLATES/` patterns exactly
+- **Data Cleanup**: Existing files need systematic remediation per `CLEANUP.md`
+- **CLI Status**: Table foundation excellent (20/20), segment fields critical gap
+- **Architecture**: Four-domain model + plugin patterns still enforced
 - **Error Protocol**: STOP-THINK-ACT methodology still mandatory
-- **Distribution**: Self-contained executables ready with first-time user experience
 
 ---
 
 ## 📊 **CURRENT STATE SUMMARY**
-*Last Updated: September 12, 2025*
+*Last Updated: September 16, 2025*
 
 ### **Project Status**
-- **Phase**: ✅ **P0 MVP COMPLETE** - All 6 core features delivered + distribution infrastructure ready
-- **Health Score**: 100/100 (Clean architecture, professional standards maintained)
-- **Build Status**: ✅ Clean (0 errors, all features functional)
-- **P0 MVP Status**: ✅ **100% COMPLETE** - Ready for P1 expansion phase
+- **Phase**: 🔍 **P0 MVP Data Foundation Critical Gap** - Lookup functionality blocked by incomplete segment data
+- **Health Score**: 85/100 (Architecture excellent, data foundation incomplete)
+- **Build Status**: ✅ Clean (0 errors, CLI functional but limited)
+- **CLI Status**: 40% effective (tables ✅ excellent, segment fields ❌ critical gaps)
 
 ### **P0 Embryonic Development Completion (8 weeks)**
 **Result**: Successfully executed compound growth sequence with all features building on previous intelligence
@@ -73,22 +78,36 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 
 ---
 
+## 🚨 **CRITICAL DATA FOUNDATION WORK REQUIRED**
+
+### **Immediate Priority: Complete Missing Segment Fields**
+**Critical Finding**: Lookup command effectiveness is only 40% due to missing segment field definitions despite excellent table foundation (20/20 critical tables complete).
+
+### **P0 Critical Work Required:**
+1. **Complete PID Segment Fields** - Missing PID.16 (Marital Status), PID.10 (Race), PID.17 (Religion)
+2. **Complete PV1 Segment Fields** - Missing PV1.2 (Patient Class), PV1.4 (Admission Type), PV1.14 (Admit Source)
+3. **Fix Message Pattern Recognition** - Enable `pidgeon lookup ADT_A01` functionality
+4. **ALL work must follow `_TEMPLATES/` patterns** - No exceptions for consistency
+
 ## 🎯 **IMMEDIATE ACTION GUIDANCE**
 
 ### **If User Asks for Feature Work**:
-**Response**: "P0 MVP complete with all 6 features delivered. Distribution infrastructure ready with self-contained executables and first-time user experience. Ready to begin P1 expansion phase or address any remaining polish/optimization needs."
+**Response**: "Critical data foundation gap identified. CLI lookup only 40% effective due to missing segment fields. Must complete PID/PV1 fields first before P1 expansion - tables exist, just need field definitions."
 
 ### **If User Reports Errors**:
 **Response**: Follow STOP-THINK-ACT protocol from `docs/RULES.md`. Don't fix immediately - analyze first.
 
+### **If User Wants Data Work**:
+**Response**: MANDATORY - Use `pidgeon/data/standards/hl7v23/_TEMPLATES/` patterns. Read `README.md` and `CLEANUP.md` first. No exceptions for consistency.
+
 ### **If User Wants CLI Commands**:
-**Response**: Reference `docs/roadmap/features/cli_baseline.md` for exact command structure. Implement with clear Free/Pro gating.
+**Response**: Check `docs/roadmap/CLI_DEVELOPMENT_STATUS.md` first for current gaps. Priority is completing missing segment fields, not new commands.
 
 ### **If User Wants New Standards Support**:
-**Response**: Implement as plugin following existing HL7v23Plugin pattern. Never modify core services.
+**Response**: Complete HL7 v2.3 segment foundation first. Then implement as plugin following existing HL7v23Plugin pattern. Never modify core services.
 
 ### **If User Wants GUI Features**:
-**Response**: Follow CLI-GUI harmonization strategy - one engine, two frontends. GUI operations export CLI equivalents. For GUI development work, use `docs/SESSION_INIT_GUI.md` for complete design context.
+**Response**: Critical CLI lookup gaps must be resolved first. CLI effectiveness only 40% due to missing segment data. GUI depends on functional CLI foundation.
 
 ---
 
@@ -97,9 +116,16 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 ### **🚨 CRITICAL - Read Every Session**
 1. **`docs/roadmap/PIDGEON_ROADMAP.md`** - Complete P0-P2 roadmap with all success metrics
 2. **`docs/roadmap/features/NORTHSTAR.md`** - Core value proposition and user focus
-3. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI command structure and examples
-4. **`docs/DEVELOPMENT.md`** - Current status and P0 development plan
-5. **`docs/RULES.md`** - Sacred architectural principles and error handling
+3. **`docs/roadmap/CLI_DEVELOPMENT_STATUS.md`** - **[CRITICAL]** Current CLI analysis with segment field gaps
+4. **`docs/roadmap/data_integrity/data_mvp.md`** - **[CRITICAL]** 80/20 data strategy and MVP priorities
+5. **`docs/roadmap/data_integrity/HL7_REFERENCE_GUIDE.md`** - **[DEFINITIVE]** Official HL7 v2.3 standards compliance
+6. **`docs/roadmap/data_integrity/HL7_PRIORITY_ITEMS.md`** - **[MVP CRITICAL]** Rank-ordered priority items for systematic development
+7. **`docs/DATA_SPRINT.md`** - **[ACTIVE SPRINT]** Current data migration process and multi-agent coordination
+8. **`pidgeon/data/standards/hl7v23/_TEMPLATES/README.md`** - **[MANDATORY]** JSON template patterns for ALL data work
+9. **`pidgeon/data/standards/hl7v23/_TEMPLATES/CLEANUP.md`** - **[REQUIRED]** Data file remediation process
+8. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI command structure and examples
+9. **`docs/DEVELOPMENT.md`** - Current status and P0 development plan
+10. **`docs/RULES.md`** - Sacred architectural principles and error handling
 
 ### **🔍 REFERENCE - Read When Relevant**
 6. **`docs/roadmap/features/cli_gui_harmonization.md`** - Platform strategy for CLI+GUI
@@ -123,16 +149,24 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 ### **Session Start Checklist**
 - [ ] Read PIDGEON_ROADMAP.md (complete P0-P2 roadmap)
 - [ ] Read NORTHSTAR.md (understand core value proposition)
+- [ ] Read CLI_DEVELOPMENT_STATUS.md (current 40% effectiveness issue)
+- [ ] Read data_mvp.md (80/20 strategy and critical table priorities)
+- [ ] Read HL7_REFERENCE_GUIDE.md (official standards navigation)
+- [ ] Read _TEMPLATES/README.md and CLEANUP.md (mandatory data patterns)
 - [ ] Check git status (understand working state)
-- [ ] Identify P0 feature priorities (6 features over 6 weeks)
-- [ ] Confirm task alignment with CLI-first development approach
+- [ ] Identify critical data gaps per MVP strategy (PID/PV1 segment fields missing)
+- [ ] Confirm all data work follows template patterns and standards compliance
 
-### **Before Any Code Changes**
+### **Before Any Data Work**
+- [ ] **MANDATORY**: Read `docs/DATA_SPRINT.md` for current process and coordination
+- [ ] **MANDATORY**: Use appropriate `_TEMPLATES/` pattern (segment, table, datatype, message)
+- [ ] Reference `data_mvp.md` for 80/20 priority guidance and critical table list
+- [ ] Reference `HL7_PRIORITY_ITEMS.md` for rank-ordered MVP development priorities
+- [ ] Use `HL7_REFERENCE_GUIDE.md` for official standards compliance verification
+- [ ] Read `_TEMPLATES/COMPATIBILITY_ANALYSIS.md` to understand lookup integration
+- [ ] Follow `_TEMPLATES/CLEANUP.md` process for existing file updates
+- [ ] Check `CLI_DEVELOPMENT_STATUS.md` for current priority (PID/PV1 fields)
 - [ ] Validate against `docs/RULES.md` principles (still enforced)
-- [ ] Check CLI command structure in `CLI_REFERENCE.md`
-- [ ] Ensure Free/Pro/Enterprise feature gating is correct
-- [ ] Plan testing approach per healthcare scenarios
-- [ ] Verify one-engine-two-frontends pattern compliance
 
 ### **Error Handling Protocol**
 - [ ] STOP: Don't immediately fix
@@ -172,21 +206,23 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 ## 🎯 **SUCCESS CRITERIA FOR INITIALIZATION**
 
 ### **Agent is Ready When They Can Answer**:
-- "What's the current development phase?" → *P0 MVP Complete - Ready for P1 expansion*
-- "What's our north star?" → *Realistic scenario testing without PHI compliance nightmare*  
-- "What was P0 achievement?" → *All 6 features complete with distribution infrastructure*
-- "What's next priority?" → *P1 expansion features or remaining polish/optimization*
+- "What's the current development phase?" → *P0 MVP Data Foundation Critical Gap - CLI only 40% effective*
+- "What's our north star?" → *Realistic scenario testing without PHI compliance nightmare*
+- "What's the critical priority?" → *Complete missing PID/PV1 segment fields - tables exist, need field definitions*
+- "What's the CLI lookup status?" → *Tables excellent (20/20), segment fields critical gap, message lookup broken*
+- "How do I handle data work?" → *MANDATORY: Use _TEMPLATES/ patterns for all data files*
 - "How do I handle errors?" → *STOP-THINK-ACT methodology*
 - "Can I add HL7-specific logic to core services?" → *No, use plugin delegation*
-- "What's our CLI-GUI strategy?" → *One engine, two frontends with export/import symmetry*
-- "What's our distribution status?" → *Self-contained executables ready with first-time UX*
+- "What template should I use for segments?" → *pidgeon/data/standards/hl7v23/_TEMPLATES/segment_template.json*
 
 ### **Agent Can Begin Work When**:
-- [ ] Understands P0 feature roadmap from pidgeon_feature_plan.md
-- [ ] Knows sacred architectural principles from RULES.md (still enforced)
-- [ ] Understands CLI command structure from cli_baseline.md
-- [ ] Can identify Free vs Pro vs Enterprise feature boundaries
-- [ ] Follows CLI-GUI harmonization strategy
+- [ ] Understands CLI lookup critical gap (40% effectiveness) from CLI_DEVELOPMENT_STATUS.md
+- [ ] Knows 80/20 data strategy and priorities from data_mvp.md
+- [ ] Can navigate official HL7 v2.3 standards using HL7_REFERENCE_GUIDE.md
+- [ ] Knows template patterns from _TEMPLATES/README.md and CLEANUP.md
+- [ ] Understands critical missing fields: PID.16, PID.10, PID.17, PV1.2, PV1.4, PV1.14
+- [ ] Knows tables 0002, 0005, 0006, 0004, 0007, 0023 exist and are complete
+- [ ] Can use appropriate template (segment_template.json for segment work)
 - [ ] Follows STOP-THINK-ACT error resolution methodology
 
 ---
@@ -219,12 +255,12 @@ dotnet build --no-restore  # Should be clean
 ✅ Initialization Complete
 
 Current State:
-- Phase: P0 MVP Complete - Ready for P1 expansion
-- Health: 100/100 (Clean architecture maintained)
-- Priority: P1 planning or optimization tasks
-- Distribution: Self-contained executables with first-time UX ready
+- Phase: P0 MVP Data Foundation Critical Gap
+- CLI Effectiveness: 40% (Tables ✅ excellent, segment fields ❌ critical gaps)
+- Priority: Complete missing PID/PV1 segment fields using templates
+- Templates: MANDATORY for all data work - zero exceptions
 
-Ready to work on: [Specific P1 feature or polish task]
+Ready to work on: [Specific missing segment field using appropriate template]
 Shall I proceed?
 ```
 

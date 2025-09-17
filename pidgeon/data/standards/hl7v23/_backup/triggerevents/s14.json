@@ -1,0 +1,54 @@
+{
+  "triggerEvent": "S14",
+  "name": "Notification of Appointment Modification",
+  "description": "Notification sent when an existing appointment has been modified in the scheduling system",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "10",
+  "chapterName": "Scheduling",
+  "messageStructure": "SIU^S14",
+  "segments": {
+    "required": [
+      "MSH",
+      "SCH"
+    ],
+    "optional": [
+      "NTE",
+      "PID",
+      "PV1",
+      "PV2",
+      "OBX",
+      "DG1",
+      "RGS",
+      "AIS",
+      "AIG",
+      "AIL",
+      "AIP"
+    ]
+  },
+  "businessPurpose": "Notify auxiliary applications that an existing appointment has been modified to maintain schedule synchronization",
+  "timing": "Sent immediately after an appointment modification is confirmed in the scheduling system",
+  "responseMessage": "ACK^S14^ACK",
+  "realWorldScenarios": [
+    "Appointment time changed due to provider running late",
+    "Duration extended for complex procedure requirements",
+    "Location changed from clinic to telehealth due to weather",
+    "Provider substitution due to emergency coverage needs",
+    "Additional resources added for procedure complexity",
+    "Patient type changed from new to established after record review"
+  ],
+  "generationRules": {
+    "MSH.9": "SIU^S14",
+    "SCH.1": "Appointment ID being modified",
+    "SCH.2": "Filler appointment ID",
+    "SCH.6": "Event reason code (typically 'MODIFIED')",
+    "SCH.11.4": "New start date/time",
+    "SCH.11.5": "New end date/time",
+    "SCH.25": "Filler status code (Booked/Confirmed)",
+    "AIS": "Service modifications if applicable",
+    "AIG": "Resource group modifications if applicable",
+    "AIL": "Location modifications if applicable",
+    "AIP": "Personnel modifications if applicable",
+    "requiredDataQuality": "High - modification accuracy critical for preventing scheduling conflicts and patient confusion"
+  }
+}

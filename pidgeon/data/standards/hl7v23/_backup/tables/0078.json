@@ -1,0 +1,119 @@
+{
+  "table": "0078",
+  "name": "Abnormal flags",
+  "description": "User-defined table indicating the normalcy status of observation results",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "Observation Reporting",
+  "type": "user_defined",
+  "values": [
+    {
+      "code": "N",
+      "description": "Normal",
+      "definition": "Result is within normal limits"
+    },
+    {
+      "code": "A",
+      "description": "Abnormal",
+      "definition": "Result is outside normal limits"
+    },
+    {
+      "code": "H",
+      "description": "High",
+      "definition": "Result is above normal range"
+    },
+    {
+      "code": "L",
+      "description": "Low",
+      "definition": "Result is below normal range"
+    },
+    {
+      "code": "HH",
+      "description": "Critical high",
+      "definition": "Result is critically high, above panic limits"
+    },
+    {
+      "code": "LL",
+      "description": "Critical low",
+      "definition": "Result is critically low, below panic limits"
+    },
+    {
+      "code": "AA",
+      "description": "Very abnormal",
+      "definition": "Result is significantly abnormal"
+    },
+    {
+      "code": ">",
+      "description": "Above absolute high-off instrument scale",
+      "definition": "Result exceeds instrument measurement capability (high)"
+    },
+    {
+      "code": "<",
+      "description": "Below absolute low-off instrument scale",
+      "definition": "Result exceeds instrument measurement capability (low)"
+    },
+    {
+      "code": "B",
+      "description": "Better",
+      "definition": "Result has improved compared to previous"
+    },
+    {
+      "code": "W",
+      "description": "Worse",
+      "definition": "Result has worsened compared to previous"
+    },
+    {
+      "code": "S",
+      "description": "Susceptible",
+      "definition": "Indicates microorganism is susceptible to antimicrobial"
+    },
+    {
+      "code": "R",
+      "description": "Resistant",
+      "definition": "Indicates microorganism is resistant to antimicrobial"
+    },
+    {
+      "code": "I",
+      "description": "Intermediate",
+      "definition": "Indicates intermediate susceptibility to antimicrobial"
+    },
+    {
+      "code": "MS",
+      "description": "Moderately susceptible",
+      "definition": "Moderately susceptible to antimicrobial"
+    },
+    {
+      "code": "VS",
+      "description": "Very susceptible",
+      "definition": "Very susceptible to antimicrobial"
+    }
+  ],
+  "usedIn": [
+    "OBX.8"
+  ],
+  "notes": "User-defined table allows local site customization. Multiple flags can be separated by repeat delimiter (e.g., A~W for abnormal and worse).",
+  "vendorVariations": {
+    "epic": "Uses standard codes plus local extensions for specific lab types",
+    "cerner": "Supports standard codes with additional microbiology-specific flags",
+    "allscripts": "Standard implementation with organization-specific customizations"
+  },
+  "generationRules": {
+    "distribution": {
+      "N": 0.70,
+      "A": 0.10,
+      "H": 0.08,
+      "L": 0.06,
+      "HH": 0.02,
+      "LL": 0.02,
+      "S": 0.01,
+      "R": 0.005,
+      "I": 0.005
+    },
+    "messageContext": {
+      "chemistry_results": ["N", "A", "H", "L", "HH", "LL"],
+      "microbiology_results": ["S", "R", "I", "MS", "VS", "N"],
+      "hematology_results": ["N", "A", "H", "L", "HH", "LL"],
+      "trending_results": ["N", "A", "B", "W"]
+    }
+  }
+}

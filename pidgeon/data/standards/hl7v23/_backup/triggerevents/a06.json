@@ -1,0 +1,53 @@
+{
+  "triggerEvent": "A06",
+  "name": "Change Outpatient to Inpatient",
+  "description": "Status change notification when a patient's visit type changes from outpatient to inpatient",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A06",
+  "segments": {
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "NK1",
+      "PV1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
+  },
+  "businessPurpose": "Notify receiving systems when a patient's status changes from outpatient to inpatient, typically involving bed assignment",
+  "timing": "Sent when outpatient visit converts to inpatient admission with bed assignment",
+  "responseMessage": "ACK^A06^ACK",
+  "realWorldScenarios": [
+    "Emergency department patient requires admission",
+    "Outpatient procedure complications requiring overnight stay",
+    "Observation patient upgraded to inpatient status",
+    "Same-day surgery patient requires extended stay",
+    "Clinic visit escalates to hospital admission",
+    "Diagnostic procedure patient develops complications"
+  ],
+  "generationRules": {
+    "EVN.1": "A06",
+    "EVN.2": "Current timestamp",
+    "EVN.6": "Status change timestamp",
+    "PV1.2": "Change from 'O' to 'I' (Outpatient to Inpatient)",
+    "PV1.3": "New inpatient location/bed assignment",
+    "PV1.44": "New admit date/time for inpatient status",
+    "requiredDataQuality": "High - status change affects billing, bed management, and clinical protocols"
+  }
+}

@@ -1,0 +1,375 @@
+{
+  "segment": "PV1",
+  "name": "Patient Visit",
+  "description": "The PV1 segment is used by Registration/Patient Administration applications to communicate information on an account or visit-specific basis. It contains information about patient location, attending physicians, admission details, and visit-specific data.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "R",
+  "cardinality": {
+    "min": 1,
+    "max": 1,
+    "note": "PV1 segment is required and appears once per patient visit in ADT messages"
+  },
+  "messageTypes": [
+    "ADT^A01", "ADT^A02", "ADT^A03", "ADT^A04", "ADT^A05", "ADT^A06", "ADT^A07", "ADT^A08",
+    "ADT^A09", "ADT^A10", "ADT^A11", "ADT^A12", "ADT^A13", "ADT^A14", "ADT^A15", "ADT^A16",
+    "ADT^A17", "ADT^A18", "ADT^A21", "ADT^A22", "ADT^A23", "ADT^A24", "ADT^A25", "ADT^A26",
+    "ADT^A27", "ADT^A28", "ADT^A29", "ADT^A31", "ADT^A32", "ADT^A33", "ADT^A37", "ADT^A38"
+  ],
+  "fields": {
+    "PV1.1": {
+      "name": "Set ID - PV1",
+      "description": "This field contains the number that identifies this transaction. For the first occurrence of the segment, the sequence number shall be one; for the second occurrence, the sequence number shall be two; etc.",
+      "dataType": "SI",
+      "usage": "O",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Sequential number starting from 1"
+    },
+    "PV1.2": {
+      "name": "Patient Class",
+      "description": "This field is used by systems to categorize patients by site. It does not have a consistent industry-wide definition. Values are institution-defined.",
+      "dataType": "IS",
+      "usage": "R",
+      "maxLength": 1,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "E", "description": "Emergency"},
+        {"code": "I", "description": "Inpatient"},
+        {"code": "O", "description": "Outpatient"},
+        {"code": "P", "description": "Preadmit"},
+        {"code": "R", "description": "Recurring patient"},
+        {"code": "B", "description": "Obstetrics"},
+        {"code": "C", "description": "Commercial Account"},
+        {"code": "N", "description": "Not Applicable"},
+        {"code": "U", "description": "Unknown"}
+      ],
+      "generationHint": "Most common: I (inpatient), O (outpatient), E (emergency)"
+    },
+    "PV1.3": {
+      "name": "Assigned Patient Location",
+      "description": "This field contains the patient's initial assigned location or the location to which the patient is being moved. Format: <nurse unit>^<room>^<bed>^<facility ID>^<bed status>.",
+      "dataType": "PL",
+      "usage": "O",
+      "maxLength": 80,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: ICU^201^A^MAIN^O (ICU unit, room 201, bed A, facility MAIN, occupied)"
+    },
+    "PV1.4": {
+      "name": "Admission Type",
+      "description": "This field indicates the circumstances under which the patient was or will be admitted to the healthcare facility.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "A", "description": "Accident"},
+        {"code": "C", "description": "Elective"},
+        {"code": "L", "description": "Labor and Delivery"},
+        {"code": "R", "description": "Routine"},
+        {"code": "N", "description": "Newborn"},
+        {"code": "U", "description": "Urgent"},
+        {"code": "E", "description": "Emergency"}
+      ],
+      "generationHint": "Common types: R (routine), E (emergency), U (urgent), C (elective)"
+    },
+    "PV1.5": {
+      "name": "Preadmit Number",
+      "description": "This field uniquely identifies the patient's pre-admit account. This field is used to link pre-admission data with the actual admission.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <number>^<check_digit>^<identifier_type>, e.g., 'PA123456^^^PA'"
+    },
+    "PV1.6": {
+      "name": "Prior Patient Location",
+      "description": "This field contains the patient's location prior to coming to the currently assigned location. Used for tracking patient movement within the facility.",
+      "dataType": "PL",
+      "usage": "O",
+      "maxLength": 80,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Same format as PV1.3, represents previous location"
+    },
+    "PV1.7": {
+      "name": "Attending Doctor",
+      "description": "This field contains the attending physician information. Uses extended composite ID number and name format. Multiple attending physicians can be specified.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <id>^<last_name>^<first_name>^<degree>, e.g., '12345^SMITH^JOHN^MD'"
+    },
+    "PV1.8": {
+      "name": "Referring Doctor",
+      "description": "This field contains the referring physician information. The physician who referred the patient for care at the healthcare facility.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <id>^<last_name>^<first_name>^<degree>, e.g., '67890^JONES^MARY^MD'"
+    },
+    "PV1.9": {
+      "name": "Consulting Doctor",
+      "description": "This field contains consulting physician information. Retained for backward compatibility in v2.3 but may be withdrawn in later versions.",
+      "dataType": "XCN",
+      "usage": "B",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Similar format to attending/referring doctor"
+    },
+    "PV1.10": {
+      "name": "Hospital Service",
+      "description": "This field contains the treatment or type of surgery the patient is scheduled to receive. Also known as the service line or department.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MED", "description": "Medicine"},
+        {"code": "SUR", "description": "Surgery"},
+        {"code": "GYN", "description": "Gynecology"},
+        {"code": "OBS", "description": "Obstetrics"},
+        {"code": "PED", "description": "Pediatrics"},
+        {"code": "ICU", "description": "Intensive Care Unit"},
+        {"code": "ER", "description": "Emergency Room"},
+        {"code": "PSY", "description": "Psychiatry"},
+        {"code": "REH", "description": "Rehabilitation"},
+        {"code": "CAR", "description": "Cardiology"}
+      ],
+      "generationHint": "Common services: MED, SUR, ICU, ER, PED"
+    },
+    "PV1.11": {
+      "name": "Temporary Location",
+      "description": "This field contains a location other than the assigned location required for a temporary period of time (e.g., OR, operating theatre, radiology, etc.).",
+      "dataType": "PL",
+      "usage": "O",
+      "maxLength": 80,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Same format as PV1.3, for temporary locations like OR^3^1^MAIN^T"
+    },
+    "PV1.12": {
+      "name": "Preadmit Test Indicator",
+      "description": "This field indicates whether the patient needs pre-admission testing and what type of testing is required.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes, pre-admit testing required"},
+        {"code": "N", "description": "No, pre-admit testing not required"}
+      ],
+      "generationHint": "Usually Y or N indicating testing requirement"
+    },
+    "PV1.13": {
+      "name": "Re-admission Indicator",
+      "description": "This field indicates that the patient is being re-admitted to the healthcare facility and may qualify for special handling or reduced reimbursement.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "R", "description": "Re-admission"}
+      ],
+      "generationHint": "Use 'R' for readmissions, otherwise leave empty"
+    },
+    "PV1.14": {
+      "name": "Admit Source",
+      "description": "This field indicates the point of origin of the patient immediately prior to admission to the healthcare facility.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 6,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "1", "description": "Physician referral"},
+        {"code": "2", "description": "Clinic referral"},
+        {"code": "3", "description": "HMO referral"},
+        {"code": "4", "description": "Transfer from a hospital"},
+        {"code": "5", "description": "Transfer from a skilled nursing facility"},
+        {"code": "6", "description": "Transfer from another health care facility"},
+        {"code": "7", "description": "Emergency room"},
+        {"code": "8", "description": "Court/law enforcement"},
+        {"code": "9", "description": "Information not available"}
+      ],
+      "generationHint": "Common sources: 1 (physician), 7 (emergency room), 4 (transfer)"
+    },
+    "PV1.15": {
+      "name": "Ambulatory Status",
+      "description": "This field indicates the ambulatory status of the patient at the time of admission or visit. Multiple values may be reported.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "A0", "description": "No functional limitations"},
+        {"code": "A1", "description": "Ambulates with assistive device"},
+        {"code": "A2", "description": "Wheelchair/stretcher bound"},
+        {"code": "A3", "description": "Comatose; non-responsive"},
+        {"code": "A4", "description": "Disoriented"},
+        {"code": "A5", "description": "Vision impaired"},
+        {"code": "A6", "description": "Hearing impaired"},
+        {"code": "A7", "description": "Speech impaired"},
+        {"code": "A8", "description": "Non-English speaking"},
+        {"code": "A9", "description": "Functional level unknown"}
+      ],
+      "generationHint": "Multiple codes possible: A0 (no limitations), A1 (needs assistance)"
+    },
+    "PV1.16": {
+      "name": "VIP Indicator",
+      "description": "This field indicates that the patient should receive VIP treatment. The field may also be used to indicate other types of special handling for the patient.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes, VIP"},
+        {"code": "N", "description": "No, not VIP"}
+      ],
+      "generationHint": "Usually empty unless patient requires special treatment"
+    },
+    "PV1.17": {
+      "name": "Admitting Doctor",
+      "description": "This field contains the admitting physician information. The physician responsible for admitting the patient to the healthcare facility.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Format: <id>^<last_name>^<first_name>^<degree>, e.g., '54321^BROWN^DAVID^MD'"
+    },
+    "PV1.18": {
+      "name": "Patient Type",
+      "description": "This field is used to categorize patients for billing, statistical, or other purposes. Institution-defined values.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Institution-specific patient categorization codes"
+    },
+    "PV1.19": {
+      "name": "Visit Number",
+      "description": "This field contains a unique value that identifies the patient's visit or encounter. Used to distinguish multiple visits for the same patient.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Format: <visit_id>^<check_digit>^<identifier_type>, e.g., 'V123456789^^^VN'"
+    },
+    "PV1.20": {
+      "name": "Financial Class",
+      "description": "This field contains the financial class assigned to the patient for billing and reimbursement purposes. Used by billing systems to determine payment methods.",
+      "dataType": "FC",
+      "usage": "O",
+      "maxLength": 50,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "I", "description": "Insurance"},
+        {"code": "P", "description": "Private pay"},
+        {"code": "M", "description": "Medicare"},
+        {"code": "D", "description": "Medicaid"},
+        {"code": "W", "description": "Workers compensation"},
+        {"code": "C", "description": "Charity"}
+      ],
+      "generationHint": "Format: <financial_class>^<effective_date>, common: I^, M^, D^"
+    }
+  },
+  "examples": [
+    "PV1|1|I|ICU^201^A^MAIN^O||PA123456|ER^101^1^MAIN^V|12345^SMITH^JOHN^MD|67890^JONES^MARY^MD||MED|OR^3^1^MAIN^T|Y||1|A0||54321^BROWN^DAVID^MD||V123456789^^^VN|I^",
+    "PV1|1|O|CLINIC^A^1^WEST^O|||11111^DOE^JANE^MD|22222^WILSON^BOB^MD||CAR||||7||||V987654321^^^VN|P^",
+    "PV1|1|E|ER^TRAUMA^1^MAIN^O|||33333^GARCIA^MARIA^MD|||ER||||7|A1||44444^TAYLOR^CHRIS^MD||V555666777^^^VN|I^",
+    "PV1||I|MED^305^B^EAST^O||||||MED||||||||||||"
+  ],
+  "notes": [
+    "PV1 segment is required for all ADT message types involving patient visits",
+    "PV1.2 (Patient Class) is the only required field in HL7 v2.3",
+    "PV1.3 (Assigned Patient Location) should be populated for inpatient admits",
+    "Physician fields (PV1.7, PV1.8, PV1.17) can be repeated for multiple doctors",
+    "Location format uses ^-delimited components: unit^room^bed^facility^status"
+  ],
+  "crossReferences": {
+    "fhir": [
+      "Encounter.class",
+      "Encounter.location",
+      "Encounter.participant",
+      "Encounter.hospitalization"
+    ],
+    "related": ["EVN", "PID", "PV2", "DG1", "AL1", "NK1"]
+  },
+  "generationRules": {
+    "required": ["PV1.2"],
+    "conditional": {
+      "PV1.3": "Required for inpatient admissions",
+      "PV1.7": "Should be provided for inpatient stays",
+      "PV1.19": "Required for visit tracking"
+    },
+    "relationships": {
+      "PV1.2_PV1.3": "Inpatient class should have bed assignment",
+      "PV1.6_PV1.3": "Prior location should differ from current location",
+      "PV1.7_PV1.8_PV1.17": "Multiple physician types should have different roles"
+    },
+    "validation": {
+      "PV1.2": "Must be valid patient class code",
+      "PV1.4": "Must be valid admission type if present",
+      "PV1.14": "Must be valid admit source code if present"
+    }
+  }
+}

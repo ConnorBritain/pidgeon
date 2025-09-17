@@ -1,0 +1,419 @@
+{
+  "segment": "IN2",
+  "name": "Insurance Additional Information",
+  "description": "The Insurance Additional Information segment (IN2) contains additional insurance information that supplements the basic coverage details in IN1. This segment supports complex insurance scenarios including eligibility verification, prior authorization, employment details, military service, disability information, and special coverage circumstances. It is essential for comprehensive billing workflows and claims processing in healthcare organizations.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": 1,
+    "note": "IN2 provides extended insurance details when additional information is available"
+  },
+  "messageTypes": ["ADT^A01", "ADT^A04", "ADT^A08", "DFT^P03", "BAR^P01", "BAR^P02"],
+  "fields": {
+    "IN2.1": {
+      "name": "Insured's Employee ID",
+      "description": "This field contains the insured person's employee identification number.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Employee ID with assigning authority",
+      "example": "E123456789^ACME_CORP^EI"
+    },
+    "IN2.2": {
+      "name": "Insured's Social Security Number",
+      "description": "This field contains the insured person's Social Security Number.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 11,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Format: 999-99-9999 or 999999999",
+      "example": "123-45-6789"
+    },
+    "IN2.3": {
+      "name": "Insured's Employer's Name and ID",
+      "description": "This field contains the name and identification of the insured person's employer.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Employer name with identifier",
+      "example": "12345^ACME Corporation^EMPLOYER_ID"
+    },
+    "IN2.4": {
+      "name": "Employer Information Data",
+      "description": "This field indicates whether employer information data is available or on file.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["Y", "N", "U"],
+      "generationHint": "Y=Yes, N=No, U=Unknown",
+      "example": "Y"
+    },
+    "IN2.5": {
+      "name": "Mail Claim Party",
+      "description": "This field identifies who should receive mailed claims and correspondence.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["E", "I", "O", "P"],
+      "generationHint": "E=Employer, I=Insurance Company, O=Other, P=Patient",
+      "example": "I"
+    },
+    "IN2.6": {
+      "name": "Medicare Health Ins Card Number",
+      "description": "This field contains the Medicare health insurance card number.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 15,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Medicare card number format",
+      "example": "1EG4-TE5-MK73"
+    },
+    "IN2.7": {
+      "name": "Medicaid Case Name",
+      "description": "This field contains the name associated with the Medicaid case.",
+      "dataType": "XPN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Name format for Medicaid case holder",
+      "example": "Smith^John^A^^^L"
+    },
+    "IN2.8": {
+      "name": "Medicaid Case Number",
+      "description": "This field contains the Medicaid case number.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 15,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "State-specific Medicaid case number",
+      "example": "MC123456789"
+    },
+    "IN2.9": {
+      "name": "Military Sponsor Name",
+      "description": "This field contains the name of the military sponsor for TRICARE/military insurance.",
+      "dataType": "XPN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Military sponsor's full name",
+      "example": "Johnson^Robert^M^^^L^CUR"
+    },
+    "IN2.10": {
+      "name": "Military ID Number",
+      "description": "This field contains the military identification number.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Military service member ID number",
+      "example": "1234567890"
+    },
+    "IN2.11": {
+      "name": "Dependent Of Military Recipient",
+      "description": "This field contains information about the dependent relationship to military sponsor.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["SPOUSE", "CHILD", "PARENT", "OTHER"],
+      "generationHint": "Relationship to military sponsor",
+      "example": "SPOUSE^Spouse^RELATIONSHIP"
+    },
+    "IN2.12": {
+      "name": "Military Organization",
+      "description": "This field contains the military organization or branch of service.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 25,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["ARMY", "NAVY", "AIR_FORCE", "MARINES", "COAST_GUARD"],
+      "generationHint": "Military branch or organization",
+      "example": "ARMY"
+    },
+    "IN2.13": {
+      "name": "Military Station",
+      "description": "This field contains the military station or base assignment.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 25,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Military base or station name",
+      "example": "Fort Bragg"
+    },
+    "IN2.14": {
+      "name": "Military Service",
+      "description": "This field contains the specific military service designation.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 14,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["ACTIVE", "RESERVE", "GUARD", "RETIRED"],
+      "generationHint": "Military service status",
+      "example": "ACTIVE"
+    },
+    "IN2.15": {
+      "name": "Military Rank/Grade",
+      "description": "This field contains the military rank or grade of the service member.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 2,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Military rank code",
+      "example": "E5"
+    },
+    "IN2.16": {
+      "name": "Military Status",
+      "description": "This field contains the current military status.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["ACT", "RET", "SEP", "DEC"],
+      "generationHint": "ACT=Active, RET=Retired, SEP=Separated, DEC=Deceased",
+      "example": "ACT"
+    },
+    "IN2.17": {
+      "name": "Military Retire Date",
+      "description": "This field contains the military retirement date.",
+      "dataType": "DT",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Format: YYYYMMDD",
+      "example": "20201215"
+    },
+    "IN2.18": {
+      "name": "Military Non-Avail Cert On File",
+      "description": "This field indicates whether a military non-availability certificate is on file.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["Y", "N"],
+      "generationHint": "Y=Yes, N=No",
+      "example": "Y"
+    },
+    "IN2.19": {
+      "name": "Baby Coverage",
+      "description": "This field indicates whether newborn/baby coverage is included.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["Y", "N"],
+      "generationHint": "Y=Yes, N=No",
+      "example": "Y"
+    },
+    "IN2.20": {
+      "name": "Combine Baby Bill",
+      "description": "This field indicates whether baby charges should be combined with mother's bill.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["Y", "N"],
+      "generationHint": "Y=Yes, N=No",
+      "example": "N"
+    },
+    "IN2.21": {
+      "name": "Blood Deductible",
+      "description": "This field contains the blood deductible amount or units.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Blood units deductible amount",
+      "example": "2"
+    },
+    "IN2.22": {
+      "name": "Special Coverage Approval Name",
+      "description": "This field contains the name of the person who approved special coverage.",
+      "dataType": "XPN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Name of approving authority",
+      "example": "Wilson^Mary^S^^^DR"
+    },
+    "IN2.23": {
+      "name": "Special Coverage Approval Title",
+      "description": "This field contains the title of the person who approved special coverage.",
+      "dataType": "ST",
+      "usage": "O",
+      "maxLength": 30,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Title or position of approver",
+      "example": "Medical Director"
+    },
+    "IN2.24": {
+      "name": "Non-Covered Insurance Code",
+      "description": "This field contains codes for insurance that does not cover certain services.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {"min": 0, "max": 10},
+      "generationHint": "Codes for non-covered services",
+      "example": "COSMETIC"
+    },
+    "IN2.25": {
+      "name": "Payor ID",
+      "description": "This field contains the unique identifier for the insurance payor.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Payor identifier with assigning authority",
+      "example": "ANTHEM001^ANTHEM^PAYOR_ID"
+    },
+    "IN2.26": {
+      "name": "Payor Subscriber ID",
+      "description": "This field contains the payor's subscriber identification number.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Subscriber ID from payor perspective",
+      "example": "SUB123456789^ANTHEM^SUBSCRIBER_ID"
+    },
+    "IN2.27": {
+      "name": "Eligibility Source",
+      "description": "This field identifies the source of eligibility information.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 1,
+      "cardinality": {"min": 0, "max": 1},
+      "validValues": ["1", "2", "3", "4"],
+      "generationHint": "1=Insurance Company, 2=Employer, 3=Government, 4=Other",
+      "example": "1"
+    },
+    "IN2.28": {
+      "name": "Room Coverage Type/Amount",
+      "description": "This field contains information about room coverage limits and types.",
+      "dataType": "RMC",
+      "usage": "O",
+      "maxLength": 82,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Room coverage details with amounts",
+      "example": "PRIVATE^1^500.00^USD"
+    },
+    "IN2.29": {
+      "name": "Policy Type/Amount",
+      "description": "This field contains policy type and associated amounts or limits.",
+      "dataType": "PTA",
+      "usage": "O",
+      "maxLength": 56,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Policy type with amount limits",
+      "example": "MAJOR_MEDICAL^1000000.00^USD"
+    },
+    "IN2.30": {
+      "name": "Daily Deductible",
+      "description": "This field contains the daily deductible amount.",
+      "dataType": "DDI",
+      "usage": "O",
+      "maxLength": 25,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Daily deductible with number of days",
+      "example": "100.00^5^USD"
+    }
+  },
+  "vendorVariations": {
+    "epic": {
+      "commonFields": ["IN2.1", "IN2.2", "IN2.3", "IN2.25", "IN2.26"],
+      "extensions": ["Real-time eligibility verification", "Prior authorization tracking", "Benefits estimation"],
+      "notes": "Epic provides comprehensive insurance verification with real-time benefit checks"
+    },
+    "cerner": {
+      "commonFields": ["IN2.1", "IN2.2", "IN2.4", "IN2.19", "IN2.27"],
+      "extensions": ["Automated eligibility checking", "Coverage gap analysis", "Claims prediction"],
+      "notes": "Cerner emphasizes automated eligibility verification and coverage analysis"
+    },
+    "allscripts": {
+      "commonFields": ["IN2.2", "IN2.3", "IN2.6", "IN2.7", "IN2.8"],
+      "extensions": ["Medicare/Medicaid integration", "Multi-payor support", "Benefits coordination"],
+      "notes": "Allscripts provides strong support for government insurance programs"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "Coverage.identifier",
+      "Coverage.subscriber",
+      "Coverage.beneficiary",
+      "Coverage.dependent",
+      "Coverage.relationship",
+      "Coverage.payor",
+      "Coverage.contract",
+      "Coverage.costToBeneficiary",
+      "Coverage.subrogation"
+    ],
+    "related": [
+      "IN1 (Insurance)",
+      "IN3 (Insurance Additional Information - Certification)",
+      "PID (Patient Identification)",
+      "GT1 (Guarantor)",
+      "DG1 (Diagnosis)",
+      "PR1 (Procedures)"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Employment-Based Insurance",
+      "segment": "IN2|E123456789^ACME_CORP^EI|123-45-6789|12345^ACME Corporation^EMPLOYER_ID|Y|I||||||||||||||Y|N|||||ANTHEM001^ANTHEM^PAYOR_ID|SUB123456789^ANTHEM^SUBSCRIBER_ID|1|||",
+      "description": "Standard employment-based insurance with employer and payor details"
+    },
+    {
+      "name": "Military TRICARE Coverage",
+      "segment": "IN2||987-65-4321||Y||1EG4-TE5-MK73|||Johnson^Robert^M^^^L^CUR|1234567890|SPOUSE^Spouse^RELATIONSHIP|ARMY|Fort Bragg|ACTIVE|E5|ACT|||Y|Y||||||||TRICARE001^TRICARE^PAYOR_ID|MIL987654321^TRICARE^SUBSCRIBER_ID|3|||",
+      "description": "Military family member with TRICARE coverage including sponsor details"
+    },
+    {
+      "name": "Medicare with Medicaid Secondary",
+      "segment": "IN2||111-22-3333|||I|1EG4-TE5-MK73|Smith^John^A^^^L|MC123456789|||||||||||||||||||CMS001^CMS^PAYOR_ID|MEDICARE111223333^CMS^SUBSCRIBER_ID|3|||",
+      "description": "Medicare primary with Medicaid secondary coverage"
+    },
+    {
+      "name": "Maternity Coverage Details",
+      "segment": "IN2|E555666777^HEALTH_CORP^EI|555-66-7777|67890^Health Corporation^EMPLOYER_ID|Y|P||||||||||||||Y|Y|2|Wilson^Mary^S^^^DR|Medical Director||||BLUECROSS001^BLUE_CROSS^PAYOR_ID|BC555666777^BLUE_CROSS^SUBSCRIBER_ID|1|PRIVATE^1^500.00^USD|MAJOR_MEDICAL^1000000.00^USD|100.00^5^USD",
+      "description": "Comprehensive maternity coverage with room and policy details"
+    }
+  ],
+  "notes": [
+    "IN2 segments extend IN1 with detailed insurance information for complex billing scenarios",
+    "Military and government insurance programs require specific field combinations",
+    "Eligibility verification often depends on multiple fields working together",
+    "Maternity and newborn coverage has special billing rules and field requirements",
+    "Payor IDs enable electronic claims processing and real-time eligibility checking",
+    "Room coverage and policy amounts support pre-authorization and benefit estimation",
+    "The segment accommodates both primary and secondary insurance details"
+  ],
+  "generationRules": {
+    "fieldPopulation": {
+      "required": [],
+      "recommended": ["IN2.1", "IN2.2", "IN2.3", "IN2.25", "IN2.26"],
+      "situational": ["IN2.6", "IN2.7", "IN2.8", "IN2.9", "IN2.10", "IN2.19", "IN2.20"]
+    },
+    "dataConsistency": {
+      "employmentCoherence": "IN2.1, IN2.3, IN2.4 should align with employment status",
+      "militaryAlignment": "IN2.9-IN2.18 should be consistent for military coverage",
+      "governmentPrograms": "IN2.6-IN2.8 should align with Medicare/Medicaid eligibility",
+      "maternityLogic": "IN2.19-IN2.20 should reflect obstetric coverage policies"
+    },
+    "businessRules": {
+      "eligibilityVerification": "Real-time eligibility checks use payor ID and subscriber ID",
+      "benefitsCoordination": "Multiple insurance requires coordination of benefits rules",
+      "militaryValidation": "Military insurance requires valid sponsor and relationship data",
+      "governmentCompliance": "Medicare/Medicaid must follow CMS guidelines"
+    },
+    "messageFlow": {
+      "triggers": ["Insurance verification", "Benefit estimation", "Claims processing"],
+      "responses": ["Eligibility confirmation", "Coverage details", "Prior authorization"],
+      "workflow": "Essential for complex billing and prior authorization workflows"
+    }
+  }
+}
