@@ -1,0 +1,70 @@
+{
+  "code": "MA",
+  "name": "Multiplexed Array",
+  "version": "HL7 v2.3",
+  "description": "This data type is used to represent channel-multiplexed waveform data, (e.g., the digitized values from an analog-to-digital converter or other digital data source). Each value is of type NM, and represents a time sample from a channel. This segment may contain data from one or more channels. The waveform data is in channel-multiplexed format (that is, the values for all channels for the first time sample are transmitted, then the values for the next time sample, and so on until the requisite number of time samples have been transmitted). Time samples are separated by repeat delimiters (~), and channels within a sample are separated by component delimiters (^). The time between samples (the sampling interval) is the reciprocal of the digitization frequency as specified using the CD data type.\n\n3 channels (identical), 5 time-samples\n|0^0^0~1^1^1~2^2^2~3^3^3~4^4^4~5^5^5|\n\n1 channel, 11 time-samples\n|0~1~2~3~4~5~6~7~8~9~10|",
+  "category": "composite",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "MA.1",
+      "field_description": "Sample 1 From Channel 1",
+      "length": "0",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 2,
+      "field_name": "MA.2",
+      "field_description": "Sample 1 From Channel 2",
+      "length": "0",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 3,
+      "field_name": "MA.3",
+      "field_description": "Sample 1 From Channel 3",
+      "length": "0",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 4,
+      "field_name": "MA.4",
+      "field_description": "Sample 2 From Channel 1",
+      "length": "0",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 5,
+      "field_name": "MA.5",
+      "field_description": "Sample 2 From Channel 2",
+      "length": "0",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 6,
+      "field_name": "MA.6",
+      "field_description": "Sample 2 From Channel 3",
+      "length": "0",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    }
+  ],
+  "field_count": 6
+}

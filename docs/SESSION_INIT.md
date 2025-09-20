@@ -12,15 +12,11 @@
 1. **`docs/roadmap/PIDGEON_ROADMAP.md`** - Master P0-P2 roadmap with success criteria
 2. **`docs/roadmap/features/NORTHSTAR.md`** - North star vision and product focus
 3. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI structure for P0 development
-4. **`docs/roadmap/CLI_DEVELOPMENT_STATUS.md`** - **[CRITICAL]** Current CLI status with detailed lookup analysis
-5. **`docs/roadmap/data_integrity/data_mvp.md`** - **[CRITICAL]** 80/20 strategy for data completeness and MVP priorities
-6. **`docs/roadmap/data_integrity/HL7_REFERENCE_GUIDE.md`** - **[DEFINITIVE]** Official HL7 v2.3 standards navigation and compliance framework
-7. **`docs/roadmap/data_integrity/HL7_PRIORITY_ITEMS.md`** - **[MVP CRITICAL]** Rank-ordered 20-50 priority items per category for systematic development
-8. **`docs/DATA_SPRINT.md`** - **[ACTIVE SPRINT]** Current data migration process and multi-agent coordination
-8. **`docs/DEVELOPMENT.md`** - Current status (foundation complete) and P0 features
-9. **`docs/RULES.md`** - Sacred architectural principles (still enforced)
-10. **`pidgeon/data/standards/hl7v23/_TEMPLATES/README.md`** - **[MANDATORY]** JSON template patterns for all data files
-11. **`pidgeon/data/standards/hl7v23/_TEMPLATES/CLEANUP.md`** - **[REQUIRED]** Data file rehabilitation process
+4. **`pidgeon/docs/data/sprint1_09182025/data-enriched-cli-improvement-plan.md`** - **[CURRENT SPRINT]** Active CLI enhancement using existing data
+5. **`docs/DATA_SPRINT.md`** - **[ACTIVE SPRINT]** Data utilization and CLI integration
+6. **`docs/roadmap/database_strategy.md`** - **[CRITICAL]** SQLite database integration for CLI
+7. **`docs/DEVELOPMENT.md`** - Current status (foundation complete) and P0 features
+8. **`docs/RULES.md`** - Sacred architectural principles (still enforced)
 
 ### **Step 2: Assess Current State** ⭐
 **Commands**:
@@ -32,26 +28,25 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 
 ### **Step 3: Validate Understanding** ⭐
 **Confirm you understand**:
-- **Current Phase**: 🔍 **P0 MVP Data Foundation Work** - Critical segment fields missing (September 16, 2025)
-- **Major Finding**: CLI lookup effectiveness reduced from 70% to 40% due to incomplete segment data
+- **Current Phase**: 🚀 **Data-Enriched CLI Sprint** - Leveraging existing 96 segments, 90+ data types, 306 tables
+- **Major Finding**: Core data is excellent, need enhanced CLI access to tables/trigger events
 - **North Star**: "Realistic scenario testing without PHI compliance nightmare"
-- **Critical Priority**: Complete missing PID/PV1 segment fields that reference existing tables
-- **Template Compliance**: ALL new data files must follow `_TEMPLATES/` patterns exactly
-- **Data Cleanup**: Existing files need systematic remediation per `CLEANUP.md`
-- **CLI Status**: Table foundation excellent (20/20), segment fields critical gap
+- **Critical Priority**: 1) Enable table/trigger event lookup 2) SQLite database integration 3) Wire up generation/validation
+- **Data Status**: Rich competitive datasets (500+ demographic values) ready for use
+- **CLI Status**: Segments/datatypes work perfectly, tables/triggers need path recognition
 - **Architecture**: Four-domain model + plugin patterns still enforced
 - **Error Protocol**: STOP-THINK-ACT methodology still mandatory
 
 ---
 
 ## 📊 **CURRENT STATE SUMMARY**
-*Last Updated: September 16, 2025*
+*Last Updated: September 18, 2025*
 
 ### **Project Status**
-- **Phase**: 🔍 **P0 MVP Data Foundation Critical Gap** - Lookup functionality blocked by incomplete segment data
-- **Health Score**: 85/100 (Architecture excellent, data foundation incomplete)
-- **Build Status**: ✅ Clean (0 errors, CLI functional but limited)
-- **CLI Status**: 40% effective (tables ✅ excellent, segment fields ❌ critical gaps)
+- **Phase**: 🚀 **Data-Enriched CLI Sprint** - Leveraging existing rich data foundation
+- **Health Score**: 95/100 (Architecture excellent, data rich, CLI enhancements in progress)
+- **Build Status**: ✅ Clean (0 errors, CLI functional and improving)
+- **CLI Status**: 70% effective (segments ✅ perfect, datatypes ✅ perfect, tables/triggers 🔧 in progress)
 
 ### **P0 Embryonic Development Completion (8 weeks)**
 **Result**: Successfully executed compound growth sequence with all features building on previous intelligence
@@ -78,55 +73,58 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 
 ---
 
-## 🚨 **CRITICAL DATA FOUNDATION WORK REQUIRED**
+## 🚨 **NEXT SPRINT: LOCK/SET WORKFLOW AUTOMATION**
 
-### **Immediate Priority: Complete Missing Segment Fields**
-**Critical Finding**: Lookup command effectiveness is only 40% due to missing segment field definitions despite excellent table foundation (20/20 critical tables complete).
+### **Data-Enriched CLI Sprint: COMPLETED** ✅
+**Achievements**: All priority items successfully completed:
+- ✅ **Table & Trigger Event Lookup** - `pidgeon lookup FirstName`, `pidgeon lookup ADT_A01` working perfectly
+- ✅ **Demographic Dataset Integration** - Realistic generation using 500+ demographic values
+- ✅ **Enhanced Field Display** - Position, repeatability, table references with cross-navigation
+- ✅ **Database Strategy** - Comprehensive SQLite integration plan enhanced with CLI aspirations
 
-### **P0 Critical Work Required:**
-1. **Complete PID Segment Fields** - Missing PID.16 (Marital Status), PID.10 (Race), PID.17 (Religion)
-2. **Complete PV1 Segment Fields** - Missing PV1.2 (Patient Class), PV1.4 (Admission Type), PV1.14 (Admit Source)
-3. **Fix Message Pattern Recognition** - Enable `pidgeon lookup ADT_A01` functionality
-4. **ALL work must follow `_TEMPLATES/` patterns** - No exceptions for consistency
+### **Current Sprint: Lock/Set Functionality (4 weeks)**
+**Mission**: Transform Pidgeon from one-shot generator to workflow automation platform
+**Core Value**: "Generate a full patient journey once, then iterate on individual touchpoints without breaking continuity"
+
+### **Sprint Priorities (per lock_functionality.md):**
+1. **Session Lock Management** - Create, list, show, remove patient locks for workflow consistency
+2. **Granular Value Setting** - `pidgeon set patient.mrn "MR123456" --lock workflow_name`
+3. **Lock-Aware Generation** - `pidgeon generate "ADT^A01" --use-lock patient_workflow`
+4. **Workflow Automation** - Multi-step healthcare scenarios with maintained patient context
 
 ## 🎯 **IMMEDIATE ACTION GUIDANCE**
 
 ### **If User Asks for Feature Work**:
-**Response**: "Critical data foundation gap identified. CLI lookup only 40% effective due to missing segment fields. Must complete PID/PV1 fields first before P1 expansion - tables exist, just need field definitions."
+**Response**: "Perfect timing! Data-enriched CLI sprint completed successfully. Current sprint: Lock/Set functionality implementation per lock_functionality.md. Priority: Session lock management, granular field setting, lock-aware generation."
 
 ### **If User Reports Errors**:
 **Response**: Follow STOP-THINK-ACT protocol from `docs/RULES.md`. Don't fix immediately - analyze first.
 
 ### **If User Wants Data Work**:
-**Response**: MANDATORY - Use `pidgeon/data/standards/hl7v23/_TEMPLATES/` patterns. Read `README.md` and `CLEANUP.md` first. No exceptions for consistency.
+**Response**: "Data foundation is excellent and complete! Rich demographic datasets integrated, SQLite strategy planned. Focus now on lock/set workflow automation functionality."
 
 ### **If User Wants CLI Commands**:
-**Response**: Check `docs/roadmap/CLI_DEVELOPMENT_STATUS.md` first for current gaps. Priority is completing missing segment fields, not new commands.
+**Response**: Check `docs/data/sprint1_09182025/lock_functionality.md` for current sprint priorities. Focus: patient lock creation, field setting, lock-aware message generation."
 
 ### **If User Wants New Standards Support**:
-**Response**: Complete HL7 v2.3 segment foundation first. Then implement as plugin following existing HL7v23Plugin pattern. Never modify core services.
+**Response**: Complete CLI enhancements for HL7 v2.3 first. Then implement as plugin following existing HL7v23Plugin pattern. Never modify core services.
 
 ### **If User Wants GUI Features**:
-**Response**: Critical CLI lookup gaps must be resolved first. CLI effectiveness only 40% due to missing segment data. GUI depends on functional CLI foundation.
+**Response**: CLI enhancements in progress will enable GUI. Focus on database integration per database_strategy.md - this powers both CLI and GUI.
 
 ---
 
 ## 📚 **ESSENTIAL READING LIST**
 
 ### **🚨 CRITICAL - Read Every Session**
-1. **`docs/HL7_LIBRARY_PROCESS.md`** - **[GROUND TRUTH]** MANDATORY workflow for hallucination-free data using hl7-dictionary library
+1. **`docs/data/sprint1_09182025/lock_functionality.md`** - **[CURRENT SPRINT]** Lock/Set workflow automation feature specification
 2. **`docs/roadmap/PIDGEON_ROADMAP.md`** - Complete P0-P2 roadmap with all success metrics
 3. **`docs/roadmap/features/NORTHSTAR.md`** - Core value proposition and user focus
-4. **`docs/roadmap/CLI_DEVELOPMENT_STATUS.md`** - **[CRITICAL]** Current CLI analysis with segment field gaps
-5. **`docs/roadmap/data_integrity/data_mvp.md`** - **[CRITICAL]** 80/20 data strategy and MVP priorities
-6. **`docs/roadmap/data_integrity/HL7_REFERENCE_GUIDE.md`** - **[DEFINITIVE]** Official HL7 v2.3 standards compliance
-7. **`docs/roadmap/data_integrity/HL7_PRIORITY_ITEMS.md`** - **[MVP CRITICAL]** Rank-ordered priority items for systematic development
-8. **`docs/DATA_SPRINT.md`** - **[ACTIVE SPRINT]** Current data migration process and multi-agent coordination
-9. **`pidgeon/data/standards/hl7v23/_TEMPLATES/README.md`** - **[MANDATORY]** JSON template patterns for ALL data work
-10. **`pidgeon/data/standards/hl7v23/_TEMPLATES/CLEANUP.md`** - **[REQUIRED]** Data file remediation process
-8. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI command structure and examples
-9. **`docs/DEVELOPMENT.md`** - Current status and P0 development plan
-10. **`docs/RULES.md`** - Sacred architectural principles and error handling
+4. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI command structure and examples
+5. **`docs/data/database_strategy.md`** - **[FOUNDATION]** SQLite database integration plan with CLI aspirations
+6. **`docs/data/sprint1_09182025/data-enriched-cli-improvement-plan.md`** - **[COMPLETED]** Previous sprint achievements
+7. **`docs/DEVELOPMENT.md`** - Current status and P0 development plan
+8. **`docs/RULES.md`** - Sacred architectural principles and error handling
 
 ### **🔍 REFERENCE - Read When Relevant**
 6. **`docs/roadmap/features/cli_gui_harmonization.md`** - Platform strategy for CLI+GUI
