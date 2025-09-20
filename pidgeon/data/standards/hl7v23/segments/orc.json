@@ -1,178 +1,200 @@
 {
-  "segment": "ORC",
-  "name": "Common Order",
-  "description": "Contains common order information that applies to many types of orders including lab, radiology, and pharmacy orders",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "O",
-  "cardinality": {
-    "min": 0,
-    "max": "unbounded"
-  },
-  "fields": {
-    "ORC.1": {
-      "name": "Order Control",
-      "description": "Action requested or reported for this order",
-      "dataType": "ID",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "table": "0119",
-      "examples": ["NW", "OC", "CA", "DC", "SC"]
+  "code": "ORC",
+  "name": "Common order segment",
+  "version": "HL7 v2.3",
+  "chapter": "Order Entry",
+  "description": "The Common Order segment (ORC) is used to transmit fields that are common to all orders (all types of services that are requested). The ORC segment is required in the Order (ORM) message. ORC is mandatory in Order Acknowledgment (ORR) messages if an order detail segment is present, but is not required otherwise.\n\nIf details are needed for a particular type of order segment (e.g., Pharmacy, Dietary), the ORC must precede any order detail segment (e.g., RXO, ODS). In some cases, the ORC may be as simple as the string ORC|OK|<placer order number>|<filler order number>|<cr>. \n\nIf details are not needed for the order, the order detail segment may be omitted. For example, to place an order on hold, one would transmit an ORC with the following fields completed: ORC-1-order control with a value of HD, ORC-2-placer order number, and ORC-3-filler order number",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "ORC.1",
+      "field_description": "Order Control",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": "0119"
     },
-    "ORC.2": {
-      "name": "Placer Order Number",
-      "description": "Unique identifier assigned by the placer of the order",
-      "dataType": "EI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["ORD123456", "LAB789012"]
+    {
+      "position": 2,
+      "field_name": "ORC.2",
+      "field_description": "Placer Order Number",
+      "length": "22",
+      "data_type": "EI",
+      "optionality": "C",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.3": {
-      "name": "Filler Order Number",
-      "description": "Unique identifier assigned by the filler of the order",
-      "dataType": "EI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["LAB456789", "RAD987654"]
+    {
+      "position": 3,
+      "field_name": "ORC.3",
+      "field_description": "Filler Order Number",
+      "length": "22",
+      "data_type": "EI",
+      "optionality": "C",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.4": {
-      "name": "Placer Group Number",
-      "description": "Identifier for a group of related orders from the placer",
-      "dataType": "EI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["GRP123", "BATCH789"]
+    {
+      "position": 4,
+      "field_name": "ORC.4",
+      "field_description": "Placer Group Number",
+      "length": "22",
+      "data_type": "EI",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.5": {
-      "name": "Order Status",
-      "description": "Current status of the order",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0038",
-      "examples": ["A", "CA", "CM", "DC", "ER", "HD", "IP", "RP", "SC"]
+    {
+      "position": 5,
+      "field_name": "ORC.5",
+      "field_description": "Order Status",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0038"
     },
-    "ORC.6": {
-      "name": "Response Flag",
-      "description": "Indicates level of response required",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0121",
-      "examples": ["E", "R", "N", "O", "D"]
+    {
+      "position": 6,
+      "field_name": "ORC.6",
+      "field_description": "Response Flag",
+      "length": "1",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0121"
     },
-    "ORC.7": {
-      "name": "Quantity/Timing",
-      "description": "Timing and quantity specifications for the order",
-      "dataType": "TQ",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["1^QD^D", "2^BID^D", "PRN"]
+    {
+      "position": 7,
+      "field_name": "ORC.7",
+      "field_description": "Quantity/Timing",
+      "length": "200",
+      "data_type": "TQ",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.8": {
-      "name": "Parent Order",
-      "description": "Parent order information if this is a child order",
-      "dataType": "CM_EIP",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1}
+    {
+      "position": 8,
+      "field_name": "ORC.8",
+      "field_description": "Parent Order",
+      "length": "200",
+      "data_type": "CM_EIP",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.9": {
-      "name": "Date/Time of Transaction",
-      "description": "Date and time the order transaction occurred",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815143000", "20221201120000"]
+    {
+      "position": 9,
+      "field_name": "ORC.9",
+      "field_description": "Date/Time of Transaction",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.10": {
-      "name": "Entered By",
-      "description": "Person who entered the order",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["12345^JONES^MARY^NURSE", "67890^SMITH^JOHN^CLERK"]
+    {
+      "position": 10,
+      "field_name": "ORC.10",
+      "field_description": "Entered By",
+      "length": "120",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.11": {
-      "name": "Verified By",
-      "description": "Person who verified the order",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["11111^BROWN^SUSAN^MD", "22222^DAVIS^ROBERT^PHARM"]
+    {
+      "position": 11,
+      "field_name": "ORC.11",
+      "field_description": "Verified By",
+      "length": "120",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.12": {
-      "name": "Ordering Provider",
-      "description": "Provider who placed the order",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["33333^WILSON^JAMES^MD", "44444^TAYLOR^LISA^NP"]
+    {
+      "position": 12,
+      "field_name": "ORC.12",
+      "field_description": "Ordering Provider",
+      "length": "120",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.13": {
-      "name": "Enterer's Location",
-      "description": "Location where the order was entered",
-      "dataType": "PL",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["ICU^201^A^MAIN^P", "ER^101^B^WEST^P"]
+    {
+      "position": 13,
+      "field_name": "ORC.13",
+      "field_description": "Enterer's Location",
+      "length": "80",
+      "data_type": "PL",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.14": {
-      "name": "Call Back Phone Number",
-      "description": "Phone number for callback regarding this order",
-      "dataType": "TN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 2},
-      "examples": ["555-1234", "800-HOSPITAL"]
+    {
+      "position": 14,
+      "field_name": "ORC.14",
+      "field_description": "Call Back Phone Number",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "2",
+      "table": ""
     },
-    "ORC.15": {
-      "name": "Order Effective Date/Time",
-      "description": "Date and time when the order becomes effective",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220816080000", "20221202060000"]
+    {
+      "position": 15,
+      "field_name": "ORC.15",
+      "field_description": "Order Effective Date/Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.16": {
-      "name": "Order Control Code Reason",
-      "description": "Reason for the order control action",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["STAT^Urgent", "ROUTINE^Standard priority"]
+    {
+      "position": 16,
+      "field_name": "ORC.16",
+      "field_description": "Order Control Code Reason",
+      "length": "200",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.17": {
-      "name": "Entering Organization",
-      "description": "Organization that entered the order",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["MAIN^Main Hospital", "CLINIC^Outpatient Clinic"]
+    {
+      "position": 17,
+      "field_name": "ORC.17",
+      "field_description": "Entering Organization",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.18": {
-      "name": "Entering Device",
-      "description": "Device or system that entered the order",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["CPOE^Computerized Provider Order Entry", "EMR^Electronic Medical Record"]
+    {
+      "position": 18,
+      "field_name": "ORC.18",
+      "field_description": "Entering Device",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ORC.19": {
-      "name": "Action By",
-      "description": "Person responsible for the action specified in order control",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["55555^GARCIA^CARLOS^TECH", "66666^MARTINEZ^ANNA^RN"]
+    {
+      "position": 19,
+      "field_name": "ORC.19",
+      "field_description": "Action By",
+      "length": "120",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     }
-  },
-  "examples": [
-    "ORC|NW|ORD123456|LAB456789||A||1^QD^D|||20220815143000|12345^JONES^MARY^NURSE||33333^WILSON^JAMES^MD|ICU^201^A^MAIN^P|555-1234|20220816080000||||",
-    "ORC|CA|LAB789012|RAD987654||CA|E|PRN|||20221201120000|67890^SMITH^JOHN^CLERK|11111^BROWN^SUSAN^MD|44444^TAYLOR^LISA^NP|ER^101^B^WEST^P||||||"
   ],
-  "notes": [
-    "ORC.1 (Order Control) is required to specify the action being taken",
-    "ORC.7 (Quantity/Timing) is required for timing specifications",
-    "Commonly used with OBR, RXO, RXE segments for different order types",
-    "Multiple ORC segments can represent different actions on the same order"
-  ]
+  "field_count": 19
 }

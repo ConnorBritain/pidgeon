@@ -1,0 +1,221 @@
+{
+  "segment": "IN3",
+  "name": "Insurance Additional Info - Certification",
+  "description": "Contains insurance certification and authorization information including pre-authorization and case management details",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "unbounded"
+  },
+  "fields": {
+    "IN3.1": {
+      "name": "Set ID - Insurance Certification",
+      "description": "Sequence number for insurance certification segments",
+      "dataType": "SI",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["1", "2", "3"]
+    },
+    "IN3.2": {
+      "name": "Certification Number",
+      "description": "Unique certification identifier",
+      "dataType": "CX",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["CERT123456", "AUTH789012"]
+    },
+    "IN3.3": {
+      "name": "Certified By",
+      "description": "Person who provided the certification",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["12345^SMITH^MARY^MD", "67890^JONES^JOHN^RN"]
+    },
+    "IN3.4": {
+      "name": "Certification Required",
+      "description": "Indicates if certification is required",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0136",
+      "examples": ["Y", "N"]
+    },
+    "IN3.5": {
+      "name": "Penalty",
+      "description": "Penalty information for non-compliance",
+      "dataType": "CM_PEN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "IN3.6": {
+      "name": "Certification Date/Time",
+      "description": "Date and time certification was granted",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815143000", "20221201120000"]
+    },
+    "IN3.7": {
+      "name": "Certification Modify Date/Time",
+      "description": "Date and time certification was last modified",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220816143000", "20221202120000"]
+    },
+    "IN3.8": {
+      "name": "Operator",
+      "description": "Person who entered or modified the certification",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["11111^BROWN^SUSAN^CLERK", "22222^DAVIS^ROBERT^ADMIN"]
+    },
+    "IN3.9": {
+      "name": "Certification Begin Date",
+      "description": "Date when certification becomes effective",
+      "dataType": "DT",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815", "20221201"]
+    },
+    "IN3.10": {
+      "name": "Certification End Date",
+      "description": "Date when certification expires",
+      "dataType": "DT",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20230815", "20231201"]
+    },
+    "IN3.11": {
+      "name": "Days",
+      "description": "Number of days certification is valid",
+      "dataType": "CM_DTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "IN3.12": {
+      "name": "Non-Concur Code/Description",
+      "description": "Code and description for non-concurrence",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["DENIED^Authorization denied", "PENDING^Pending review"]
+    },
+    "IN3.13": {
+      "name": "Non-Concur Effective Date/Time",
+      "description": "Effective date for non-concurrence decision",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815143000", "20221201120000"]
+    },
+    "IN3.14": {
+      "name": "Physician Reviewer",
+      "description": "Physician who reviewed the certification request",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["33333^WILSON^JAMES^MD", "44444^TAYLOR^LISA^MD"]
+    },
+    "IN3.15": {
+      "name": "Certification Contact",
+      "description": "Contact person for certification matters",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["Mary Smith", "John Jones"]
+    },
+    "IN3.16": {
+      "name": "Certification Contact Phone Number",
+      "description": "Phone number for certification contact",
+      "dataType": "XTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["555-1234^WPN^PH", "800-CERTIFY^WPN^PH"]
+    },
+    "IN3.17": {
+      "name": "Appeal Reason",
+      "description": "Reason for certification appeal",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["MEDICAL^Medical necessity", "ADMIN^Administrative error"]
+    },
+    "IN3.18": {
+      "name": "Certification Agency",
+      "description": "Agency responsible for certification",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["AETNA^Aetna Health Plans", "BCBS^Blue Cross Blue Shield"]
+    },
+    "IN3.19": {
+      "name": "Certification Agency Phone Number",
+      "description": "Phone number for certification agency",
+      "dataType": "XTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["800-AETNA^WPN^PH", "800-BCBS^WPN^PH"]
+    },
+    "IN3.20": {
+      "name": "Pre-Certification required/Window",
+      "description": "Pre-certification requirements and time window",
+      "dataType": "CM_PCF",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "IN3.21": {
+      "name": "Case Manager",
+      "description": "Case manager assigned to this certification",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["Susan Brown", "Robert Davis"]
+    },
+    "IN3.22": {
+      "name": "Second Opinion Date",
+      "description": "Date second opinion was obtained",
+      "dataType": "DT",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220820", "20221205"]
+    },
+    "IN3.23": {
+      "name": "Second Opinion Status",
+      "description": "Status of second opinion requirement",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0151"
+    },
+    "IN3.24": {
+      "name": "Second Opinion Documentation Received",
+      "description": "Indicates if second opinion documentation was received",
+      "dataType": "IS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0152"
+    },
+    "IN3.25": {
+      "name": "Second Opinion Physician",
+      "description": "Physician who provided second opinion",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["55555^GARCIA^CARLOS^MD", "66666^MARTINEZ^ANNA^MD"]
+    }
+  },
+  "examples": [
+    "IN3|1|CERT123456|12345^SMITH^MARY^MD|Y||20220815143000|20220816143000|11111^BROWN^SUSAN^CLERK|20220815|20230815||||||||||||||||",
+    "IN3|2|AUTH789012|67890^JONES^JOHN^RN|N||20221201120000|||20221201|20231201|||||33333^WILSON^JAMES^MD|Mary Smith|555-1234^WPN^PH||||||||"
+  ],
+  "notes": [
+    "IN3.1 (Set ID) is required for segment sequencing",
+    "Used with IN1 and IN2 segments for complete insurance information",
+    "Contains detailed authorization and certification workflow information"
+  ]
+}

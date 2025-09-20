@@ -1,0 +1,70 @@
+{
+  "triggerEvent": "M05",
+  "name": "Master File - Patient Location",
+  "description": "Master file updates for physical locations including rooms, beds, clinics, and service areas within healthcare facilities",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "8",
+  "chapterName": "Master Files",
+  "messageStructure": "MFN^M05",
+  "hl7Reference": "HL7 v2.3 Chapter 8 Master Files - HL7.eu/HL7v2x/v23/std23",
+  "segments": {
+    "required": [
+      "MSH",
+      "MFI",
+      "MFE",
+      "LOC"
+    ],
+    "optional": [
+      "LCH",
+      "LRL",
+      "LCC"
+    ]
+  },
+  "businessPurpose": "Synchronize location master data across all clinical and administrative systems for accurate patient placement and resource management",
+  "timing": "Sent when facility locations change, including new construction, renovations, or service area modifications",
+  "responseMessage": "MFK^M05^MFK",
+  "standardNotes": [
+    "M05 handles patient location master file updates for facility management",
+    "LOC segment contains primary location identification and characteristics",
+    "LCH segment provides location characteristics like room type and capabilities",
+    "LRL segment defines location relationships and hierarchies",
+    "LCC segment contains location charge information for billing purposes",
+    "Critical for bed management, patient tracking, and resource allocation"
+  ],
+  "realWorldScenarios": [
+    "New wing opens with additional patient rooms and ICU beds",
+    "Emergency department expands with additional triage and treatment areas",
+    "Operating room temporarily closed for equipment upgrades",
+    "Clinic locations updated after medical office building renovation",
+    "Isolation rooms activated during infection control protocols",
+    "Outpatient procedure areas reconfigured for increased capacity"
+  ],
+  "generationRules": {
+    "MSH.9": "MFN^M05",
+    "MFI.1": "Patient Location master file identifier",
+    "MFI.3": "File-level event code (REP, UPD)",
+    "MFE.1": "Record-level event code (MAD, MUP, MDL)",
+    "MFE.4": "Primary key value (location code)",
+    "LOC.1": "Primary Key Value - LOC",
+    "LOC.2": "Location Description",
+    "LOC.3": "Location Type - LOC",
+    "LOC.4": "Organization Name - LOC",
+    "LOC.5": "Location Address",
+    "LOC.6": "Location Phone",
+    "LOC.7": "License Number",
+    "LOC.8": "Location Equipment",
+    "LCH.1": "Primary Key Value - LCH",
+    "LCH.2": "Segment Action Code",
+    "LCH.3": "Segment Unique Key",
+    "LCH.4": "Location Characteristic ID",
+    "LCH.5": "Location Characteristic Value",
+    "requiredDataQuality": "High - location accuracy affects patient safety, resource utilization, and operational efficiency",
+    "tableReferences": {
+      "MFI.3": "HL7-0178 (File Level Event Code)",
+      "MFE.1": "HL7-0180 (Record Level Event Code)",
+      "LOC.3": "HL7-0260 (Patient Location Type)",
+      "LCH.2": "HL7-0206 (Segment Action Code)"
+    }
+  }
+}

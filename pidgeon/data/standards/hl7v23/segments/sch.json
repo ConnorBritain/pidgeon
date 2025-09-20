@@ -1,223 +1,260 @@
 {
-  "segment": "SCH",
-  "name": "Scheduling Activity Information",
-  "description": "Contains appointment and scheduling information including participants, timing, and status details",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "O",
-  "cardinality": {
-    "min": 0,
-    "max": "unbounded"
-  },
-  "fields": {
-    "SCH.1": {
-      "name": "Placer Appointment ID",
-      "description": "Unique identifier assigned by appointment requester",
-      "dataType": "EI",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["APPT123456", "SCH789012"]
+  "code": "SCH",
+  "name": "Schedule Activity Information",
+  "version": "HL7 v2.3",
+  "chapter": "Scheduling",
+  "description": "The SCH segment contains general information about the scheduled appointment",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "SCH.1",
+      "field_description": "Placer Appointment ID",
+      "length": "75",
+      "data_type": "EI",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.2": {
-      "name": "Filler Appointment ID",
-      "description": "Unique identifier assigned by appointment scheduler",
-      "dataType": "EI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["FILL987654", "SCHED456789"]
+    {
+      "position": 2,
+      "field_name": "SCH.2",
+      "field_description": "Filler Appointment ID",
+      "length": "75",
+      "data_type": "EI",
+      "optionality": "C",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.3": {
-      "name": "Occurrence Number",
-      "description": "Occurrence number for recurring appointments",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["1", "2", "5"]
+    {
+      "position": 3,
+      "field_name": "SCH.3",
+      "field_description": "Occurrence Number",
+      "length": "5",
+      "data_type": "NM",
+      "optionality": "C",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.4": {
-      "name": "Placer Group Number",
-      "description": "Group identifier for related appointments",
-      "dataType": "EI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["GRP123", "SERIES456"]
+    {
+      "position": 4,
+      "field_name": "SCH.4",
+      "field_description": "Placer Group Number",
+      "length": "75",
+      "data_type": "EI",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.5": {
-      "name": "Schedule ID",
-      "description": "Identifier for the schedule or calendar",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["CARDIO^Cardiology Schedule", "ORTHO^Orthopedic Schedule"]
+    {
+      "position": 5,
+      "field_name": "SCH.5",
+      "field_description": "Schedule ID",
+      "length": "200",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.6": {
-      "name": "Event Reason",
-      "description": "Reason for the scheduled event",
-      "dataType": "CE",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["ROUTINE^Routine appointment", "FOLLOWUP^Follow-up visit", "URGENT^Urgent consultation"]
+    {
+      "position": 6,
+      "field_name": "SCH.6",
+      "field_description": "Event Reason",
+      "length": "200",
+      "data_type": "CE",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.7": {
-      "name": "Appointment Reason",
-      "description": "Specific reason for the appointment",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["CHECKUP^Annual checkup", "CONSULT^Specialist consultation", "PROCEDURE^Medical procedure"]
+    {
+      "position": 7,
+      "field_name": "SCH.7",
+      "field_description": "Appointment Reason",
+      "length": "200",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0276"
     },
-    "SCH.8": {
-      "name": "Appointment Type",
-      "description": "Type or category of appointment",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["OFFICE^Office visit", "PHONE^Phone consultation", "SURGERY^Surgical procedure"]
+    {
+      "position": 8,
+      "field_name": "SCH.8",
+      "field_description": "Appointment Type",
+      "length": "200",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0277"
     },
-    "SCH.9": {
-      "name": "Appointment Duration",
-      "description": "Expected duration of the appointment",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["30", "60", "15"]
+    {
+      "position": 9,
+      "field_name": "SCH.9",
+      "field_description": "Appointment Duration",
+      "length": "20",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.10": {
-      "name": "Appointment Duration Units",
-      "description": "Units for the appointment duration",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["MIN^Minutes", "HR^Hours"]
+    {
+      "position": 10,
+      "field_name": "SCH.10",
+      "field_description": "Appointment Duration Units",
+      "length": "200",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.11": {
-      "name": "Appointment Timing Quantity",
-      "description": "Timing specifications for the appointment",
-      "dataType": "TQ",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["1^ONCE", "1^QD^D"]
+    {
+      "position": 11,
+      "field_name": "SCH.11",
+      "field_description": "Appointment Timing Quantity",
+      "length": "200",
+      "data_type": "TQ",
+      "optionality": "R",
+      "repeatability": "∞",
+      "table": ""
     },
-    "SCH.12": {
-      "name": "Placer Contact Person",
-      "description": "Contact person for the appointment requester",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["12345^SMITH^MARY^SECRETARY", "67890^JONES^JOHN^NURSE"]
+    {
+      "position": 12,
+      "field_name": "SCH.12",
+      "field_description": "Placer Contact Person",
+      "length": "48",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.13": {
-      "name": "Placer Contact Phone Number",
-      "description": "Phone number for placer contact person",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["555-1234^WPN^PH", "800-HOSPITAL^WPN^PH"]
+    {
+      "position": 13,
+      "field_name": "SCH.13",
+      "field_description": "Placer Contact Phone Number",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.14": {
-      "name": "Placer Contact Address",
-      "description": "Address for placer contact person",
-      "dataType": "XAD",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["123 MAIN ST^^ANYTOWN^ST^12345"]
+    {
+      "position": 14,
+      "field_name": "SCH.14",
+      "field_description": "Placer Contact Address",
+      "length": "106",
+      "data_type": "XAD",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.15": {
-      "name": "Placer Contact Location",
-      "description": "Location for placer contact person",
-      "dataType": "PL",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["OFFICE^201^A^MAIN^P"]
+    {
+      "position": 15,
+      "field_name": "SCH.15",
+      "field_description": "Placer Contact Location",
+      "length": "80",
+      "data_type": "PL",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.16": {
-      "name": "Filler Contact Person",
-      "description": "Contact person for the appointment scheduler",
-      "dataType": "XCN",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["11111^BROWN^SUSAN^SCHEDULER", "22222^DAVIS^ROBERT^COORDINATOR"]
+    {
+      "position": 16,
+      "field_name": "SCH.16",
+      "field_description": "Filler Contact Person",
+      "length": "38",
+      "data_type": "XCN",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.17": {
-      "name": "Filler Contact Phone Number",
-      "description": "Phone number for filler contact person",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["555-5678^WPN^PH", "800-SCHEDULE^WPN^PH"]
+    {
+      "position": 17,
+      "field_name": "SCH.17",
+      "field_description": "Filler Contact Phone Number",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.18": {
-      "name": "Filler Contact Address",
-      "description": "Address for filler contact person",
-      "dataType": "XAD",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["456 ELM ST^^CITYTOWN^ST^67890"]
+    {
+      "position": 18,
+      "field_name": "SCH.18",
+      "field_description": "Filler Contact Address",
+      "length": "106",
+      "data_type": "XAD",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.19": {
-      "name": "Filler Contact Location",
-      "description": "Location for filler contact person",
-      "dataType": "PL",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["SCHED^101^B^EAST^P"]
+    {
+      "position": 19,
+      "field_name": "SCH.19",
+      "field_description": "Filler Contact Location",
+      "length": "80",
+      "data_type": "PL",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.20": {
-      "name": "Entered By Person",
-      "description": "Person who entered the appointment",
-      "dataType": "XCN",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["33333^WILSON^JAMES^CLERK", "44444^TAYLOR^LISA^REGISTRAR"]
+    {
+      "position": 20,
+      "field_name": "SCH.20",
+      "field_description": "Entered By Person",
+      "length": "48",
+      "data_type": "XCN",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.21": {
-      "name": "Entered By Phone Number",
-      "description": "Phone number for person who entered appointment",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["555-9012^WPN^PH"]
+    {
+      "position": 21,
+      "field_name": "SCH.21",
+      "field_description": "Entered By Phone Number",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "SCH.22": {
-      "name": "Entered By Location",
-      "description": "Location for person who entered appointment",
-      "dataType": "PL",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["FRONT^DESK^A^MAIN^P"]
+    {
+      "position": 22,
+      "field_name": "SCH.22",
+      "field_description": "Entered By Location",
+      "length": "80",
+      "data_type": "PL",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.23": {
-      "name": "Parent Placer Appointment ID",
-      "description": "Parent appointment ID from placer for linked appointments",
-      "dataType": "EI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["PARENT123", "MASTER456"]
+    {
+      "position": 23,
+      "field_name": "SCH.23",
+      "field_description": "Parent Placer Appointment ID",
+      "length": "75",
+      "data_type": "EI",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.24": {
-      "name": "Parent Filler Appointment ID",
-      "description": "Parent appointment ID from filler for linked appointments",
-      "dataType": "EI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["PFILL789", "PMASTER012"]
+    {
+      "position": 24,
+      "field_name": "SCH.24",
+      "field_description": "Parent Filler Appointment ID",
+      "length": "75",
+      "data_type": "EI",
+      "optionality": "C",
+      "repeatability": "-",
+      "table": ""
     },
-    "SCH.25": {
-      "name": "Filler Status Code",
-      "description": "Status of the appointment from scheduler perspective",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["BOOKED^Confirmed booking", "PENDING^Pending confirmation", "CANCELLED^Cancelled"]
+    {
+      "position": 25,
+      "field_name": "SCH.25",
+      "field_description": "Filler Status Code",
+      "length": "200",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0278"
     }
-  },
-  "examples": [
-    "SCH|APPT123456|FILL987654|1||CARDIO^Cardiology Schedule|ROUTINE^Routine appointment|CHECKUP^Annual checkup|OFFICE^Office visit|30|MIN^Minutes|1^ONCE||||11111^BROWN^SUSAN^SCHEDULER|||33333^WILSON^JAMES^CLERK|||||",
-    "SCH|SCH789012|SCHED456789|||ORTHO^Orthopedic Schedule|FOLLOWUP^Follow-up visit|CONSULT^Specialist consultation|PHONE^Phone consultation|15|MIN^Minutes|1^QD^D||||22222^DAVIS^ROBERT^COORDINATOR|||44444^TAYLOR^LISA^REGISTRAR|||||"
   ],
-  "notes": [
-    "SCH.1 (Placer Appointment ID), SCH.6 (Event Reason), SCH.11 (Appointment Timing Quantity), SCH.16 (Filler Contact Person), and SCH.20 (Entered By Person) are required",
-    "Used in SIU messages for appointment scheduling workflows",
-    "Multiple SCH segments can represent different appointments or appointment changes"
-  ]
+  "field_count": 25
 }

@@ -1,0 +1,338 @@
+{
+  "segment": "AIG",
+  "name": "Appointment Information - General Resource",
+  "description": "The AIG segment contains information about various kinds of resources (other than personnel, location, or auxiliary personnel) that can be scheduled for appointments. These might include equipment, instruments, supplies, or other general resources needed for healthcare appointments and procedures.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "*",
+    "note": "Multiple AIG segments can be used to specify different general resources for the same appointment"
+  },
+  "messageTypes": ["SIU^S12", "SIU^S13", "SIU^S14", "SIU^S15", "SIU^S16", "SIU^S17", "SIU^S26"],
+  "fields": {
+    "AIG.1": {
+      "name": "Set ID - AIG",
+      "description": "This field contains the number that identifies this transaction. For the first occurrence of the segment, the sequence number shall be one, for the second occurrence, the sequence number shall be two, etc.",
+      "dataType": "SI",
+      "usage": "R",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Sequential number starting at 1 for each general resource in the appointment"
+    },
+    "AIG.2": {
+      "name": "Segment Action Code",
+      "description": "This field indicates the action to be taken when processing this segment. It allows applications to process the segment appropriately.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "A", "description": "Add/Insert"},
+        {"code": "D", "description": "Delete"},
+        {"code": "U", "description": "Update"},
+        {"code": "X", "description": "No change"}
+      ],
+      "generationHint": "A for new resources, U for updates, D for cancellations"
+    },
+    "AIG.3": {
+      "name": "Resource ID",
+      "description": "This field contains a unique identifier for the general resource. This should be a system-specific identifier that uniquely identifies the resource within the scheduling system.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "EQ001", "description": "Ultrasound Machine #1"},
+        {"code": "EQ002", "description": "X-Ray Machine Room A"},
+        {"code": "EQ003", "description": "MRI Scanner #1"},
+        {"code": "EQ004", "description": "CT Scanner #2"},
+        {"code": "EQ005", "description": "Surgical Microscope"},
+        {"code": "WHEEL001", "description": "Wheelchair #1"},
+        {"code": "BED001", "description": "Hospital Bed #1"},
+        {"code": "VENT001", "description": "Ventilator #1"}
+      ],
+      "generationHint": "Use facility-specific equipment identifiers with descriptive names"
+    },
+    "AIG.4": {
+      "name": "Resource Type",
+      "description": "This field categorizes the type of general resource being scheduled. This helps in resource management and scheduling optimization.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "EQUIP", "description": "Equipment"},
+        {"code": "SUPPLY", "description": "Supply"},
+        {"code": "TRANSPORT", "description": "Transportation"},
+        {"code": "DEVICE", "description": "Medical Device"},
+        {"code": "TOOL", "description": "Instrument/Tool"},
+        {"code": "FURNITURE", "description": "Furniture"},
+        {"code": "TECH", "description": "Technology"},
+        {"code": "OTHER", "description": "Other Resource"}
+      ],
+      "generationHint": "EQUIP most common (60%), DEVICE (20%), TRANSPORT (10%), SUPPLY (10%)"
+    },
+    "AIG.5": {
+      "name": "Resource Group",
+      "description": "This field identifies a group or category that the resource belongs to. This allows for grouped scheduling and resource management.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "IMAGING", "description": "Imaging Equipment"},
+        {"code": "SURGICAL", "description": "Surgical Equipment"},
+        {"code": "LAB", "description": "Laboratory Equipment"},
+        {"code": "CARDIO", "description": "Cardiology Equipment"},
+        {"code": "RESPIRATORY", "description": "Respiratory Equipment"},
+        {"code": "MOBILITY", "description": "Mobility Aids"},
+        {"code": "MONITORING", "description": "Monitoring Equipment"},
+        {"code": "EMERGENCY", "description": "Emergency Equipment"}
+      ],
+      "generationHint": "Group resources by department or function for easier scheduling management"
+    },
+    "AIG.6": {
+      "name": "Resource Quantity",
+      "description": "This field indicates how many of this resource are needed for the appointment. Default is 1 if not specified.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 5,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Usually 1, but can be higher for supplies or multiple identical equipment"
+    },
+    "AIG.7": {
+      "name": "Resource Quantity Units",
+      "description": "This field specifies the units for the resource quantity (e.g., each, box, set, etc.).",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "EA", "description": "Each"},
+        {"code": "SET", "description": "Set"},
+        {"code": "BOX", "description": "Box"},
+        {"code": "UNIT", "description": "Unit"},
+        {"code": "PAIR", "description": "Pair"},
+        {"code": "KIT", "description": "Kit"}
+      ],
+      "generationHint": "EA (each) is most common for individual equipment pieces"
+    },
+    "AIG.8": {
+      "name": "Start Date/Time",
+      "description": "This field contains the start date and time that this resource is requested for the appointment.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Should match or be within the overall appointment timeframe"
+    },
+    "AIG.9": {
+      "name": "Start Date/Time Offset",
+      "description": "This field contains the number of units that the start date/time may be moved without affecting the schedule.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Flexibility window in minutes: 0 (exact), 15, 30, 60 for flexible scheduling"
+    },
+    "AIG.10": {
+      "name": "Start Date/Time Offset Units",
+      "description": "This field contains the units of time for the start date/time offset.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MIN", "description": "Minutes"},
+        {"code": "H", "description": "Hours"},
+        {"code": "D", "description": "Days"}
+      ],
+      "generationHint": "MIN most common for short flexibility windows"
+    },
+    "AIG.11": {
+      "name": "Duration",
+      "description": "This field contains the duration that this resource is requested for the appointment.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Duration in specified units: 30, 60, 90, 120 (minutes) for typical appointments"
+    },
+    "AIG.12": {
+      "name": "Duration Units",
+      "description": "This field contains the units of time for the duration.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MIN", "description": "Minutes"},
+        {"code": "H", "description": "Hours"},
+        {"code": "D", "description": "Days"}
+      ],
+      "generationHint": "MIN for short procedures, H for longer procedures or equipment use"
+    },
+    "AIG.13": {
+      "name": "Allow Substitution Code",
+      "description": "This field indicates whether substitution of this resource with an equivalent resource is allowed.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 10,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes, substitution allowed"},
+        {"code": "N", "description": "No, substitution not allowed"},
+        {"code": "C", "description": "Confirm substitution with requester"}
+      ],
+      "generationHint": "Y for flexible scheduling, N for specific equipment requirements"
+    },
+    "AIG.14": {
+      "name": "Filler Status Code",
+      "description": "This field describes the status of the appointment as maintained by the filler application.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "PENDING", "description": "Pending confirmation"},
+        {"code": "BOOKED", "description": "Booked/confirmed"},
+        {"code": "COMPLETE", "description": "Completed"},
+        {"code": "CANCELLED", "description": "Cancelled"},
+        {"code": "NOSHOW", "description": "No show"},
+        {"code": "BLOCKED", "description": "Blocked"},
+        {"code": "OVERBOOK", "description": "Overbooked"}
+      ],
+      "generationHint": "PENDING for new requests, BOOKED for confirmed resources"
+    }
+  },
+  "vendorVariations": {
+    "epic": {
+      "commonFields": ["AIG.1", "AIG.3", "AIG.4", "AIG.8", "AIG.11", "AIG.12", "AIG.14"],
+      "extensions": ["Resource utilization tracking", "Automated conflict detection", "Smart substitution suggestions"],
+      "notes": "Epic provides comprehensive resource management with real-time availability checking"
+    },
+    "cerner": {
+      "commonFields": ["AIG.1", "AIG.3", "AIG.4", "AIG.6", "AIG.8", "AIG.11", "AIG.13"],
+      "extensions": ["Resource allocation optimization", "Multi-facility resource sharing", "Predictive maintenance scheduling"],
+      "notes": "Cerner emphasizes resource efficiency and cross-facility resource management"
+    },
+    "allscripts": {
+      "commonFields": ["AIG.1", "AIG.3", "AIG.4", "AIG.8", "AIG.11", "AIG.14"],
+      "extensions": ["Basic resource scheduling", "Equipment maintenance alerts"],
+      "notes": "Allscripts provides fundamental resource scheduling with maintenance tracking"
+    },
+    "athenahealth": {
+      "commonFields": ["AIG.1", "AIG.3", "AIG.4", "AIG.8", "AIG.14"],
+      "extensions": ["Cloud-based resource management", "Mobile resource booking"],
+      "notes": "Athenahealth focuses on mobile-friendly resource scheduling and cloud integration"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "Appointment.participant",
+      "Device.identifier",
+      "Location.managingOrganization",
+      "Schedule.actor",
+      "Slot.schedule"
+    ],
+    "related": ["SCH", "AIL", "AIP", "AIS", "MSH", "PID"]
+  },
+  "examples": [
+    {
+      "name": "MRI Scanner Appointment",
+      "segment": "AIG|1|A|MRI001^MRI Scanner #1^FACILITY|EQUIP^Equipment^RESTYPE|IMAGING^Imaging Equipment^DEPT|1|EA^Each^UNITS|20241215140000||MIN|60|MIN|N|BOOKED^Booked^STATUS",
+      "description": "MRI scanner scheduled for 1-hour imaging appointment"
+    },
+    {
+      "name": "Surgical Equipment Set",
+      "segment": "AIG|1|A|SURG_KIT_001^Cardiac Surgery Kit^FACILITY|EQUIP^Equipment^RESTYPE|SURGICAL^Surgical Equipment^DEPT|1|SET^Set^UNITS|20241215080000|15|MIN|240|MIN|Y|PENDING^Pending Confirmation^STATUS",
+      "description": "Cardiac surgery equipment set for 4-hour procedure with 15-minute flexibility"
+    },
+    {
+      "name": "Wheelchair Transport",
+      "segment": "AIG|1|A|WHEEL001^Wheelchair #1^FACILITY|TRANSPORT^Transportation^RESTYPE|MOBILITY^Mobility Aids^DEPT|1|EA^Each^UNITS|20241215100000||MIN|30|MIN|Y|BOOKED^Booked^STATUS",
+      "description": "Wheelchair for patient transport, 30-minute duration"
+    },
+    {
+      "name": "Laboratory Analyzer",
+      "segment": "AIG|1|A|LAB_HEMA001^Hematology Analyzer #1^FACILITY|DEVICE^Medical Device^RESTYPE|LAB^Laboratory Equipment^DEPT|1|EA^Each^UNITS|20241215120000||MIN|45|MIN|N|BOOKED^Booked^STATUS",
+      "description": "Dedicated hematology analyzer for specialized testing"
+    }
+  ],
+  "notes": [
+    "AIG segments are essential for comprehensive appointment resource management",
+    "Resource ID should be unique within the facility's equipment inventory system",
+    "Allow substitution codes enable flexible scheduling while respecting specific requirements",
+    "Duration and timing fields ensure proper resource allocation and availability",
+    "Status codes track resource utilization throughout the appointment lifecycle",
+    "Multiple AIG segments can specify different resources for complex procedures"
+  ],
+  "generationRules": {
+    "fieldPopulation": {
+      "required": ["AIG.1", "AIG.4"],
+      "recommended": ["AIG.3", "AIG.8", "AIG.11", "AIG.12", "AIG.14"],
+      "situational": ["AIG.2", "AIG.5", "AIG.6", "AIG.9", "AIG.13"]
+    },
+    "dataConsistency": {
+      "timingAlignment": "AIG.8 should align with overall appointment schedule",
+      "durationUnits": "AIG.11 and AIG.12 must be specified together",
+      "quantityUnits": "AIG.6 and AIG.7 should be used together when quantity > 1",
+      "offsetUnits": "AIG.9 and AIG.10 must be paired when offset is specified"
+    },
+    "businessRules": {
+      "resourceAvailability": "Resources must be available during requested timeframe",
+      "conflictPrevention": "No double-booking of non-shareable resources",
+      "substitutionLogic": "Substitute resources must be functionally equivalent",
+      "statusProgression": "Status should follow logical appointment workflow"
+    },
+    "messageFlow": {
+      "triggers": ["Appointment booking", "Resource requests", "Schedule modifications"],
+      "responses": ["Resource confirmations", "Availability updates", "Conflict notifications"],
+      "workflow": "Usually accompanies SCH segment and other appointment-related segments"
+    }
+  }
+}

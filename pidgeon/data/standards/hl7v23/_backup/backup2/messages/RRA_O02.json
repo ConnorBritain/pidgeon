@@ -1,0 +1,114 @@
+{
+  "messageType": "RRA",
+  "triggerEvent": "O02",
+  "name": "Pharmacy/Treatment Administration Acknowledgment",
+  "description": "Sent to acknowledge receipt and processing status of pharmacy administration messages",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Pharmacy Administration",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'RRA^O02'"]
+    },
+    {
+      "type": "segment",
+      "segment": "MSA",
+      "name": "Message Acknowledgment",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "ERR",
+      "name": "Error",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "NTE",
+      "name": "Notes and Comments",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "group",
+      "name": "RESPONSE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "structure": [
+        {
+          "type": "group",
+          "name": "PATIENT",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "PID",
+              "name": "Patient Identification",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "NTE",
+              "name": "Notes and Comments",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 0}
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "name": "ORDER",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": "unbounded"},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "ORC",
+              "name": "Common Order",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "RXA",
+              "name": "Pharmacy/Treatment Administration",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": "unbounded"},
+              "notes": ["Acknowledges administration records"]
+            },
+            {
+              "type": "segment",
+              "segment": "RXR",
+              "name": "Pharmacy/Treatment Route",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "useCases": [
+    "Acknowledge medication administration records",
+    "Confirm receipt of IV therapy documentation",
+    "Validate controlled substance administration logging",
+    "Pharmacy system integration acknowledgments"
+  ],
+  "examples": [
+    "MSH|^~\\&|PHARMACY|HOSPITAL|||20231201180000||RRA^O02|123456807|P|2.3",
+    "MSA|AA|123456805|Message accepted|",
+    "PID|||12345678^^^HOSPITAL^MR||DOE^JOHN^MIDDLE||19800101|M",
+    "ORC|OK|RX004|||||||20231201180000|||PHARM001^DAVIS^ROBERT",
+    "RXA|0|325|TAB|20231201080000|NURSE001^JONES^MARY|IV||",
+    "RXR|IV^Intravenous^HL70162"
+  ]
+}

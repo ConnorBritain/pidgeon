@@ -1,198 +1,230 @@
 {
-  "segment": "RXA",
-  "name": "Pharmacy/Treatment Administration",
-  "description": "Contains information about actual administration of medications or treatments to patients",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "O",
-  "cardinality": {
-    "min": 0,
-    "max": "unbounded"
-  },
-  "fields": {
-    "RXA.1": {
-      "name": "Give Sub-ID Counter",
-      "description": "Sequential number for multiple administrations of same medication",
-      "dataType": "ID",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["1", "2", "3"]
+  "code": "RXA",
+  "name": "Pharmacy administration segment",
+  "version": "HL7 v2.3",
+  "chapter": "Order Entry",
+  "description": "The ORC must have the filler order number and the order control code RE. As a site-specific variant, the RXO and associated RXCs and/or the RXE (and associated RXCs) may be present if the receiving application needs any of their data. The RXA carries the administration data.",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "RXA.1",
+      "field_description": "Give Sub-ID Counter",
+      "length": "4",
+      "data_type": "NM",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.2": {
-      "name": "Administration Sub-ID Counter",
-      "description": "Sequential counter for administration events",
-      "dataType": "NM",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["1", "2", "3"]
+    {
+      "position": 2,
+      "field_name": "RXA.2",
+      "field_description": "Administration Sub-ID Counter",
+      "length": "4",
+      "data_type": "NM",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.3": {
-      "name": "Date/Time Start of Administration",
-      "description": "Date and time when administration began",
-      "dataType": "TS",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["20220815143000", "20221201120000"]
+    {
+      "position": 3,
+      "field_name": "RXA.3",
+      "field_description": "Date/Time Start of Administration",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.4": {
-      "name": "Date/Time End of Administration",
-      "description": "Date and time when administration ended",
-      "dataType": "TS",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["20220815143500", "20221201123000"]
+    {
+      "position": 4,
+      "field_name": "RXA.4",
+      "field_description": "Date/Time End of Administration",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.5": {
-      "name": "Administered Code",
-      "description": "Code for the medication or treatment that was administered",
-      "dataType": "CE",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["ASA81^Aspirin 81mg^NDC", "AMX500^Amoxicillin 500mg^NDC"]
+    {
+      "position": 5,
+      "field_name": "RXA.5",
+      "field_description": "Administered Code",
+      "length": "100",
+      "data_type": "CE",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": "0292"
     },
-    "RXA.6": {
-      "name": "Administered Amount",
-      "description": "Amount of medication or treatment administered",
-      "dataType": "NM",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["1", "2.5", "0.5"]
+    {
+      "position": 6,
+      "field_name": "RXA.6",
+      "field_description": "Administered Amount",
+      "length": "20",
+      "data_type": "NM",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.7": {
-      "name": "Administered Units",
-      "description": "Units for the administered amount",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["TAB^Tablet", "ML^Milliliter", "MG^Milligram"]
+    {
+      "position": 7,
+      "field_name": "RXA.7",
+      "field_description": "Administered Units",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "C",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.8": {
-      "name": "Administered Dosage Form",
-      "description": "Dosage form of the administered medication",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["TAB^Tablet", "CAP^Capsule", "INJ^Injection"]
+    {
+      "position": 8,
+      "field_name": "RXA.8",
+      "field_description": "Administered Dosage Form",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.9": {
-      "name": "Administration Notes",
-      "description": "Notes about the administration event",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["TOLERATED^Well tolerated", "ADVERSE^Adverse reaction noted"]
+    {
+      "position": 9,
+      "field_name": "RXA.9",
+      "field_description": "Administration Notes",
+      "length": "200",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "RXA.10": {
-      "name": "Administering Provider",
-      "description": "Provider who administered the medication",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["12345^SMITH^MARY^RN", "67890^JONES^JOHN^MD"]
+    {
+      "position": 10,
+      "field_name": "RXA.10",
+      "field_description": "Administering Provider",
+      "length": "200",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.11": {
-      "name": "Administered-at Location",
-      "description": "Location where administration occurred",
-      "dataType": "CM_LA1",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1}
+    {
+      "position": 11,
+      "field_name": "RXA.11",
+      "field_description": "Administered-at Location",
+      "length": "200",
+      "data_type": "LA2",
+      "optionality": "C",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.12": {
-      "name": "Administered Per",
-      "description": "Time unit for administration (per dose, per day, etc.)",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["DOSE", "DAY", "HOUR"]
+    {
+      "position": 12,
+      "field_name": "RXA.12",
+      "field_description": "Administered Per",
+      "length": "20",
+      "data_type": "ST",
+      "optionality": "C",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.13": {
-      "name": "Administered Strength",
-      "description": "Strength of the administered medication",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["81", "500", "10"]
+    {
+      "position": 13,
+      "field_name": "RXA.13",
+      "field_description": "Administered Strength",
+      "length": "20",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.14": {
-      "name": "Administered Strength Units",
-      "description": "Units for the administered strength",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["MG^Milligram", "MCG^Microgram", "UNIT^Unit"]
+    {
+      "position": 14,
+      "field_name": "RXA.14",
+      "field_description": "Administered Strength Units",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "RXA.15": {
-      "name": "Substance Lot Number",
-      "description": "Lot number of the administered substance",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["LOT123456", "BATCH789012"]
+    {
+      "position": 15,
+      "field_name": "RXA.15",
+      "field_description": "Substance Lot Number",
+      "length": "20",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "RXA.16": {
-      "name": "Substance Expiration Date",
-      "description": "Expiration date of the administered substance",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20231215", "20240630"]
+    {
+      "position": 16,
+      "field_name": "RXA.16",
+      "field_description": "Substance Expiration Date",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "RXA.17": {
-      "name": "Substance Manufacturer Name",
-      "description": "Manufacturer of the administered substance",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["PFIZER^Pfizer Inc", "MERCK^Merck & Co"]
+    {
+      "position": 17,
+      "field_name": "RXA.17",
+      "field_description": "Substance Manufacturer Name",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": "0227"
     },
-    "RXA.18": {
-      "name": "Substance Refusal Reason",
-      "description": "Reason if patient refused the medication",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["ALLERGY^Allergy concern", "REFUSED^Patient refused"]
+    {
+      "position": 18,
+      "field_name": "RXA.18",
+      "field_description": "Substance Refusal Reason",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "RXA.19": {
-      "name": "Indication",
-      "description": "Indication or reason for administration",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["PAIN^Pain management", "HTN^Hypertension", "INFECTION^Bacterial infection"]
+    {
+      "position": 19,
+      "field_name": "RXA.19",
+      "field_description": "Indication",
+      "length": "200",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "RXA.20": {
-      "name": "Completion Status",
-      "description": "Status of the administration completion",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 20,
+      "field_name": "RXA.20",
+      "field_description": "Completion Status",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0322"
     },
-    "RXA.21": {
-      "name": "Action Code-RXA",
-      "description": "Action code for this administration record",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 21,
+      "field_name": "RXA.21",
+      "field_description": "Action Code-RXA",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0323"
     },
-    "RXA.22": {
-      "name": "System Entry Date/Time",
-      "description": "Date and time when administration was entered into system",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815144000", "20221201125000"]
+    {
+      "position": 22,
+      "field_name": "RXA.22",
+      "field_description": "System Entry Date/Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     }
-  },
-  "examples": [
-    "RXA|1|1|20220815143000|20220815143500|ASA81^Aspirin 81mg^NDC|1|TAB^Tablet|TAB^Tablet||12345^SMITH^MARY^RN||||||||||",
-    "RXA|1|1|20221201120000|20221201123000|AMX500^Amoxicillin 500mg^NDC|1|CAP^Capsule|CAP^Capsule||67890^JONES^JOHN^MD||||||||||"
   ],
-  "notes": [
-    "RXA.1 through RXA.6 are required fields for proper administration tracking",
-    "Used to document actual medication administration events",
-    "Multiple RXA segments can represent different administration events"
-  ]
+  "field_count": 22
 }

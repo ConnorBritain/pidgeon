@@ -1,0 +1,20 @@
+{
+  "code": "CD",
+  "name": "Channel Definition",
+  "version": "HL7 v2.3",
+  "description": "This data type is used for labeling of digital waveform data. It defines a recording channel which is associated with one of the values in each time sample of waveform data. Each channel has a number (which generally defines its position in a multichannel display) and an optional name or label (also used in displays). One or two named waveform sources may also be associated with a channel (providing for the use of differential amplifiers with two inputs). The other components of the channel definition data type are optional.",
+  "category": "composite",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "CD.1",
+      "field_description": "Channel Identifier",
+      "length": "0",
+      "data_type": "CM_WVI",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    }
+  ],
+  "field_count": 1
+}

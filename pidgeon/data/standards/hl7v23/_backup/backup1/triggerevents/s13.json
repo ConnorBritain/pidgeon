@@ -1,0 +1,52 @@
+{
+  "triggerEvent": "S13",
+  "name": "Notification of Appointment Rescheduling",
+  "description": "Notification sent when an existing appointment has been rescheduled to a different date or time",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "10",
+  "chapterName": "Scheduling",
+  "messageStructure": "SIU^S13",
+  "segments": {
+    "required": [
+      "MSH",
+      "SCH"
+    ],
+    "optional": [
+      "NTE",
+      "PID",
+      "PV1",
+      "PV2",
+      "OBX",
+      "DG1",
+      "RGS",
+      "AIS",
+      "AIG",
+      "AIL",
+      "AIP"
+    ]
+  },
+  "businessPurpose": "Notify auxiliary applications and systems that an existing appointment has been moved to a different date/time slot",
+  "timing": "Sent immediately after an appointment is rescheduled to new date/time in the scheduling system",
+  "responseMessage": "ACK^S13^ACK",
+  "realWorldScenarios": [
+    "Patient requests appointment change due to schedule conflict",
+    "Provider reschedules due to emergency coverage needs",
+    "Surgery rescheduled due to equipment maintenance",
+    "Clinic appointment moved due to provider illness",
+    "Radiology appointment rescheduled for better preparation time",
+    "Follow-up visit moved earlier due to clinical urgency"
+  ],
+  "generationRules": {
+    "MSH.9": "SIU^S13",
+    "SCH.1": "Original appointment ID being rescheduled",
+    "SCH.2": "Filler appointment ID",
+    "SCH.6": "Event reason code (typically 'RESCHEDULED')",
+    "SCH.11.4": "New start date/time",
+    "SCH.11.5": "New end date/time",
+    "SCH.25": "Filler status code (Rescheduled)",
+    "NTE": "Rescheduling reason/notes often included",
+    "originalDateTime": "Previous appointment date/time for reference",
+    "requiredDataQuality": "High - rescheduling accuracy critical for patient communication and resource management"
+  }
+}

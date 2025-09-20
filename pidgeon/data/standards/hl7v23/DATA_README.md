@@ -158,7 +158,7 @@ We follow a strict **template‑first** process with automated checks where poss
    * Populate `triggerevents/<code>.json` with `businessPurpose`, `timing`, `responseMessage`, and the segment lists.
    * Cross‑check against the corresponding **message** in `messages/` to ensure consistency (`messageType^triggerEvent` pair).
 
-> **Caristix nuance:** Their online dictionary is great for human reference but loads data dynamically, so we do **manual entry with citations** for trigger events and any edge cases we cannot validate automatically. This is explicitly called out in our sprint plan.
+> **Implementation note:** Online reference dictionaries are useful for human validation but often load data dynamically, so we do **manual entry with citations** for trigger events and any edge cases we cannot validate automatically. This is explicitly called out in our sprint plan.
 
 ---
 

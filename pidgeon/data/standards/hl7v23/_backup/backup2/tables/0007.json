@@ -1,0 +1,49 @@
+{
+  "table": "0007",
+  "name": "Admission Type",
+  "description": "Circumstances under which the patient was or will be admitted",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "type": "user_defined",
+  "values": [
+    {
+      "code": "A",
+      "description": "Accident",
+      "definition": "Patient admission due to accidental injury"
+    },
+    {
+      "code": "C",
+      "description": "Elective",
+      "definition": "Planned admission for non-urgent medical care"
+    },
+    {
+      "code": "E",
+      "description": "Emergency",
+      "definition": "Unplanned admission requiring immediate medical attention"
+    },
+    {
+      "code": "L",
+      "description": "Labor and Delivery",
+      "definition": "Admission for childbirth and obstetric care"
+    },
+    {
+      "code": "N",
+      "description": "Newborn (Birth in healthcare facility)",
+      "definition": "Admission of newborn infant born in healthcare facility"
+    },
+    {
+      "code": "R",
+      "description": "Routine",
+      "definition": "Standard planned admission for routine care"
+    },
+    {
+      "code": "U",
+      "description": "Urgent",
+      "definition": "Unscheduled admission requiring prompt attention"
+    }
+  ],
+  "usedIn": [
+    "PV1.4"
+  ],
+  "notes": "User-defined table allows customization for organization-specific admission workflows and policies"
+}

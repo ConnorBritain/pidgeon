@@ -1,600 +1,730 @@
 {
-  "segment": "IN2",
-  "name": "Insurance Additional Info",
-  "description": "Contains extended insurance information and additional coverage details",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "O",
-  "cardinality": {
-    "min": 0,
-    "max": "unbounded"
-  },
-  "fields": {
-    "IN2.1": {
-      "name": "Insured's Employee ID",
-      "description": "Employee identifier for the insured person",
-      "dataType": "CX",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["EMP12345", "STAFF67890"]
+  "code": "IN2",
+  "name": "Insurance additional info",
+  "version": "HL7 v2.3",
+  "chapter": "Financial Management",
+  "description": "The IN2 segment contains additional insurance policy coverage and benefit information necessary for proper billing and reimbursement. Fields used by this segment are defined by HCFA or other regulatory agencies.",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "IN2.1",
+      "field_description": "Insured's Employee ID",
+      "length": "59",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.2": {
-      "name": "Insured's Social Security Number",
-      "description": "Social Security Number of the insured",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["123-45-6789", "987-65-4321"]
+    {
+      "position": 2,
+      "field_name": "IN2.2",
+      "field_description": "Insured's Social Security Number",
+      "length": "11",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.3": {
-      "name": "Insured's Employer Name",
-      "description": "Name of the insured's employer",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["ACME Corporation", "City Hospital"]
+    {
+      "position": 3,
+      "field_name": "IN2.3",
+      "field_description": "Insured's Employer Name",
+      "length": "130",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.4": {
-      "name": "Employer Information Data",
-      "description": "Employer information data indicator",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 4,
+      "field_name": "IN2.4",
+      "field_description": "Employer Information Data",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0139"
     },
-    "IN2.5": {
-      "name": "Mail Claim Party",
-      "description": "Party to receive claim mailings",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 5,
+      "field_name": "IN2.5",
+      "field_description": "Mail Claim Party",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "∞",
       "table": "0137"
     },
-    "IN2.6": {
-      "name": "Medicare Health Ins Card Number",
-      "description": "Medicare health insurance card number",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["1EG4-TE5-MK73", "1AB2-CD3-EF45"]
+    {
+      "position": 6,
+      "field_name": "IN2.6",
+      "field_description": "Medicare Health Ins Card Number",
+      "length": "15",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.7": {
-      "name": "Medicaid Case Name",
-      "description": "Name on Medicaid case",
-      "dataType": "XPN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["SMITH^JOHN^Q", "DOE^JANE"]
+    {
+      "position": 7,
+      "field_name": "IN2.7",
+      "field_description": "Medicaid Case Name",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.8": {
-      "name": "Medicaid Case Number",
-      "description": "Medicaid case number",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["MCD123456", "MC789012"]
+    {
+      "position": 8,
+      "field_name": "IN2.8",
+      "field_description": "Medicaid Case Number",
+      "length": "15",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.9": {
-      "name": "Champus Sponsor Name",
-      "description": "Name of CHAMPUS sponsor",
-      "dataType": "XPN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["JONES^WILLIAM^R"]
+    {
+      "position": 9,
+      "field_name": "IN2.9",
+      "field_description": "Champus Sponsor Name",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.10": {
-      "name": "Champus ID Number",
-      "description": "CHAMPUS identification number",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["CH123456789", "CHAMP987654"]
+    {
+      "position": 10,
+      "field_name": "IN2.10",
+      "field_description": "Champus ID Number",
+      "length": "20",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.11": {
-      "name": "Dependent of Champus Recipient",
-      "description": "Dependent relationship to CHAMPUS recipient",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["SPO^Spouse", "CHD^Child"]
+    {
+      "position": 11,
+      "field_name": "IN2.11",
+      "field_description": "Dependent of Champus Recipient",
+      "length": "80",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.12": {
-      "name": "Champus Organization",
-      "description": "CHAMPUS organization",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["US Army", "US Navy"]
+    {
+      "position": 12,
+      "field_name": "IN2.12",
+      "field_description": "Champus Organization",
+      "length": "25",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.13": {
-      "name": "Champus Station",
-      "description": "CHAMPUS station assignment",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["Fort Knox", "Pearl Harbor"]
+    {
+      "position": 13,
+      "field_name": "IN2.13",
+      "field_description": "Champus Station",
+      "length": "25",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.14": {
-      "name": "Champus Service",
-      "description": "CHAMPUS service branch",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 14,
+      "field_name": "IN2.14",
+      "field_description": "Champus Service",
+      "length": "14",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0140"
     },
-    "IN2.15": {
-      "name": "Champus Rank/Grade",
-      "description": "Military rank or grade",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 15,
+      "field_name": "IN2.15",
+      "field_description": "Champus Rank/Grade",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0141"
     },
-    "IN2.16": {
-      "name": "Champus Status",
-      "description": "CHAMPUS status code",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 16,
+      "field_name": "IN2.16",
+      "field_description": "Champus Status",
+      "length": "3",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0142"
     },
-    "IN2.17": {
-      "name": "Champus Retire Date",
-      "description": "Military retirement date",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20200101", "20181231"]
+    {
+      "position": 17,
+      "field_name": "IN2.17",
+      "field_description": "Champus Retire Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.18": {
-      "name": "Champus Non-Avail Cert on File",
-      "description": "CHAMPUS non-availability certificate on file",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 18,
+      "field_name": "IN2.18",
+      "field_description": "Champus Non-Avail Cert on File",
+      "length": "1",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "IN2.19": {
-      "name": "Baby Coverage",
-      "description": "Baby coverage indicator",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 19,
+      "field_name": "IN2.19",
+      "field_description": "Baby Coverage",
+      "length": "1",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "IN2.20": {
-      "name": "Combine Baby Bill",
-      "description": "Combine baby bill indicator",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 20,
+      "field_name": "IN2.20",
+      "field_description": "Combine Baby Bill",
+      "length": "1",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "IN2.21": {
-      "name": "Blood Deductible",
-      "description": "Blood deductible information",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["0", "1", "2"]
+    {
+      "position": 21,
+      "field_name": "IN2.21",
+      "field_description": "Blood Deductible",
+      "length": "1",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.22": {
-      "name": "Special Coverage Approval Name",
-      "description": "Name for special coverage approval",
-      "dataType": "XPN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["BROWN^MICHAEL^APPROVAL"]
+    {
+      "position": 22,
+      "field_name": "IN2.22",
+      "field_description": "Special Coverage Approval Name",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.23": {
-      "name": "Special Coverage Approval Title",
-      "description": "Title for special coverage approval",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["Medical Director", "Review Coordinator"]
+    {
+      "position": 23,
+      "field_name": "IN2.23",
+      "field_description": "Special Coverage Approval Title",
+      "length": "30",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.24": {
-      "name": "Non-Covered Insurance Code",
-      "description": "Code for non-covered insurance",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "examples": ["COSMETIC", "EXPERIMENTAL"]
+    {
+      "position": 24,
+      "field_name": "IN2.24",
+      "field_description": "Non-Covered Insurance Code",
+      "length": "8",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": "0143"
     },
-    "IN2.25": {
-      "name": "Payor ID",
-      "description": "Identifier for the payor",
-      "dataType": "CX",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["PAY123456", "PAYOR789"]
+    {
+      "position": 25,
+      "field_name": "IN2.25",
+      "field_description": "Payor ID",
+      "length": "59",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.26": {
-      "name": "Payor Subscriber ID",
-      "description": "Subscriber identifier for the payor",
-      "dataType": "CX",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["SUB123456", "MEMBER789"]
+    {
+      "position": 26,
+      "field_name": "IN2.26",
+      "field_description": "Payor Subscriber ID",
+      "length": "59",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.27": {
-      "name": "Eligibility Source",
-      "description": "Source of eligibility information",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 27,
+      "field_name": "IN2.27",
+      "field_description": "Eligibility Source",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0144"
     },
-    "IN2.28": {
-      "name": "Room Coverage Type/Amount",
-      "description": "Room coverage type and amount",
-      "dataType": "CM_RMC",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"}
+    {
+      "position": 28,
+      "field_name": "IN2.28",
+      "field_description": "Room Coverage Type/Amount",
+      "length": "25",
+      "data_type": "CM_RMC",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.29": {
-      "name": "Policy Type/Amount",
-      "description": "Policy type and amount information",
-      "dataType": "CM_PTA",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"}
+    {
+      "position": 29,
+      "field_name": "IN2.29",
+      "field_description": "Policy Type/Amount",
+      "length": "25",
+      "data_type": "CM_PTA",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.30": {
-      "name": "Daily Deductible",
-      "description": "Daily deductible information",
-      "dataType": "CM_DDI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1}
+    {
+      "position": 30,
+      "field_name": "IN2.30",
+      "field_description": "Daily Deductible",
+      "length": "25",
+      "data_type": "CM_DDI",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.31": {
-      "name": "Living Dependency",
-      "description": "Living dependency status",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 31,
+      "field_name": "IN2.31",
+      "field_description": "Living Dependency",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0223"
     },
-    "IN2.32": {
-      "name": "Ambulatory Status",
-      "description": "Ambulatory status of insured",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 32,
+      "field_name": "IN2.32",
+      "field_description": "Ambulatory Status",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0009"
     },
-    "IN2.33": {
-      "name": "Citizenship",
-      "description": "Citizenship of insured",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 33,
+      "field_name": "IN2.33",
+      "field_description": "Citizenship",
+      "length": "4",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0171"
     },
-    "IN2.34": {
-      "name": "Primary Language",
-      "description": "Primary language of insured",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["EN^English", "ES^Spanish"]
+    {
+      "position": 34,
+      "field_name": "IN2.34",
+      "field_description": "Primary Language",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0296"
     },
-    "IN2.35": {
-      "name": "Living Arrangement",
-      "description": "Living arrangement of insured",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 35,
+      "field_name": "IN2.35",
+      "field_description": "Living Arrangement",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0220"
     },
-    "IN2.36": {
-      "name": "Publicity Indicator",
-      "description": "Publicity restrictions for insured",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1}
+    {
+      "position": 36,
+      "field_name": "IN2.36",
+      "field_description": "Publicity Indicator",
+      "length": "80",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0215"
     },
-    "IN2.37": {
-      "name": "Protection Indicator",
-      "description": "Protection indicator for insured",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 37,
+      "field_name": "IN2.37",
+      "field_description": "Protection Indicator",
+      "length": "1",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "IN2.38": {
-      "name": "Student Indicator",
-      "description": "Student status of insured",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 38,
+      "field_name": "IN2.38",
+      "field_description": "Student Indicator",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0231"
     },
-    "IN2.39": {
-      "name": "Religion",
-      "description": "Religious affiliation of insured",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 39,
+      "field_name": "IN2.39",
+      "field_description": "Religion",
+      "length": "3",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0006"
     },
-    "IN2.40": {
-      "name": "Mother's Maiden Name",
-      "description": "Mother's maiden name of insured",
-      "dataType": "XPN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["JOHNSON^MARY"]
+    {
+      "position": 40,
+      "field_name": "IN2.40",
+      "field_description": "Mother s Maiden Name",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.41": {
-      "name": "Nationality Code",
-      "description": "Nationality of insured",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["USA^United States"]
+    {
+      "position": 41,
+      "field_name": "IN2.41",
+      "field_description": "Nationality Code",
+      "length": "80",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0212"
     },
-    "IN2.42": {
-      "name": "Ethnic Group",
-      "description": "Ethnic group of insured",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 42,
+      "field_name": "IN2.42",
+      "field_description": "Ethnic Group",
+      "length": "3",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0189"
     },
-    "IN2.43": {
-      "name": "Marital Status",
-      "description": "Marital status of insured",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 43,
+      "field_name": "IN2.43",
+      "field_description": "Marital Status",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "∞",
       "table": "0002"
     },
-    "IN2.44": {
-      "name": "Employment Start Date",
-      "description": "Date employment started",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220101", "20210615"]
+    {
+      "position": 44,
+      "field_name": "IN2.44",
+      "field_description": "Employment Start Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.45": {
-      "name": "Employment Stop Date",
-      "description": "Date employment ended",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20221231"]
+    {
+      "position": 45,
+      "field_name": "IN2.45",
+      "field_description": "Employment Stop Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.46": {
-      "name": "Job Title",
-      "description": "Job title of insured",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["Software Engineer", "Nurse", "Teacher"]
+    {
+      "position": 46,
+      "field_name": "IN2.46",
+      "field_description": "Job Title",
+      "length": "20",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.47": {
-      "name": "Job Code/Class",
-      "description": "Job classification code",
-      "dataType": "JCC",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1}
+    {
+      "position": 47,
+      "field_name": "IN2.47",
+      "field_description": "Job Code/Class",
+      "length": "20",
+      "data_type": "JCC",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.48": {
-      "name": "Job Status",
-      "description": "Employment status",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 48,
+      "field_name": "IN2.48",
+      "field_description": "Job Status",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0311"
     },
-    "IN2.49": {
-      "name": "Employer Contact Person Name",
-      "description": "Name of employer contact person",
-      "dataType": "XPN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["WILSON^SARAH^HR"]
+    {
+      "position": 49,
+      "field_name": "IN2.49",
+      "field_description": "Employer Contact Person Name",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.50": {
-      "name": "Employer Contact Person Phone Number",
-      "description": "Phone number for employer contact",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["(216) 555-1234^WPN^PH"]
+    {
+      "position": 50,
+      "field_name": "IN2.50",
+      "field_description": "Employer Contact Person Phone Number",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.51": {
-      "name": "Employer Contact Reason",
-      "description": "Reason for employer contact",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 51,
+      "field_name": "IN2.51",
+      "field_description": "Employer Contact Reason",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0222"
     },
-    "IN2.52": {
-      "name": "Insured's Contact Person's Name",
-      "description": "Name of insured's contact person",
-      "dataType": "XPN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["TAYLOR^ROBERT^EMERGENCY"]
+    {
+      "position": 52,
+      "field_name": "IN2.52",
+      "field_description": "Insured's Contact Person Name",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.53": {
-      "name": "Insured's Contact Person Telephone Number",
-      "description": "Phone number for insured's contact",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["(330) 555-9876^PRN^PH"]
+    {
+      "position": 53,
+      "field_name": "IN2.53",
+      "field_description": "Insured s Contact Person Telephone Number",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.54": {
-      "name": "Insured's Contact Person Reason",
-      "description": "Reason for insured's contact",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 54,
+      "field_name": "IN2.54",
+      "field_description": "Insured s Contact Person Reason",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "∞",
       "table": "0222"
     },
-    "IN2.55": {
-      "name": "Relationship To The Patient Start Date",
-      "description": "Start date of relationship to patient",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220101"]
+    {
+      "position": 55,
+      "field_name": "IN2.55",
+      "field_description": "Relationship To The Patient Start Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.56": {
-      "name": "Relationship To The Patient Stop Date",
-      "description": "End date of relationship to patient",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20221231"]
+    {
+      "position": 56,
+      "field_name": "IN2.56",
+      "field_description": "Relationship To The Patient Stop Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.57": {
-      "name": "Insurance Co. Contact Reason",
-      "description": "Reason for insurance company contact",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 57,
+      "field_name": "IN2.57",
+      "field_description": "Insurance Company Contact Reason",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0232"
     },
-    "IN2.58": {
-      "name": "Insurance Co. Contact Phone Number",
-      "description": "Phone number for insurance company contact",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["(800) 555-CLAIM^WPN^PH"]
+    {
+      "position": 58,
+      "field_name": "IN2.58",
+      "field_description": "Insurance Company Contact Phone Number",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.59": {
-      "name": "Policy Scope",
-      "description": "Scope of insurance policy",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 59,
+      "field_name": "IN2.59",
+      "field_description": "Policy Scope",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0312"
     },
-    "IN2.60": {
-      "name": "Policy Source",
-      "description": "Source of insurance policy",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 60,
+      "field_name": "IN2.60",
+      "field_description": "Policy Source",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0313"
     },
-    "IN2.61": {
-      "name": "Patient Member Number",
-      "description": "Patient's member number",
-      "dataType": "CX",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["MBR123456789", "MEMBER987654"]
+    {
+      "position": 61,
+      "field_name": "IN2.61",
+      "field_description": "Patient Member Number",
+      "length": "60",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.62": {
-      "name": "Guarantor's Relationship To Insured",
-      "description": "Guarantor's relationship to insured",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 62,
+      "field_name": "IN2.62",
+      "field_description": "Guarantor's Relationship To Insured",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0063"
     },
-    "IN2.63": {
-      "name": "Insured's Telephone Number - Home",
-      "description": "Home phone number of insured",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["(216) 555-HOME^PRN^PH"]
+    {
+      "position": 63,
+      "field_name": "IN2.63",
+      "field_description": "Insured's Telephone Number - Home",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.64": {
-      "name": "Insured's Employer Telephone Number",
-      "description": "Work phone number of insured",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["(216) 555-WORK^WPN^PH"]
+    {
+      "position": 64,
+      "field_name": "IN2.64",
+      "field_description": "Insured's Employer Telephone Number",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.65": {
-      "name": "Military Handicapped Program",
-      "description": "Military handicapped program information",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1}
+    {
+      "position": 65,
+      "field_name": "IN2.65",
+      "field_description": "Military Handicapped Program",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN2.66": {
-      "name": "Suspend Flag",
-      "description": "Flag indicating suspended coverage",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 66,
+      "field_name": "IN2.66",
+      "field_description": "Suspend Flag",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "IN2.67": {
-      "name": "Co-pay Limit Flag",
-      "description": "Flag indicating co-pay limit reached",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 67,
+      "field_name": "IN2.67",
+      "field_description": "Co-pay Limit Flag",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "IN2.68": {
-      "name": "Stoploss Limit Flag",
-      "description": "Flag indicating stop-loss limit reached",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 68,
+      "field_name": "IN2.68",
+      "field_description": "Stoploss Limit Flag",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "IN2.69": {
-      "name": "Insured Organization Name And ID",
-      "description": "Organization name and ID for insured",
-      "dataType": "XON",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["ACME Corp^ORG123456"]
+    {
+      "position": 69,
+      "field_name": "IN2.69",
+      "field_description": "Insured Organization Name And ID",
+      "length": "130",
+      "data_type": "XON",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.70": {
-      "name": "Insured Employer Organization Name And ID",
-      "description": "Employer organization name and ID",
-      "dataType": "XON",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["City Hospital^EMP789012"]
+    {
+      "position": 70,
+      "field_name": "IN2.70",
+      "field_description": "Insured Employer Organization Name And ID",
+      "length": "130",
+      "data_type": "XON",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN2.71": {
-      "name": "Race",
-      "description": "Race of insured",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 71,
+      "field_name": "IN2.71",
+      "field_description": "Race",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0005"
     },
-    "IN2.72": {
-      "name": "Patient Relationship to Insured",
-      "description": "Patient's relationship to insured",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["01", "02", "03"]
+    {
+      "position": 72,
+      "field_name": "IN2.72",
+      "field_description": "Patient Relationship to Insured",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     }
-  },
-  "examples": [
-    "IN2|EMP12345|123-45-6789|ACME Corporation||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||",
-    "IN2||987-65-4321|City Hospital||||||||||||||||||||||||||||||||||||||||||||||||||||||||||Software Engineer||||||||||||||"
   ],
-  "notes": [
-    "All IN2 fields are optional - provides extended insurance information",
-    "Commonly used with IN1 to provide complete insurance coverage details",
-    "Contains specific fields for military (CHAMPUS) and government insurance programs"
-  ]
+  "field_count": 72
 }

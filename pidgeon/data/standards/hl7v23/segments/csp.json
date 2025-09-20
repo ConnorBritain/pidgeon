@@ -1,0 +1,50 @@
+{
+  "code": "CSP",
+  "name": "Clinical Study Phase",
+  "version": "HL7 v2.3",
+  "chapter": "Observation Reporting",
+  "description": "The CSP segment contains information on a patient’s status for a particular phase of the study. This segment is optional and is useful when a study has different evaluation intervals within it. (See Section 7.5.1.2, “phase of a clinical trial.”) The CSP segment is implemented on a study-specific basis for messaging purposes. The fact that the patient has entered a phase of the study that represents a certain treatment approach may need to be messaged to other systems, like pharmacy, nursing, or order entry. It is also important to sponsors and data management centers for tracking patient progress through the study and monitoring the data schedule defined for each phase. It may subsume OBR and OBX segments that follow it to indicate that these data describe the phase",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "CSP.1",
+      "field_description": "Study Phase Identifier",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 2,
+      "field_name": "CSP.2",
+      "field_description": "Date/time Study Phase Began",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 3,
+      "field_name": "CSP.3",
+      "field_description": "Date/time Study Phase Ended",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 4,
+      "field_name": "CSP.4",
+      "field_description": "Study Phase Evaluability",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "C",
+      "repeatability": "-",
+      "table": ""
+    }
+  ],
+  "field_count": 4
+}

@@ -1,0 +1,44 @@
+{
+  "table": "0008",
+  "name": "Acknowledgment code",
+  "description": "Codes indicating acknowledgment response status for HL7 messages",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "type": "hl7_defined",
+  "values": [
+    {
+      "code": "AA",
+      "description": "Original mode: Application Accept - Enhanced mode: Application acknowledgment: Accept",
+      "definition": "Message accepted and processed successfully"
+    },
+    {
+      "code": "AE",
+      "description": "Original mode: Application Error - Enhanced mode: Application acknowledgment: Error",
+      "definition": "Message accepted but processing resulted in error"
+    },
+    {
+      "code": "AR",
+      "description": "Original mode: Application Reject - Enhanced mode: Application acknowledgment: Reject",
+      "definition": "Message rejected due to application-level validation failure"
+    },
+    {
+      "code": "CA",
+      "description": "Enhanced mode: Accept acknowledgment: Commit Accept",
+      "definition": "Enhanced mode commit accept acknowledgment"
+    },
+    {
+      "code": "CE",
+      "description": "Enhanced mode: Accept acknowledgment: Commit Error",
+      "definition": "Enhanced mode commit error acknowledgment"
+    },
+    {
+      "code": "CR",
+      "description": "Enhanced mode: Accept acknowledgment: Commit Reject",
+      "definition": "Enhanced mode commit reject acknowledgment"
+    }
+  ],
+  "usedIn": [
+    "MSA.1"
+  ],
+  "notes": "Critical for HL7 message acknowledgment processing and error handling"
+}

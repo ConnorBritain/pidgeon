@@ -1,0 +1,316 @@
+{
+  "segment": "AIP",
+  "name": "Appointment Information - Personnel Resource",
+  "description": "The AIP segment contains information about personnel resources that can be scheduled for appointments. This includes physicians, nurses, technicians, therapists, and other healthcare personnel. The segment supports flexible scheduling, substitute personnel assignment, and comprehensive provider management.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "*",
+    "note": "Multiple AIP segments can be used to specify different personnel for the same appointment"
+  },
+  "messageTypes": ["SIU^S12", "SIU^S13", "SIU^S14", "SIU^S15", "SIU^S16", "SIU^S17", "SIU^S26"],
+  "fields": {
+    "AIP.1": {
+      "name": "Set ID - AIP",
+      "description": "This field contains the number that identifies this transaction. For the first occurrence of the segment, the sequence number shall be one, for the second occurrence, the sequence number shall be two, etc.",
+      "dataType": "SI",
+      "usage": "R",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Sequential number starting at 1 for each personnel resource in the appointment"
+    },
+    "AIP.2": {
+      "name": "Segment Action Code",
+      "description": "This field indicates the action to be taken when processing this segment. It allows applications to process the segment appropriately.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 3,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "A", "description": "Add/Insert"},
+        {"code": "D", "description": "Delete"},
+        {"code": "U", "description": "Update"},
+        {"code": "X", "description": "No change"}
+      ],
+      "generationHint": "A for new provider assignments, U for updates, D for removal from schedule"
+    },
+    "AIP.3": {
+      "name": "Personnel Resource ID",
+      "description": "This field contains a unique identifier for the personnel resource. This should be a system-specific identifier that uniquely identifies the person within the provider management system.",
+      "dataType": "XCN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Provider identifier in XCN format: ID^LastName^FirstName^MI^Suffix^Prefix^Degree^SourceTable^AssigningAuthority"
+    },
+    "AIP.4": {
+      "name": "Resource Type",
+      "description": "This field categorizes the type of personnel being scheduled. This helps in resource management and scheduling optimization.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MD", "description": "Physician"},
+        {"code": "RN", "description": "Registered Nurse"},
+        {"code": "LPN", "description": "Licensed Practical Nurse"},
+        {"code": "CNA", "description": "Certified Nursing Assistant"},
+        {"code": "RT", "description": "Respiratory Therapist"},
+        {"code": "PT", "description": "Physical Therapist"},
+        {"code": "OT", "description": "Occupational Therapist"},
+        {"code": "SW", "description": "Social Worker"},
+        {"code": "TECH", "description": "Technician"},
+        {"code": "PHARM", "description": "Pharmacist"},
+        {"code": "PA", "description": "Physician Assistant"},
+        {"code": "NP", "description": "Nurse Practitioner"},
+        {"code": "SURG", "description": "Surgeon"},
+        {"code": "ANES", "description": "Anesthesiologist"},
+        {"code": "RAD", "description": "Radiologist"},
+        {"code": "PATH", "description": "Pathologist"},
+        {"code": "ADMIN", "description": "Administrative Staff"}
+      ],
+      "generationHint": "MD most common (35%), RN (25%), TECH (15%), NP/PA (10%), others (15%)"
+    },
+    "AIP.5": {
+      "name": "Resource Group",
+      "description": "This field identifies a group or department that the personnel belongs to. This allows for grouped scheduling and resource management.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "CARDIOLOGY", "description": "Cardiology Department"},
+        {"code": "SURGERY", "description": "Surgical Services"},
+        {"code": "EMERGENCY", "description": "Emergency Department"},
+        {"code": "RADIOLOGY", "description": "Radiology Department"},
+        {"code": "LABORATORY", "description": "Laboratory Services"},
+        {"code": "FAMILY_MED", "description": "Family Medicine"},
+        {"code": "INTERNAL_MED", "description": "Internal Medicine"},
+        {"code": "PEDIATRICS", "description": "Pediatrics Department"},
+        {"code": "OBSTETRICS", "description": "Obstetrics Department"},
+        {"code": "ONCOLOGY", "description": "Oncology Department"},
+        {"code": "MENTAL_HEALTH", "description": "Mental Health Services"},
+        {"code": "ANESTHESIA", "description": "Anesthesia Department"},
+        {"code": "NURSING", "description": "Nursing Services"},
+        {"code": "PHARMACY", "description": "Pharmacy Services"}
+      ],
+      "generationHint": "Group personnel by medical specialty or service line for scheduling optimization"
+    },
+    "AIP.6": {
+      "name": "Start Date/Time",
+      "description": "This field contains the start date and time that this personnel resource is requested for the appointment.",
+      "dataType": "TS",
+      "usage": "O",
+      "maxLength": 26,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Should match or be within the overall appointment timeframe"
+    },
+    "AIP.7": {
+      "name": "Start Date/Time Offset",
+      "description": "This field contains the number of units that the start date/time may be moved without affecting the schedule.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Flexibility window in minutes: 0 (exact), 15, 30, 60 for flexible provider scheduling"
+    },
+    "AIP.8": {
+      "name": "Start Date/Time Offset Units",
+      "description": "This field contains the units of time for the start date/time offset.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MIN", "description": "Minutes"},
+        {"code": "H", "description": "Hours"},
+        {"code": "D", "description": "Days"}
+      ],
+      "generationHint": "MIN most common for short flexibility windows"
+    },
+    "AIP.9": {
+      "name": "Duration",
+      "description": "This field contains the duration that this personnel resource is requested for the appointment.",
+      "dataType": "NM",
+      "usage": "O",
+      "maxLength": 20,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Duration in specified units: 15, 30, 60, 90, 120 (minutes) for provider time allocation"
+    },
+    "AIP.10": {
+      "name": "Duration Units",
+      "description": "This field contains the units of time for the duration.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "MIN", "description": "Minutes"},
+        {"code": "H", "description": "Hours"},
+        {"code": "D", "description": "Days"}
+      ],
+      "generationHint": "MIN for routine appointments, H for surgical procedures or long consultations"
+    },
+    "AIP.11": {
+      "name": "Allow Substitution Code",
+      "description": "This field indicates whether substitution of this personnel with an equivalent provider is allowed.",
+      "dataType": "IS",
+      "usage": "O",
+      "maxLength": 10,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "Y", "description": "Yes, substitution allowed"},
+        {"code": "N", "description": "No, substitution not allowed"},
+        {"code": "C", "description": "Confirm substitution with requester"}
+      ],
+      "generationHint": "Y for flexible provider assignments, N for specific provider requests or procedures"
+    },
+    "AIP.12": {
+      "name": "Filler Status Code",
+      "description": "This field describes the status of the personnel assignment as maintained by the filler application.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "PENDING", "description": "Pending confirmation"},
+        {"code": "BOOKED", "description": "Booked/confirmed"},
+        {"code": "COMPLETE", "description": "Completed"},
+        {"code": "CANCELLED", "description": "Cancelled"},
+        {"code": "NOSHOW", "description": "Provider no show"},
+        {"code": "BLOCKED", "description": "Time blocked"},
+        {"code": "OVERBOOK", "description": "Overbooked"},
+        {"code": "REQUESTED", "description": "Requested but not confirmed"},
+        {"code": "TENTATIVE", "description": "Tentatively scheduled"}
+      ],
+      "generationHint": "PENDING for new assignments, BOOKED for confirmed provider schedules"
+    }
+  },
+  "vendorVariations": {
+    "epic": {
+      "commonFields": ["AIP.1", "AIP.3", "AIP.4", "AIP.6", "AIP.9", "AIP.10", "AIP.12"],
+      "extensions": ["Provider workload balancing", "Automated call schedules", "Credential verification integration"],
+      "notes": "Epic provides comprehensive provider management with workload optimization and credential tracking"
+    },
+    "cerner": {
+      "commonFields": ["AIP.1", "AIP.3", "AIP.4", "AIP.5", "AIP.6", "AIP.9", "AIP.11"],
+      "extensions": ["Multi-facility provider sharing", "Competency-based assignments", "Call schedule optimization"],
+      "notes": "Cerner emphasizes cross-facility resource sharing and competency-based scheduling"
+    },
+    "allscripts": {
+      "commonFields": ["AIP.1", "AIP.3", "AIP.4", "AIP.6", "AIP.9", "AIP.12"],
+      "extensions": ["Basic provider scheduling", "Availability conflict alerts"],
+      "notes": "Allscripts provides fundamental provider scheduling with conflict prevention"
+    },
+    "athenahealth": {
+      "commonFields": ["AIP.1", "AIP.3", "AIP.4", "AIP.6", "AIP.12"],
+      "extensions": ["Cloud-based provider management", "Mobile schedule access"],
+      "notes": "Athenahealth focuses on mobile-friendly provider scheduling and cloud integration"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "Appointment.participant.actor",
+      "Practitioner.identifier",
+      "PractitionerRole.practitioner",
+      "Schedule.actor",
+      "Slot.schedule",
+      "HealthcareService.providedBy"
+    ],
+    "related": ["SCH", "AIG", "AIL", "AIS", "MSH", "PID"]
+  },
+  "examples": [
+    {
+      "name": "Primary Care Provider Appointment",
+      "segment": "AIP|1|A|12345^SMITH^JOHN^A^MD^^^NPI^1234567890|MD^Physician^PROVIDER_TYPE|FAMILY_MED^Family Medicine^DEPT|20241215140000|15|MIN|30|MIN|Y|BOOKED^Booked^STATUS",
+      "description": "Family medicine physician scheduled for 30-minute routine appointment with 15-minute flexibility"
+    },
+    {
+      "name": "Surgical Team Assignment",
+      "segment": "AIP|1|A|54321^JOHNSON^SARAH^M^MD^^^NPI^9876543210|SURG^Surgeon^PROVIDER_TYPE|SURGERY^Surgical Services^DEPT|20241215080000||MIN|240|MIN|N|BOOKED^Booked^STATUS",
+      "description": "Lead surgeon for 4-hour procedure, no substitution allowed"
+    },
+    {
+      "name": "Nursing Assignment",
+      "segment": "AIP|2|A|78901^BROWN^LISA^K^RN^^^EMP^NURSE001|RN^Registered Nurse^PROVIDER_TYPE|SURGERY^Surgical Services^DEPT|20241215080000||MIN|240|MIN|Y|BOOKED^Booked^STATUS",
+      "description": "OR nurse for surgical procedure, substitution allowed with equivalent RN"
+    },
+    {
+      "name": "Specialist Consultation",
+      "segment": "AIP|1|A|11111^DAVIS^ROBERT^C^MD^^^NPI^3333333333|MD^Physician^PROVIDER_TYPE|CARDIOLOGY^Cardiology Department^DEPT|20241215100000|30|MIN|60|MIN|C|TENTATIVE^Tentatively Scheduled^STATUS",
+      "description": "Cardiology consultation with flexible timing, requiring confirmation for substitution"
+    }
+  ],
+  "notes": [
+    "AIP segments are essential for comprehensive provider resource management",
+    "Personnel ID should use standard provider identifiers (NPI, DEA, state license numbers)",
+    "Allow substitution codes enable flexible scheduling while respecting provider-specific requests",
+    "Duration and timing fields ensure proper provider allocation and availability",
+    "Status codes track provider assignments throughout the appointment lifecycle",
+    "Multiple AIP segments can specify different providers for team-based care"
+  ],
+  "generationRules": {
+    "fieldPopulation": {
+      "required": ["AIP.1", "AIP.4"],
+      "recommended": ["AIP.3", "AIP.6", "AIP.9", "AIP.10", "AIP.12"],
+      "situational": ["AIP.2", "AIP.5", "AIP.7", "AIP.11"]
+    },
+    "dataConsistency": {
+      "timingAlignment": "AIP.6 should align with overall appointment schedule",
+      "durationUnits": "AIP.9 and AIP.10 must be specified together",
+      "offsetUnits": "AIP.7 and AIP.8 must be paired when offset is specified",
+      "providerFormat": "AIP.3 should follow standard provider identifier format (XCN)"
+    },
+    "businessRules": {
+      "providerAvailability": "Providers must be available during requested timeframe",
+      "credentialVerification": "Providers must have appropriate credentials for assigned services",
+      "conflictPrevention": "No double-booking of providers without overbook status",
+      "substitutionLogic": "Substitute providers must have equivalent qualifications",
+      "statusProgression": "Status should follow logical appointment workflow",
+      "competencyAlignment": "Provider competencies must match appointment requirements"
+    },
+    "messageFlow": {
+      "triggers": ["Appointment booking", "Provider requests", "Schedule modifications", "Call schedule changes"],
+      "responses": ["Provider confirmations", "Availability updates", "Conflict notifications"],
+      "workflow": "Usually accompanies SCH segment and other appointment-related segments"
+    }
+  }
+}

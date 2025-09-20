@@ -1,0 +1,53 @@
+{
+  "triggerEvent": "A25",
+  "name": "Cancel Pending Discharge",
+  "description": "Cancellation notification when a previously sent A16 (pending discharge) event needs to be reversed",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "messageStructure": "ADT^A25",
+  "segments": {
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "NK1",
+      "PV1",
+      "PV2",
+      "OBX",
+      "AL1",
+      "DG1",
+      "PR1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3",
+      "ACC",
+      "UB1",
+      "UB2"
+    ]
+  },
+  "businessPurpose": "Cancel a previous pending discharge notification due to erroneous entry or decision to continue patient care",
+  "timing": "Sent immediately after determining that a previous A16 pending discharge event should be cancelled",
+  "responseMessage": "ACK^A25^ACK",
+  "realWorldScenarios": [
+    "Patient condition deteriorates - discharge cancelled for continued treatment",
+    "Pending discharge entered in error - patient still requires inpatient care",
+    "Family unable to provide adequate home care - discharge postponed",
+    "Post-discharge placement falls through - patient must remain in facility",
+    "Clinical team decides extended observation needed after discharge planning",
+    "Insurance authorization issues prevent planned discharge timing"
+  ],
+  "generationRules": {
+    "EVN.1": "A25",
+    "EVN.2": "Current timestamp",
+    "EVN.6": "Discharge cancellation timestamp",
+    "PV1.3": "Patient location after discharge cancellation",
+    "PV1.45": "Cancelled discharge date/time (for reference)",
+    "originalTrigger": "References original A16 that is being cancelled",
+    "requiredDataQuality": "High - discharge cancellation affects care planning, bed management, and resource allocation"
+  }
+}

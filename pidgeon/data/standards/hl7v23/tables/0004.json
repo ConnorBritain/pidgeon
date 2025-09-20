@@ -1,59 +1,47 @@
 {
-  "table": "0004",
-  "name": "Patient Class",
-  "description": "Patient categorization by site and service type",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "type": "user_defined",
+  "code": "0004",
+  "name": "Patient class",
+  "version": "HL7 v2.3",
+  "chapter": "Patient Administration",
+  "description": "User Defined Tables - Tables with data suggested by HL7 organization. Most table are customized to reflect system workflows and coded values (such as lab values).",
+  "type": "User",
   "values": [
     {
-      "code": "B",
+      "value": "B",
       "description": "Obstetrics",
-      "definition": "Patient receiving obstetric or maternity care services"
+      "comment": "",
+      "sort_order": 1
     },
     {
-      "code": "C",
-      "description": "Commercial Account",
-      "definition": "Patient under commercial insurance or account arrangement"
-    },
-    {
-      "code": "E",
+      "value": "E",
       "description": "Emergency",
-      "definition": "Patient receiving emergency department services"
+      "comment": "",
+      "sort_order": 2
     },
     {
-      "code": "I",
+      "value": "I",
       "description": "Inpatient",
-      "definition": "Patient admitted as an inpatient to the facility"
+      "comment": "",
+      "sort_order": 3
     },
     {
-      "code": "N",
-      "description": "Not Applicable",
-      "definition": "Patient class classification is not applicable"
-    },
-    {
-      "code": "O",
+      "value": "O",
       "description": "Outpatient",
-      "definition": "Patient receiving outpatient or ambulatory services"
+      "comment": "",
+      "sort_order": 4
     },
     {
-      "code": "P",
+      "value": "P",
       "description": "Preadmit",
-      "definition": "Patient registered for future admission or services"
+      "comment": "",
+      "sort_order": 5
     },
     {
-      "code": "R",
+      "value": "R",
       "description": "Recurring patient",
-      "definition": "Patient with recurring or repeated visits to the facility"
-    },
-    {
-      "code": "U",
-      "description": "Unknown",
-      "definition": "Patient class is unknown or unspecified"
+      "comment": "",
+      "sort_order": 6
     }
   ],
-  "usedIn": [
-    "PV1.2"
-  ],
-  "notes": "User-defined table without consistent industry-wide definition, subject to site-specific variations"
+  "value_count": 6
 }

@@ -1,0 +1,49 @@
+{
+  "messageType": "ACK",
+  "triggerEvent": "",
+  "name": "General Acknowledgment Message",
+  "description": "Sent to acknowledge receipt and processing status of any HL7 message",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "System Administration",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 Message Type set to 'ACK^[original trigger event]'"]
+    },
+    {
+      "type": "segment",
+      "segment": "MSA",
+      "name": "Message Acknowledgment",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSA.1 Acknowledgment Code: AA (Application Accept), AE (Application Error), AR (Application Reject)", "MSA.2 Message Control ID from original message"]
+    },
+    {
+      "type": "segment",
+      "segment": "ERR",
+      "name": "Error Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "notes": ["Required when MSA.1 is AE or AR to provide error details"]
+    }
+  ],
+  "useCases": [
+    "Application-level acknowledgment for successful message processing",
+    "Error reporting and rejection of malformed messages",
+    "System integration testing and message validation",
+    "Audit trail for message delivery confirmation"
+  ],
+  "examples": [
+    "MSH|^~\\&|RECEIVING_APP|RECEIVING_FAC|SENDING_APP|SENDING_FAC|20231201120000||ACK^A01^ACK|123456800|P|2.3",
+    "MSA|AA|123456789|Message accepted successfully",
+    "",
+    "MSH|^~\\&|RECEIVING_APP|RECEIVING_FAC|SENDING_APP|SENDING_FAC|20231201120000||ACK^A01^ACK|123456801|P|2.3",
+    "MSA|AE|123456789|Application error occurred",
+    "ERR|^^^0100^^PID^1|E|Required field missing^Application^100|Patient ID is required"
+  ]
+}

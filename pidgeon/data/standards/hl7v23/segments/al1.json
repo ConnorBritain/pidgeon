@@ -1,76 +1,70 @@
 {
-  "segment": "AL1",
+  "code": "AL1",
   "name": "Patient Allergy Information",
-  "description": "Contains patient allergy and adverse reaction information for safety alerts",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "O",
-  "cardinality": {
-    "min": 0,
-    "max": "unbounded"
-  },
-  "fields": {
-    "AL1.1": {
-      "name": "Set ID - AL1",
-      "description": "Sequence number for AL1 segments within message",
-      "dataType": "SI",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["1", "2", "3"]
+  "version": "HL7 v2.3",
+  "chapter": "Patient Administration",
+  "description": "The AL1 segment contains patient allergy information of various types. Most of this information will be derived from user-defined tables. Each AL1 segment describes a single patient allergy.",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "AL1.1",
+      "field_description": "Set ID - AL1",
+      "length": "4",
+      "data_type": "SI",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "AL1.2": {
-      "name": "Allergy Type",
-      "description": "Type or category of allergy",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0127",
-      "validValues": ["DA", "FA", "MA", "MC", "EA", "AA"],
-      "examples": ["DA", "FA", "MA"]
+    {
+      "position": 2,
+      "field_name": "AL1.2",
+      "field_description": "Allergy Type",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0127"
     },
-    "AL1.3": {
-      "name": "Allergy Code/Mnemonic/Description",
-      "description": "Code or description of the allergen",
-      "dataType": "CE",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["ASPIRIN^Aspirin^L", "PENICILLIN^Penicillin^L", "LATEX^Latex^L"]
+    {
+      "position": 3,
+      "field_name": "AL1.3",
+      "field_description": "Allergy Code/Mnemonic/ Description",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "AL1.4": {
-      "name": "Allergy Severity",
-      "description": "Severity level of allergic reaction",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0128",
-      "validValues": ["SV", "MO", "MI", "U"],
-      "examples": ["SV", "MO", "MI"]
+    {
+      "position": 4,
+      "field_name": "AL1.4",
+      "field_description": "Allergy Severity",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0128"
     },
-    "AL1.5": {
-      "name": "Allergy Reaction",
-      "description": "Description of allergic reaction or symptoms",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "examples": ["RASH", "ANAPHYLAXIS", "NAUSEA"]
+    {
+      "position": 5,
+      "field_name": "AL1.5",
+      "field_description": "Allergy Reaction",
+      "length": "15",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "AL1.6": {
-      "name": "Identification Date",
-      "description": "Date when allergy was first identified",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815", "19951201"]
+    {
+      "position": 6,
+      "field_name": "AL1.6",
+      "field_description": "Identification Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     }
-  },
-  "examples": [
-    "AL1|1|DA|ASPIRIN^Aspirin^L|SV|ANAPHYLAXIS|20220815",
-    "AL1|2|FA|PEANUTS^Peanuts^L|MO|RASH|19951201",
-    "AL1|3|MA|LATEX^Latex^L|MI|CONTACT DERMATITIS|20100503"
   ],
-  "notes": [
-    "AL1.1 (Set ID) is required for segment sequencing",
-    "AL1.3 (Allergy Code) is required to identify the allergen",
-    "Critical safety information - should be prominently displayed"
-  ]
+  "field_count": 6
 }

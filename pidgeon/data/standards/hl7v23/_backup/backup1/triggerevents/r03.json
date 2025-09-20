@@ -1,0 +1,47 @@
+{
+  "triggerEvent": "R03",
+  "name": "Display Based Response",
+  "description": "Structured clinical data report optimized for display systems and user interfaces",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "7",
+  "chapterName": "Observation Reporting",
+  "messageStructure": "ORU^R03",
+  "segments": {
+    "required": [
+      "MSH",
+      "PID",
+      "OBR",
+      "OBX"
+    ],
+    "optional": [
+      "NTE",
+      "PV1",
+      "ORC",
+      "CTI"
+    ]
+  },
+  "businessPurpose": "Transmit observation results formatted specifically for optimal display in clinical information systems",
+  "timing": "Sent when clinical results need to be presented in user-friendly display format",
+  "responseMessage": "ACK^R03^ACK",
+  "realWorldScenarios": [
+    "Radiology report formatted for clinician review in EMR",
+    "Laboratory results panel organized for physician dashboard display",
+    "Pathology report structured for oncology team review interface",
+    "Cardiology study results formatted for cardiologist workstation",
+    "Clinical summary report optimized for nursing station displays",
+    "Multi-department results compiled for patient care conference review"
+  ],
+  "generationRules": {
+    "MSH.9": "ORU^R03",
+    "PID": "Patient identification for results association",
+    "OBR.1": "Set ID for observation request",
+    "OBR.4": "Universal service identifier",
+    "OBR.7": "Observation date/time",
+    "OBX.1": "Set ID for observation simple",
+    "OBX.2": "Value type (display-optimized formatting)",
+    "OBX.3": "Observation identifier",
+    "OBX.5": "Observation value (formatted for display)",
+    "requiredDataQuality": "High - display formatting must maintain clinical accuracy while optimizing readability"
+  }
+}

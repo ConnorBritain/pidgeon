@@ -1,0 +1,223 @@
+{
+  "segment": "SCH",
+  "name": "Scheduling Activity Information",
+  "description": "Contains appointment and scheduling information including participants, timing, and status details",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "unbounded"
+  },
+  "fields": {
+    "SCH.1": {
+      "name": "Placer Appointment ID",
+      "description": "Unique identifier assigned by appointment requester",
+      "dataType": "EI",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["APPT123456", "SCH789012"]
+    },
+    "SCH.2": {
+      "name": "Filler Appointment ID",
+      "description": "Unique identifier assigned by appointment scheduler",
+      "dataType": "EI",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["FILL987654", "SCHED456789"]
+    },
+    "SCH.3": {
+      "name": "Occurrence Number",
+      "description": "Occurrence number for recurring appointments",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["1", "2", "5"]
+    },
+    "SCH.4": {
+      "name": "Placer Group Number",
+      "description": "Group identifier for related appointments",
+      "dataType": "EI",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["GRP123", "SERIES456"]
+    },
+    "SCH.5": {
+      "name": "Schedule ID",
+      "description": "Identifier for the schedule or calendar",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["CARDIO^Cardiology Schedule", "ORTHO^Orthopedic Schedule"]
+    },
+    "SCH.6": {
+      "name": "Event Reason",
+      "description": "Reason for the scheduled event",
+      "dataType": "CE",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["ROUTINE^Routine appointment", "FOLLOWUP^Follow-up visit", "URGENT^Urgent consultation"]
+    },
+    "SCH.7": {
+      "name": "Appointment Reason",
+      "description": "Specific reason for the appointment",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["CHECKUP^Annual checkup", "CONSULT^Specialist consultation", "PROCEDURE^Medical procedure"]
+    },
+    "SCH.8": {
+      "name": "Appointment Type",
+      "description": "Type or category of appointment",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["OFFICE^Office visit", "PHONE^Phone consultation", "SURGERY^Surgical procedure"]
+    },
+    "SCH.9": {
+      "name": "Appointment Duration",
+      "description": "Expected duration of the appointment",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["30", "60", "15"]
+    },
+    "SCH.10": {
+      "name": "Appointment Duration Units",
+      "description": "Units for the appointment duration",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["MIN^Minutes", "HR^Hours"]
+    },
+    "SCH.11": {
+      "name": "Appointment Timing Quantity",
+      "description": "Timing specifications for the appointment",
+      "dataType": "TQ",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["1^ONCE", "1^QD^D"]
+    },
+    "SCH.12": {
+      "name": "Placer Contact Person",
+      "description": "Contact person for the appointment requester",
+      "dataType": "XCN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["12345^SMITH^MARY^SECRETARY", "67890^JONES^JOHN^NURSE"]
+    },
+    "SCH.13": {
+      "name": "Placer Contact Phone Number",
+      "description": "Phone number for placer contact person",
+      "dataType": "XTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["555-1234^WPN^PH", "800-HOSPITAL^WPN^PH"]
+    },
+    "SCH.14": {
+      "name": "Placer Contact Address",
+      "description": "Address for placer contact person",
+      "dataType": "XAD",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["123 MAIN ST^^ANYTOWN^ST^12345"]
+    },
+    "SCH.15": {
+      "name": "Placer Contact Location",
+      "description": "Location for placer contact person",
+      "dataType": "PL",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["OFFICE^201^A^MAIN^P"]
+    },
+    "SCH.16": {
+      "name": "Filler Contact Person",
+      "description": "Contact person for the appointment scheduler",
+      "dataType": "XCN",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["11111^BROWN^SUSAN^SCHEDULER", "22222^DAVIS^ROBERT^COORDINATOR"]
+    },
+    "SCH.17": {
+      "name": "Filler Contact Phone Number",
+      "description": "Phone number for filler contact person",
+      "dataType": "XTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["555-5678^WPN^PH", "800-SCHEDULE^WPN^PH"]
+    },
+    "SCH.18": {
+      "name": "Filler Contact Address",
+      "description": "Address for filler contact person",
+      "dataType": "XAD",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["456 ELM ST^^CITYTOWN^ST^67890"]
+    },
+    "SCH.19": {
+      "name": "Filler Contact Location",
+      "description": "Location for filler contact person",
+      "dataType": "PL",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["SCHED^101^B^EAST^P"]
+    },
+    "SCH.20": {
+      "name": "Entered By Person",
+      "description": "Person who entered the appointment",
+      "dataType": "XCN",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["33333^WILSON^JAMES^CLERK", "44444^TAYLOR^LISA^REGISTRAR"]
+    },
+    "SCH.21": {
+      "name": "Entered By Phone Number",
+      "description": "Phone number for person who entered appointment",
+      "dataType": "XTN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["555-9012^WPN^PH"]
+    },
+    "SCH.22": {
+      "name": "Entered By Location",
+      "description": "Location for person who entered appointment",
+      "dataType": "PL",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["FRONT^DESK^A^MAIN^P"]
+    },
+    "SCH.23": {
+      "name": "Parent Placer Appointment ID",
+      "description": "Parent appointment ID from placer for linked appointments",
+      "dataType": "EI",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["PARENT123", "MASTER456"]
+    },
+    "SCH.24": {
+      "name": "Parent Filler Appointment ID",
+      "description": "Parent appointment ID from filler for linked appointments",
+      "dataType": "EI",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["PFILL789", "PMASTER012"]
+    },
+    "SCH.25": {
+      "name": "Filler Status Code",
+      "description": "Status of the appointment from scheduler perspective",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["BOOKED^Confirmed booking", "PENDING^Pending confirmation", "CANCELLED^Cancelled"]
+    }
+  },
+  "examples": [
+    "SCH|APPT123456|FILL987654|1||CARDIO^Cardiology Schedule|ROUTINE^Routine appointment|CHECKUP^Annual checkup|OFFICE^Office visit|30|MIN^Minutes|1^ONCE||||11111^BROWN^SUSAN^SCHEDULER|||33333^WILSON^JAMES^CLERK|||||",
+    "SCH|SCH789012|SCHED456789|||ORTHO^Orthopedic Schedule|FOLLOWUP^Follow-up visit|CONSULT^Specialist consultation|PHONE^Phone consultation|15|MIN^Minutes|1^QD^D||||22222^DAVIS^ROBERT^COORDINATOR|||44444^TAYLOR^LISA^REGISTRAR|||||"
+  ],
+  "notes": [
+    "SCH.1 (Placer Appointment ID), SCH.6 (Event Reason), SCH.11 (Appointment Timing Quantity), SCH.16 (Filler Contact Person), and SCH.20 (Entered By Person) are required",
+    "Used in SIU messages for appointment scheduling workflows",
+    "Multiple SCH segments can represent different appointments or appointment changes"
+  ]
+}

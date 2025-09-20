@@ -1,0 +1,49 @@
+{
+  "segment": "NTE",
+  "name": "Notes and Comments",
+  "description": "Contains free-text notes and comments associated with other segments or messages",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "unbounded"
+  },
+  "fields": {
+    "NTE.1": {
+      "name": "Set ID - Notes and Comments",
+      "description": "Sequence number for notes segments within message",
+      "dataType": "SI",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["1", "2", "3"]
+    },
+    "NTE.2": {
+      "name": "Source of Comment",
+      "description": "Source or author of the comment",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0105",
+      "examples": ["L", "P", "N"]
+    },
+    "NTE.3": {
+      "name": "Comment",
+      "description": "Free-text comment or note",
+      "dataType": "FT",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["Patient reports mild chest pain", "Follow up in 2 weeks", "No known allergies"]
+    }
+  },
+  "examples": [
+    "NTE|1|L|Patient reports mild chest pain on exertion",
+    "NTE|2|P|Follow up appointment scheduled for next week",
+    "NTE|3|N|No known drug allergies documented"
+  ],
+  "notes": [
+    "All NTE fields are optional but NTE.3 (Comment) contains the primary content",
+    "Multiple NTE segments can be used for different types of comments",
+    "Often follows PID, OBR, OBX or other segments to provide additional context"
+  ]
+}

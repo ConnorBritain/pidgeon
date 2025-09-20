@@ -1,221 +1,260 @@
 {
-  "segment": "IN3",
-  "name": "Insurance Additional Info - Certification",
-  "description": "Contains insurance certification and authorization information including pre-authorization and case management details",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "O",
-  "cardinality": {
-    "min": 0,
-    "max": "unbounded"
-  },
-  "fields": {
-    "IN3.1": {
-      "name": "Set ID - Insurance Certification",
-      "description": "Sequence number for insurance certification segments",
-      "dataType": "SI",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["1", "2", "3"]
+  "code": "IN3",
+  "name": "Insurance additional info - certification",
+  "version": "HL7 v2.3",
+  "chapter": "Financial Management",
+  "description": "The IN3 segment contains additional insurance information for certifying the need for patient care. Fields used by this segment are defined by HCFA, or other regulatory agencies.",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "IN3.1",
+      "field_description": "Set ID - Insurance Certification",
+      "length": "4",
+      "data_type": "SI",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.2": {
-      "name": "Certification Number",
-      "description": "Unique certification identifier",
-      "dataType": "CX",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["CERT123456", "AUTH789012"]
+    {
+      "position": 2,
+      "field_name": "IN3.2",
+      "field_description": "Certification Number",
+      "length": "59",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.3": {
-      "name": "Certified By",
-      "description": "Person who provided the certification",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["12345^SMITH^MARY^MD", "67890^JONES^JOHN^RN"]
+    {
+      "position": 3,
+      "field_name": "IN3.3",
+      "field_description": "Certified By",
+      "length": "60",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN3.4": {
-      "name": "Certification Required",
-      "description": "Indicates if certification is required",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 4,
+      "field_name": "IN3.4",
+      "field_description": "Certification Required",
+      "length": "1",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "IN3.5": {
-      "name": "Penalty",
-      "description": "Penalty information for non-compliance",
-      "dataType": "CM_PEN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1}
+    {
+      "position": 5,
+      "field_name": "IN3.5",
+      "field_description": "Penalty",
+      "length": "10",
+      "data_type": "CM_PEN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.6": {
-      "name": "Certification Date/Time",
-      "description": "Date and time certification was granted",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815143000", "20221201120000"]
+    {
+      "position": 6,
+      "field_name": "IN3.6",
+      "field_description": "Certification Date/Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.7": {
-      "name": "Certification Modify Date/Time",
-      "description": "Date and time certification was last modified",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220816143000", "20221202120000"]
+    {
+      "position": 7,
+      "field_name": "IN3.7",
+      "field_description": "Certification Modify Date/Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.8": {
-      "name": "Operator",
-      "description": "Person who entered or modified the certification",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["11111^BROWN^SUSAN^CLERK", "22222^DAVIS^ROBERT^ADMIN"]
+    {
+      "position": 8,
+      "field_name": "IN3.8",
+      "field_description": "Operator",
+      "length": "60",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN3.9": {
-      "name": "Certification Begin Date",
-      "description": "Date when certification becomes effective",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815", "20221201"]
+    {
+      "position": 9,
+      "field_name": "IN3.9",
+      "field_description": "Certification Begin Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.10": {
-      "name": "Certification End Date",
-      "description": "Date when certification expires",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20230815", "20231201"]
+    {
+      "position": 10,
+      "field_name": "IN3.10",
+      "field_description": "Certification End Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.11": {
-      "name": "Days",
-      "description": "Number of days certification is valid",
-      "dataType": "CM_DTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1}
+    {
+      "position": 11,
+      "field_name": "IN3.11",
+      "field_description": "Days",
+      "length": "3",
+      "data_type": "CM_DTN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.12": {
-      "name": "Non-Concur Code/Description",
-      "description": "Code and description for non-concurrence",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["DENIED^Authorization denied", "PENDING^Pending review"]
+    {
+      "position": 12,
+      "field_name": "IN3.12",
+      "field_description": "Non-Concur Code/Description",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0233"
     },
-    "IN3.13": {
-      "name": "Non-Concur Effective Date/Time",
-      "description": "Effective date for non-concurrence decision",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815143000", "20221201120000"]
+    {
+      "position": 13,
+      "field_name": "IN3.13",
+      "field_description": "Non-Concur Effective Date/Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.14": {
-      "name": "Physician Reviewer",
-      "description": "Physician who reviewed the certification request",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["33333^WILSON^JAMES^MD", "44444^TAYLOR^LISA^MD"]
+    {
+      "position": 14,
+      "field_name": "IN3.14",
+      "field_description": "Physician Reviewer",
+      "length": "60",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN3.15": {
-      "name": "Certification Contact",
-      "description": "Contact person for certification matters",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["Mary Smith", "John Jones"]
+    {
+      "position": 15,
+      "field_name": "IN3.15",
+      "field_description": "Certification Contact",
+      "length": "48",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.16": {
-      "name": "Certification Contact Phone Number",
-      "description": "Phone number for certification contact",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["555-1234^WPN^PH", "800-CERTIFY^WPN^PH"]
+    {
+      "position": 16,
+      "field_name": "IN3.16",
+      "field_description": "Certification Contact Phone Number",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN3.17": {
-      "name": "Appeal Reason",
-      "description": "Reason for certification appeal",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["MEDICAL^Medical necessity", "ADMIN^Administrative error"]
+    {
+      "position": 17,
+      "field_name": "IN3.17",
+      "field_description": "Appeal Reason",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.18": {
-      "name": "Certification Agency",
-      "description": "Agency responsible for certification",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["AETNA^Aetna Health Plans", "BCBS^Blue Cross Blue Shield"]
+    {
+      "position": 18,
+      "field_name": "IN3.18",
+      "field_description": "Certification Agency",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.19": {
-      "name": "Certification Agency Phone Number",
-      "description": "Phone number for certification agency",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["800-AETNA^WPN^PH", "800-BCBS^WPN^PH"]
+    {
+      "position": 19,
+      "field_name": "IN3.19",
+      "field_description": "Certification Agency Phone Number",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN3.20": {
-      "name": "Pre-Certification required/Window",
-      "description": "Pre-certification requirements and time window",
-      "dataType": "CM_PCF",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1}
+    {
+      "position": 20,
+      "field_name": "IN3.20",
+      "field_description": "Pre-Certification required/Window",
+      "length": "40",
+      "data_type": "CM_PCF",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "IN3.21": {
-      "name": "Case Manager",
-      "description": "Case manager assigned to this certification",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["Susan Brown", "Robert Davis"]
+    {
+      "position": 21,
+      "field_name": "IN3.21",
+      "field_description": "Case Manager",
+      "length": "48",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.22": {
-      "name": "Second Opinion Date",
-      "description": "Date second opinion was obtained",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220820", "20221205"]
+    {
+      "position": 22,
+      "field_name": "IN3.22",
+      "field_description": "Second Opinion Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN3.23": {
-      "name": "Second Opinion Status",
-      "description": "Status of second opinion requirement",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 23,
+      "field_name": "IN3.23",
+      "field_description": "Second Opinion Status",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0151"
     },
-    "IN3.24": {
-      "name": "Second Opinion Documentation Received",
-      "description": "Indicates if second opinion documentation was received",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 24,
+      "field_name": "IN3.24",
+      "field_description": "Second Opinion Documentation Received",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "∞",
       "table": "0152"
     },
-    "IN3.25": {
-      "name": "Second Opinion Physician",
-      "description": "Physician who provided second opinion",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["55555^GARCIA^CARLOS^MD", "66666^MARTINEZ^ANNA^MD"]
+    {
+      "position": 25,
+      "field_name": "IN3.25",
+      "field_description": "Second Opinion Physician",
+      "length": "60",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": "0010"
     }
-  },
-  "examples": [
-    "IN3|1|CERT123456|12345^SMITH^MARY^MD|Y||20220815143000|20220816143000|11111^BROWN^SUSAN^CLERK|20220815|20230815||||||||||||||||",
-    "IN3|2|AUTH789012|67890^JONES^JOHN^RN|N||20221201120000|||20221201|20231201|||||33333^WILSON^JAMES^MD|Mary Smith|555-1234^WPN^PH||||||||"
   ],
-  "notes": [
-    "IN3.1 (Set ID) is required for segment sequencing",
-    "Used with IN1 and IN2 segments for complete insurance information",
-    "Contains detailed authorization and certification workflow information"
-  ]
+  "field_count": 25
 }

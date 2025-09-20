@@ -1,40 +1,41 @@
 {
-  "table": "0027",
+  "code": "0027",
   "name": "Priority",
-  "description": "Priority codes for ordering and processing clinical requests",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "type": "hl7_defined",
+  "version": "HL7 v2.3",
+  "chapter": "Master Files",
+  "description": "HL7 Standard Tables - Tables defined by the HL7 organization. Most tables in this category are related to the standard and its message structures.",
+  "type": "HL7",
   "values": [
     {
-      "code": "A",
+      "value": "A",
       "description": "As soon as possible (a priority lower than stat)",
-      "definition": "Urgent priority level below stat for clinical requests requiring expedited processing"
+      "comment": "",
+      "sort_order": 1
     },
     {
-      "code": "P",
+      "value": "P",
       "description": "Preoperative (to be done prior to surgery)",
-      "definition": "Priority for procedures that must be completed before surgical intervention"
+      "comment": "",
+      "sort_order": 2
     },
     {
-      "code": "R",
+      "value": "R",
       "description": "Routine",
-      "definition": "Standard priority for normal processing workflow"
+      "comment": "",
+      "sort_order": 3
     },
     {
-      "code": "S",
+      "value": "S",
       "description": "Stat (do immediately)",
-      "definition": "Highest priority requiring immediate attention and processing"
+      "comment": "",
+      "sort_order": 4
     },
     {
-      "code": "T",
+      "value": "T",
       "description": "Timing critical (do as near as possible to requested time)",
-      "definition": "Time-sensitive priority requiring precise scheduling coordination"
+      "comment": "",
+      "sort_order": 5
     }
   ],
-  "usedIn": [
-    "OBR.5",
-    "TQ1.9"
-  ],
-  "notes": "Essential for clinical workflow prioritization and resource allocation"
+  "value_count": 5
 }

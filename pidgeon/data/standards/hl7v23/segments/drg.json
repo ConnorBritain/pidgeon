@@ -1,105 +1,110 @@
 {
-  "segment": "DRG",
+  "code": "DRG",
   "name": "Diagnosis Related Group",
-  "description": "Contains DRG assignment and reimbursement information for hospital billing and case classification",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "O",
-  "cardinality": {
-    "min": 0,
-    "max": 1
-  },
-  "fields": {
-    "DRG.1": {
-      "name": "Diagnostic Related Group",
-      "description": "DRG code assigned to this case",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["247^Percutaneous Cardiovascular Procedures", "292^Heart Failure & Shock", "470^Major Joint Replacement"]
+  "version": "HL7 v2.3",
+  "chapter": "Financial Management",
+  "description": "The DRG segment contains diagnoses-related grouping information of various types. The DRG segment is used to send the DRG information, for example, for billing and medical records encoding",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "DRG.1",
+      "field_description": "Diagnostic Related Group",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0055"
     },
-    "DRG.2": {
-      "name": "DRG Assigned Date/Time",
-      "description": "Date and time when DRG was assigned",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815143000", "20221201120000"]
+    {
+      "position": 2,
+      "field_name": "DRG.2",
+      "field_description": "DRG Assigned Date/Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "DRG.3": {
-      "name": "DRG Approval Indicator",
-      "description": "Indicates if DRG assignment was approved",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 3,
+      "field_name": "DRG.3",
+      "field_description": "DRG Approval Indicator",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "DRG.4": {
-      "name": "DRG Grouper Review Code",
-      "description": "Review code from DRG grouper software",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 4,
+      "field_name": "DRG.4",
+      "field_description": "DRG Grouper Review Code",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0056"
     },
-    "DRG.5": {
-      "name": "Outlier Type",
-      "description": "Type of outlier for DRG classification",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["DAY^Day outlier", "COST^Cost outlier", "NONE^No outlier"]
+    {
+      "position": 5,
+      "field_name": "DRG.5",
+      "field_description": "Outlier Type",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0083"
     },
-    "DRG.6": {
-      "name": "Outlier Days",
-      "description": "Number of outlier days beyond DRG threshold",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["5", "12", "8"]
+    {
+      "position": 6,
+      "field_name": "DRG.6",
+      "field_description": "Outlier Days",
+      "length": "3",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "DRG.7": {
-      "name": "Outlier Cost",
-      "description": "Cost associated with outlier days or procedures",
-      "dataType": "CP",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["5000.00^USD", "12500.00^USD", "8750.00^USD"]
+    {
+      "position": 7,
+      "field_name": "DRG.7",
+      "field_description": "Outlier Cost",
+      "length": "12",
+      "data_type": "CP",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "DRG.8": {
-      "name": "DRG Payor",
-      "description": "Payor for DRG reimbursement",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 8,
+      "field_name": "DRG.8",
+      "field_description": "DRG Payor",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0229"
     },
-    "DRG.9": {
-      "name": "Outlier Reimbursement",
-      "description": "Reimbursement amount for outlier costs",
-      "dataType": "CP",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["4000.00^USD", "10000.00^USD", "7000.00^USD"]
+    {
+      "position": 9,
+      "field_name": "DRG.9",
+      "field_description": "Outlier Reimbursement",
+      "length": "9",
+      "data_type": "CP",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "DRG.10": {
-      "name": "Confidential Indicator",
-      "description": "Indicates if DRG information is confidential",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 10,
+      "field_name": "DRG.10",
+      "field_description": "Confidential Indicator",
+      "length": "1",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     }
-  },
-  "examples": [
-    "DRG|247^Percutaneous Cardiovascular Procedures|20220815143000|Y||DAY^Day outlier|5|5000.00^USD||4000.00^USD|N",
-    "DRG|292^Heart Failure & Shock|20221201120000|Y||NONE^No outlier|0|0.00^USD||0.00^USD|N"
   ],
-  "notes": [
-    "All DRG fields are optional but provide important reimbursement information",
-    "Used with DG1 and other clinical segments for case mix classification",
-    "Critical for hospital reimbursement and quality reporting"
-  ]
+  "field_count": 10
 }

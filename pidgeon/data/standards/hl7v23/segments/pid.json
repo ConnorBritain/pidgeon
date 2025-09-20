@@ -1,275 +1,310 @@
 {
-  "segment": "PID",
+  "code": "PID",
   "name": "Patient Identification",
-  "description": "Primary patient identifying and demographic information",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "R",
-  "cardinality": {
-    "min": 1,
-    "max": 1
-  },
-  "fields": {
-    "PID.1": {
-      "name": "Set ID - PID",
-      "description": "Sequence number for this transaction",
-      "dataType": "SI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["1", "2"]
+  "version": "HL7 v2.3",
+  "chapter": "Patient Administration",
+  "description": "The PID segment is used by all applications as the primary means of communicating patient identification information. This segment contains permanent patient identifying and demographic information that, for the most part, is not likely to change frequently.\n\nUsage notes: PID patient identification \nThe assigning facility ID, the fourth component of the patient identifiers, is a string of up to six characters that is uniquely associated with the facility that originally assigned the number. A given institution, or group of intercommunicating institutions, should establish a list of facilities that may be potential assignors of patient identification (and other important identification) numbers. The list will be one of the institution’s master dictionary lists. Since third parties (other than the assignors of patient identification numbers) may send or receive HL7 messages containing patient identification numbers, the assigning facility ID in the patient identification numbers may not be the same as the sending and receiving systems identified in the MSH. The assigning facility ID must be unique across applications at a given site. This field is required in HL7 implementations that have more than a single Patient Administration application assigning such numbers.",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "PID.1",
+      "field_description": "Set ID - Patient ID",
+      "length": "4",
+      "data_type": "SI",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "PID.2": {
-      "name": "Patient ID (External ID)",
-      "description": "Deprecated - use PID.3 Patient Identifier List",
-      "dataType": "CX",
-      "usage": "X",
-      "cardinality": {"min": 0, "max": 0}
+    {
+      "position": 2,
+      "field_name": "PID.2",
+      "field_description": "Patient ID (External ID)",
+      "length": "20",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "PID.3": {
-      "name": "Patient Identifier List",
-      "description": "List of identifiers used to uniquely identify a patient",
-      "dataType": "CX",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": "unbounded"},
-      "examples": ["PATID1234^^^MRN^MR", "123456789^^^SSN^SS"]
+    {
+      "position": 3,
+      "field_name": "PID.3",
+      "field_description": "Patient ID (Internal ID)",
+      "length": "20",
+      "data_type": "CX",
+      "optionality": "R",
+      "repeatability": "∞",
+      "table": ""
     },
-    "PID.4": {
-      "name": "Alternate Patient ID - PID",
-      "description": "Deprecated - use PID.3 Patient Identifier List",
-      "dataType": "CX",
-      "usage": "X",
-      "cardinality": {"min": 0, "max": 0}
+    {
+      "position": 4,
+      "field_name": "PID.4",
+      "field_description": "Alternate Patient ID",
+      "length": "20",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "PID.5": {
-      "name": "Patient Name",
-      "description": "Patient's legal name and alternate names",
-      "dataType": "XPN",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": "unbounded"},
-      "examples": ["DOE^JOHN^Q", "SMITH^JANE^MARIE"]
+    {
+      "position": 5,
+      "field_name": "PID.5",
+      "field_description": "Patient Name",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "R",
+      "repeatability": "∞",
+      "table": ""
     },
-    "PID.6": {
-      "name": "Mother's Maiden Name",
-      "description": "Mother's family name at birth",
-      "dataType": "XPN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "examples": ["JONES^MARY"]
+    {
+      "position": 6,
+      "field_name": "PID.6",
+      "field_description": "Mother's Maiden Name",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "PID.7": {
-      "name": "Date/Time of Birth",
-      "description": "Patient's birth date and time",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["19801015", "19801015123000"]
+    {
+      "position": 7,
+      "field_name": "PID.7",
+      "field_description": "Date of Birth",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "PID.8": {
-      "name": "Administrative Sex",
-      "description": "Patient's sex for administrative purposes",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0001",
-      "validValues": ["F", "M", "O", "U"],
-      "examples": ["M", "F"]
+    {
+      "position": 8,
+      "field_name": "PID.8",
+      "field_description": "Sex",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0001"
     },
-    "PID.9": {
-      "name": "Patient Alias",
-      "description": "Alternative names used by the patient",
-      "dataType": "XPN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "examples": ["SMITH^JOHNNY"]
+    {
+      "position": 9,
+      "field_name": "PID.9",
+      "field_description": "Patient Alias",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "PID.10": {
-      "name": "Race",
-      "description": "Patient's race for demographic reporting",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "table": "0005",
-      "examples": ["1002-5^American Indian or Alaska Native^HL70005"]
+    {
+      "position": 10,
+      "field_name": "PID.10",
+      "field_description": "Race",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0005"
     },
-    "PID.11": {
-      "name": "Patient Address",
-      "description": "Patient's mailing and home address",
-      "dataType": "XAD",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "examples": ["123 MAIN ST^^CLEVELAND^OH^44101^USA"]
+    {
+      "position": 11,
+      "field_name": "PID.11",
+      "field_description": "Patient Address",
+      "length": "106",
+      "data_type": "XAD",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "PID.12": {
-      "name": "County Code",
-      "description": "Deprecated field - county code",
-      "dataType": "IS",
-      "usage": "X",
-      "cardinality": {"min": 0, "max": 0}
+    {
+      "position": 12,
+      "field_name": "PID.12",
+      "field_description": "County Code",
+      "length": "4",
+      "data_type": "IS",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": "0289"
     },
-    "PID.13": {
-      "name": "Phone Number - Home",
-      "description": "Patient's home telephone number",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "examples": ["(216) 555-1234", "2165551234^PRN^PH"]
+    {
+      "position": 13,
+      "field_name": "PID.13",
+      "field_description": "Phone Number - Home",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "PID.14": {
-      "name": "Phone Number - Business",
-      "description": "Patient's work telephone number",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "examples": ["(216) 555-9876^WPN^PH"]
+    {
+      "position": 14,
+      "field_name": "PID.14",
+      "field_description": "Phone Number - Business",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "PID.15": {
-      "name": "Primary Language",
-      "description": "Patient's primary language for communication",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0296",
-      "examples": ["EN^English^ISO639"]
+    {
+      "position": 15,
+      "field_name": "PID.15",
+      "field_description": "Primary Language",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0296"
     },
-    "PID.16": {
-      "name": "Marital Status",
-      "description": "Patient's current marital status",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0002",
-      "validValues": ["S", "M", "D", "W", "A", "P", "U"],
-      "examples": ["M^Married^HL70002", "S^Single^HL70002"]
+    {
+      "position": 16,
+      "field_name": "PID.16",
+      "field_description": "Marital Status",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0002"
     },
-    "PID.17": {
-      "name": "Religion",
-      "description": "Patient's religious affiliation",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0006",
-      "examples": ["CHR^Christian^HL70006", "JEW^Jewish^HL70006"]
+    {
+      "position": 17,
+      "field_name": "PID.17",
+      "field_description": "Religion",
+      "length": "3",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0006"
     },
-    "PID.18": {
-      "name": "Patient Account Number",
-      "description": "External identifier for billing purposes",
-      "dataType": "CX",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["ACC123456^^^AN^AN"]
+    {
+      "position": 18,
+      "field_name": "PID.18",
+      "field_description": "Patient Account Number",
+      "length": "20",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "PID.19": {
-      "name": "SSN Number - Patient",
-      "description": "Patient's Social Security Number",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["123-45-6789"]
+    {
+      "position": 19,
+      "field_name": "PID.19",
+      "field_description": "SSN Number - Patient",
+      "length": "16",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "PID.20": {
-      "name": "Driver's License Number - Patient",
-      "description": "Patient's driver's license number and state",
-      "dataType": "DLN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["OH123456789^OH^20251231"]
+    {
+      "position": 20,
+      "field_name": "PID.20",
+      "field_description": "Driver's License Number",
+      "length": "25",
+      "data_type": "DLN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "PID.21": {
-      "name": "Mother's Identifier",
-      "description": "Identifier for the patient's mother",
-      "dataType": "CX",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "examples": ["MOM123456^^^MRN^MR"]
+    {
+      "position": 21,
+      "field_name": "PID.21",
+      "field_description": "Mother's Identifier",
+      "length": "20",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "PID.22": {
-      "name": "Ethnic Group",
-      "description": "Patient's ethnic group",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "table": "0189",
-      "examples": ["2135-2^Hispanic or Latino^HL70189"]
+    {
+      "position": 22,
+      "field_name": "PID.22",
+      "field_description": "Ethnic Group",
+      "length": "3",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0189"
     },
-    "PID.23": {
-      "name": "Birth Place",
-      "description": "Patient's place of birth",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["CLEVELAND, OH, USA"]
+    {
+      "position": 23,
+      "field_name": "PID.23",
+      "field_description": "Birth Place",
+      "length": "60",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "PID.24": {
-      "name": "Multiple Birth Indicator",
-      "description": "Indicates if patient is part of multiple birth",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "validValues": ["Y", "N"],
-      "examples": ["N", "Y"]
+    {
+      "position": 24,
+      "field_name": "PID.24",
+      "field_description": "Multiple Birth Indicator",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "PID.25": {
-      "name": "Birth Order",
-      "description": "Birth order for multiple births",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["1", "2"]
+    {
+      "position": 25,
+      "field_name": "PID.25",
+      "field_description": "Birth Order",
+      "length": "2",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "PID.26": {
-      "name": "Citizenship",
-      "description": "Patient's citizenship",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "table": "0171",
-      "examples": ["USA^United States^ISO3166_1"]
+    {
+      "position": 26,
+      "field_name": "PID.26",
+      "field_description": "Citizenship",
+      "length": "4",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": "0171"
     },
-    "PID.27": {
-      "name": "Veterans Military Status",
-      "description": "Patient's military service status",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0172",
-      "examples": ["AUSA^Australian Army^HL70172"]
+    {
+      "position": 27,
+      "field_name": "PID.27",
+      "field_description": "Veterans Military Status",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0172"
     },
-    "PID.28": {
-      "name": "Nationality",
-      "description": "Patient's nationality",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0212",
-      "examples": ["USA^United States^ISO3166_1"]
+    {
+      "position": 28,
+      "field_name": "PID.28",
+      "field_description": "Nationality Code",
+      "length": "80",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0212"
     },
-    "PID.29": {
-      "name": "Patient Death Date and Time",
-      "description": "Date and time of patient's death",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815143022"]
+    {
+      "position": 29,
+      "field_name": "PID.29",
+      "field_description": "Patient Death Date and Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "PID.30": {
-      "name": "Patient Death Indicator",
-      "description": "Indicates if patient is deceased",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "validValues": ["Y", "N"],
-      "examples": ["N", "Y"]
+    {
+      "position": 30,
+      "field_name": "PID.30",
+      "field_description": "Patient Death Indicator",
+      "length": "1",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     }
-  },
-  "examples": [
-    "PID|1||PATID1234^^^MRN^MR||DOE^JOHN^Q|JONES^MARY|19801015|M||1002-5^American Indian^HL70005|123 MAIN ST^^CLEVELAND^OH^44101||(216) 555-1234|(216) 555-9876|EN^English^ISO639|M^Married^HL70002|CHR^Christian^HL70006|ACC123456|123-45-6789|OH123456789^OH^20251231|MOM123456^^^MRN^MR|2135-2^Hispanic^HL70189|CLEVELAND, OH|N|1|USA^United States^ISO3166_1|AUSA^Australian Army^HL70172|USA^United States^ISO3166_1||N"
   ],
-  "notes": [
-    "PID.3 Patient Identifier List is required - minimum should contain MRN",
-    "PID.16 (Marital Status) references table 0002 for valid codes",
-    "PID.10 (Race) and PID.17 (Religion) support demographic reporting requirements",
-    "Fields PID.2, PID.4, and PID.12 are deprecated in HL7 v2.3"
-  ]
+  "field_count": 30
 }

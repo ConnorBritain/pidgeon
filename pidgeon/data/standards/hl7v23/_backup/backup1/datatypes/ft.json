@@ -1,0 +1,91 @@
+{
+  "dataType": "FT",
+  "name": "Formatted Text",
+  "description": "The FT data type is used for text that may contain formatting instructions. It supports escape sequences for text formatting like font changes, underlines, highlighting, and other display enhancements. FT allows for rich text representation while maintaining compatibility with HL7 messaging standards. Commonly used for clinical reports, formatted documents, and text that requires specific presentation formatting.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "primitive",
+  "length": 65536,
+  "constraints": {
+    "formatting": "Supports HL7 escape sequences for text formatting",
+    "escapeSequences": "Includes font, color, highlighting, and style commands",
+    "lineBreaks": "Supports \\r\\n, \\n, or \\r line separators with formatting preservation",
+    "characterSets": "Supports multiple character sets with formatting escape sequences",
+    "nesting": "Formatting commands may be nested but must be properly closed"
+  },
+  "formattingCommands": {
+    "font": "\\F\\ - Change font face and size",
+    "highlight": "\\H\\ - Begin highlighting text",
+    "normal": "\\N\\ - Return to normal text formatting",
+    "skip": "\\S\\ - Skip specified number of spaces",
+    "underline": "Various underline formatting options",
+    "escape": "\\E\\ - Escape character for literal backslash"
+  },
+  "usage": [
+    "Formatted clinical reports and documents",
+    "Rich text clinical notes with styling",
+    "Laboratory reports with formatting emphasis",
+    "Radiology reports with structured formatting",
+    "Clinical summaries requiring text presentation",
+    "Documentation requiring visual emphasis"
+  ],
+  "examples": [
+    "\\F\\Arial,12\\IMPRESSION:\\N\\ Acute myocardial infarction\\F\\\\r\\n\\H\\URGENT:\\N\\ Requires immediate intervention",
+    "\\F\\Times,10\\MEDICATIONS:\\N\\\\r\\n1. Aspirin 325mg daily\\r\\n2. \\H\\Metoprolol 50mg BID\\N\\\\r\\n3. Lisinopril 10mg daily",
+    "\\F\\Courier,8\\LAB RESULTS:\\N\\\\r\\nGlucose: \\H\\250 mg/dL\\N\\ (HIGH)\\r\\nHbA1c: 8.2% (HIGH)",
+    "Patient presents with \\H\\severe chest pain\\N\\ radiating to left arm.\\r\\n\\F\\Arial,14\\CRITICAL:\\N\\ Requires stat EKG"
+  ],
+  "commonFields": [
+    "OBX.5 - Observation Value for formatted results",
+    "NTE.3 - Comment text with formatting",
+    "TXA.2 - Document Type for formatted transcription",
+    "Various report and documentation fields requiring formatting"
+  ],
+  "generationHints": {
+    "typical": "Use realistic clinical text with appropriate formatting emphasis",
+    "structure": "Apply formatting to highlight critical information and improve readability",
+    "medical": "Use formatting for section headers, abnormal values, and urgent findings",
+    "balance": "Don't over-format - use formatting judiciously for clarity",
+    "compatibility": "Ensure formatting commands are properly paired and closed"
+  },
+  "escapeSequenceRules": {
+    "syntax": "Escape sequences begin with \\letter\\ and end with \\",
+    "pairing": "Opening formatting commands should have corresponding closing commands",
+    "nesting": "Commands may be nested but must be properly structured",
+    "fallback": "Systems should gracefully handle unknown formatting commands",
+    "preservation": "Formatting should be preserved through message transmission"
+  },
+  "clinicalApplications": {
+    "emphasis": "Highlight abnormal values, critical findings, and urgent items",
+    "structure": "Format section headers, lists, and organizational elements",
+    "readability": "Improve text presentation for clinical decision-making",
+    "standardization": "Consistent formatting across clinical documentation",
+    "integration": "Maintain formatting in system-to-system communication"
+  },
+  "validationRules": {
+    "syntaxCheck": "Escape sequences must follow proper HL7 formatting syntax",
+    "pairing": "Opening formatting commands must have corresponding closing commands",
+    "characterValidation": "All characters must be valid within specified character set",
+    "lengthConstraints": "Formatted text must not exceed maximum field length including formatting commands",
+    "compatibility": "Formatting should be compatible with receiving system capabilities"
+  },
+  "relatedDataTypes": {
+    "TX": "Text Data - for unformatted extended text",
+    "ST": "String - for simple text without formatting",
+    "ED": "Encapsulated Data - for complex multimedia documents",
+    "RTF": "Rich Text Format - external document format reference"
+  },
+  "implementationNotes": {
+    "display": "Receiving systems should interpret formatting commands for proper display",
+    "fallback": "Provide text-only fallback for systems that don't support formatting",
+    "storage": "Database design should accommodate formatted text with escape sequences",
+    "rendering": "Consider rich text controls for user interface display",
+    "migration": "Legacy systems may need formatting conversion capabilities"
+  },
+  "systemCompatibility": {
+    "modernSystems": "Most current HL7 implementations support FT formatting",
+    "legacySystems": "Older systems may display formatting commands as literal text",
+    "webDisplay": "May require conversion to HTML or other web-compatible formats",
+    "printing": "Formatting should be preserved in printed clinical documents"
+  }
+}

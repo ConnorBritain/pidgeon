@@ -1,422 +1,500 @@
 {
-  "segment": "IN1",
+  "code": "IN1",
   "name": "Insurance",
-  "description": "Contains patient insurance and financial coverage information",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "O",
-  "cardinality": {
-    "min": 0,
-    "max": "unbounded"
-  },
-  "fields": {
-    "IN1.1": {
-      "name": "Set ID - Insurance",
-      "description": "Sequence number for insurance segments within message",
-      "dataType": "SI",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["1", "2", "3"]
+  "version": "HL7 v2.3",
+  "chapter": "Financial Management",
+  "description": "The IN1 segment contains insurance policy coverage information necessary to produce properly pro-rated and patient and insurance bills.",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "IN1.1",
+      "field_description": "Set ID - Insurance",
+      "length": "4",
+      "data_type": "SI",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "IN1.2": {
-      "name": "Insurance Plan ID",
-      "description": "Identifier for the insurance plan",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["HMO001^Health Plan 1", "PPO002^Preferred Plan"]
-    },
-    "IN1.3": {
-      "name": "Insurance Company ID",
-      "description": "Identifier for the insurance company",
-      "dataType": "CX",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["AETNA^^^AETNA", "BCBS^^^BLUECROSS"]
-    },
-    "IN1.4": {
-      "name": "Insurance Company Name",
-      "description": "Name of the insurance company",
-      "dataType": "XON",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["Aetna Health Plans", "Blue Cross Blue Shield"]
-    },
-    "IN1.5": {
-      "name": "Insurance Company Address",
-      "description": "Address of the insurance company",
-      "dataType": "XAD",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["123 INSURANCE BLVD^^HARTFORD^CT^06156"]
-    },
-    "IN1.6": {
-      "name": "Insurance Co. Contact Person",
-      "description": "Contact person at insurance company",
-      "dataType": "XPN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["JOHNSON^MARY^CLAIMS"]
-    },
-    "IN1.7": {
-      "name": "Insurance Co Phone Number",
-      "description": "Phone number for insurance company",
-      "dataType": "XTN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 3},
-      "examples": ["(800) 555-1234^WPN^PH"]
-    },
-    "IN1.8": {
-      "name": "Group Number",
-      "description": "Group number for insurance coverage",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["GRP123456", "CORP789"]
-    },
-    "IN1.9": {
-      "name": "Group Name",
-      "description": "Name of the insured group",
-      "dataType": "XON",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["ACME Corporation", "State Employees"]
-    },
-    "IN1.10": {
-      "name": "Insured's Group Employer ID",
-      "description": "Employer ID for the insured's group",
-      "dataType": "CX",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["EMP12345"]
-    },
-    "IN1.11": {
-      "name": "Insured's Group Emp Name",
-      "description": "Employer name for the insured",
-      "dataType": "XON",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["ACME Corporation", "City Hospital"]
-    },
-    "IN1.12": {
-      "name": "Plan Effective Date",
-      "description": "Date when insurance plan becomes effective",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220101", "20230701"]
-    },
-    "IN1.13": {
-      "name": "Plan Expiration Date",
-      "description": "Date when insurance plan expires",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20221231", "20240630"]
-    },
-    "IN1.14": {
-      "name": "Authorization Information",
-      "description": "Authorization details for coverage",
-      "dataType": "CM_AUI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1}
-    },
-    "IN1.15": {
-      "name": "Plan Type",
-      "description": "Type of insurance plan",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0086",
-      "examples": ["HMO", "PPO", "FFS"]
-    },
-    "IN1.16": {
-      "name": "Name of Insured",
-      "description": "Name of the insured person",
-      "dataType": "XPN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["SMITH^JOHN^Q", "DOE^JANE^MARIE"]
-    },
-    "IN1.17": {
-      "name": "Insured's Relationship to Patient",
-      "description": "Relationship of insured to patient",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0063",
-      "examples": ["SEL", "SPO", "CHD"]
-    },
-    "IN1.18": {
-      "name": "Insured's Date of Birth",
-      "description": "Birth date of the insured person",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["19750425", "19821203"]
-    },
-    "IN1.19": {
-      "name": "Insured's Address",
-      "description": "Address of the insured person",
-      "dataType": "XAD",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["456 ELM ST^^AKRON^OH^44301"]
-    },
-    "IN1.20": {
-      "name": "Assignment of Benefits",
-      "description": "Assignment of benefits indicator",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0135",
-      "examples": ["Y", "N"]
-    },
-    "IN1.21": {
-      "name": "Coordination of Benefits",
-      "description": "Coordination of benefits indicator",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0173",
-      "examples": ["CO", "IN"]
-    },
-    "IN1.22": {
-      "name": "Coord of Ben. Priority",
-      "description": "Priority for coordination of benefits",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["1", "2"]
-    },
-    "IN1.23": {
-      "name": "Notice of Admission Code",
-      "description": "Notice of admission required indicator",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
-    },
-    "IN1.24": {
-      "name": "Notice of Admission Date",
-      "description": "Date notice of admission was given",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815"]
-    },
-    "IN1.25": {
-      "name": "Rpt of Eligibility Code",
-      "description": "Report of eligibility required indicator",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
-    },
-    "IN1.26": {
-      "name": "Rpt of Eligibility Date",
-      "description": "Date eligibility was reported",
-      "dataType": "DT",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815"]
-    },
-    "IN1.27": {
-      "name": "Release Information Code",
-      "description": "Release of information authorization",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0093",
-      "examples": ["Y", "N"]
-    },
-    "IN1.28": {
-      "name": "Pre-Admit Cert",
-      "description": "Pre-admission certification number",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["CERT123456"]
-    },
-    "IN1.29": {
-      "name": "Verification Date/Time",
-      "description": "Date and time benefits were verified",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815143000"]
-    },
-    "IN1.30": {
-      "name": "Verification By",
-      "description": "Person who verified the benefits",
-      "dataType": "XPN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["JONES^SUSAN^VERIFY"]
-    },
-    "IN1.31": {
-      "name": "Type of Agreement Code",
-      "description": "Type of agreement with insurance company",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0098"
-    },
-    "IN1.32": {
-      "name": "Billing Status",
-      "description": "Current billing status for coverage",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0022"
-    },
-    "IN1.33": {
-      "name": "Lifetime Reserve Days",
-      "description": "Number of lifetime reserve days available",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["60", "30"]
-    },
-    "IN1.34": {
-      "name": "Delay Before Lifetime Reserve Days",
-      "description": "Days before lifetime reserve kicks in",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["90", "60"]
-    },
-    "IN1.35": {
-      "name": "Company Plan Code",
-      "description": "Insurance company's internal plan code",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0042"
-    },
-    "IN1.36": {
-      "name": "Policy Number",
-      "description": "Insurance policy number",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["POL123456789", "ABC987654321"]
-    },
-    "IN1.37": {
-      "name": "Policy Deductible",
-      "description": "Deductible amount for policy",
-      "dataType": "CP",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["500.00^USD", "1000.00^USD"]
-    },
-    "IN1.38": {
-      "name": "Policy Limit - Amount",
-      "description": "Maximum coverage amount for policy",
-      "dataType": "CP",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["100000.00^USD", "50000.00^USD"]
-    },
-    "IN1.39": {
-      "name": "Policy Limit - Days",
-      "description": "Maximum coverage days for policy",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["365", "180"]
-    },
-    "IN1.40": {
-      "name": "Room Rate - Semi-Private",
-      "description": "Daily rate for semi-private room",
-      "dataType": "CP",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["200.00^USD"]
-    },
-    "IN1.41": {
-      "name": "Room Rate - Private",
-      "description": "Daily rate for private room",
-      "dataType": "CP",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["350.00^USD"]
-    },
-    "IN1.42": {
-      "name": "Insured's Employment Status",
-      "description": "Employment status of insured person",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["F^Full-time", "P^Part-time"]
-    },
-    "IN1.43": {
-      "name": "Insured's Sex",
-      "description": "Gender of insured person",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0001",
-      "examples": ["M", "F"]
-    },
-    "IN1.44": {
-      "name": "Insured's Employer Address",
-      "description": "Address of insured person's employer",
-      "dataType": "XAD",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["789 WORK ST^^CLEVELAND^OH^44101"]
-    },
-    "IN1.45": {
-      "name": "Verification Status",
-      "description": "Status of insurance verification",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["V", "P", "N"]
-    },
-    "IN1.46": {
-      "name": "Prior Insurance Plan ID",
-      "description": "Previous insurance plan identifier",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 2,
+      "field_name": "IN1.2",
+      "field_description": "Insurance Plan ID",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "R",
+      "repeatability": "-",
       "table": "0072"
     },
-    "IN1.47": {
-      "name": "Coverage Type",
-      "description": "Type of coverage provided",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 3,
+      "field_name": "IN1.3",
+      "field_description": "Insurance Company ID",
+      "length": "59",
+      "data_type": "CX",
+      "optionality": "R",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 4,
+      "field_name": "IN1.4",
+      "field_description": "Insurance Company Name",
+      "length": "130",
+      "data_type": "XON",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 5,
+      "field_name": "IN1.5",
+      "field_description": "Insurance Company Address",
+      "length": "106",
+      "data_type": "XAD",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 6,
+      "field_name": "IN1.6",
+      "field_description": "Insurance Co. Contact Person",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 7,
+      "field_name": "IN1.7",
+      "field_description": "Insurance Co Phone Number",
+      "length": "40",
+      "data_type": "XTN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 8,
+      "field_name": "IN1.8",
+      "field_description": "Group Number",
+      "length": "12",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 9,
+      "field_name": "IN1.9",
+      "field_description": "Group Name",
+      "length": "130",
+      "data_type": "XON",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 10,
+      "field_name": "IN1.10",
+      "field_description": "Insured's group employer ID",
+      "length": "12",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 11,
+      "field_name": "IN1.11",
+      "field_description": "Insured's Group Emp Name",
+      "length": "130",
+      "data_type": "XON",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 12,
+      "field_name": "IN1.12",
+      "field_description": "Plan Effective Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 13,
+      "field_name": "IN1.13",
+      "field_description": "Plan Expiration Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 14,
+      "field_name": "IN1.14",
+      "field_description": "Authorization Information",
+      "length": "55",
+      "data_type": "CM_AUI",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 15,
+      "field_name": "IN1.15",
+      "field_description": "Plan Type",
+      "length": "3",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0086"
+    },
+    {
+      "position": 16,
+      "field_name": "IN1.16",
+      "field_description": "Name of Insured",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 17,
+      "field_name": "IN1.17",
+      "field_description": "Insured's Relationship to Patient",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0063"
+    },
+    {
+      "position": 18,
+      "field_name": "IN1.18",
+      "field_description": "Insured's Date of Birth",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 19,
+      "field_name": "IN1.19",
+      "field_description": "Insured's Address",
+      "length": "106",
+      "data_type": "XAD",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 20,
+      "field_name": "IN1.20",
+      "field_description": "Assignment of Benefits",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0135"
+    },
+    {
+      "position": 21,
+      "field_name": "IN1.21",
+      "field_description": "Coordination of Benefits",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0173"
+    },
+    {
+      "position": 22,
+      "field_name": "IN1.22",
+      "field_description": "Coord of Ben. Priority",
+      "length": "2",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 23,
+      "field_name": "IN1.23",
+      "field_description": "Notice of Admission Code",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
+    },
+    {
+      "position": 24,
+      "field_name": "IN1.24",
+      "field_description": "Notice of Admission Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 25,
+      "field_name": "IN1.25",
+      "field_description": "Report of Eigibility Code",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
+    },
+    {
+      "position": 26,
+      "field_name": "IN1.26",
+      "field_description": "Report of Eligibility Date",
+      "length": "8",
+      "data_type": "DT",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 27,
+      "field_name": "IN1.27",
+      "field_description": "Release Information Code",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0093"
+    },
+    {
+      "position": 28,
+      "field_name": "IN1.28",
+      "field_description": "Pre-Admit Cert",
+      "length": "15",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 29,
+      "field_name": "IN1.29",
+      "field_description": "Verification Date/Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 30,
+      "field_name": "IN1.30",
+      "field_description": "Verification By",
+      "length": "60",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 31,
+      "field_name": "IN1.31",
+      "field_description": "Type of Agreement Code",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0098"
+    },
+    {
+      "position": 32,
+      "field_name": "IN1.32",
+      "field_description": "Billing Status",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0022"
+    },
+    {
+      "position": 33,
+      "field_name": "IN1.33",
+      "field_description": "Lifetime Reserve Days",
+      "length": "4",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 34,
+      "field_name": "IN1.34",
+      "field_description": "Delay before lifetime reserve days",
+      "length": "4",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 35,
+      "field_name": "IN1.35",
+      "field_description": "Company Plan Code",
+      "length": "8",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0042"
+    },
+    {
+      "position": 36,
+      "field_name": "IN1.36",
+      "field_description": "Policy Number",
+      "length": "15",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 37,
+      "field_name": "IN1.37",
+      "field_description": "Policy Deductible",
+      "length": "12",
+      "data_type": "CP",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 38,
+      "field_name": "IN1.38",
+      "field_description": "Policy Limit - Amount",
+      "length": "12",
+      "data_type": "CP",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 39,
+      "field_name": "IN1.39",
+      "field_description": "Policy Limit - Days",
+      "length": "4",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 40,
+      "field_name": "IN1.40",
+      "field_description": "Room Rate - Semi-Private",
+      "length": "12",
+      "data_type": "CP",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 41,
+      "field_name": "IN1.41",
+      "field_description": "Room Rate - Private",
+      "length": "12",
+      "data_type": "CP",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 42,
+      "field_name": "IN1.42",
+      "field_description": "Insured's Employment Status",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0066"
+    },
+    {
+      "position": 43,
+      "field_name": "IN1.43",
+      "field_description": "Insured's Sex",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0001"
+    },
+    {
+      "position": 44,
+      "field_name": "IN1.44",
+      "field_description": "Insured's Employer Address",
+      "length": "106",
+      "data_type": "XAD",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 45,
+      "field_name": "IN1.45",
+      "field_description": "Verification Status",
+      "length": "2",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 46,
+      "field_name": "IN1.46",
+      "field_description": "Prior Insurance Plan ID",
+      "length": "8",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0072"
+    },
+    {
+      "position": 47,
+      "field_name": "IN1.47",
+      "field_description": "Coverage Type",
+      "length": "3",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0309"
     },
-    "IN1.48": {
-      "name": "Handicap",
-      "description": "Handicap status of insured",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 48,
+      "field_name": "IN1.48",
+      "field_description": "Handicap",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0310"
     },
-    "IN1.49": {
-      "name": "Insured's ID Number",
-      "description": "Insurance ID number for insured person",
-      "dataType": "CX",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["ID123456789", "MBR987654321"]
+    {
+      "position": 49,
+      "field_name": "IN1.49",
+      "field_description": "Insured's ID Number",
+      "length": "12",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     }
-  },
-  "examples": [
-    "IN1|1|HMO001^Health Plan 1|AETNA^^^AETNA|Aetna Health Plans|123 INSURANCE BLVD^^HARTFORD^CT^06156|JOHNSON^MARY^CLAIMS|(800) 555-1234^WPN^PH|GRP123456|ACME Corporation",
-    "IN1|2||BCBS^^^BLUECROSS|Blue Cross Blue Shield||||PPO002^Preferred Plan||||||||||||||||||||||||||||||"
   ],
-  "notes": [
-    "IN1.1 (Set ID) is required for segment sequencing",
-    "IN1.3 (Insurance Company ID) is required to identify the payer",
-    "Multiple IN1 segments represent different insurance coverages"
-  ]
+  "field_count": 49
 }

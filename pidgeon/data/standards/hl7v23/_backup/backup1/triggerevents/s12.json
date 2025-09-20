@@ -1,0 +1,50 @@
+{
+  "triggerEvent": "S12",
+  "name": "Notification of New Appointment Booking",
+  "description": "Notification sent when a new appointment has been scheduled and booked in the scheduling system",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "10",
+  "chapterName": "Scheduling",
+  "messageStructure": "SIU^S12",
+  "segments": {
+    "required": [
+      "MSH",
+      "SCH"
+    ],
+    "optional": [
+      "NTE",
+      "PID",
+      "PV1",
+      "PV2",
+      "OBX",
+      "DG1",
+      "RGS",
+      "AIS",
+      "AIG",
+      "AIL",
+      "AIP"
+    ]
+  },
+  "businessPurpose": "Notify auxiliary applications and systems that a new appointment has been created and confirmed",
+  "timing": "Sent immediately after a new appointment is successfully booked in the scheduling system",
+  "responseMessage": "ACK^S12^ACK",
+  "realWorldScenarios": [
+    "Patient schedules office visit with primary care physician",
+    "Radiology appointment booked for CT scan",
+    "Surgery scheduling with operating room reservation",
+    "Laboratory appointment for blood work",
+    "Physical therapy session booking",
+    "Specialist consultation appointment"
+  ],
+  "generationRules": {
+    "MSH.9": "SIU^S12",
+    "SCH.1": "Unique appointment ID",
+    "SCH.2": "Filler appointment ID",
+    "SCH.6": "Event reason code (typically 'NEW')",
+    "SCH.11.4": "Start date/time",
+    "SCH.11.5": "End date/time",
+    "SCH.25": "Filler status code (Booked/Confirmed)",
+    "requiredDataQuality": "High - appointment accuracy critical for patient care coordination"
+  }
+}

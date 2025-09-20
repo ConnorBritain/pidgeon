@@ -1,0 +1,156 @@
+{
+  "dataType": "PT",
+  "name": "Processing Type",
+  "description": "The PT data type is used to specify the processing mode or type for HL7 messages and data exchanges. It indicates how the message should be processed by the receiving system, such as debugging, production, training, or testing modes. PT provides essential processing context that enables systems to handle messages appropriately based on their intended purpose and environment.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "composite",
+  "components": {
+    "PT.1": {
+      "name": "Processing ID",
+      "dataType": "ID",
+      "description": "Specifies the processing mode for the message (e.g., Production, Training, Debugging). Indicates the operational context and how the message should be handled.",
+      "length": 1,
+      "usage": "optional",
+      "position": 1,
+      "table": "0103"
+    },
+    "PT.2": {
+      "name": "Processing Mode",
+      "dataType": "ID",
+      "description": "Further specifies the processing characteristics or sub-mode. Provides additional context for message processing requirements.",
+      "length": 1,
+      "usage": "optional",
+      "position": 2,
+      "table": "0207"
+    }
+  },
+  "length": 3,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "processingContext": "Processing ID should match the intended operational environment",
+    "systemAlignment": "Processing mode should align with receiving system capabilities",
+    "consistency": "Should be consistent throughout message processing workflow"
+  },
+  "usage": [
+    "MSH.11 - Processing ID in message header",
+    "System-to-system processing mode identification",
+    "Test versus production environment differentiation",
+    "Training and debugging mode specification",
+    "Message routing and handling instructions",
+    "Quality assurance and validation environments"
+  ],
+  "examples": [
+    "P^",
+    "T^",
+    "D^",
+    "P^A",
+    "T^R",
+    "D^I"
+  ],
+  "commonFields": [
+    "MSH.11 - Processing ID in message header",
+    "Processing control fields in system interfaces",
+    "Environment specification in message routing",
+    "Testing and validation processing indicators",
+    "System configuration and deployment fields"
+  ],
+  "generationHints": {
+    "typical": "Use appropriate processing types for different operational environments",
+    "production": "P for live production systems handling real patient data",
+    "testing": "T for testing environments and system validation",
+    "debugging": "D for debugging and troubleshooting scenarios",
+    "training": "Use T for training environments and educational purposes"
+  },
+  "processingModes": {
+    "production": {
+      "id": "P",
+      "description": "Production processing for live patient care",
+      "characteristics": "Real patient data, full system functionality, audit trails",
+      "examples": ["P^", "P^A"]
+    },
+    "training": {
+      "id": "T",
+      "description": "Training mode for education and practice",
+      "characteristics": "Training data, educational scenarios, safe environment",
+      "examples": ["T^", "T^R"]
+    },
+    "debugging": {
+      "id": "D",
+      "description": "Debugging and troubleshooting mode",
+      "characteristics": "Detailed logging, diagnostic information, test scenarios",
+      "examples": ["D^", "D^I"]
+    }
+  },
+  "processingSubModes": {
+    "A": "Archive - for archival processing",
+    "R": "Restore from archive - for restoration processing",
+    "I": "Initial load - for initial data loading",
+    "Not present": "Current processing - real-time or standard processing"
+  },
+  "operationalContexts": {
+    "liveProduction": {
+      "processingType": "P^",
+      "description": "Live production environment with real patient data",
+      "requirements": "Full audit trails, security, compliance, real-time processing"
+    },
+    "testEnvironment": {
+      "processingType": "T^",
+      "description": "Testing environment for system validation",
+      "requirements": "Test data, validation scenarios, performance testing"
+    },
+    "trainingSystem": {
+      "processingType": "T^",
+      "description": "Training environment for user education",
+      "requirements": "Training scenarios, educational data, safe practice environment"
+    },
+    "debugMode": {
+      "processingType": "D^",
+      "description": "Debugging environment for troubleshooting",
+      "requirements": "Detailed logging, diagnostic data, problem isolation"
+    }
+  },
+  "validationRules": {
+    "processingIDValidation": "PT.1 should reference valid processing ID from table 0103",
+    "processingModeValidation": "PT.2 should reference valid processing mode from table 0207",
+    "environmentConsistency": "Processing type should match the actual operational environment",
+    "systemCompatibility": "Receiving system should support the specified processing mode"
+  },
+  "systemImplications": {
+    "dataHandling": "Processing type affects how data is stored, validated, and processed",
+    "security": "Different processing modes may have different security requirements",
+    "audit": "Audit and logging requirements vary by processing type",
+    "performance": "Processing mode may affect system performance and resource allocation",
+    "compliance": "Regulatory compliance requirements may differ by processing environment"
+  },
+  "relatedDataTypes": {
+    "ID": "Coded Value - used for both processing ID and mode components",
+    "MSH": "Message Header - contains PT in processing ID field",
+    "ST": "String - may be used for processing descriptions in other contexts"
+  },
+  "implementationNotes": {
+    "routing": "Message routing systems use PT to determine processing pathways",
+    "validation": "Different validation rules may apply based on processing type",
+    "logging": "Logging levels and audit requirements vary by processing mode",
+    "security": "Security controls may be adjusted based on processing environment",
+    "performance": "System performance optimization may vary by processing type"
+  },
+  "environmentalConsiderations": {
+    "development": "Development environments typically use T (Training) or D (Debugging)",
+    "staging": "Staging environments may use T (Training) for final validation",
+    "production": "Production environments must use P (Production) for live data",
+    "disaster": "Disaster recovery may use specific processing modes for restoration"
+  },
+  "qualityAssurance": {
+    "testing": "QA testing should verify appropriate processing type handling",
+    "validation": "Systems should validate processing type consistency",
+    "monitoring": "Monitor processing type usage across environments",
+    "compliance": "Ensure processing types meet regulatory requirements"
+  },
+  "integrationScenarios": {
+    "interfaceEngines": "Interface engines route messages based on processing type",
+    "systemIntegration": "Integration platforms use PT for environment-specific processing",
+    "dataExchange": "Health information exchanges consider processing type for routing",
+    "cloudServices": "Cloud-based systems use PT for multi-tenant environment management"
+  }
+}

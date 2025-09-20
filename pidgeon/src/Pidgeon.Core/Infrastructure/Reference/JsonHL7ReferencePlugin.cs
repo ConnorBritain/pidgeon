@@ -37,7 +37,9 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
     
     private static readonly Regex HL7PathPattern = new(@"^[A-Z]{2,3}(\.\d+){0,2}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex TablePattern = new(@"^\d{4}$", RegexOptions.Compiled);
+    private static readonly Regex NamedTablePattern = new(@"^[A-Z][a-zA-Z0-9]*$", RegexOptions.Compiled);
     private static readonly Regex TriggerEventPattern = new(@"^[A-Z]\d{2}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex MessageTypePattern = new(@"^[A-Z]{3}_[A-Z]\d{2}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex DataTypePattern = new(@"^[A-Z]{2,3}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -111,8 +113,16 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
         if (TablePattern.IsMatch(normalizedPath))
             return true;
 
+        // Named table patterns: FirstName, ZipCode, ISO3166
+        if (NamedTablePattern.IsMatch(normalizedPath))
+            return true;
+
         // Trigger event patterns: A01, O01, R01
         if (TriggerEventPattern.IsMatch(normalizedPath))
+            return true;
+
+        // Message type patterns: ADT_A01, ORU_R01
+        if (MessageTypePattern.IsMatch(normalizedPath))
             return true;
 
         // Segment and data type patterns: PID, MSH, AD, CE (differentiated by existence check)
@@ -136,8 +146,14 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
         if (TablePattern.IsMatch(normalizedPath))
             return 0.98; // Tables are very specific 4-digit patterns
 
+        if (NamedTablePattern.IsMatch(normalizedPath))
+            return 0.96; // Named tables like FirstName, ZipCode
+
         if (TriggerEventPattern.IsMatch(normalizedPath))
             return 0.95; // Trigger events are specific letter+2-digit patterns
+
+        if (MessageTypePattern.IsMatch(normalizedPath))
+            return 0.94; // Message types like ADT_A01
 
         if (HL7PathPattern.IsMatch(normalizedPath))
         {
@@ -157,7 +173,7 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
         {
             // Check if it exists as segment vs data type
             var segmentFile = Path.Combine(_dataBasePath, "segments", $"{normalizedPath.ToLowerInvariant()}.json");
-            var dataTypeFile = Path.Combine(_dataBasePath, "datatypes", $"{normalizedPath.ToLowerInvariant()}.json");
+            var dataTypeFile = Path.Combine(_dataBasePath, "data_types", $"{normalizedPath.ToLowerInvariant()}.json");
 
             if (File.Exists(segmentFile))
                 return 0.9; // Known segment
@@ -510,7 +526,7 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
     {
         var normalizedPath = path.ToUpperInvariant();
         var pathParts = normalizedPath.Split('.');
-        
+
         // Determine element type and load accordingly
         if (pathParts.Length >= 2)
         {
@@ -520,19 +536,31 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
         else if (pathParts.Length == 1)
         {
             var query = pathParts[0];
-            
-            // Check if it's a table (4 digits)
+
+            // Check if it's a numeric table (4 digits)
             if (query.Length == 4 && query.All(char.IsDigit))
             {
                 return await LoadTableElementAsync(query, cancellationToken);
             }
-            
+
+            // Check if it's a named table (PascalCase, e.g., FirstName)
+            if (NamedTablePattern.IsMatch(query))
+            {
+                return await LoadNamedTableElementAsync(query, cancellationToken);
+            }
+
+            // Check if it's a message type pattern (e.g., ADT_A01)
+            if (MessageTypePattern.IsMatch(query))
+            {
+                return await LoadMessageTypeElementAsync(query, cancellationToken);
+            }
+
             // Check if it's a trigger event (letter + 2 digits)
             if (Regex.IsMatch(query, @"^[A-Z]\d{2}$"))
             {
                 return await LoadTriggerEventElementAsync(query, cancellationToken);
             }
-            
+
             // Check if it's a segment or data type (2-3 letters)
             if (query.Length is >= 2 and <= 3 && query.All(char.IsLetter))
             {
@@ -542,7 +570,7 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
                 {
                     return segmentResult;
                 }
-                
+
                 // If no segment found, try data type
                 var dataTypeResult = await LoadDataTypeElementAsync(query, cancellationToken);
                 if (dataTypeResult != null)
@@ -568,14 +596,14 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
             var json = await File.ReadAllTextAsync(segmentFile, cancellationToken);
             var segmentData = JsonSerializer.Deserialize<JsonElement>(json, JsonOptions);
 
-            if (!segmentData.TryGetProperty("segment", out var segmentProp))
+            if (!segmentData.TryGetProperty("code", out var codeProp))
             {
                 return null;
             }
 
             var element = new StandardElement
             {
-                Path = segmentProp.GetString() ?? segmentName,
+                Path = codeProp.GetString() ?? segmentName,
                 Name = segmentData.TryGetProperty("name", out var name) ? name.GetString() ?? "" : "",
                 Description = segmentData.TryGetProperty("description", out var desc) ? desc.GetString() ?? "" : "",
                 Standard = _config.StandardId,
@@ -675,9 +703,78 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
         }
     }
 
+    private async Task<StandardElement?> LoadNamedTableElementAsync(string tableName, CancellationToken cancellationToken)
+    {
+        var tableFile = Path.Combine(_dataBasePath, "tables", $"{tableName}.json");
+        if (!File.Exists(tableFile))
+        {
+            return null;
+        }
+
+        try
+        {
+            var json = await File.ReadAllTextAsync(tableFile, cancellationToken);
+            var tableData = JsonSerializer.Deserialize<JsonElement>(json, JsonOptions);
+
+            var element = new StandardElement
+            {
+                Path = tableName,
+                Name = tableData.TryGetProperty("name", out var name) ? name.GetString() ?? tableName : tableName,
+                Description = tableData.TryGetProperty("description", out var desc) ? desc.GetString() ?? "" : "",
+                Standard = _config.StandardId,
+                Version = _config.Version,
+                DataType = "Table",
+                Usage = "Reference Dataset",
+                ValidValues = ExtractValidValues(tableData),
+                Examples = ExtractTableExamples(tableData)
+            };
+
+            return element;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading named table {TableName}", tableName);
+            return null;
+        }
+    }
+
+    private async Task<StandardElement?> LoadMessageTypeElementAsync(string messageType, CancellationToken cancellationToken)
+    {
+        var triggerFile = Path.Combine(_dataBasePath, "trigger_events", $"{messageType.ToLowerInvariant()}.json");
+        if (!File.Exists(triggerFile))
+        {
+            return null;
+        }
+
+        try
+        {
+            var json = await File.ReadAllTextAsync(triggerFile, cancellationToken);
+            var triggerData = JsonSerializer.Deserialize<JsonElement>(json, JsonOptions);
+
+            var element = new StandardElement
+            {
+                Path = messageType.ToUpperInvariant(),
+                Name = triggerData.TryGetProperty("name", out var name) ? name.GetString() ?? "" : "",
+                Description = triggerData.TryGetProperty("description", out var desc) ? desc.GetString() ?? "" : "",
+                Standard = _config.StandardId,
+                Version = _config.Version,
+                DataType = "MessageType",
+                Usage = triggerData.TryGetProperty("usage", out var usage) ? usage.GetString() ?? "" : "",
+                Examples = ExtractExamples(triggerData)
+            };
+
+            return element;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading message type {MessageType}", messageType);
+            return null;
+        }
+    }
+
     private async Task<StandardElement?> LoadDataTypeElementAsync(string dataTypeName, CancellationToken cancellationToken)
     {
-        var dataTypeFile = Path.Combine(_dataBasePath, "datatypes", $"{dataTypeName.ToLowerInvariant()}.json");
+        var dataTypeFile = Path.Combine(_dataBasePath, "data_types", $"{dataTypeName.ToLowerInvariant()}.json");
         if (!File.Exists(dataTypeFile))
         {
             return null;
@@ -688,9 +785,11 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
             var json = await File.ReadAllTextAsync(dataTypeFile, cancellationToken);
             var dataTypeData = JsonSerializer.Deserialize<JsonElement>(json, JsonOptions);
 
+            var codeProperty = dataTypeData.TryGetProperty("code", out var codeProp) ? codeProp.GetString() : dataTypeName.ToUpperInvariant();
+
             var element = new StandardElement
             {
-                Path = dataTypeName.ToUpperInvariant(),
+                Path = codeProperty ?? dataTypeName.ToUpperInvariant(),
                 Name = dataTypeData.TryGetProperty("name", out var name) ? name.GetString() ?? "" : "",
                 Description = dataTypeData.TryGetProperty("description", out var desc) ? desc.GetString() ?? "" : "",
                 Standard = _config.StandardId,
@@ -712,7 +811,7 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
 
     private async Task<StandardElement?> LoadTriggerEventElementAsync(string triggerCode, CancellationToken cancellationToken)
     {
-        var triggerFile = Path.Combine(_dataBasePath, "triggerevents", $"{triggerCode.ToLowerInvariant()}.json");
+        var triggerFile = Path.Combine(_dataBasePath, "trigger_events", $"{triggerCode.ToLowerInvariant()}.json");
         if (!File.Exists(triggerFile))
         {
             return null;
@@ -754,7 +853,7 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
             var elements = new List<StandardElement>();
             
             // Add segment-level element
-            if (segmentData.TryGetProperty("segment", out var segmentName))
+            if (segmentData.TryGetProperty("code", out var segmentName))
             {
                 var segmentElement = new StandardElement
                 {
@@ -768,10 +867,43 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
                 // Add field elements
                 if (segmentData.TryGetProperty("fields", out var fields))
                 {
-                    foreach (var fieldProperty in fields.EnumerateObject())
+                    if (fields.ValueKind == JsonValueKind.Array)
                     {
-                        var fieldPath = fieldProperty.Name;
-                        var fieldData = fieldProperty.Value;
+                        // Array format: fields is an array of field objects
+                        foreach (var fieldData in fields.EnumerateArray())
+                        {
+                            if (fieldData.TryGetProperty("field_name", out var fieldNameProp))
+                            {
+                                var fieldPath = fieldNameProp.GetString();
+                                if (!string.IsNullOrEmpty(fieldPath))
+                                {
+                                    var fieldElement = new StandardElement
+                                    {
+                                        Path = fieldPath,
+                                        Name = GetFieldProperty(fieldData, "name", "field_description"),
+                                        Description = GetFieldProperty(fieldData, "description", "field_description"),
+                                        Standard = _config.StandardId,
+                                        Version = _config.Version,
+                                        DataType = GetFieldProperty(fieldData, "dataType", "data_type"),
+                                        Usage = GetFieldProperty(fieldData, "usage", "optionality"),
+                                        MaxLength = GetFieldIntProperty(fieldData, "maxLength", "length"),
+                                        ParentPath = segmentName.GetString() ?? "",
+                                        Examples = ExtractExamples(fieldData),
+                                        ValidValues = ExtractValidValues(fieldData),
+                                        ChildPaths = ExtractFieldComponents(fieldData)
+                                    };
+                                    elements.Add(fieldElement);
+                                }
+                            }
+                        }
+                    }
+                    else if (fields.ValueKind == JsonValueKind.Object)
+                    {
+                        // Object format: fields is an object with field names as keys
+                        foreach (var fieldProperty in fields.EnumerateObject())
+                        {
+                            var fieldPath = fieldProperty.Name;
+                            var fieldData = fieldProperty.Value;
                         
                         var fieldElement = new StandardElement
                         {
@@ -798,7 +930,8 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
                             }
                         }
                         
-                        elements.Add(fieldElement);
+                            elements.Add(fieldElement);
+                        }
                     }
                 }
             }
@@ -839,7 +972,7 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
             }
             
             // Load all data types
-            var dataTypeFiles = Directory.GetFiles(Path.Combine(_dataBasePath, "datatypes"), "*.json");
+            var dataTypeFiles = Directory.GetFiles(Path.Combine(_dataBasePath, "data_types"), "*.json");
             foreach (var dataTypeFile in dataTypeFiles)
             {
                 var dataTypeName = Path.GetFileNameWithoutExtension(dataTypeFile).ToUpperInvariant();
@@ -851,7 +984,7 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
             }
             
             // Load all trigger events
-            var triggerFiles = Directory.GetFiles(Path.Combine(_dataBasePath, "triggerevents"), "*.json");
+            var triggerFiles = Directory.GetFiles(Path.Combine(_dataBasePath, "trigger_events"), "*.json");
             foreach (var triggerFile in triggerFiles)
             {
                 var triggerCode = Path.GetFileNameWithoutExtension(triggerFile).ToUpperInvariant();
@@ -896,15 +1029,34 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
     private static List<string> ExtractChildPaths(JsonElement segmentData)
     {
         var childPaths = new List<string>();
-        
+
         if (segmentData.TryGetProperty("fields", out var fields))
         {
-            foreach (var field in fields.EnumerateObject())
+            if (fields.ValueKind == JsonValueKind.Array)
             {
-                childPaths.Add(field.Name);
+                // Array format: fields is an array of field objects
+                foreach (var field in fields.EnumerateArray())
+                {
+                    if (field.TryGetProperty("field_name", out var fieldNameProp))
+                    {
+                        var fieldName = fieldNameProp.GetString();
+                        if (!string.IsNullOrEmpty(fieldName))
+                        {
+                            childPaths.Add(fieldName);
+                        }
+                    }
+                }
+            }
+            else if (fields.ValueKind == JsonValueKind.Object)
+            {
+                // Object format: fields is an object with field names as keys
+                foreach (var field in fields.EnumerateObject())
+                {
+                    childPaths.Add(field.Name);
+                }
             }
         }
-        
+
         return childPaths;
     }
     
@@ -925,7 +1077,33 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
     
     private StandardElement? ExtractFieldElement(JsonElement fields, string fieldPath, JsonElement segmentData)
     {
-        if (!fields.TryGetProperty(fieldPath, out var fieldData))
+        JsonElement fieldData = default;
+        bool fieldFound = false;
+
+        if (fields.ValueKind == JsonValueKind.Array)
+        {
+            // Array format: search for field by field_name
+            foreach (var field in fields.EnumerateArray())
+            {
+                if (field.TryGetProperty("field_name", out var fieldNameProp))
+                {
+                    var fieldName = fieldNameProp.GetString();
+                    if (fieldName == fieldPath)
+                    {
+                        fieldData = field;
+                        fieldFound = true;
+                        break;
+                    }
+                }
+            }
+        }
+        else if (fields.ValueKind == JsonValueKind.Object)
+        {
+            // Object format: direct property lookup
+            fieldFound = fields.TryGetProperty(fieldPath, out fieldData);
+        }
+
+        if (!fieldFound)
         {
             return null;
         }
@@ -933,20 +1111,58 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
         var element = new StandardElement
         {
             Path = fieldPath,
-            Name = fieldData.TryGetProperty("name", out var name) ? name.GetString() ?? "" : "",
-            Description = fieldData.TryGetProperty("description", out var desc) ? desc.GetString() ?? "" : "",
+            Name = GetFieldProperty(fieldData, "name", "field_description"),
+            Description = GetFieldProperty(fieldData, "description", "field_description"),
             Standard = _config.StandardId,
             Version = _config.Version,
-            DataType = fieldData.TryGetProperty("dataType", out var dataType) ? dataType.GetString() ?? "" : "",
-            Usage = fieldData.TryGetProperty("usage", out var usage) ? usage.GetString() ?? "" : "",
-            MaxLength = fieldData.TryGetProperty("maxLength", out var maxLength) ? maxLength.GetInt32() : null,
+            DataType = GetFieldProperty(fieldData, "dataType", "data_type"),
+            Usage = GetFieldProperty(fieldData, "usage", "optionality"),
+            MaxLength = GetFieldIntProperty(fieldData, "maxLength", "length"),
+            Position = GetFieldIntProperty(fieldData, "position", "position"),
+            Repeatability = GetFieldProperty(fieldData, "repeatability", "repeatability"),
+            TableReference = GetFieldProperty(fieldData, "table", "table"),
             ParentPath = fieldPath.Split('.')[0], // Segment name
             Examples = ExtractExamples(fieldData),
             ValidValues = ExtractValidValues(fieldData),
             ChildPaths = ExtractFieldComponents(fieldData)
         };
-        
+
         return element;
+    }
+
+    private static string GetFieldProperty(JsonElement fieldData, string primaryName, string fallbackName)
+    {
+        if (fieldData.TryGetProperty(primaryName, out var primary))
+        {
+            return primary.GetString() ?? "";
+        }
+        if (fieldData.TryGetProperty(fallbackName, out var fallback))
+        {
+            return fallback.GetString() ?? "";
+        }
+        return "";
+    }
+
+    private static int? GetFieldIntProperty(JsonElement fieldData, string primaryName, string fallbackName)
+    {
+        if (fieldData.TryGetProperty(primaryName, out var primary) && primary.ValueKind == JsonValueKind.Number)
+        {
+            return primary.GetInt32();
+        }
+        if (fieldData.TryGetProperty(fallbackName, out var fallback))
+        {
+            if (fallback.ValueKind == JsonValueKind.Number)
+            {
+                return fallback.GetInt32();
+            }
+            // Try parsing string to int for length field
+            var lengthStr = fallback.GetString();
+            if (int.TryParse(lengthStr, out var parsed))
+            {
+                return parsed;
+            }
+        }
+        return null;
     }
     
     private StandardElement? ExtractComponentElement(JsonElement fields, string fieldName, string componentPath, JsonElement segmentData)
@@ -1108,9 +1324,9 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
     {
         // Check if it exists as any type of element
         var segmentFile = Path.Combine(_dataBasePath, "segments", $"{normalizedPath.ToLowerInvariant()}.json");
-        var dataTypeFile = Path.Combine(_dataBasePath, "datatypes", $"{normalizedPath.ToLowerInvariant()}.json");
+        var dataTypeFile = Path.Combine(_dataBasePath, "data_types", $"{normalizedPath.ToLowerInvariant()}.json");
         var tableFile = Path.Combine(_dataBasePath, "tables", $"{normalizedPath}.json");
-        var triggerFile = Path.Combine(_dataBasePath, "triggerevents", $"{normalizedPath.ToLowerInvariant()}.json");
+        var triggerFile = Path.Combine(_dataBasePath, "trigger_events", $"{normalizedPath.ToLowerInvariant()}.json");
 
         return File.Exists(segmentFile) || File.Exists(dataTypeFile) || File.Exists(tableFile) || File.Exists(triggerFile);
     }

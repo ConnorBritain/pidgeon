@@ -1,225 +1,260 @@
 {
-  "segment": "FT1",
-  "name": "Financial Transaction",
-  "description": "Contains individual financial transactions including charges, payments, adjustments, and billing details",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "O",
-  "cardinality": {
-    "min": 0,
-    "max": "unbounded"
-  },
-  "fields": {
-    "FT1.1": {
-      "name": "Set ID - Financial Transaction",
-      "description": "Sequence number for financial transaction segments",
-      "dataType": "SI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["1", "2", "3"]
+  "code": "FT1",
+  "name": "Financial transaction",
+  "version": "HL7 v2.3",
+  "chapter": "Financial Management",
+  "description": "The FT1 segment contains the detail data necessary to post charges, payments, adjustments, etc. to patient accounting records.",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "FT1.1",
+      "field_description": "Set ID - Financial Transaction",
+      "length": "4",
+      "data_type": "SI",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.2": {
-      "name": "Transaction ID",
-      "description": "Unique identifier for this transaction",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["TXN123456", "CHG789012"]
+    {
+      "position": 2,
+      "field_name": "FT1.2",
+      "field_description": "Transaction ID",
+      "length": "12",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.3": {
-      "name": "Transaction Batch ID",
-      "description": "Batch identifier for grouped transactions",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["BATCH001", "DAILY123"]
+    {
+      "position": 3,
+      "field_name": "FT1.3",
+      "field_description": "Transaction Batch ID",
+      "length": "10",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.4": {
-      "name": "Transaction Date",
-      "description": "Date when transaction occurred",
-      "dataType": "TS",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["20220815143000", "20221201120000"]
+    {
+      "position": 4,
+      "field_name": "FT1.4",
+      "field_description": "Transaction Date",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.5": {
-      "name": "Transaction Posting Date",
-      "description": "Date when transaction was posted to account",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220816143000", "20221202120000"]
+    {
+      "position": 5,
+      "field_name": "FT1.5",
+      "field_description": "Transaction Posting Date",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.6": {
-      "name": "Transaction Type",
-      "description": "Type of financial transaction",
-      "dataType": "ID",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "table": "0017",
-      "examples": ["CG", "PY", "AJ"]
+    {
+      "position": 6,
+      "field_name": "FT1.6",
+      "field_description": "Transaction Type",
+      "length": "8",
+      "data_type": "IS",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": "0017"
     },
-    "FT1.7": {
-      "name": "Transaction Code",
-      "description": "Code for the specific transaction",
-      "dataType": "CE",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["99213^Office Visit^CPT4", "85025^CBC^CPT4", "36415^Venipuncture^CPT4"]
+    {
+      "position": 7,
+      "field_name": "FT1.7",
+      "field_description": "Transaction Code",
+      "length": "80",
+      "data_type": "CE",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": "0132"
     },
-    "FT1.8": {
-      "name": "Transaction Description",
-      "description": "Description of the transaction",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["Office visit - established patient", "Complete blood count", "Blood draw"]
+    {
+      "position": 8,
+      "field_name": "FT1.8",
+      "field_description": "Transaction Description",
+      "length": "40",
+      "data_type": "ST",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.9": {
-      "name": "Transaction Description - alternate",
-      "description": "Alternative description of the transaction",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["EST PT OFFICE VISIT", "CBC WITH DIFF", "VENIPUNCTURE"]
+    {
+      "position": 9,
+      "field_name": "FT1.9",
+      "field_description": "Transaction Description - alternate",
+      "length": "40",
+      "data_type": "ST",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.10": {
-      "name": "Transaction Quantity",
-      "description": "Quantity of services or items",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["1", "2", "3"]
+    {
+      "position": 10,
+      "field_name": "FT1.10",
+      "field_description": "Transaction Quantity",
+      "length": "6",
+      "data_type": "NM",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.11": {
-      "name": "Transaction Amount - Extended",
-      "description": "Extended amount for the transaction",
-      "dataType": "CP",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["150.00^USD", "45.00^USD", "25.00^USD"]
+    {
+      "position": 11,
+      "field_name": "FT1.11",
+      "field_description": "Transaction Amount - Extended",
+      "length": "12",
+      "data_type": "CP",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.12": {
-      "name": "Transaction Amount - Unit",
-      "description": "Unit amount for the transaction",
-      "dataType": "CP",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["150.00^USD", "45.00^USD", "25.00^USD"]
+    {
+      "position": 12,
+      "field_name": "FT1.12",
+      "field_description": "Transaction Amount - Unit",
+      "length": "12",
+      "data_type": "CP",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.13": {
-      "name": "Department Code",
-      "description": "Department responsible for the transaction",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["LAB^Laboratory", "RAD^Radiology", "CARDIO^Cardiology"]
+    {
+      "position": 13,
+      "field_name": "FT1.13",
+      "field_description": "Department Code",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0049"
     },
-    "FT1.14": {
-      "name": "Insurance Plan ID",
-      "description": "Insurance plan associated with transaction",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["AETNA^Aetna Health Plans", "BCBS^Blue Cross Blue Shield"]
+    {
+      "position": 14,
+      "field_name": "FT1.14",
+      "field_description": "Insurance Plan ID",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0072"
     },
-    "FT1.15": {
-      "name": "Insurance Amount",
-      "description": "Amount covered by insurance",
-      "dataType": "CP",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["120.00^USD", "36.00^USD", "20.00^USD"]
+    {
+      "position": 15,
+      "field_name": "FT1.15",
+      "field_description": "Insurance Amount",
+      "length": "12",
+      "data_type": "CP",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.16": {
-      "name": "Assigned Patient Location",
-      "description": "Patient location when transaction occurred",
-      "dataType": "PL",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["ICU^201^A^MAIN^P", "ER^101^B^WEST^P"]
+    {
+      "position": 16,
+      "field_name": "FT1.16",
+      "field_description": "Assigned Patient Location",
+      "length": "80",
+      "data_type": "PL",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.17": {
-      "name": "Fee Schedule",
-      "description": "Fee schedule used for pricing",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 17,
+      "field_name": "FT1.17",
+      "field_description": "Fee Schedule",
+      "length": "1",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0024"
     },
-    "FT1.18": {
-      "name": "Patient Type",
-      "description": "Type of patient for billing purposes",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0018",
-      "examples": ["I", "O", "E"]
+    {
+      "position": 18,
+      "field_name": "FT1.18",
+      "field_description": "Patient Type",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0018"
     },
-    "FT1.19": {
-      "name": "Diagnosis Code",
-      "description": "Diagnosis code associated with transaction",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["I25.10^CAD^ICD10", "K59.00^Constipation^ICD10"]
+    {
+      "position": 19,
+      "field_name": "FT1.19",
+      "field_description": "Diagnosis Code",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": "0051"
     },
-    "FT1.20": {
-      "name": "Performed By Code",
-      "description": "Provider who performed the service",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["12345^SMITH^JOHN^MD", "67890^JONES^MARY^RN"]
+    {
+      "position": 20,
+      "field_name": "FT1.20",
+      "field_description": "Performed By Code",
+      "length": "120",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0084"
     },
-    "FT1.21": {
-      "name": "Ordered By Code",
-      "description": "Provider who ordered the service",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["11111^BROWN^SUSAN^MD", "22222^DAVIS^ROBERT^MD"]
+    {
+      "position": 21,
+      "field_name": "FT1.21",
+      "field_description": "Ordered By Code",
+      "length": "120",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.22": {
-      "name": "Unit Cost",
-      "description": "Cost per unit of service",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["150.00", "45.00", "25.00"]
+    {
+      "position": 22,
+      "field_name": "FT1.22",
+      "field_description": "Unit Cost",
+      "length": "12",
+      "data_type": "CP",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.23": {
-      "name": "Filler Order Number",
-      "description": "Order number assigned by service provider",
-      "dataType": "EI",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["ORD123456", "LAB789012"]
+    {
+      "position": 23,
+      "field_name": "FT1.23",
+      "field_description": "Filler Order Number",
+      "length": "22",
+      "data_type": "EI",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.24": {
-      "name": "Entered By Code",
-      "description": "Person who entered the transaction",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["33333^WILSON^JAMES^CLERK", "44444^TAYLOR^LISA^BILLING"]
+    {
+      "position": 24,
+      "field_name": "FT1.24",
+      "field_description": "Entered By Code",
+      "length": "120",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "FT1.25": {
-      "name": "Procedure Code",
-      "description": "Procedure code associated with transaction",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["99213^Office Visit^CPT4", "36415^Venipuncture^CPT4"]
+    {
+      "position": 25,
+      "field_name": "FT1.25",
+      "field_description": "Procedure Code",
+      "length": "80",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0088"
     }
-  },
-  "examples": [
-    "FT1|1|TXN123456|BATCH001|20220815143000|20220816143000|CG|99213^Office Visit^CPT4|Office visit - established patient||1|150.00^USD|150.00^USD|CARDIO^Cardiology|AETNA^Aetna Health Plans|120.00^USD||||||12345^SMITH^JOHN^MD|11111^BROWN^SUSAN^MD|150.00||33333^WILSON^JAMES^CLERK|99213^Office Visit^CPT4",
-    "FT1|2|CHG789012|DAILY123|20221201120000|20221202120000|CG|85025^CBC^CPT4|Complete blood count||1|45.00^USD|45.00^USD|LAB^Laboratory|BCBS^Blue Cross Blue Shield|36.00^USD||||||67890^JONES^MARY^RN|22222^DAVIS^ROBERT^MD|45.00|LAB789012|44444^TAYLOR^LISA^BILLING|85025^CBC^CPT4"
   ],
-  "notes": [
-    "FT1.4 (Transaction Date), FT1.6 (Transaction Type), and FT1.7 (Transaction Code) are required",
-    "Used in DFT messages for posting financial transactions",
-    "Multiple FT1 segments can represent different charges or transactions"
-  ]
+  "field_count": 25
 }

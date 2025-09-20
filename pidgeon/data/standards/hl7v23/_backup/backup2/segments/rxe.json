@@ -1,0 +1,264 @@
+{
+  "segment": "RXE",
+  "name": "Pharmacy/Treatment Encoded Order",
+  "description": "Contains detailed pharmacy or treatment order information including medication details, dosing, and dispensing instructions",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "unbounded"
+  },
+  "fields": {
+    "RXE.1": {
+      "name": "Quantity/Timing",
+      "description": "Quantity and timing specifications for the medication order",
+      "dataType": "TQ",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["1^QD^D", "2^BID^D", "1^PRN"]
+    },
+    "RXE.2": {
+      "name": "Give Code",
+      "description": "Medication or treatment code being ordered",
+      "dataType": "CE",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["ASA81^Aspirin 81mg^NDC", "AMX500^Amoxicillin 500mg^NDC"]
+    },
+    "RXE.3": {
+      "name": "Give Amount - Minimum",
+      "description": "Minimum amount to give per dose",
+      "dataType": "NM",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["1", "2.5", "0.5"]
+    },
+    "RXE.4": {
+      "name": "Give Amount - Maximum",
+      "description": "Maximum amount to give per dose",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["2", "5", "1"]
+    },
+    "RXE.5": {
+      "name": "Give Units",
+      "description": "Units for the give amount",
+      "dataType": "CE",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "examples": ["TAB^Tablet", "ML^Milliliter", "MG^Milligram"]
+    },
+    "RXE.6": {
+      "name": "Give Dosage Form",
+      "description": "Dosage form of the medication",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["TAB^Tablet", "CAP^Capsule", "LIQ^Liquid"]
+    },
+    "RXE.7": {
+      "name": "Provider's Administration Instructions",
+      "description": "Instructions for administration of the medication",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["PO^By mouth", "IV^Intravenous", "TOPICAL^Apply topically"]
+    },
+    "RXE.8": {
+      "name": "Deliver To Location",
+      "description": "Location where medication should be delivered",
+      "dataType": "CM_LA1",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    "RXE.9": {
+      "name": "Substitution Status",
+      "description": "Indicates if generic substitution is allowed",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0167",
+      "examples": ["0", "1", "2"]
+    },
+    "RXE.10": {
+      "name": "Dispense Amount",
+      "description": "Amount to dispense",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["30", "90", "15"]
+    },
+    "RXE.11": {
+      "name": "Dispense Units",
+      "description": "Units for the dispense amount",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["TAB^Tablet", "ML^Milliliter", "DOSE^Dose"]
+    },
+    "RXE.12": {
+      "name": "Number of Refills",
+      "description": "Number of refills authorized",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["0", "3", "5"]
+    },
+    "RXE.13": {
+      "name": "Ordering Provider's DEA Number",
+      "description": "DEA number of the prescribing provider",
+      "dataType": "CN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["AB1234567"]
+    },
+    "RXE.14": {
+      "name": "Pharmacist/Treatment Supplier's Verifier ID",
+      "description": "ID of pharmacist who verified the order",
+      "dataType": "CN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["PHARM123"]
+    },
+    "RXE.15": {
+      "name": "Prescription Number",
+      "description": "Unique prescription identifier",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["RX123456", "PRESC789012"]
+    },
+    "RXE.16": {
+      "name": "Number of Refills Remaining",
+      "description": "Number of refills remaining on prescription",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["3", "1", "0"]
+    },
+    "RXE.17": {
+      "name": "Number of Refills/Doses Dispensed",
+      "description": "Number of refills or doses already dispensed",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["1", "2", "5"]
+    },
+    "RXE.18": {
+      "name": "Date / time of most recent refill or dose dispensed",
+      "description": "Date and time of most recent dispensing",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815143000", "20221201120000"]
+    },
+    "RXE.19": {
+      "name": "Total Daily Dose",
+      "description": "Total daily dose amount and units",
+      "dataType": "CQ",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["100^MG", "2^TAB"]
+    },
+    "RXE.20": {
+      "name": "Needs Human Review",
+      "description": "Indicates if order needs human pharmacist review",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0136",
+      "examples": ["Y", "N"]
+    },
+    "RXE.21": {
+      "name": "Pharmacy/Treatment Supplier's Special Dispensing Instructions",
+      "description": "Special instructions for dispensing",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["REFRIGERATE^Keep refrigerated", "SHAKE^Shake well before use"]
+    },
+    "RXE.22": {
+      "name": "Give Per",
+      "description": "Time period for dosing (per day, per hour, etc.)",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["DAY", "HOUR", "DOSE"]
+    },
+    "RXE.23": {
+      "name": "Give Rate Amount",
+      "description": "Rate amount for continuous infusions",
+      "dataType": "ST",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["100", "0.5", "25"]
+    },
+    "RXE.24": {
+      "name": "Give Rate Units",
+      "description": "Units for the give rate amount",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["ML/HR^Milliliters per hour", "MCG/MIN^Micrograms per minute"]
+    },
+    "RXE.25": {
+      "name": "Give Strength",
+      "description": "Strength of the medication",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["81", "500", "10"]
+    },
+    "RXE.26": {
+      "name": "Give Strength Units",
+      "description": "Units for the medication strength",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["MG^Milligram", "MCG^Microgram", "UNIT^Unit"]
+    },
+    "RXE.27": {
+      "name": "Give Indication",
+      "description": "Indication or reason for the medication",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["PAIN^Pain management", "HTN^Hypertension", "INFECTION^Bacterial infection"]
+    },
+    "RXE.28": {
+      "name": "Dispense Package Size",
+      "description": "Size of the dispensed package",
+      "dataType": "NM",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["30", "90", "100"]
+    },
+    "RXE.29": {
+      "name": "Dispense Package Size Unit",
+      "description": "Units for the package size",
+      "dataType": "CE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["TAB^Tablet", "ML^Milliliter", "DOSE^Dose"]
+    },
+    "RXE.30": {
+      "name": "Dispense Package Method",
+      "description": "Method used for dispensing the package",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0321"
+    }
+  },
+  "examples": [
+    "RXE|1^QD^D|ASA81^Aspirin 81mg^NDC|1||TAB^Tablet|TAB^Tablet|PO^By mouth||0|30|TAB^Tablet|3||||||||||||||||||",
+    "RXE|2^BID^D|AMX500^Amoxicillin 500mg^NDC|1||CAP^Capsule|CAP^Capsule|PO^By mouth||1|20|CAP^Capsule|0||||||||||||||||||"
+  ],
+  "notes": [
+    "RXE.1 (Quantity/Timing), RXE.2 (Give Code), RXE.3 (Give Amount - Minimum), and RXE.5 (Give Units) are required",
+    "Used with ORC segment for complete pharmacy order management",
+    "Multiple RXE segments can represent different medications in same order"
+  ]
+}

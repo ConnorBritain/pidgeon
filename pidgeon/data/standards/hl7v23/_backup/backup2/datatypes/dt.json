@@ -1,0 +1,22 @@
+{
+  "dataType": "DT",
+  "name": "Date",
+  "description": "Date using Gregorian calendar. Allows variable precision with optional month and day components.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "primitive",
+  "usage": [
+    "Patient birth dates in PID.7",
+    "Admission dates in PV1.44",
+    "Procedure dates in PR1.5"
+  ],
+  "examples": [
+    "19880704",
+    "199503",
+    "1998"
+  ],
+  "constraints": {
+    "encoding": "YYYY[MM[DD]] format",
+    "validation": "Year required, month and day optional for variable precision"
+  }
+}

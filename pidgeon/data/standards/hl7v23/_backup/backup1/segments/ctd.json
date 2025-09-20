@@ -1,0 +1,217 @@
+{
+  "segment": "CTD",
+  "name": "Contact Data",
+  "description": "The CTD segment contains detailed contact information for healthcare providers, personnel, and other individuals associated with patient care, referrals, or administrative functions. This segment allows multiple contact personnel to be associated with a single provider or organization, supporting complex healthcare communication networks and referral relationships.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "*",
+    "note": "CTD segments repeat for each contact person associated with the provider or organization"
+  },
+  "messageTypes": ["REF^I12", "REF^I13", "REF^I14", "REF^I15", "ADT^A01", "ADT^A04", "ORM^O01", "ORU^R01"],
+  "fields": {
+    "CTD.1": {
+      "name": "Role",
+      "description": "This field specifies the role or relationship of the contact person to the provider or organization. Defines the functional capacity in which the contact serves within the healthcare delivery system.",
+      "dataType": "CE",
+      "usage": "R",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 1,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "ADM", "description": "Admitting physician"},
+        {"code": "ATT", "description": "Attending physician"},
+        {"code": "CON", "description": "Consultant"},
+        {"code": "REF", "description": "Referring physician"},
+        {"code": "ADV", "description": "Advisor"},
+        {"code": "TRT", "description": "Treating physician"},
+        {"code": "PRI", "description": "Primary care physician"},
+        {"code": "EMG", "description": "Emergency contact"},
+        {"code": "SEC", "description": "Secretary/Assistant"},
+        {"code": "FHCP", "description": "Family health care professional"}
+      ],
+      "generationHint": "Most common: ATT (attending), REF (referring), CON (consultant), PRI (primary)"
+    },
+    "CTD.2": {
+      "name": "Contact Name",
+      "description": "This field contains the name of the contact person. Supports various name formats including family name, given name, middle initial, suffix, and prefix components.",
+      "dataType": "XPN",
+      "usage": "O",
+      "maxLength": 106,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Standard physician names: Smith^John^A^MD, Johnson^Mary^L^DO"
+    },
+    "CTD.3": {
+      "name": "Contact Address",
+      "description": "This field contains the mailing address information for the contact person. Includes street address, city, state, postal code, and country components.",
+      "dataType": "XAD",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Complete addresses: 123 Medical Dr^^Springfield^IL^62701^USA"
+    },
+    "CTD.4": {
+      "name": "Contact Location",
+      "description": "This field specifies the physical location where the contact person can be found within a healthcare facility. Includes building, floor, room, and department information.",
+      "dataType": "PL",
+      "usage": "O",
+      "maxLength": 60,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Facility locations: 2East^Room 201^General Hospital^Springfield^IL"
+    },
+    "CTD.5": {
+      "name": "Contact Communication Information",
+      "description": "This field contains telecommunication information for contacting the person, including phone numbers, fax numbers, email addresses, and other communication methods.",
+      "dataType": "XTN",
+      "usage": "O",
+      "maxLength": 100,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "validValues": [
+        {"code": "PH", "description": "Telephone"},
+        {"code": "FX", "description": "Fax"},
+        {"code": "MD", "description": "Modem"},
+        {"code": "CP", "description": "Cellular Phone"},
+        {"code": "PG", "description": "Pager"},
+        {"code": "BP", "description": "Beeper"},
+        {"code": "Internet", "description": "Internet Address"},
+        {"code": "X.400", "description": "X.400 email address"}
+      ],
+      "generationHint": "Phone: 217-555-0123^PRN^PH, Email: doctor@hospital.org^NET^Internet"
+    },
+    "CTD.6": {
+      "name": "Preferred Method of Contact",
+      "description": "This field indicates the preferred method for contacting this person, such as phone, email, pager, or other communication channels.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 200,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "B", "description": "Beeper Number"},
+        {"code": "C", "description": "Cellular Phone Number"},
+        {"code": "E", "description": "E-Mail Address (for backward compatibility)"},
+        {"code": "F", "description": "FAX Number"},
+        {"code": "H", "description": "Home Phone Number"},
+        {"code": "O", "description": "Office Phone Number"},
+        {"code": "P", "description": "Pager Number"}
+      ],
+      "generationHint": "Most common: O (office), C (cellular), E (email), P (pager)"
+    },
+    "CTD.7": {
+      "name": "Contact Identifiers",
+      "description": "This field contains unique identifiers for the contact person, such as provider numbers, license numbers, employee IDs, or other identification codes used by the healthcare organization.",
+      "dataType": "CM",
+      "usage": "O",
+      "maxLength": 100,
+      "cardinality": {
+        "min": 0,
+        "max": "*"
+      },
+      "generationHint": "Provider IDs: NPI1234567890, License: MD123456, Employee: EMP789012"
+    }
+  },
+  "vendorVariations": {
+    "epic": {
+      "commonFields": ["CTD.1", "CTD.2", "CTD.5", "CTD.6"],
+      "extensions": ["MyChart messaging integration", "Provider directory synchronization", "Smart routing based on role"],
+      "notes": "Epic emphasizes communication workflow integration with provider preference management"
+    },
+    "cerner": {
+      "commonFields": ["CTD.1", "CTD.2", "CTD.3", "CTD.5"],
+      "extensions": ["PowerChart contact management", "Care team coordination", "Multi-facility provider tracking"],
+      "notes": "Cerner focuses on care team collaboration with comprehensive contact management"
+    },
+    "allscripts": {
+      "commonFields": ["CTD.1", "CTD.2", "CTD.5"],
+      "extensions": ["Provider portal integration", "Basic contact preferences", "Referral network management"],
+      "notes": "Allscripts provides essential contact management for ambulatory care referrals"
+    },
+    "meditech": {
+      "commonFields": ["CTD.1", "CTD.2", "CTD.4", "CTD.5"],
+      "extensions": ["Enterprise contact directory", "Role-based access control", "Multi-entity provider tracking"],
+      "notes": "Meditech supports complex healthcare system contact management across multiple facilities"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "Practitioner.telecom",
+      "PractitionerRole.contact",
+      "Organization.contact",
+      "Person.telecom",
+      "RelatedPerson.telecom"
+    ],
+    "related": ["PRD", "ROL", "STF", "ORG", "PRA"]
+  },
+  "examples": [
+    {
+      "name": "Referring Physician Contact",
+      "segment": "CTD|REF^Referring Physician^HL70131|Smith^John^A^MD|123 Medical Dr^^Springfield^IL^62701^USA|2East^Room 201^General Hospital|217-555-0123^PRN^PH~jsmith@hospital.org^NET^Internet|O^Office Phone|NPI1234567890^NPI^Provider Number",
+      "description": "Complete contact information for referring physician with office phone preference"
+    },
+    {
+      "name": "Emergency Contact",
+      "segment": "CTD|EMG^Emergency Contact^HL70131|Johnson^Mary^L^RN||Emergency Department^ED^General Hospital|217-555-0199^PRN^PH~217-555-0200^WPN^CP|C^Cellular Phone|EMP789012^Employee ID",
+      "description": "Emergency department contact with cellular phone preference"
+    },
+    {
+      "name": "Consultant Contact",
+      "segment": "CTD|CON^Consultant^HL70131|Williams^Robert^T^MD|456 Specialty Ave^^Springfield^IL^62702|3West^Suite 301^Specialty Clinic|217-555-0300^WPN^PH~217-555-0888^WPN^PG|P^Pager|NPI9876543210^NPI",
+      "description": "Specialist consultant with pager as preferred contact method"
+    },
+    {
+      "name": "Primary Care Provider",
+      "segment": "CTD|PRI^Primary Care Physician^HL70131|Davis^Susan^M^DO|789 Family Dr^^Springfield^IL^62703|1st Floor^Room 105^Family Practice|217-555-0400^WPN^PH~sdavis@familycare.org^NET^Internet|E^Email|NPI5555666677^NPI",
+      "description": "Primary care physician with email as preferred contact method"
+    }
+  ],
+  "notes": [
+    "CTD segment is essential for healthcare communication and referral management",
+    "Role field (CTD.1) is required and defines the contact's relationship to patient care",
+    "Multiple CTD segments can be used to specify different contact persons for same provider",
+    "Contact communication information supports multiple communication channels",
+    "Preferred contact method enables efficient provider-to-provider communication",
+    "Critical for care coordination and patient safety communication workflows"
+  ],
+  "generationRules": {
+    "fieldPopulation": {
+      "required": ["CTD.1"],
+      "recommended": ["CTD.2", "CTD.5"],
+      "situational": ["CTD.3", "CTD.4", "CTD.6", "CTD.7"]
+    },
+    "dataConsistency": {
+      "roleValidation": "CTD.1 Role must be appropriate for the healthcare context",
+      "contactMethodAlignment": "CTD.6 Preferred method must reference valid communication in CTD.5",
+      "identifierValidation": "CTD.7 Contact identifiers must be valid for the specified role",
+      "addressCompletion": "CTD.3 and CTD.4 should provide sufficient location information"
+    },
+    "businessRules": {
+      "communicationCompliance": "All contact methods must comply with healthcare communication standards",
+      "roleAuthorization": "Contact roles must be appropriate for the provider's scope of practice",
+      "identifierValidation": "Provider identifiers must be properly verified and current",
+      "contactVerification": "Contact information should be validated for accuracy and accessibility"
+    },
+    "messageFlow": {
+      "triggers": ["Provider registration", "Referral creation", "Care team assignment"],
+      "responses": ["Contact verification confirmations", "Communication delivery receipts"],
+      "workflow": "CTD segments enable comprehensive provider contact management and care coordination"
+    }
+  }
+}

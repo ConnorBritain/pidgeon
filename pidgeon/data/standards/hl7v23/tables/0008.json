@@ -1,44 +1,47 @@
 {
-  "table": "0008",
+  "code": "0008",
   "name": "Acknowledgment code",
-  "description": "Codes indicating acknowledgment response status for HL7 messages",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "type": "hl7_defined",
+  "version": "HL7 v2.3",
+  "chapter": "Control/Query",
+  "description": "HL7 Standard Tables - Tables defined by the HL7 organization. Most tables in this category are related to the standard and its message structures.",
+  "type": "HL7",
   "values": [
     {
-      "code": "AA",
+      "value": "AA",
       "description": "Original mode: Application Accept - Enhanced mode: Application acknowledgment: Accept",
-      "definition": "Message accepted and processed successfully"
+      "comment": "",
+      "sort_order": 1
     },
     {
-      "code": "AE",
+      "value": "AE",
       "description": "Original mode: Application Error - Enhanced mode: Application acknowledgment: Error",
-      "definition": "Message accepted but processing resulted in error"
+      "comment": "",
+      "sort_order": 2
     },
     {
-      "code": "AR",
+      "value": "AR",
       "description": "Original mode: Application Reject - Enhanced mode: Application acknowledgment: Reject",
-      "definition": "Message rejected due to application-level validation failure"
+      "comment": "",
+      "sort_order": 3
     },
     {
-      "code": "CA",
+      "value": "CA",
       "description": "Enhanced mode: Accept acknowledgment: Commit Accept",
-      "definition": "Enhanced mode commit accept acknowledgment"
+      "comment": "",
+      "sort_order": 4
     },
     {
-      "code": "CE",
+      "value": "CE",
       "description": "Enhanced mode: Accept acknowledgment: Commit Error",
-      "definition": "Enhanced mode commit error acknowledgment"
+      "comment": "",
+      "sort_order": 5
     },
     {
-      "code": "CR",
+      "value": "CR",
       "description": "Enhanced mode: Accept acknowledgment: Commit Reject",
-      "definition": "Enhanced mode commit reject acknowledgment"
+      "comment": "",
+      "sort_order": 6
     }
   ],
-  "usedIn": [
-    "MSA.1"
-  ],
-  "notes": "Critical for HL7 message acknowledgment processing and error handling"
+  "value_count": 6
 }

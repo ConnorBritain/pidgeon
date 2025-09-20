@@ -41,6 +41,21 @@ public record StandardElement
     public int? MaxLength { get; init; }
 
     /// <summary>
+    /// Position number within the segment for HL7 fields (e.g., 8 for PID.8).
+    /// </summary>
+    public int? Position { get; init; }
+
+    /// <summary>
+    /// Repeatability indicator: "-" (non-repeating), "∞" (unlimited), or number (max repeats).
+    /// </summary>
+    public string? Repeatability { get; init; }
+
+    /// <summary>
+    /// Table reference for coded fields (e.g., "0001" for Administrative Sex).
+    /// </summary>
+    public string? TableReference { get; init; }
+
+    /// <summary>
     /// Example values for this element to help developers understand usage.
     /// </summary>
     public List<string> Examples { get; init; } = [];

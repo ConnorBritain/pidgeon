@@ -1,0 +1,58 @@
+{
+  "triggerEvent": "P04",
+  "name": "Generate Bill and A/R Statements",
+  "description": "Triggers generation of patient bills and accounts receivable statements for outstanding balances",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "6",
+  "chapterName": "Financial Management",
+  "messageStructure": "BAR^P04",
+  "hl7Reference": "HL7 v2.3 Chapter 6 Financial Management - HL7.eu/HL7v2x/v23/std23",
+  "segments": {
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "PV1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3"
+    ]
+  },
+  "businessPurpose": "Initiate generation of patient billing statements and accounts receivable reports for outstanding account balances",
+  "timing": "Sent when billing cycle processing requires statement generation or on-demand bill creation",
+  "responseMessage": "ACK^P04^ACK",
+  "standardNotes": [
+    "P04 triggers billing statement generation, not the actual bill content",
+    "Used for periodic billing cycles and ad-hoc statement requests",
+    "EVN.2 should contain the statement generation date/time",
+    "Generated statements typically sent through separate delivery channels"
+  ],
+  "realWorldScenarios": [
+    "Monthly billing cycle generates statements for all outstanding accounts",
+    "Patient requests current account statement before payment",
+    "Insurance follow-up requires updated statement for claim processing",
+    "Collection agency needs detailed statement for delinquent accounts",
+    "Financial counselor requests statement for payment plan setup",
+    "Audit department requires statement generation for account review"
+  ],
+  "generationRules": {
+    "MSH.9": "BAR^P04",
+    "EVN.1": "P04",
+    "EVN.2": "Statement generation date/time",
+    "PID": "Patient identification for statement generation",
+    "PV1": "Visit information if statement specific to encounter",
+    "GT1": "Guarantor information for billing responsibility",
+    "IN1": "Primary insurance information for statement",
+    "IN2": "Additional insurance details",
+    "IN3": "Insurance certification information",
+    "requiredDataQuality": "High - statement accuracy affects patient satisfaction and payment collection",
+    "tableReferences": {
+      "EVN.1": "Event Type Code",
+      "PV1.2": "HL7-0004 (Patient Class)"
+    }
+  }
+}

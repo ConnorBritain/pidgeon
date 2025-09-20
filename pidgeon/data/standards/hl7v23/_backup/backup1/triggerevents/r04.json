@@ -1,0 +1,49 @@
+{
+  "triggerEvent": "R04",
+  "name": "Response for Results of Observation",
+  "description": "Query response message providing specific observation results requested through R02 query messages",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "7",
+  "chapterName": "Observation Reporting",
+  "messageStructure": "ORF^R04",
+  "segments": {
+    "required": [
+      "MSH",
+      "MSA",
+      "QRD"
+    ],
+    "optional": [
+      "QRF",
+      "PID",
+      "OBR",
+      "OBX",
+      "NTE",
+      "CTI"
+    ]
+  },
+  "businessPurpose": "Provide specific observation results in response to R02 query requests from clinical and laboratory systems",
+  "timing": "Sent in response to R02 observation query messages when results are available",
+  "responseMessage": "ACK^R04^ACK",
+  "realWorldScenarios": [
+    "Laboratory responds to physician query for pending blood work results",
+    "Radiology system provides requested diagnostic imaging results",
+    "Pathology department returns requested biopsy findings",
+    "Cardiology system responds with requested ECG interpretation",
+    "Pharmacy provides requested drug level monitoring results",
+    "Microbiology lab returns requested culture and sensitivity results"
+  ],
+  "generationRules": {
+    "MSH.9": "ORF^R04",
+    "MSA.1": "AA|AE|AR (Application Accept|Error|Reject)",
+    "MSA.2": "Original message control ID from R02 query",
+    "QRD": "Original query definition from R02 request",
+    "QRF": "Original query filter from R02 request",
+    "PID": "Patient identification for requested results",
+    "OBR.4": "Universal service identifier for requested observations",
+    "OBX.3": "Observation identifier",
+    "OBX.5": "Observation value/result",
+    "OBX.11": "Observation result status",
+    "requiredDataQuality": "Critical - query responses must accurately match requested observations and provide complete result data"
+  }
+}

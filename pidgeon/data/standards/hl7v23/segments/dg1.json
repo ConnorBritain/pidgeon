@@ -1,180 +1,200 @@
 {
-  "segment": "DG1",
+  "code": "DG1",
   "name": "Diagnosis",
-  "description": "Contains diagnosis information including codes, descriptions, and clinical data",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "O",
-  "cardinality": {
-    "min": 0,
-    "max": "unbounded"
-  },
-  "fields": {
-    "DG1.1": {
-      "name": "Set ID - Diagnosis",
-      "description": "Sequence number for diagnosis segments within message",
-      "dataType": "SI",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "examples": ["1", "2", "3"]
+  "version": "HL7 v2.3",
+  "chapter": "Financial Management",
+  "description": "The DG1 segment contains patient diagnosis information of various types, for example, admitting, primary, etc. The DG1 segment is used to send multiple diagnoses (for example, for medical records encoding). It is also used when the FT1-19-diagnosis does not provide sufficient information for a billing system. This diagnosis coding should be distinguished from the clinical problem segment used by caregivers to manage the patient (see Chapter 12, Patient Care). Coding methodologies are also defined.",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "DG1.1",
+      "field_description": "Set ID - Diagnosis",
+      "length": "4",
+      "data_type": "SI",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": ""
     },
-    "DG1.2": {
-      "name": "Diagnosis Coding Method",
-      "description": "Coding system used for diagnosis",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0053",
-      "examples": ["I9", "I10"]
+    {
+      "position": 2,
+      "field_name": "DG1.2",
+      "field_description": "Diagnosis Coding Method",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": "0053"
     },
-    "DG1.3": {
-      "name": "Diagnosis Code",
-      "description": "Coded diagnosis using specified coding method",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0051",
-      "examples": ["I25.10^CAD^ICD10", "K59.00^Constipation^ICD10"]
+    {
+      "position": 3,
+      "field_name": "DG1.3",
+      "field_description": "Diagnosis Code",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0051"
     },
-    "DG1.4": {
-      "name": "Diagnosis Description",
-      "description": "Text description of the diagnosis",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["Coronary artery disease", "Type 2 diabetes", "Hypertension"]
+    {
+      "position": 4,
+      "field_name": "DG1.4",
+      "field_description": "Diagnosis Description",
+      "length": "40",
+      "data_type": "ST",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": ""
     },
-    "DG1.5": {
-      "name": "Diagnosis Date/Time",
-      "description": "Date and time diagnosis was made",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815143000", "20221201120000"]
+    {
+      "position": 5,
+      "field_name": "DG1.5",
+      "field_description": "Diagnosis Date/Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "DG1.6": {
-      "name": "Diagnosis Type",
-      "description": "Type or category of diagnosis",
-      "dataType": "IS",
-      "usage": "R",
-      "cardinality": {"min": 1, "max": 1},
-      "table": "0052",
-      "examples": ["A", "P", "W"]
+    {
+      "position": 6,
+      "field_name": "DG1.6",
+      "field_description": "Diagnosis Type",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "R",
+      "repeatability": "-",
+      "table": "0052"
     },
-    "DG1.7": {
-      "name": "Major Diagnostic Category",
-      "description": "Major diagnostic category for DRG grouping",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 7,
+      "field_name": "DG1.7",
+      "field_description": "Major Diagnostic Category",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "B",
+      "repeatability": "-",
       "table": "0118"
     },
-    "DG1.8": {
-      "name": "Diagnostic Related Group",
-      "description": "DRG code for billing and classification",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0055",
-      "examples": ["247^Percutaneous Cardiovascular Procedures"]
+    {
+      "position": 8,
+      "field_name": "DG1.8",
+      "field_description": "Diagnostic Related Group",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": "0055"
     },
-    "DG1.9": {
-      "name": "DRG Approval Indicator",
-      "description": "Indicates if DRG assignment is approved",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["Y", "N"]
+    {
+      "position": 9,
+      "field_name": "DG1.9",
+      "field_description": "DRG Approval Indicator",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "DG1.10": {
-      "name": "DRG Grouper Review Code",
-      "description": "Review code from DRG grouper software",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 10,
+      "field_name": "DG1.10",
+      "field_description": "DRG Grouper Review Code",
+      "length": "2",
+      "data_type": "IS",
+      "optionality": "B",
+      "repeatability": "-",
       "table": "0056"
     },
-    "DG1.11": {
-      "name": "Outlier Type",
-      "description": "Type of outlier for DRG classification",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 11,
+      "field_name": "DG1.11",
+      "field_description": "Outlier Type",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "B",
+      "repeatability": "-",
       "table": "0083"
     },
-    "DG1.12": {
-      "name": "Outlier Days",
-      "description": "Number of outlier days beyond DRG threshold",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["5", "12"]
+    {
+      "position": 12,
+      "field_name": "DG1.12",
+      "field_description": "Outlier Days",
+      "length": "3",
+      "data_type": "NM",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": ""
     },
-    "DG1.13": {
-      "name": "Outlier Cost",
-      "description": "Cost associated with outlier days",
-      "dataType": "CP",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["5000.00^USD"]
+    {
+      "position": 13,
+      "field_name": "DG1.13",
+      "field_description": "Outlier Cost",
+      "length": "12",
+      "data_type": "CP",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": ""
     },
-    "DG1.14": {
-      "name": "Grouper Version and Type",
-      "description": "Version and type of DRG grouper software used",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["V38", "3M41"]
+    {
+      "position": 14,
+      "field_name": "DG1.14",
+      "field_description": "Grouper Version and Type",
+      "length": "4",
+      "data_type": "ST",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": ""
     },
-    "DG1.15": {
-      "name": "Diagnosis Priority",
-      "description": "Priority or ranking of this diagnosis",
-      "dataType": "NM",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["1", "2", "3"]
+    {
+      "position": 15,
+      "field_name": "DG1.15",
+      "field_description": "Diagnosis Priority",
+      "length": "2",
+      "data_type": "NM",
+      "optionality": "B",
+      "repeatability": "-",
+      "table": ""
     },
-    "DG1.16": {
-      "name": "Diagnosing Clinician",
-      "description": "Clinician who made the diagnosis",
-      "dataType": "XCN",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": "unbounded"},
-      "examples": ["12345^SMITH^JOHN^MD", "67890^DOE^JANE^MD"]
+    {
+      "position": 16,
+      "field_name": "DG1.16",
+      "field_description": "Diagnosing Clinician",
+      "length": "60",
+      "data_type": "XCN",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
     },
-    "DG1.17": {
-      "name": "Diagnosis Classification",
-      "description": "Classification category for the diagnosis",
-      "dataType": "IS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
+    {
+      "position": 17,
+      "field_name": "DG1.17",
+      "field_description": "Diagnosis Classification",
+      "length": "3",
+      "data_type": "IS",
+      "optionality": "O",
+      "repeatability": "-",
       "table": "0228"
     },
-    "DG1.18": {
-      "name": "Confidential Indicator",
-      "description": "Indicates if diagnosis information is confidential",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 18,
+      "field_name": "DG1.18",
+      "field_description": "Confidential Indicator",
+      "length": "1",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "DG1.19": {
-      "name": "Attestation Date/Time",
-      "description": "Date and time diagnosis was attested by clinician",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815150000"]
+    {
+      "position": 19,
+      "field_name": "DG1.19",
+      "field_description": "Attestation Date/Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     }
-  },
-  "examples": [
-    "DG1|1|I10|I25.10^CAD^ICD10|Coronary artery disease|20220815143000|A|||||||||||12345^SMITH^JOHN^MD||N|20220815150000",
-    "DG1|2|I10|E11.9^Type 2 diabetes^ICD10|Type 2 diabetes mellitus|20220815143000|P|||||||||||67890^DOE^JANE^MD||N|20220815150000"
   ],
-  "notes": [
-    "DG1.1 (Set ID) is required for segment sequencing",
-    "DG1.6 (Diagnosis Type) is required - A=Admitting, P=Primary, W=Working",
-    "Multiple DG1 segments can represent different diagnoses or comorbidities"
-  ]
+  "field_count": 19
 }

@@ -1,74 +1,70 @@
 {
-  "segment": "ACC",
+  "code": "ACC",
   "name": "Accident",
-  "description": "Contains information about accidents related to patient injuries or emergency department visits",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "usage": "O",
-  "cardinality": {
-    "min": 0,
-    "max": 1
-  },
-  "fields": {
-    "ACC.1": {
-      "name": "Accident Date/Time",
-      "description": "Date and time when the accident occurred",
-      "dataType": "TS",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["20220815143000", "20221201120000"]
+  "version": "HL7 v2.3",
+  "chapter": "Financial Management",
+  "description": "The ACC segment contains patient information relative to an accident in which the patient has been involved.",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "ACC.1",
+      "field_description": "Accident Date/Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ACC.2": {
-      "name": "Accident Code",
-      "description": "Code indicating the type of accident",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0050",
-      "examples": ["A", "E", "T"]
+    {
+      "position": 2,
+      "field_name": "ACC.2",
+      "field_description": "Accident Code",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0050"
     },
-    "ACC.3": {
-      "name": "Accident Location",
-      "description": "Location where the accident occurred",
-      "dataType": "ST",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["Interstate 95 mile marker 45", "Home kitchen", "Workplace parking lot"]
+    {
+      "position": 3,
+      "field_name": "ACC.3",
+      "field_description": "Accident Location",
+      "length": "25",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ACC.4": {
-      "name": "Auto Accident State",
-      "description": "State where auto accident occurred",
-      "dataType": "CE",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "examples": ["CA^California", "TX^Texas", "NY^New York"]
+    {
+      "position": 4,
+      "field_name": "ACC.4",
+      "field_description": "Auto Accident State",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
     },
-    "ACC.5": {
-      "name": "Accident Job Related Indicator",
-      "description": "Indicates if accident was job related",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 5,
+      "field_name": "ACC.5",
+      "field_description": "Accident Job Related Indicator",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     },
-    "ACC.6": {
-      "name": "Accident Death Indicator",
-      "description": "Indicates if accident resulted in death",
-      "dataType": "ID",
-      "usage": "O",
-      "cardinality": {"min": 0, "max": 1},
-      "table": "0136",
-      "examples": ["Y", "N"]
+    {
+      "position": 6,
+      "field_name": "ACC.6",
+      "field_description": "Accident Death Indicator",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
     }
-  },
-  "examples": [
-    "ACC|20220815143000|A|Interstate 95 mile marker 45|CA^California|N|N",
-    "ACC|20221201120000|E|Home kitchen||Y|N"
   ],
-  "notes": [
-    "All ACC fields are optional but provide important context for emergency and trauma cases",
-    "Typically used in emergency department and trauma center workflows",
-    "Supports workers compensation and auto insurance claim processing"
-  ]
+  "field_count": 6
 }

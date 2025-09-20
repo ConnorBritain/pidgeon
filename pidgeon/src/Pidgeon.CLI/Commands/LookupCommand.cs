@@ -308,6 +308,19 @@ public class LookupCommand : CommandBuilderBase
         {
             Console.WriteLine($"   Max Length: {element.MaxLength}");
         }
+        if (element.Position.HasValue)
+        {
+            Console.WriteLine($"   Position: {element.Position}");
+        }
+        if (!string.IsNullOrEmpty(element.Repeatability))
+        {
+            Console.WriteLine($"   Repeatability: {element.Repeatability}");
+        }
+        if (!string.IsNullOrEmpty(element.TableReference))
+        {
+            Console.WriteLine($"   Table: {element.TableReference}");
+            Console.WriteLine($"   📋 Valid Values: → pidgeon lookup {element.TableReference}");
+        }
         Console.WriteLine();
 
         Console.WriteLine($"📝 Description:");

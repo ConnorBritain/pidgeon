@@ -1,0 +1,89 @@
+{
+  "table": "0023",
+  "name": "Admit Source",
+  "description": "From where the patient was admitted",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "type": "user_defined",
+  "values": [
+    {
+      "code": "1",
+      "description": "Physician referral",
+      "definition": "Patient admitted through physician referral"
+    },
+    {
+      "code": "2",
+      "description": "Clinic referral",
+      "definition": "Patient referred from clinic or outpatient facility"
+    },
+    {
+      "code": "3",
+      "description": "HMO referral",
+      "definition": "Patient referred from Health Maintenance Organization"
+    },
+    {
+      "code": "4",
+      "description": "Transfer from a hospital",
+      "definition": "Patient transferred from another acute care hospital"
+    },
+    {
+      "code": "5",
+      "description": "Transfer from a skilled nursing facility",
+      "definition": "Patient transferred from skilled nursing facility"
+    },
+    {
+      "code": "6",
+      "description": "Transfer from another health care facility",
+      "definition": "Patient transferred from other healthcare facility"
+    },
+    {
+      "code": "7",
+      "description": "Emergency room",
+      "definition": "Patient admitted through emergency department"
+    },
+    {
+      "code": "8",
+      "description": "Court/law enforcement",
+      "definition": "Patient admitted by court order or law enforcement"
+    },
+    {
+      "code": "9",
+      "description": "Information not available",
+      "definition": "Admit source information not available or unknown"
+    },
+    {
+      "code": "A",
+      "description": "Transfer from critical access hospital",
+      "definition": "Patient transferred from critical access hospital"
+    },
+    {
+      "code": "B",
+      "description": "Transfer from another home health agency",
+      "definition": "Patient transferred from different home health agency"
+    },
+    {
+      "code": "C",
+      "description": "Readmission to same home health agency",
+      "definition": "Patient readmitted to same home health agency"
+    },
+    {
+      "code": "D",
+      "description": "Transfer from one distinct unit to another distinct unit",
+      "definition": "Internal hospital transfer between distinct units"
+    },
+    {
+      "code": "E",
+      "description": "Transfer from ambulatory surgery center",
+      "definition": "Patient transferred from ambulatory surgical center"
+    },
+    {
+      "code": "F",
+      "description": "Transfer from hospice",
+      "definition": "Patient transferred from hospice facility"
+    }
+  ],
+  "usedIn": [
+    "PV1.14"
+  ],
+  "notes": "User-defined table based on UB04 Form Locator 15 codes, may be customized by organization"
+}

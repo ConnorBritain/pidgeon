@@ -1,0 +1,123 @@
+{
+  "table": "0190",
+  "name": "Address Type",
+  "description": "Codes specifying the type or purpose of an address for proper routing and context",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "type": "hl7_defined",
+  "values": [
+    {
+      "code": "H",
+      "description": "Home",
+      "definition": "Primary residence where subject resides most of the time"
+    },
+    {
+      "code": "B",
+      "description": "Firm/Business",
+      "definition": "Address specific to an organization or business"
+    },
+    {
+      "code": "O",
+      "description": "Office/Business",
+      "definition": "Work address specific to the subject"
+    },
+    {
+      "code": "M",
+      "description": "Mailing",
+      "definition": "Retained for backward compatibility as of v2.6"
+    },
+    {
+      "code": "P",
+      "description": "Permanent",
+      "definition": "Address where correspondence will reach subject"
+    },
+    {
+      "code": "C",
+      "description": "Current Or Temporary",
+      "definition": "Retained for backward compatibility as of v2.6"
+    },
+    {
+      "code": "BI",
+      "description": "Billing Address",
+      "definition": "May be used for credit card validation"
+    },
+    {
+      "code": "SH",
+      "description": "Shipping Address",
+      "definition": "Address for shipping goods and deliveries"
+    },
+    {
+      "code": "L",
+      "description": "Legal Address",
+      "definition": "Address specific to subject's legal status"
+    },
+    {
+      "code": "V",
+      "description": "Vacation",
+      "definition": "Vacation address or temporary residence"
+    },
+    {
+      "code": "BA",
+      "description": "Bad address",
+      "definition": "Retained for backward compatibility as of v2.6"
+    },
+    {
+      "code": "BDL",
+      "description": "Birth delivery location",
+      "definition": "Address where birth occurred"
+    },
+    {
+      "code": "BR",
+      "description": "Residence at birth",
+      "definition": "Home address at time of birth"
+    },
+    {
+      "code": "F",
+      "description": "Country Of Origin",
+      "definition": "Country of origin address"
+    },
+    {
+      "code": "N",
+      "description": "Birth (nee) address",
+      "definition": "Birth address, not otherwise specified"
+    },
+    {
+      "code": "RH",
+      "description": "Registry home",
+      "definition": "Information system storing patient data"
+    },
+    {
+      "code": "S",
+      "description": "Service Location",
+      "definition": "Location where service is rendered"
+    },
+    {
+      "code": "TM",
+      "description": "Tube Address",
+      "definition": "Pneumatic tube address for hospital delivery systems"
+    }
+  ],
+  "usedIn": [
+    "XAD.7",
+    "XAN.7",
+    "AD.7"
+  ],
+  "vendorVariations": {
+    "epic": "Supports standard codes with additional internal address categories",
+    "cerner": "Standard implementation with validation for common address types",
+    "allscripts": "Supports primary codes (H, B, O, M, P)"
+  },
+  "generationRules": {
+    "distribution": {
+      "H": 0.45,
+      "B": 0.20,
+      "O": 0.15,
+      "M": 0.10,
+      "P": 0.05,
+      "BI": 0.02,
+      "SH": 0.02,
+      "C": 0.01
+    },
+    "realistic": "Home addresses are most common, followed by business/office addresses for providers"
+  }
+}

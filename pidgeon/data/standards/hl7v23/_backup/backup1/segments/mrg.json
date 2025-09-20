@@ -1,0 +1,192 @@
+{
+  "segment": "MRG",
+  "name": "Merge Patient Information",
+  "description": "The Merge Patient Information segment (MRG) provides information about patient records that are being merged or combined. This segment is critical for patient safety, data integrity, and maintaining accurate medical records when duplicate patient records are identified. It supports various merge scenarios including patient ID consolidation, medical record number changes, and cross-facility patient matching.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "R",
+  "cardinality": {
+    "min": 1,
+    "max": 1,
+    "note": "MRG is required in merge messages to identify the record being merged"
+  },
+  "messageTypes": ["ADT^A34", "ADT^A35", "ADT^A36", "ADT^A37", "ADT^A38", "ADT^A39"],
+  "fields": {
+    "MRG.1": {
+      "name": "Prior Patient Identifier List",
+      "description": "This field contains the patient identifiers that are being merged from the prior record.",
+      "dataType": "CX",
+      "usage": "R",
+      "maxLength": 250,
+      "cardinality": {"min": 1, "max": 1},
+      "generationHint": "Patient ID from the record being merged away",
+      "example": "OLD123456789^HOSPITAL_A^MR"
+    },
+    "MRG.2": {
+      "name": "Prior Alternate Patient ID",
+      "description": "This field contains alternate patient identifiers from the prior record.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Alternate ID from the record being merged",
+      "example": "SSN987654321^SSA^SS"
+    },
+    "MRG.3": {
+      "name": "Prior Patient Account Number",
+      "description": "This field contains the patient account number from the prior record.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Account number from the record being merged",
+      "example": "ACCT789456123^HOSPITAL_A^AN"
+    },
+    "MRG.4": {
+      "name": "Prior Patient ID",
+      "description": "This field contains the internal patient ID from the prior record.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Internal system ID from the record being merged",
+      "example": "INT456789^INTERNAL_SYSTEM^PI"
+    },
+    "MRG.5": {
+      "name": "Prior Visit Number",
+      "description": "This field contains the visit number from the prior record being merged.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Visit number from the record being merged",
+      "example": "VISIT202303150001^HOSPITAL_A^VN"
+    },
+    "MRG.6": {
+      "name": "Prior Alternate Visit ID",
+      "description": "This field contains alternate visit identifiers from the prior record.",
+      "dataType": "CX",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Alternate visit ID from the record being merged",
+      "example": "ALT2023031501^REGISTRATION^AVISIT"
+    },
+    "MRG.7": {
+      "name": "Prior Patient Name",
+      "description": "This field contains the patient name from the prior record being merged.",
+      "dataType": "XPN",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {"min": 0, "max": 1},
+      "generationHint": "Patient name from the record being merged",
+      "example": "Doe^Jane^M^^^L^CUR"
+    }
+  },
+  "vendorVariations": {
+    "epic": {
+      "commonFields": ["MRG.1", "MRG.2", "MRG.3", "MRG.7"],
+      "extensions": ["Master Patient Index integration", "Probabilistic matching", "Automated merge workflows"],
+      "notes": "Epic provides sophisticated patient matching and merge capabilities with comprehensive audit trails"
+    },
+    "cerner": {
+      "commonFields": ["MRG.1", "MRG.3", "MRG.4", "MRG.7"],
+      "extensions": ["Real-time duplicate detection", "Cross-facility matching", "Merge prevention alerts"],
+      "notes": "Cerner emphasizes proactive duplicate prevention and cross-enterprise patient matching"
+    },
+    "allscripts": {
+      "commonFields": ["MRG.1", "MRG.2", "MRG.7"],
+      "extensions": ["Manual merge workflows", "Demographic matching", "Merge reversal capabilities"],
+      "notes": "Allscripts provides user-controlled merge processes with strong reversal capabilities"
+    },
+    "mpi_vendors": {
+      "commonFields": ["MRG.1", "MRG.2", "MRG.3", "MRG.4", "MRG.7"],
+      "extensions": ["Advanced matching algorithms", "Cross-system identity resolution", "EMPI integration"],
+      "notes": "Master Patient Index vendors provide specialized identity management and matching services"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "Patient.identifier",
+      "Patient.name",
+      "Patient.link.other",
+      "Patient.link.type",
+      "Patient.active",
+      "Provenance.target",
+      "Provenance.activity",
+      "AuditEvent.entity.what"
+    ],
+    "related": [
+      "PID (Patient Identification)",
+      "PV1 (Patient Visit)",
+      "NK1 (Next of Kin)",
+      "IN1 (Insurance)",
+      "GT1 (Guarantor)",
+      "AL1 (Patient Allergy Information)",
+      "DG1 (Diagnosis)"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Basic Patient Merge",
+      "segment": "MRG|OLD123456789^HOSPITAL_A^MR|SSN987654321^SSA^SS|ACCT789456123^HOSPITAL_A^AN|||Doe^Jane^M^^^L^CUR",
+      "description": "Standard patient record merge with medical record number, SSN, and account number"
+    },
+    {
+      "name": "Cross-Facility Patient Merge",
+      "segment": "MRG|PAT555666777^FACILITY_B^MR||ACCT999888777^FACILITY_B^AN|INT333444555^INTERNAL_B^PI||Smith^John^A^^^L^CUR",
+      "description": "Patient merge across different healthcare facilities"
+    },
+    {
+      "name": "Visit-Level Merge",
+      "segment": "MRG|PAT111222333^HOSPITAL_C^MR|||VISIT202303140001^HOSPITAL_C^VN|ALT2023031401^REGISTRATION^AVISIT|Johnson^Mary^S^^^L^CUR",
+      "description": "Merge involving specific visit records and alternate visit identifiers"
+    },
+    {
+      "name": "Minimal Identifier Merge",
+      "segment": "MRG|TEMP999888777^TEMP_SYSTEM^MR||||||",
+      "description": "Minimal merge with only prior patient identifier when limited information is available"
+    }
+  ],
+  "notes": [
+    "MRG segments are critical for maintaining patient safety during record consolidation",
+    "All prior identifiers must be preserved to maintain data lineage and audit trails",
+    "Patient name information helps verify correct merge operations",
+    "Visit-level merges may be needed when encounters are incorrectly assigned",
+    "Cross-facility merges require careful attention to identifier authority domains",
+    "Merge operations must be auditable and potentially reversible",
+    "The segment supports both automated and manual merge workflows"
+  ],
+  "generationRules": {
+    "fieldPopulation": {
+      "required": ["MRG.1"],
+      "recommended": ["MRG.2", "MRG.3", "MRG.7"],
+      "situational": ["MRG.4", "MRG.5", "MRG.6"]
+    },
+    "dataConsistency": {
+      "identifierIntegrity": "All MRG identifiers must be valid and match the prior record exactly",
+      "nameMatching": "MRG.7 should correspond to the patient being merged from",
+      "authorityAlignment": "Identifier authorities must match the originating systems",
+      "uniquenessValidation": "Prior identifiers should not conflict with surviving record"
+    },
+    "businessRules": {
+      "patientSafety": "Merge operations require verification to prevent incorrect consolidation",
+      "auditRequirements": "All merge operations must be logged for compliance and safety",
+      "reversibility": "Merge data must be preserved to enable operation reversal if needed",
+      "crossReference": "All references to prior identifiers must be updated systematically"
+    },
+    "messageFlow": {
+      "triggers": ["Duplicate patient detection", "Manual merge request", "Cross-facility matching"],
+      "responses": ["Master record update", "System notifications", "Audit logging"],
+      "workflow": "Critical component of patient identity management and data integrity"
+    },
+    "mergeTypes": {
+      "A34": "Merge patient information - combines patient records",
+      "A35": "Merge patient information - combines patient records with account merge",
+      "A36": "Merge patient information - combines patient and visit information",
+      "A37": "Unlink patient information - separates previously merged records",
+      "A38": "Cancel pre-admit - cancels pre-admission registration",
+      "A39": "Merge person - patient information - merges person-level demographics"
+    }
+  }
+}

@@ -1,29 +1,29 @@
 {
-  "table": "0103",
+  "code": "0103",
   "name": "Processing ID",
-  "description": "Codes indicating the processing mode for HL7 messages",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "type": "hl7_defined",
+  "version": "HL7 v2.3",
+  "chapter": "Control/Query",
+  "description": "HL7 Standard Tables - Tables defined by the HL7 organization. Most tables in this category are related to the standard and its message structures.",
+  "type": "HL7",
   "values": [
     {
-      "code": "D",
+      "value": "D",
       "description": "Debugging",
-      "definition": "Message is part of a debugging system with detailed logging and diagnostic information"
+      "comment": "",
+      "sort_order": 1
     },
     {
-      "code": "P",
+      "value": "P",
       "description": "Production",
-      "definition": "Message is part of a production system with real patient data and live operations"
+      "comment": "",
+      "sort_order": 2
     },
     {
-      "code": "T",
+      "value": "T",
       "description": "Training",
-      "definition": "Message is part of a training system for education and practice scenarios"
+      "comment": "",
+      "sort_order": 3
     }
   ],
-  "usedIn": [
-    "MSH.11"
-  ],
-  "notes": "Critical for message routing and system environment identification"
+  "value_count": 3
 }

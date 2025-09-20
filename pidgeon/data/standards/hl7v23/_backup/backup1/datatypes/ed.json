@@ -1,0 +1,108 @@
+{
+  "dataType": "ED",
+  "name": "Encapsulated Data",
+  "description": "The ED data type is used to encapsulate binary or multimedia data within HL7 messages, including images, documents, audio files, and other non-textual content. It provides a structured way to embed large data objects with metadata describing the content type, encoding method, and data compression. ED enables healthcare systems to exchange complex multimedia content such as medical images, scanned documents, digital signatures, and diagnostic waveforms as part of standard HL7 message flows.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "composite",
+  "components": {
+    "ED.1": {
+      "name": "Source Application",
+      "dataType": "HD",
+      "description": "Identifies the application or system that created or is responsible for the encapsulated data. Provides context for data interpretation and processing.",
+      "length": 227,
+      "usage": "optional",
+      "position": 1
+    },
+    "ED.2": {
+      "name": "Type of Data",
+      "dataType": "ID",
+      "description": "Specifies the type or format of the encapsulated data (e.g., IMAGE, DOCUMENT, AUDIO, WAVEFORM). Indicates how the data should be interpreted and processed.",
+      "length": 20,
+      "usage": "required",
+      "position": 2,
+      "table": "0191"
+    },
+    "ED.3": {
+      "name": "Data Subtype",
+      "dataType": "ID",
+      "description": "Further specifies the subtype or specific format of the data (e.g., JPEG, PDF, WAV, ECG). Provides detailed format information for proper data handling.",
+      "length": 20,
+      "usage": "optional",
+      "position": 3,
+      "table": "0291"
+    },
+    "ED.4": {
+      "name": "Encoding",
+      "dataType": "ID",
+      "description": "Specifies the encoding method used for the binary data (e.g., Base64, Hex, UUEncode). Indicates how to decode the encapsulated data.",
+      "length": 20,
+      "usage": "required",
+      "position": 4,
+      "table": "0299"
+    },
+    "ED.5": {
+      "name": "Data",
+      "dataType": "TX",
+      "description": "The actual encapsulated data encoded according to the specified encoding method. Contains the binary or multimedia content as encoded text.",
+      "length": 65536,
+      "usage": "required",
+      "position": 5
+    }
+  },
+  "length": 65843,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "dataType": "Type of Data must reference valid data type from table 0191",
+    "encodingMethod": "Encoding must specify a supported encoding method from table 0299",
+    "dataIntegrity": "Encoded data must be valid according to the specified encoding method",
+    "sizeLimit": "Large data objects may require message segmentation or external storage"
+  },
+  "usage": [
+    "Medical imaging data (X-rays, CT scans, MRIs, ultrasounds)",
+    "Scanned documents and forms within healthcare workflows",
+    "Digital pathology images and microscopy data",
+    "Diagnostic waveforms (ECGs, EEGs, respiratory patterns)",
+    "Audio recordings (dictation, patient interviews)",
+    "Digital signatures and authentication certificates",
+    "Laboratory instrument data and graphs"
+  ],
+  "examples": [
+    "Radiology System^IMAGE^JPEG^Base64^/9j/4AAQSkZJRgABAQEAYABgAAD...",
+    "Document Scanner^DOCUMENT^PDF^Base64^JVBERi0xLjQKJcfsj6IKNSAwIG9...",
+    "ECG Monitor^WAVEFORM^SCP^Hex^30313032303334353637383941424...",
+    "Pathology Lab^IMAGE^TIFF^UUEncode^begin 644 image.tiff...",
+    "Voice Recorder^AUDIO^WAV^Base64^UklGRjIAAABXQVZFZm10IBAAA...",
+    "Lab Instrument^GRAPH^PNG^Base64^iVBORw0KGgoAAAANSUhEUgAAAB..."
+  ],
+  "commonFields": [
+    "OBX.5 - Observation Value for multimedia results and images",
+    "TXA.11 - Document Content in transcription documents",
+    "Document attachment fields in various message types",
+    "Laboratory result attachments and graphs",
+    "Radiology report embedded images and studies",
+    "Patient consent forms and scanned documentation"
+  ],
+  "generationHints": {
+    "typical": "Use realistic MIME types and encoding formats for healthcare data",
+    "dataTypes": ["IMAGE", "DOCUMENT", "AUDIO", "WAVEFORM", "GRAPH", "VIDEO"],
+    "subtypes": ["JPEG", "PNG", "PDF", "WAV", "ECG", "TIFF", "DICOM"],
+    "encodings": ["Base64", "Hex", "UUEncode"],
+    "sources": ["Radiology System", "ECG Monitor", "Document Scanner", "Lab Instrument"],
+    "sampleData": "Use truncated encoded data examples for testing purposes"
+  },
+  "relatedDataTypes": {
+    "TX": "Text Data - used for the actual encoded data component",
+    "HD": "Hierarchic Designator - used for source application identification",
+    "ID": "Coded Value - used for data type, subtype, and encoding specification",
+    "FT": "Formatted Text - alternative for formatted document content",
+    "ST": "String - used for shorter encoded data elements"
+  },
+  "implementationNotes": {
+    "performance": "Large encapsulated data significantly increases message size and processing time",
+    "storage": "Consider external storage with references for very large data objects",
+    "security": "Implement appropriate access controls and encryption for sensitive multimedia data",
+    "validation": "Validate encoded data integrity and format compliance before processing",
+    "compression": "Consider data compression before encoding to reduce message size"
+  }
+}

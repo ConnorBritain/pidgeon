@@ -1,0 +1,199 @@
+{
+  "messageType": "OMS",
+  "triggerEvent": "O01",
+  "name": "Stock Requisition Order Message",
+  "description": "Sent to transmit pharmacy inventory and supply requisition orders",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Pharmacy Orders",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'OMS^O01'"]
+    },
+    {
+      "type": "segment",
+      "segment": "NTE",
+      "name": "Notes and Comments",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "group",
+      "name": "PATIENT",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "structure": [
+        {
+          "type": "segment",
+          "segment": "PID",
+          "name": "Patient Identification",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": 1}
+        },
+        {
+          "type": "segment",
+          "segment": "PD1",
+          "name": "Additional Demographics",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1}
+        },
+        {
+          "type": "segment",
+          "segment": "NTE",
+          "name": "Notes and Comments",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 0}
+        },
+        {
+          "type": "group",
+          "name": "PATIENT_VISIT",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "PV1",
+              "name": "Patient Visit",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "PV2",
+              "name": "Patient Visit - Additional Information",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 1}
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "name": "INSURANCE",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 0},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "IN1",
+              "name": "Insurance",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "IN2",
+              "name": "Insurance Additional Information",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "IN3",
+              "name": "Insurance Additional Information - Certification",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 1}
+            }
+          ]
+        },
+        {
+          "type": "segment",
+          "segment": "GT1",
+          "name": "Guarantor",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1}
+        },
+        {
+          "type": "segment",
+          "segment": "AL1",
+          "name": "Patient Allergy Information",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 0}
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "name": "ORDER",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": "unbounded"},
+      "structure": [
+        {
+          "type": "segment",
+          "segment": "ORC",
+          "name": "Common Order",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": 1}
+        },
+        {
+          "type": "group",
+          "name": "ORDER_DETAIL",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "RQD",
+              "name": "Requisition Detail",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1},
+              "notes": ["Contains inventory item and quantity information"]
+            },
+            {
+              "type": "segment",
+              "segment": "NTE",
+              "name": "Notes and Comments",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 0}
+            },
+            {
+              "type": "group",
+              "name": "OBSERVATION",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 0},
+              "structure": [
+                {
+                  "type": "segment",
+                  "segment": "OBX",
+                  "name": "Observation/Result",
+                  "usage": "R",
+                  "cardinality": {"min": 1, "max": 1}
+                },
+                {
+                  "type": "segment",
+                  "segment": "NTE",
+                  "name": "Notes and Comments",
+                  "usage": "O",
+                  "cardinality": {"min": 0, "max": 0}
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "segment",
+          "segment": "BLG",
+          "name": "Billing",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1}
+        }
+      ]
+    }
+  ],
+  "useCases": [
+    "Pharmacy inventory requisitions",
+    "Medical supply orders",
+    "Equipment stock requests",
+    "Unit dose medication resupply"
+  ],
+  "examples": [
+    "MSH|^~\\&|PHARMACY|HOSPITAL|||20231201150000||OMS^O01|123456804|P|2.3",
+    "ORC|NW|REQ001|||||||20231201150000|||PHARM001^DAVIS^ROBERT",
+    "RQD|ASPIRIN^Aspirin 325mg TAB^NDC|100|TAB|STOREROOM|URGENT",
+    "BLG|S|PHARMACY|20231201150000"
+  ]
+}

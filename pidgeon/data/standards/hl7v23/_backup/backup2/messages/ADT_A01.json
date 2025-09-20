@@ -1,0 +1,197 @@
+{
+  "messageType": "ADT",
+  "triggerEvent": "A01",
+  "messageStructure": "ADT_A01",
+  "name": "Admit/Visit Notification",
+  "description": "Sent when a patient undergoes admission and is assigned to a bed, signaling the beginning of a patient's stay in a healthcare facility",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Patient Administration",
+  "chapter": "3",
+  "chapterName": "Patient Administration",
+  "businessPurpose": "Notify receiving applications that a patient has been admitted for inpatient care or has begun a visit for outpatient care",
+  "timing": "Sent when patient registration is complete and bed assignment occurs",
+  "responseMessage": "ACK^A01^ACK",
+  "searchTerms": ["A01", "admit", "admission", "visit", "inpatient"],
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'ADT^A01'"]
+    },
+    {
+      "type": "segment",
+      "segment": "EVN",
+      "name": "Event Type",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["EVN.1 must be 'A01'"]
+    },
+    {
+      "type": "segment",
+      "segment": "PID",
+      "name": "Patient Identification",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["PID.3 Patient Identifier List is critical for patient matching"]
+    },
+    {
+      "type": "segment",
+      "segment": "PD1",
+      "name": "Additional Demographics",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "NK1",
+      "name": "Next of Kin/Associated Parties",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "segment",
+      "segment": "PV1",
+      "name": "Patient Visit",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["PV1.2 Patient Class should be 'I' for inpatient", "PV1.44 Admit Date/Time is critical"]
+    },
+    {
+      "type": "segment",
+      "segment": "PV2",
+      "name": "Patient Visit - Additional Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "DB1",
+      "name": "Disability Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "segment",
+      "segment": "OBX",
+      "name": "Observation/Result",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "segment",
+      "segment": "AL1",
+      "name": "Patient Allergy Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "segment",
+      "segment": "DG1",
+      "name": "Diagnosis",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "segment",
+      "segment": "DRG",
+      "name": "Diagnosis Related Group",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "group",
+      "name": "PROCEDURE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0},
+      "structure": [
+        {
+          "type": "segment",
+          "segment": "PR1",
+          "name": "Procedures",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": 1}
+        },
+        {
+          "type": "segment",
+          "segment": "ROL",
+          "name": "Role",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 0}
+        }
+      ]
+    },
+    {
+      "type": "segment",
+      "segment": "GT1",
+      "name": "Guarantor",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0}
+    },
+    {
+      "type": "group",
+      "name": "INSURANCE",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 0},
+      "structure": [
+        {
+          "type": "segment",
+          "segment": "IN1",
+          "name": "Insurance",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": 1}
+        },
+        {
+          "type": "segment",
+          "segment": "IN2",
+          "name": "Insurance Additional Information",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1}
+        },
+        {
+          "type": "segment",
+          "segment": "IN3",
+          "name": "Insurance Additional Information - Certification",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1}
+        }
+      ]
+    },
+    {
+      "type": "segment",
+      "segment": "ACC",
+      "name": "Accident Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "UB1",
+      "name": "Universal Bill Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "UB2",
+      "name": "Universal Bill 92 Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    }
+  ],
+  "useCases": [
+    "Hospital patient admission",
+    "Emergency department admission to inpatient status",
+    "Direct admission from physician office"
+  ],
+  "requiredSegments": ["MSH", "EVN", "PID", "PV1"],
+  "optionalSegments": ["NK1", "PV2", "OBX", "AL1", "DG1", "PR1", "GT1", "IN1", "IN2", "IN3", "ACC", "UB1", "UB2"],
+  "examples": [
+    "MSH|^~\\&|EPIC|HOSPITAL|||20231201120000||ADT^A01|123456789|P|2.3",
+    "EVN|A01|20231201120000",
+    "PID|||12345678^^^HOSPITAL^MR||DOE^JOHN^MIDDLE||19800101|M"
+  ]
+}

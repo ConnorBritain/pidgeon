@@ -1,29 +1,29 @@
 {
-  "table": "0052",
-  "name": "Diagnosis Type",
-  "description": "Classification codes for different types of diagnoses in patient care",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "type": "hl7_defined",
+  "code": "0052",
+  "name": "Diagnosis type",
+  "version": "HL7 v2.3",
+  "chapter": "Financial Management",
+  "description": "User Defined Tables - Tables with data suggested by HL7 organization. Most table are customized to reflect system workflows and coded values (such as lab values).",
+  "type": "User",
   "values": [
     {
-      "code": "A",
+      "value": "A",
       "description": "Admitting",
-      "definition": "Primary diagnosis that necessitated the patient's admission to the healthcare facility"
+      "comment": "",
+      "sort_order": 1
     },
     {
-      "code": "F",
+      "value": "F",
       "description": "Final",
-      "definition": "Conclusive diagnosis established after complete evaluation and treatment"
+      "comment": "",
+      "sort_order": 2
     },
     {
-      "code": "W",
+      "value": "W",
       "description": "Working",
-      "definition": "Provisional diagnosis used during ongoing evaluation and treatment process"
+      "comment": "",
+      "sort_order": 3
     }
   ],
-  "usedIn": [
-    "DG1.6"
-  ],
-  "notes": "Critical for diagnosis workflow management and clinical documentation accuracy"
+  "value_count": 3
 }

@@ -13,6 +13,8 @@ using Pidgeon.Core.Infrastructure.Standards.HL7.v23;
 using Pidgeon.Core.Application.Interfaces.Reference;
 using Pidgeon.Core.Application.Services.Reference;
 using Pidgeon.Core.Infrastructure.Reference;
+using Pidgeon.Core.Application.Interfaces.Generation;
+using Pidgeon.Core.Infrastructure.Generation.Constraints;
 
 namespace Pidgeon.Core.Extensions;
 
@@ -57,7 +59,14 @@ public static class ServiceCollectionExtensions
         
         // Register standards reference system
         services.AddStandardsReferenceSystem();
-        
+
+        // Register demographics data service for data-driven generation
+        services.AddScoped<Pidgeon.Core.Application.Interfaces.Reference.IDemographicsDataService,
+                          Pidgeon.Core.Application.Services.Reference.DemographicsDataService>();
+
+        // Register constraint resolution system
+        services.AddConstraintResolution();
+
         return services;
     }
 
@@ -139,6 +148,26 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<ILogger<Infrastructure.Reference.JsonHL7ReferencePlugin>>(),
                 provider.GetRequiredService<IMemoryCache>()));
         
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the constraint resolution system with all plugins and services.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddConstraintResolution(this IServiceCollection services)
+    {
+        // Register core constraint resolver
+        services.AddScoped<IConstraintResolver, ConstraintResolver>();
+
+        // Register constraint resolver plugins
+        services.AddScoped<IConstraintResolverPlugin, HL7ConstraintResolverPlugin>();
+
+        // TODO: Add FHIR and NCPDP plugins when implemented
+        // services.AddScoped<IConstraintResolverPlugin, FHIRConstraintResolverPlugin>();
+        // services.AddScoped<IConstraintResolverPlugin, NCPDPConstraintResolverPlugin>();
+
         return services;
     }
 

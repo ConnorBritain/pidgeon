@@ -1,0 +1,31 @@
+{
+  "triggerEvent": "S22",
+  "name": "Notification of Deletion of Service/Resource on Appointment",
+  "description": "Notification sent when a service or resource that was erroneously added to an appointment is permanently deleted",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "10",
+  "chapterName": "Scheduling",
+  "messageStructure": "SIU^S22",
+  "segments": {
+    "required": ["MSH", "SCH"],
+    "optional": ["NTE", "PID", "PV1", "PV2", "OBX", "DG1", "RGS", "AIS", "AIG", "AIL", "AIP"]
+  },
+  "businessPurpose": "Remove erroneously added services or resources from appointments to maintain data integrity and prevent statistical processing errors",
+  "timing": "Sent when a service or resource that was added in error needs to be permanently removed from an appointment",
+  "responseMessage": "ACK^S22^ACK",
+  "realWorldScenarios": ["Anesthesia erroneously added to local procedure - delete the incorrect service", "Wrong interpreter language added to appointment - remove erroneous entry", "Equipment mistakenly assigned to wrong procedure type - delete incorrect allocation", "Duplicate nursing support accidentally added - remove the duplicate entry", "Training appointment incorrectly included real services - delete all test services", "Wrong department services added due to scheduling error - delete incorrect entries"],
+    "generationRules": {
+    "MSH.9": "SIU^S22",
+    "SCH.1": "Appointment ID with service/resource being deleted",
+    "SCH.2": "Filler appointment ID",
+    "SCH.6": "Event reason code (typically 'DELETED' or 'ERROR')",
+    "SCH.25": "Filler status code (Booked/Confirmed)",
+    "AIS": "Service deletion details",
+    "AIG": "Resource group deletion details if applicable",
+    "AIL": "Location deletion details if applicable",
+    "AIP": "Personnel deletion details",
+    "NTE": "Reason for deletion often included for audit trail",
+    "requiredDataQuality": "Critical - accurate deletion prevents removal of valid services and maintains appointment integrity"
+  }
+}

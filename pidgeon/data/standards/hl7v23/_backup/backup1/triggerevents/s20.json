@@ -1,0 +1,31 @@
+{
+  "triggerEvent": "S20",
+  "name": "Notification of Cancellation of Service/Resource on Appointment",
+  "description": "Notification sent when a service or resource is cancelled from an existing appointment",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "10",
+  "chapterName": "Scheduling",
+  "messageStructure": "SIU^S20",
+  "segments": {
+    "required": ["MSH", "SCH"],
+    "optional": ["NTE", "PID", "PV1", "PV2", "OBX", "DG1", "RGS", "AIS", "AIG", "AIL", "AIP"]
+  },
+  "businessPurpose": "Notify systems when services or resources are cancelled from appointments to free up resources and prevent conflicts",
+  "timing": "Sent when a service or resource needs to be cancelled from an existing appointment",
+  "responseMessage": "ACK^S20^ACK",
+  "realWorldScenarios": ["Anesthesia cancelled when procedure changed to local anesthesia only", "Interpreter services cancelled when family member can translate", "Specialized equipment cancelled when standard equipment sufficient", "Additional nursing support cancelled when patient acuity decreased", "Transport services cancelled when patient able to ambulate", "Dietary consultation cancelled when patient NPO status changed"],
+    "generationRules": {
+    "MSH.9": "SIU^S20",
+    "SCH.1": "Appointment ID being modified",
+    "SCH.2": "Filler appointment ID",
+    "SCH.6": "Event reason code (typically 'CANCELLED')",
+    "SCH.25": "Filler status code (Booked/Confirmed)",
+    "AIS": "Service cancellation details",
+    "AIG": "Resource group cancellation details if applicable",
+    "AIL": "Location cancellation details if applicable",
+    "AIP": "Personnel cancellation details",
+    "NTE": "Reason for cancellation often included",
+    "requiredDataQuality": "High - accurate service/resource cancellation frees up resources and prevents scheduling conflicts"
+  }
+}

@@ -1,49 +1,35 @@
 {
-  "table": "0007",
-  "name": "Admission Type",
-  "description": "Circumstances under which the patient was or will be admitted",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "type": "user_defined",
+  "code": "0007",
+  "name": "Admission type",
+  "version": "HL7 v2.3",
+  "chapter": "Patient Administration",
+  "description": "User Defined Tables - Tables with data suggested by HL7 organization. Most table are customized to reflect system workflows and coded values (such as lab values).",
+  "type": "User",
   "values": [
     {
-      "code": "A",
+      "value": "A",
       "description": "Accident",
-      "definition": "Patient admission due to accidental injury"
+      "comment": "",
+      "sort_order": 1
     },
     {
-      "code": "C",
-      "description": "Elective",
-      "definition": "Planned admission for non-urgent medical care"
-    },
-    {
-      "code": "E",
+      "value": "E",
       "description": "Emergency",
-      "definition": "Unplanned admission requiring immediate medical attention"
+      "comment": "",
+      "sort_order": 2
     },
     {
-      "code": "L",
+      "value": "L",
       "description": "Labor and Delivery",
-      "definition": "Admission for childbirth and obstetric care"
+      "comment": "",
+      "sort_order": 3
     },
     {
-      "code": "N",
-      "description": "Newborn (Birth in healthcare facility)",
-      "definition": "Admission of newborn infant born in healthcare facility"
-    },
-    {
-      "code": "R",
+      "value": "R",
       "description": "Routine",
-      "definition": "Standard planned admission for routine care"
-    },
-    {
-      "code": "U",
-      "description": "Urgent",
-      "definition": "Unscheduled admission requiring prompt attention"
+      "comment": "",
+      "sort_order": 4
     }
   ],
-  "usedIn": [
-    "PV1.4"
-  ],
-  "notes": "User-defined table allows customization for organization-specific admission workflows and policies"
+  "value_count": 4
 }

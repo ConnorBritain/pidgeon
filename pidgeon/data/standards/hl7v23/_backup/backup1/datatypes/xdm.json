@@ -1,0 +1,86 @@
+{
+  "dataType": "XDM",
+  "name": "Discharge to Location and Date",
+  "description": "The XDM data type is used to represent comprehensive discharge information including destination location, discharge date and time, and discharge disposition details. It provides structured information for tracking patient discharges from healthcare facilities, supporting care coordination, follow-up planning, and regulatory reporting requirements. XDM enables healthcare systems to maintain detailed discharge records essential for continuity of care and healthcare analytics.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "composite",
+  "components": {
+    "XDM.1": {
+      "name": "Discharge to Location",
+      "dataType": "PL",
+      "description": "The location where the patient is being discharged, such as home, skilled nursing facility, or another healthcare institution. Specifies the destination for care coordination and follow-up planning.",
+      "length": 1359,
+      "usage": "optional",
+      "position": 1
+    },
+    "XDM.2": {
+      "name": "Discharge Date/Time",
+      "dataType": "TS",
+      "description": "The specific date and time when the patient discharge occurred or is scheduled to occur. Critical for billing, bed management, and care coordination timing.",
+      "length": 26,
+      "usage": "optional",
+      "position": 2
+    },
+    "XDM.3": {
+      "name": "Discharge Disposition",
+      "dataType": "CE",
+      "description": "The coded discharge disposition indicating the circumstances and outcome of the discharge (e.g., routine discharge, transfer, against medical advice). Essential for quality metrics and regulatory reporting.",
+      "length": 483,
+      "usage": "optional",
+      "position": 3
+    }
+  },
+  "length": 1868,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "locationValidation": "Discharge location should be a valid healthcare facility or appropriate discharge destination",
+    "dateTimeValidation": "Discharge date/time should be valid timestamp format and logically consistent with admission",
+    "dispositionCoding": "Discharge disposition should use appropriate healthcare coding standards"
+  },
+  "usage": [
+    "Patient discharge planning and coordination of care transitions",
+    "Hospital bed management and capacity planning systems",
+    "Healthcare quality metrics and regulatory compliance reporting",
+    "Insurance claims processing and discharge documentation",
+    "Care coordination with post-acute care providers",
+    "Healthcare analytics and population health management"
+  ],
+  "examples": [
+    "Home^123 Main St^Springfield^IL^20240315143000^01^Routine Discharge",
+    "Skilled Nursing Facility^456 Care Lane^Metro City^CA^20240318100000^03^Transfer to SNF",
+    "Rehabilitation Hospital^789 Rehab Drive^Health City^TX^20240320080000^06^Transfer to Rehabilitation",
+    "Home Health^Patient Residence^^State^20240322120000^01^Discharge with Home Health",
+    "Another Hospital^Emergency Transfer^^^20240325200000^02^Transfer for Higher Level Care",
+    "Expired^Morgue^^^20240327060000^20^Patient Deceased"
+  ],
+  "commonFields": [
+    "PV1.36 - Discharge Disposition in patient visit information",
+    "Discharge planning fields in case management systems",
+    "Post-acute care coordination and referral tracking",
+    "Healthcare quality and outcome measurement systems",
+    "Insurance authorization and claims processing fields",
+    "Regulatory reporting and compliance documentation"
+  ],
+  "generationHints": {
+    "typical": "Use realistic discharge scenarios with appropriate locations, times, and dispositions",
+    "locations": ["Home", "Skilled Nursing Facility", "Rehabilitation Hospital", "Another Hospital", "Hospice"],
+    "dispositions": ["01 (Routine)", "02 (Transfer)", "03 (SNF)", "06 (Rehabilitation)", "07 (AMA)", "20 (Expired)"],
+    "timing": "Use realistic discharge times during typical hospital discharge hours",
+    "coordination": "Ensure discharge information is consistent and supports care coordination"
+  },
+  "relatedDataTypes": {
+    "PL": "Person Location - used for discharge destination location",
+    "TS": "Time Stamp - used for discharge date and time",
+    "CE": "Coded Element - used for discharge disposition coding",
+    "PV1": "Patient Visit - contains discharge-related information",
+    "DRG": "Diagnosis Related Group - related to discharge and billing"
+  },
+  "implementationNotes": {
+    "careCoordination": "Supports seamless care transitions and communication with receiving providers",
+    "billing": "Critical for accurate billing and claims processing based on discharge circumstances",
+    "quality": "Enables quality measurement and regulatory compliance reporting",
+    "workflow": "Integrates with discharge planning and bed management workflows",
+    "analytics": "Supports healthcare analytics and population health management initiatives"
+  }
+}

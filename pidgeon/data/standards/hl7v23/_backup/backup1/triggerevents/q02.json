@@ -1,0 +1,44 @@
+{
+  "triggerEvent": "Q02",
+  "name": "Deferred Query",
+  "description": "Query message requesting deferred access to data when immediate response is not required or available",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "5",
+  "chapterName": "Query",
+  "messageStructure": "QRY^Q02",
+  "segments": {
+    "required": [
+      "MSH",
+      "QRD"
+    ],
+    "optional": [
+      "QRF",
+      "DSC"
+    ]
+  },
+  "businessPurpose": "Request data access when immediate response is not required, allowing responding systems to process queries during optimal times",
+  "timing": "Sent when systems need data but can wait for response processing during off-peak hours or batch processing windows",
+  "responseMessage": "QCK^Q02^QCK",
+  "realWorldScenarios": [
+    "Overnight batch processing for patient census reports",
+    "Monthly quality metrics compilation requiring extensive data mining",
+    "Research data extraction for clinical studies with flexible timing",
+    "Insurance claims processing queries that can be processed in batches",
+    "Historical data analysis requests for trending and reporting",
+    "Cross-system data reconciliation during maintenance windows"
+  ],
+  "generationRules": {
+    "MSH.9": "QRY^Q02",
+    "QRD.1": "Query date/time",
+    "QRD.2": "Query format code (R=record oriented, D=display oriented)",
+    "QRD.3": "Query priority (D=deferred)",
+    "QRD.4": "Query ID for tracking deferred response",
+    "QRD.7": "Quantity limited request",
+    "QRD.8": "Who subject filter",
+    "QRD.9": "What subject filter",
+    "QRD.10": "Which date/time qualifier",
+    "QRF": "Optional query filter for additional specificity",
+    "requiredDataQuality": "Medium - deferred queries allow for comprehensive data gathering but must maintain request specificity"
+  }
+}

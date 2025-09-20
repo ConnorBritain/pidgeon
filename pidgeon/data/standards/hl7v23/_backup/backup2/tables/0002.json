@@ -1,0 +1,95 @@
+{
+  "table": "0002",
+  "name": "Marital Status",
+  "description": "Person's marital status",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "type": "user_defined",
+  "values": [
+    {
+      "code": "A",
+      "description": "Separated",
+      "definition": "Person who is separated from spouse but not divorced"
+    },
+    {
+      "code": "B",
+      "description": "Unmarried",
+      "definition": "Person who is not married and has not been married"
+    },
+    {
+      "code": "C",
+      "description": "Common law",
+      "definition": "Person in common law marriage relationship"
+    },
+    {
+      "code": "D",
+      "description": "Divorced",
+      "definition": "Person who is legally divorced"
+    },
+    {
+      "code": "E",
+      "description": "Legally Separated",
+      "definition": "Person who is legally separated from spouse"
+    },
+    {
+      "code": "G",
+      "description": "Living together",
+      "definition": "Person living together with partner without formal marriage"
+    },
+    {
+      "code": "I",
+      "description": "Interlocutory",
+      "definition": "Person with interlocutory decree (temporary legal status)"
+    },
+    {
+      "code": "M",
+      "description": "Married",
+      "definition": "Person who is currently married"
+    },
+    {
+      "code": "N",
+      "description": "Annulled",
+      "definition": "Person whose marriage has been legally annulled"
+    },
+    {
+      "code": "O",
+      "description": "Other",
+      "definition": "Person with marital status not covered by other codes"
+    },
+    {
+      "code": "P",
+      "description": "Domestic partner",
+      "definition": "Person in domestic partnership relationship"
+    },
+    {
+      "code": "R",
+      "description": "Registered domestic partner",
+      "definition": "Person in legally registered domestic partnership"
+    },
+    {
+      "code": "S",
+      "description": "Single",
+      "definition": "Person who has never been married"
+    },
+    {
+      "code": "T",
+      "description": "Unreported",
+      "definition": "Person whose marital status is unreported or undisclosed"
+    },
+    {
+      "code": "U",
+      "description": "Unknown",
+      "definition": "Person whose marital status is unknown"
+    },
+    {
+      "code": "W",
+      "description": "Widowed",
+      "definition": "Person whose spouse has died and who has not remarried"
+    }
+  ],
+  "usedIn": [
+    "PID.16",
+    "NK1.15"
+  ],
+  "notes": "User-defined table allows customization for jurisdictional and cultural variations"
+}

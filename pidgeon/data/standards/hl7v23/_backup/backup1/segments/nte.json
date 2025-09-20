@@ -1,0 +1,142 @@
+{
+  "segment": "NTE",
+  "name": "Notes and Comments",
+  "description": "The Notes and Comments segment (NTE) is used to transmit notes and comments. This segment is used to add comments to many other segments. The NTE segment appears as a child segment to other segments and provides additional narrative information that is not captured in structured fields. It supports both coded comments and free text.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "O",
+  "cardinality": {
+    "min": 0,
+    "max": "*",
+    "note": "NTE can repeat multiple times to provide extensive commentary"
+  },
+  "messageTypes": [
+    "ADT^A01", "ADT^A02", "ADT^A03", "ADT^A04", "ADT^A05", "ADT^A06", "ADT^A07", "ADT^A08",
+    "ORU^R01", "ORM^O01", "RDE^O01", "RDE^O11", "RDS^O13", "RGV^O01", "RAS^O01",
+    "SIU^S12", "SIU^S13", "SIU^S14", "SIU^S15", "SIU^S16", "SIU^S17",
+    "VXU^V04", "PPR^PC1", "PPR^PC2", "PPR^PC3", "DFT^P03", "DFT^P11",
+    "BAR^P01", "BAR^P02", "BAR^P05", "BAR^P06"
+  ],
+  "fields": {
+    "NTE.1": {
+      "name": "Set ID - NTE",
+      "description": "This field contains the sequence number for the NTE segment. When multiple NTE segments are used, this field is used to number them sequentially.",
+      "dataType": "SI",
+      "usage": "O",
+      "maxLength": 4,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "generationHint": "Sequential numbering: 1, 2, 3, etc. when multiple NTE segments are present"
+    },
+    "NTE.2": {
+      "name": "Source of Comment",
+      "description": "This field identifies the source of the comment. Values from HL7 Table 0105 - source of comment.",
+      "dataType": "ID",
+      "usage": "O",
+      "maxLength": 8,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "L", "description": "Ancillary (filler) department is source of comment"},
+        {"code": "P", "description": "Orderer (placer) is source of comment"},
+        {"code": "O", "description": "Other system is source of comment"}
+      ],
+      "generationHint": "Most common: P (placer/orderer), L (lab/ancillary department)"
+    },
+    "NTE.3": {
+      "name": "Comment",
+      "description": "This field contains the actual comment. This is a free text field that can contain narrative information, instructions, or observations related to the parent segment.",
+      "dataType": "FT",
+      "usage": "R",
+      "maxLength": 65536,
+      "cardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "generationHint": "Clinical notes, special instructions, observations, patient history, provider comments"
+    },
+    "NTE.4": {
+      "name": "Comment Type",
+      "description": "This field categorizes the type of comment being made. Values from HL7 Table 0364 - comment type.",
+      "dataType": "CE",
+      "usage": "O",
+      "maxLength": 250,
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "validValues": [
+        {"code": "1R", "description": "Primary reason"},
+        {"code": "2R", "description": "Secondary reason"},
+        {"code": "AI", "description": "Ancillary instructions"},
+        {"code": "DR", "description": "Duplicate/repeat"},
+        {"code": "GI", "description": "General instructions"},
+        {"code": "GR", "description": "General reason"},
+        {"code": "PI", "description": "Patient instructions"},
+        {"code": "RE", "description": "Remark"},
+        {"code": "RI", "description": "Refill instructions"},
+        {"code": "SI", "description": "Special instructions"},
+        {"code": "TX", "description": "Transcription"},
+        {"code": "UC", "description": "Usual care"},
+        {"code": "UD", "description": "Unit dose"},
+        {"code": "UR", "description": "Unusual requirements"}
+      ],
+      "generationHint": "Common types: GI (general instructions), PI (patient instructions), RE (remarks), AI (ancillary)"
+    }
+  },
+  "crossReferences": {
+    "fhir": [
+      "Annotation.text",
+      "DiagnosticReport.note",
+      "Observation.note",
+      "ServiceRequest.note",
+      "MedicationRequest.note",
+      "Patient.note",
+      "Encounter.note"
+    ],
+    "related": ["OBR", "OBX", "ORC", "RXE", "RXO", "PID", "PV1", "AL1", "DG1"]
+  },
+  "examples": [
+    "NTE|1|P|Patient has history of penicillin allergy - use alternative antibiotics|RE^Remark^HL70364",
+    "NTE|1|L|Specimen hemolyzed - results may be affected|GI^General Instructions^HL70364",
+    "NTE|2|L|Repeat collection recommended|AI^Ancillary Instructions^HL70364",
+    "NTE|1|P|Take with food to reduce stomach upset|PI^Patient Instructions^HL70364",
+    "NTE|1|O|Critical value called to Dr. Smith at 1430|RE^Remark^HL70364",
+    "NTE|1|P|Hold medication if systolic BP < 100 mmHg|SI^Special Instructions^HL70364"
+  ],
+  "notes": [
+    "NTE segment is widely used across many message types as a child segment",
+    "Comment field (NTE.3) is required when NTE segment is present",
+    "Can appear after many different parent segments to provide additional context",
+    "Multiple NTE segments can be used to provide extensive commentary",
+    "Source of comment helps identify who provided the information",
+    "Comment type helps categorize the nature of the note for processing",
+    "Essential for capturing clinical observations not represented in structured data",
+    "Commonly used with lab results (OBX), orders (ORC), and patient demographics (PID)"
+  ],
+  "generationRules": {
+    "required": ["NTE.3"],
+    "conditional": {
+      "NTE.1": "Should be provided when multiple NTE segments are present",
+      "NTE.2": "Helps identify the source of clinical information",
+      "NTE.4": "Important for categorizing and processing notes appropriately"
+    },
+    "relationships": {
+      "NTE.1_sequence": "Should increment sequentially when multiple NTE segments are used",
+      "NTE.2_NTE.3": "Source should align with content (e.g., lab source with technical comments)",
+      "NTE.4_NTE.3": "Comment type should match the nature of the text content"
+    },
+    "validation": {
+      "NTE.2": "Must be valid HL7 Table 0105 source code when present",
+      "NTE.4": "Must be valid HL7 Table 0364 comment type when present",
+      "NTE.3": "Required field - cannot be empty"
+    },
+    "parentSegments": [
+      "PID", "PV1", "ORC", "OBR", "OBX", "RXE", "RXO", "AL1", "DG1", "PR1", "GT1", "IN1"
+    ]
+  }
+}

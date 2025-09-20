@@ -1,0 +1,215 @@
+{
+  "messageType": "ADT",
+  "triggerEvent": "A01", 
+  "name": "Admit/Visit Notification",
+  "description": "An A01 event is sent as a result of a patient undergoing the admission process which assigns the patient to a bed. It signals the beginning of a patient's stay in a healthcare facility.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Patient Administration",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'ADT^A01'", "MSH.11 should be 'P' for production or 'T' for test"]
+    },
+    {
+      "type": "segment",
+      "segment": "EVN", 
+      "name": "Event Type",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["EVN.1 (Event Type Code) must be 'A01'", "EVN.2 (Recorded Date/Time) should reflect admission time"]
+    },
+    {
+      "type": "segment",
+      "segment": "PID",
+      "name": "Patient Identification", 
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["PID.3 (Patient Identifier List) is critical for patient matching"]
+    },
+    {
+      "type": "segment",
+      "segment": "NK1",
+      "name": "Next of Kin/Associated Parties",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "generationWeight": 0.6,
+      "notes": ["Commonly included for admitted patients", "Multiple NK1 segments for multiple contacts"]
+    },
+    {
+      "type": "segment",
+      "segment": "PV1",
+      "name": "Patient Visit",
+      "usage": "R", 
+      "cardinality": {"min": 1, "max": 1},
+      "notes": [
+        "PV1.2 (Patient Class) should be 'I' for inpatient admission",
+        "PV1.3 (Assigned Patient Location) indicates room/bed assignment",
+        "PV1.44 (Admit Date/Time) is critical for ADT^A01"
+      ]
+    },
+    {
+      "type": "segment",
+      "segment": "PV2",
+      "name": "Patient Visit - Additional Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "generationWeight": 0.3,
+      "notes": ["Less commonly used, contains extended visit information"]
+    },
+    {
+      "type": "segment",
+      "segment": "OBX",
+      "name": "Observation/Result",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "generationWeight": 0.2,
+      "notes": ["May include admission vitals or observations", "Can repeat for multiple observations"]
+    },
+    {
+      "type": "segment",
+      "segment": "AL1",
+      "name": "Patient Allergy Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"}, 
+      "generationWeight": 0.4,
+      "notes": ["Important for patient safety", "Can repeat for multiple allergies"]
+    },
+    {
+      "type": "segment",
+      "segment": "DG1",
+      "name": "Diagnosis",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "generationWeight": 0.7,
+      "notes": ["Admission diagnosis commonly included", "Can repeat for multiple diagnoses", "DG1.6 (Diagnosis Type) often 'A' for admitting diagnosis"]
+    },
+    {
+      "type": "segment",
+      "segment": "PR1",
+      "name": "Procedures",
+      "usage": "O", 
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "generationWeight": 0.1,
+      "notes": ["Less common on admission", "More typically seen in discharge messages"]
+    },
+    {
+      "type": "segment",
+      "segment": "GT1",
+      "name": "Guarantor",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "generationWeight": 0.5,
+      "notes": ["Financial guarantor information", "Can repeat for multiple guarantors"]
+    },
+    {
+      "type": "segment",
+      "segment": "IN1",
+      "name": "Insurance", 
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "generationWeight": 0.8,
+      "notes": ["Very commonly included for billing", "Can repeat for multiple insurance plans", "IN1.1 (Set ID) should increment for multiple plans"]
+    },
+    {
+      "type": "segment",
+      "segment": "IN2",
+      "name": "Insurance Additional Information",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": "unbounded"},
+      "generationWeight": 0.3,
+      "notes": ["Follows IN1 segments", "Contains extended insurance details"]
+    }
+  ],
+  "useCases": [
+    "Hospital patient admission",
+    "Emergency department admission to inpatient status", 
+    "Direct admission from physician office",
+    "Admission from observation status",
+    "Newborn admission"
+  ],
+  "generationGuidance": {
+    "typical": {
+      "description": "Typical ADT^A01 includes patient demographics, visit info, insurance, and admission diagnosis",
+      "requiredSegments": ["MSH", "EVN", "PID", "PV1"],
+      "commonOptionalSegments": ["NK1", "DG1", "IN1"],
+      "fieldGuidance": {
+        "MSH.9": "ADT^A01",
+        "EVN.1": "A01",
+        "PV1.2": "I",
+        "PV1.44": "Should be recent date/time for admission"
+      }
+    },
+    "minimal": {
+      "description": "Minimal valid ADT^A01 with only required segments",
+      "segments": ["MSH", "EVN", "PID", "PV1"],
+      "criticalFields": [
+        "MSH.9", "MSH.10", "MSH.11", "MSH.12",
+        "EVN.1", "EVN.2", 
+        "PID.3", "PID.5",
+        "PV1.2", "PV1.44"
+      ]
+    },
+    "scenarios": [
+      {
+        "name": "Emergency Admission",
+        "description": "Patient admitted through emergency department",
+        "populatedSegments": ["MSH", "EVN", "PID", "NK1", "PV1", "AL1", "DG1", "IN1"],
+        "specificValues": {
+          "PV1.4": "Emergency",
+          "DG1.6": "A"
+        }
+      },
+      {
+        "name": "Elective Admission", 
+        "description": "Planned admission for surgery or procedure",
+        "populatedSegments": ["MSH", "EVN", "PID", "NK1", "PV1", "DG1", "PR1", "GT1", "IN1"],
+        "specificValues": {
+          "PV1.4": "Elective",
+          "DG1.6": "W"
+        }
+      },
+      {
+        "name": "Newborn Admission",
+        "description": "Newborn patient admission",
+        "populatedSegments": ["MSH", "EVN", "PID", "PV1", "IN1"],
+        "specificValues": {
+          "PID.7": "Recent birth date",
+          "PV1.2": "N"
+        }
+      }
+    ]
+  },
+  "vendorNotes": {
+    "epic": {
+      "notes": [
+        "Epic commonly includes multiple DG1 segments with detailed diagnosis information",
+        "Epic typically populates comprehensive insurance information in IN1/IN2",
+        "Epic often includes OBX segments with admission vitals"
+      ],
+      "commonSegments": ["MSH", "EVN", "PID", "NK1", "PV1", "DG1", "IN1", "OBX"],
+      "omittedSegments": ["PV2", "PR1"]
+    },
+    "cerner": {
+      "notes": [
+        "Cerner often includes GT1 segment for guarantor information",
+        "Cerner may include multiple AL1 segments for comprehensive allergy information",
+        "Cerner typically populates PV2 when available"
+      ],
+      "commonSegments": ["MSH", "EVN", "PID", "PV1", "PV2", "AL1", "GT1", "IN1"],
+      "omittedSegments": ["PR1"]
+    },
+    "allscripts": {
+      "notes": [
+        "AllScripts commonly includes basic required segments with minimal optional data",
+        "AllScripts may omit some optional segments to reduce message size"
+      ],
+      "commonSegments": ["MSH", "EVN", "PID", "PV1", "DG1", "IN1"],
+      "omittedSegments": ["PV2", "OBX", "PR1", "IN2"]
+    }
+  }
+}

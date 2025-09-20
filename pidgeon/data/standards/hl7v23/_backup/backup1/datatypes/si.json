@@ -1,0 +1,62 @@
+{
+  "dataType": "SI",
+  "name": "Sequence ID",
+  "description": "The SI data type is used for sequence identifiers or counter values within HL7 messages. It provides a simple numeric sequence for identifying order, position, or count in a series. Commonly used for segment repetition counters, item numbering, and maintaining order in repeating fields or segments.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "primitive",
+  "length": 4,
+  "constraints": {
+    "format": "Positive integer value",
+    "range": "1 to 9999 (typical implementation)",
+    "increment": "Usually increments by 1 for each occurrence",
+    "uniqueness": "Must be unique within the context of use",
+    "startValue": "Typically starts at 1 for first occurrence"
+  },
+  "usage": [
+    "OBX.1 - Set ID for Observation segment repetitions",
+    "NTE.1 - Set ID for Notes and Comments segment repetitions",
+    "AL1.1 - Set ID for Patient Allergy Information repetitions",
+    "DG1.1 - Set ID for Diagnosis segment repetitions",
+    "Sequence counters in repeating segments and fields"
+  ],
+  "examples": [
+    "1",
+    "2",
+    "3",
+    "10",
+    "999"
+  ],
+  "commonFields": [
+    "OBX.1 - Set ID - OBX",
+    "NTE.1 - Set ID - NTE",
+    "AL1.1 - Set ID - AL1",
+    "DG1.1 - Set ID - DG1",
+    "PR1.1 - Set ID - PR1",
+    "IN1.1 - Set ID - IN1"
+  ],
+  "generationHints": {
+    "typical": "Use sequential integers starting from 1",
+    "patterns": "Increment by 1 for each repetition in the same message",
+    "context": "Reset to 1 for each new patient or encounter",
+    "validation": "Ensure no gaps or duplicates within the same context"
+  },
+  "sequenceRules": {
+    "ordering": "Sequential numbering maintains message integrity",
+    "uniqueness": "No duplicate sequence IDs within the same segment type for a single entity",
+    "continuity": "Should not have gaps unless segments are conditionally omitted",
+    "reset": "Sequence typically resets for each new patient or message group"
+  },
+  "validationRules": {
+    "numericOnly": "Must contain only numeric characters",
+    "positiveInteger": "Must be greater than 0",
+    "sequentialCheck": "Should follow logical sequence within message context",
+    "rangeValidation": "Should be within reasonable bounds for message size"
+  },
+  "implementationNotes": {
+    "purpose": "Maintains order and identification in repeating structures",
+    "processing": "Used by receiving systems to maintain proper sequence",
+    "debugging": "Critical for troubleshooting message parsing and segment ordering",
+    "standards": "Essential for HL7 message structure integrity"
+  }
+}

@@ -6,6 +6,9 @@ using Pidgeon.Core.Domain.Clinical.Entities;
 using Pidgeon.Core.Generation.Algorithmic.Data;
 using Pidgeon.Core.Generation.Types;
 using Pidgeon.Core.Generation;
+using Pidgeon.Core.Application.Interfaces.Reference;
+using Pidgeon.Core.Application.Interfaces.Generation;
+using Pidgeon.Core.Domain.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Pidgeon.Core.Application.Services.Generation;
@@ -18,11 +21,18 @@ namespace Pidgeon.Core.Application.Services.Generation;
 internal class GenerationService : IGenerationService
 {
     private readonly ILogger<GenerationService> _logger;
+    private readonly IDemographicsDataService _demographicsService;
+    private readonly IConstraintResolver _constraintResolver;
     private readonly Random _random;
 
-    public GenerationService(ILogger<GenerationService> logger)
+    public GenerationService(
+        ILogger<GenerationService> logger,
+        IDemographicsDataService demographicsService,
+        IConstraintResolver constraintResolver)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _demographicsService = demographicsService ?? throw new ArgumentNullException(nameof(demographicsService));
+        _constraintResolver = constraintResolver ?? throw new ArgumentNullException(nameof(constraintResolver));
         _random = new Random();
     }
 
@@ -35,8 +45,28 @@ internal class GenerationService : IGenerationService
         {
             // Use seed for deterministic generation if provided
             var random = options.Seed.HasValue ? new Random(options.Seed.Value + seedOffset) : _random;
-            
+
             var result = generateFunc(random);
+            return Result<T>.Success(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to generate {EntityType}", entityType);
+            return Result<T>.Failure($"{char.ToUpper(entityType[0])}{entityType[1..]} generation failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Template method for executing async generation operations with consistent error handling and seeding.
+    /// </summary>
+    private Result<T> ExecuteGeneration<T>(GenerationOptions options, int seedOffset, string entityType, Func<Random, Task<T>> generateFunc)
+    {
+        try
+        {
+            // Use seed for deterministic generation if provided
+            var random = options.Seed.HasValue ? new Random(options.Seed.Value + seedOffset) : _random;
+
+            var result = generateFunc(random).GetAwaiter().GetResult();
             return Result<T>.Success(result);
         }
         catch (Exception ex)
@@ -48,39 +78,93 @@ internal class GenerationService : IGenerationService
 
     public Result<Patient> GeneratePatient(GenerationOptions options)
     {
-        return ExecuteGeneration(options, 0, "patient", GeneratePatientLogic);
+        return ExecuteGeneration(options, 0, "patient", async (random) => await GeneratePatientLogicAsync(random, options));
     }
 
-    private Patient GeneratePatientLogic(Random random)
+    private async Task<Patient> GeneratePatientLogicAsync(Random random, GenerationOptions options)
     {
-        // Generate culturally-consistent name
-        var (firstName, lastName, gender) = HealthcareNames.GenerateRandomName(random);
-        
-        // Generate age with healthcare-realistic distribution
-        var age = GenerateAgeForPatientType(random);
-        
-        // Generate other demographics
-        var mrn = GenerateMRN(random);
+        // Generate administrative sex using HL7 table 0001 (constraint-aware)
+        var genderResult = await _constraintResolver.GenerateConstrainedValueAsync(
+            "PID.8",
+            new FieldConstraints
+            {
+                TableReference = "0001",
+                DataType = "IS",
+                MaxLength = 1,
+                Required = false
+            },
+            random);
+
+        var genderCode = genderResult.IsSuccess ? genderResult.Value?.ToString() : "U";
+        var gender = ParseGender(genderCode);
+
+        // Generate patient identifier with HL7 constraints (PID.3)
+        var identifierResult = await _constraintResolver.GenerateConstrainedValueAsync(
+            "PID.3",
+            new FieldConstraints
+            {
+                DataType = "CX",
+                Required = true,
+                Pattern = @"^\d{6,10}$",
+                MaxLength = 10
+            },
+            random);
+
+        var mrn = identifierResult.IsSuccess ? identifierResult.Value?.ToString() : GenerateMRN(random);
+
+        // Generate birth date with HL7 date constraints (PID.7)
+        var dobResult = await _constraintResolver.GenerateConstrainedValueAsync(
+            "PID.7",
+            new FieldConstraints
+            {
+                DataType = "TS",
+                DateTime = new DateTimeConstraints(
+                    DateTime.Today.AddYears(-120),
+                    DateTime.Today,
+                    "yyyyMMdd"),
+                Required = false
+            },
+            random);
+
+        DateTime? dob = null;
+        if (dobResult.IsSuccess && DateTime.TryParseExact(
+            dobResult.Value?.ToString(),
+            "yyyyMMdd",
+            null,
+            System.Globalization.DateTimeStyles.None,
+            out var parsedDate))
+        {
+            dob = parsedDate;
+        }
+        else
+        {
+            // Fallback to calculated date
+            var age = GenerateAgeForPatientType(random);
+            dob = CalculateDateOfBirth(age, random);
+        }
+
+        // Use demographics service for non-constrained fields
+        var (firstName, lastName, _) = await _demographicsService.GenerateRandomNameAsync(random);
+        var address = await _demographicsService.GenerateRandomAddressAsync(random);
+        var phoneNumber = await GeneratePhoneNumberAsync(random);
         var ssn = GenerateSSN(random);
-        var dob = CalculateDateOfBirth(age, random);
-        var phoneNumber = GeneratePhoneNumber(random);
-        var address = GenerateAddress(random);
-        
+
         var patient = new Patient
         {
             Id = mrn, // Use MRN as the primary ID
             MedicalRecordNumber = mrn,
             Name = PersonName.Create(lastName, firstName),
-            Gender = ParseGender(gender),
+            Gender = gender,
             BirthDate = dob,
             SocialSecurityNumber = ssn,
             PhoneNumber = phoneNumber,
             Address = address
         };
 
-        _logger.LogDebug("Generated patient: {MRN} - {Name}, Age {Age}", 
-            mrn, $"{firstName} {lastName}", age);
-        
+        var calculatedAge = dob.HasValue ? DateTime.Today.Year - dob.Value.Year : 0;
+        _logger.LogDebug("Generated patient using demographic data: {MRN} - {Name}, Age {Age}",
+            mrn, $"{firstName} {lastName}", calculatedAge);
+
         return patient;
     }
 
@@ -119,41 +203,41 @@ internal class GenerationService : IGenerationService
 
     public Result<Prescription> GeneratePrescription(GenerationOptions options)
     {
-        return ExecuteGeneration(options, 1000, "prescription", (random) =>
+        return ExecuteGeneration(options, 1000, "prescription", async (random) =>
         {
             // Generate patient and medication using seeded random for consistency
-            var patient = GeneratePatientLogic(random);
+            var patient = await GeneratePatientLogicAsync(random, options);
             var medication = GenerateMedicationLogic(random);
-            
+
             var prescription = new Prescription
             {
                 Id = GeneratePrescriptionNumber(random),
                 Patient = patient,
                 Medication = medication,
-                Prescriber = GenerateProvider(random),
+                Prescriber = await GenerateProviderAsync(random),
                 Dosage = GenerateDosageInstructions(random, medication),
                 DatePrescribed = GeneratePrescriptionDate(random),
                 Instructions = GenerateSpecialInstructions(random, medication)
             };
 
-            _logger.LogDebug("Generated prescription: {RxId} for {Patient}", 
+            _logger.LogDebug("Generated prescription using demographic data: {RxId} for {Patient}",
                 prescription.Id, prescription.Patient.Name.DisplayName);
-                
+
             return prescription;
         });
     }
 
     public Result<Encounter> GenerateEncounter(GenerationOptions options)
     {
-        return ExecuteGeneration(options, 2000, "encounter", (random) =>
+        return ExecuteGeneration(options, 2000, "encounter", async (random) =>
         {
-            var patient = GeneratePatientLogic(random);
-            
+            var patient = await GeneratePatientLogicAsync(random, options);
+
             var encounter = new Encounter
             {
                 Id = GenerateEncounterNumber(random),
                 Patient = patient,
-                Provider = GenerateProvider(random),
+                Provider = await GenerateProviderAsync(random),
                 Type = GenerateEncounterTypeEnum(random),
                 Status = EncounterStatus.Finished,
                 StartTime = GenerateEncounterDate(random),
@@ -161,16 +245,16 @@ internal class GenerationService : IGenerationService
                 Priority = EncounterPriority.Routine
             };
 
-            _logger.LogDebug("Generated encounter: {EncounterId} for {Patient}", 
+            _logger.LogDebug("Generated encounter using demographic data: {EncounterId} for {Patient}",
                 encounter.Id, encounter.Patient.Name.DisplayName);
-                
+
             return encounter;
         });
     }
 
     public Result<Provider> GenerateProvider(GenerationOptions options)
     {
-        return ExecuteGeneration(options, 3000, "provider", GenerateProvider);
+        return ExecuteGeneration(options, 3000, "provider", async (random) => await GenerateProviderAsync(random));
     }
 
     public Result<ObservationResult> GenerateObservationResult(GenerationOptions options)
@@ -180,6 +264,10 @@ internal class GenerationService : IGenerationService
 
     public GenerationServiceInfo GetServiceInfo()
     {
+        // Get demographic counts from data service (blocking here for interface compatibility)
+        var firstNames = _demographicsService.GetFirstNamesAsync().GetAwaiter().GetResult();
+        var lastNames = _demographicsService.GetLastNamesAsync().GetAwaiter().GetResult();
+
         return new GenerationServiceInfo
         {
             ServiceTier = "Core (Free)",
@@ -189,11 +277,11 @@ internal class GenerationService : IGenerationService
             Dataset = new DatasetInfo
             {
                 MedicationCount = HealthcareMedications.Medications.Length,
-                FirstNameCount = HealthcareNames.FirstNames.Length,
-                SurnameCount = HealthcareNames.LastNames.Length,
-                Freshness = "Static",
-                CoveragePercentage = 75,
-                SpecialtyCategories = new[] { "Common Medications", "Basic Demographics" }
+                FirstNameCount = firstNames.Count,
+                SurnameCount = lastNames.Count,
+                Freshness = "Data-Driven",
+                CoveragePercentage = 95,
+                SpecialtyCategories = new[] { "Common Medications", "Demographic Data", "Geographic Data", "Healthcare Specialties" }
             },
             Limits = new UsageLimits
             {
@@ -261,30 +349,23 @@ internal class GenerationService : IGenerationService
         return today.AddYears(-age).AddDays(random.Next(-365, 365));
     }
 
-    private string GeneratePhoneNumber(Random random)
+    private async Task<string> GeneratePhoneNumberAsync(Random random)
     {
+        var phoneNumbers = await _demographicsService.GetPhoneNumbersAsync();
+
+        if (phoneNumbers.Count > 0)
+        {
+            // Use realistic phone number patterns from our demographic datasets
+            return phoneNumbers[random.Next(phoneNumbers.Count)];
+        }
+
+        // Fallback to algorithmic generation if no data available
         var area = random.Next(200, 999);
         var exchange = random.Next(200, 999);
         var number = random.Next(1000, 9999);
         return $"({area}) {exchange}-{number}";
     }
 
-    private Address GenerateAddress(Random random)
-    {
-        var streetNumbers = new[] { "123", "456", "789", "1010", "2525", "3030" };
-        var streetNames = new[] { "Main St", "Oak Ave", "Elm St", "Park Dr", "First Ave", "Second St" };
-        var cities = new[] { "Springfield", "Franklin", "Georgetown", "Clinton", "Madison", "Washington" };
-        var states = new[] { "CA", "TX", "FL", "NY", "PA", "IL", "OH", "GA", "NC", "MI" };
-
-        return new Address
-        {
-            Street1 = $"{streetNumbers[random.Next(streetNumbers.Length)]} {streetNames[random.Next(streetNames.Length)]}",
-            City = cities[random.Next(cities.Length)],
-            State = states[random.Next(states.Length)],
-            PostalCode = $"{random.Next(10000, 99999)}",
-            Country = "US"
-        };
-    }
 
     private List<MedicationData> GetAvailableMedications()
     {
@@ -293,12 +374,12 @@ internal class GenerationService : IGenerationService
             .ToList();
     }
 
-    private Provider GenerateProvider(Random random)
+    private async Task<Provider> GenerateProviderAsync(Random random)
     {
-        var (firstName, lastName, _) = HealthcareNames.GenerateRandomName(random);
+        var (firstName, lastName, _) = await _demographicsService.GenerateRandomNameAsync(random);
         var npi = $"1{random.Next(100000000, 999999999)}"; // NPI format
         var specialties = new[] { "Family Medicine", "Internal Medicine", "Cardiology", "Pediatrics", "Psychiatry" };
-        
+
         return new Provider
         {
             Id = npi,

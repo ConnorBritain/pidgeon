@@ -1,0 +1,54 @@
+{
+  "table": "0061",
+  "name": "Check Digit Scheme",
+  "description": "Codes specifying the check digit scheme employed for identifier validation",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "type": "hl7_defined",
+  "values": [
+    {
+      "code": "BCV",
+      "description": "Bank Card Validation Number",
+      "definition": "A non-embossed number included on bank cards to validate card authenticity"
+    },
+    {
+      "code": "ISO",
+      "description": "ISO 7064: 1983",
+      "definition": "International standard check digit algorithm ISO 7064:1983"
+    },
+    {
+      "code": "M10",
+      "description": "Mod 10 algorithm",
+      "definition": "Modulus 10 check digit algorithm (Luhn algorithm)"
+    },
+    {
+      "code": "M11",
+      "description": "Mod 11 algorithm",
+      "definition": "Modulus 11 check digit algorithm"
+    },
+    {
+      "code": "NPI",
+      "description": "National Provider Identifier",
+      "definition": "Check digit algorithm used in the US National Provider Identifier"
+    }
+  ],
+  "usedIn": [
+    "CK.3",
+    "CX.4"
+  ],
+  "vendorVariations": {
+    "epic": "Supports M10, M11, and NPI validation",
+    "cerner": "Standard implementation with additional validation",
+    "allscripts": "Supports common algorithms M10 and M11"
+  },
+  "generationRules": {
+    "distribution": {
+      "M10": 0.40,
+      "M11": 0.30,
+      "NPI": 0.20,
+      "ISO": 0.05,
+      "BCV": 0.05
+    },
+    "realistic": "M10 and M11 are most common for patient IDs, NPI for provider identifiers"
+  }
+}

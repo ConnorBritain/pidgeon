@@ -1,0 +1,242 @@
+{
+  "dataType": "PL",
+  "name": "Person Location",
+  "description": "The PL data type is used to specify the location of a person within a healthcare facility or organization. It provides detailed location information including point of care, room, bed, facility, and building details. PL enables precise tracking of patient locations, provider assignments, and resource allocation within complex healthcare environments, supporting patient safety, workflow optimization, and emergency response systems.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "composite",
+  "components": {
+    "PL.1": {
+      "name": "Point of Care",
+      "dataType": "IS",
+      "description": "The point of care unit or area where the person is located (e.g., Emergency Department, ICU, Operating Room). Represents the primary care delivery location within the facility.",
+      "length": 20,
+      "usage": "optional",
+      "position": 1,
+      "table": "0302"
+    },
+    "PL.2": {
+      "name": "Room",
+      "dataType": "IS",
+      "description": "The specific room number or identifier where the person is located. Provides room-level location precision within the point of care.",
+      "length": 20,
+      "usage": "optional",
+      "position": 2,
+      "table": "0303"
+    },
+    "PL.3": {
+      "name": "Bed",
+      "dataType": "IS",
+      "description": "The specific bed number or identifier where the person is located. Provides bed-level location precision for patient tracking and care coordination.",
+      "length": 20,
+      "usage": "optional",
+      "position": 3,
+      "table": "0304"
+    },
+    "PL.4": {
+      "name": "Facility",
+      "dataType": "HD",
+      "description": "The healthcare facility or organization where the person is located. Identifies the institution for multi-facility healthcare systems.",
+      "length": 227,
+      "usage": "optional",
+      "position": 4
+    },
+    "PL.5": {
+      "name": "Location Status",
+      "dataType": "IS",
+      "description": "The current status of the location (e.g., active, inactive, housekeeping). Indicates availability and operational status of the location.",
+      "length": 20,
+      "usage": "optional",
+      "position": 5,
+      "table": "0306"
+    },
+    "PL.6": {
+      "name": "Person Location Type",
+      "dataType": "IS",
+      "description": "The type or category of the location (e.g., patient room, nurse station, treatment room). Classifies the functional purpose of the location.",
+      "length": 20,
+      "usage": "optional",
+      "position": 6,
+      "table": "0305"
+    },
+    "PL.7": {
+      "name": "Building",
+      "dataType": "IS",
+      "description": "The building identifier within a multi-building healthcare campus. Enables location tracking across large healthcare complexes.",
+      "length": 20,
+      "usage": "optional",
+      "position": 7,
+      "table": "0307"
+    },
+    "PL.8": {
+      "name": "Floor",
+      "dataType": "IS",
+      "description": "The floor number or identifier within the building. Provides vertical location precision for multi-story healthcare facilities.",
+      "length": 20,
+      "usage": "optional",
+      "position": 8,
+      "table": "0308"
+    },
+    "PL.9": {
+      "name": "Location Description",
+      "dataType": "ST",
+      "description": "A free-text description of the location providing additional context or human-readable location information.",
+      "length": 999,
+      "usage": "optional",
+      "position": 9
+    }
+  },
+  "length": 1359,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "hierarchy": "Location components should follow logical hierarchy (Facility > Building > Floor > Point of Care > Room > Bed)",
+    "consistency": "Location identifiers should be consistent with facility naming conventions",
+    "availability": "Location status should reflect current operational availability"
+  },
+  "usage": [
+    "Patient location tracking and management",
+    "Provider assignment and scheduling",
+    "Resource allocation and capacity management",
+    "Emergency response and evacuation procedures",
+    "Workflow optimization and process improvement",
+    "Asset tracking and equipment management",
+    "Infection control and isolation protocols",
+    "Visitor management and access control"
+  ],
+  "examples": [
+    "ICU^201^A^Main Hospital^A^ROOM^Building A^3^Intensive Care Unit Room 201A",
+    "ED^Trauma 1^^City Medical Center^A^TREATMENT^Emergency Building^1^",
+    "OR^5^^Children's Hospital^I^PROCEDURE^Surgical Pavilion^2^Operating Room 5",
+    "NICU^12^B^University Medical^A^ROOM^Tower 1^4^",
+    "CARDIO^CCU-01^^Regional Heart Center^A^ROOM^Cardiac Wing^2^Cardiac Care Unit",
+    "PEDS^305^^Metro General^A^ROOM^Pediatric Tower^3^Pediatric Room 305"
+  ],
+  "commonFields": [
+    "PV1.3 - Assigned Patient Location in patient visit information",
+    "PV1.6 - Prior Patient Location for patient transfers",
+    "PV1.11 - Temporary Location for temporary patient assignments",
+    "Provider location assignments in staff scheduling",
+    "Equipment location tracking in asset management",
+    "Specimen collection location in laboratory orders"
+  ],
+  "generationHints": {
+    "typical": "Use realistic healthcare location hierarchies and naming conventions",
+    "facilities": ["Main Hospital", "Emergency Center", "Surgical Pavilion", "Medical Plaza"],
+    "pointsOfCare": ["ICU", "ED", "OR", "NICU", "PEDS", "CARDIO", "NEURO", "ORTHO"],
+    "rooms": ["Room numbers (101, 201A), procedure rooms (OR-1, CT-2), specialty units (CCU-01)"],
+    "beds": ["A, B, C for multi-bed rooms; single beds use room number"],
+    "buildings": ["Main Building", "Tower A", "Medical Plaza", "Emergency Wing"]
+  },
+  "locationHierarchy": {
+    "facility": {
+      "description": "Top-level healthcare organization or campus",
+      "examples": ["University Medical Center", "Regional Hospital", "Children's Hospital"],
+      "scope": "Entire healthcare organization or major campus"
+    },
+    "building": {
+      "description": "Physical building within healthcare facility",
+      "examples": ["Main Hospital", "Medical Plaza", "Surgical Pavilion", "Emergency Center"],
+      "scope": "Individual building structure"
+    },
+    "floor": {
+      "description": "Floor level within building",
+      "examples": ["1", "2", "3", "B1 (Basement)", "Ground", "Mezzanine"],
+      "scope": "Horizontal building section"
+    },
+    "pointOfCare": {
+      "description": "Clinical service area or department",
+      "examples": ["ICU", "Emergency Department", "Operating Room", "Medical/Surgical"],
+      "scope": "Clinical service delivery area"
+    },
+    "room": {
+      "description": "Individual room within point of care",
+      "examples": ["101", "201A", "Trauma 1", "OR-5", "CT-2"],
+      "scope": "Specific room or treatment area"
+    },
+    "bed": {
+      "description": "Individual bed or position within room",
+      "examples": ["A", "B", "C", "1", "2", "Bed 1"],
+      "scope": "Individual patient position"
+    }
+  },
+  "locationTypes": {
+    "patientCare": {
+      "description": "Direct patient care locations",
+      "examples": ["ROOM", "ICU", "CCU", "NICU", "TREATMENT"],
+      "characteristics": "Patient assignment and clinical care delivery"
+    },
+    "procedural": {
+      "description": "Procedure and diagnostic locations",
+      "examples": ["OR", "PROCEDURE", "RADIOLOGY", "LAB", "CARDIAC_CATH"],
+      "characteristics": "Specialized medical procedures and diagnostics"
+    },
+    "support": {
+      "description": "Support and administrative locations",
+      "examples": ["NURSE_STATION", "PHARMACY", "SUPPLY", "ADMINISTRATION"],
+      "characteristics": "Clinical support and operational functions"
+    },
+    "transport": {
+      "description": "Patient transport and transition areas",
+      "examples": ["HALLWAY", "ELEVATOR", "TRANSPORT", "WAITING"],
+      "characteristics": "Patient movement and temporary staging"
+    }
+  },
+  "validationRules": {
+    "hierarchyConsistency": "Location hierarchy should follow logical facility organization",
+    "identifierUniqueness": "Location identifiers should be unique within their scope",
+    "statusValidation": "Location status should reflect current operational state",
+    "typeConsistency": "Person location type should match actual location function",
+    "facilityValidation": "Facility component should use valid HD (Hierarchic Designator) format"
+  },
+  "operationalConsiderations": {
+    "tracking": "Enables real-time patient location tracking and bed management",
+    "workflow": "Supports clinical workflow optimization and staff efficiency",
+    "safety": "Critical for patient safety, emergency response, and evacuation procedures",
+    "capacity": "Enables capacity management and resource allocation",
+    "compliance": "Supports regulatory compliance for patient location documentation"
+  },
+  "emergencyResponse": {
+    "evacuation": "Precise location data enables efficient evacuation procedures",
+    "codeTeams": "Rapid response teams can quickly locate patients in emergency situations",
+    "isolation": "Infection control protocols can be applied based on location",
+    "security": "Security responses can be targeted to specific facility areas"
+  },
+  "technologyIntegration": {
+    "rtls": "Real-Time Location Systems can update location data automatically",
+    "badges": "Staff and patient badges can integrate with location tracking",
+    "cameras": "Security camera systems can correlate with location data",
+    "sensors": "Environmental sensors can provide location-specific data"
+  },
+  "relatedDataTypes": {
+    "HD": "Hierarchic Designator - used for facility identification",
+    "IS": "Coded Value - used for most location components with table references",
+    "ST": "String - used for location description and free-text components",
+    "PV1": "Patient Visit - contains multiple PL components for location tracking"
+  },
+  "implementationNotes": {
+    "flexibility": "Accommodates various facility sizes from small clinics to large hospital complexes",
+    "scalability": "Supports growth from single building to multi-campus healthcare systems",
+    "integration": "Integrates with facility management, RTLS, and clinical information systems",
+    "standardization": "Enables consistent location identification across healthcare networks",
+    "interoperability": "Facilitates location data exchange between healthcare systems"
+  },
+  "facilityManagement": {
+    "spacePlanning": "Location data supports facility space planning and utilization analysis",
+    "maintenance": "Enables location-specific maintenance scheduling and tracking",
+    "renovation": "Supports construction and renovation project planning",
+    "expansion": "Facilitates facility expansion and new location integration"
+  },
+  "clinicalApplications": {
+    "patientSafety": "Accurate location tracking prevents patient misidentification and wrong-site procedures",
+    "workflowOptimization": "Location data enables efficient care team coordination and workflow",
+    "resourceAllocation": "Supports optimal allocation of staff, equipment, and supplies",
+    "qualityImprovement": "Location analytics identify opportunities for process improvement",
+    "riskManagement": "Location tracking supports risk assessment and mitigation strategies"
+  },
+  "regulatoryCompliance": {
+    "jointCommission": "Supports Joint Commission requirements for patient location documentation",
+    "cms": "Meets CMS requirements for patient location and transfer documentation",
+    "hipaa": "Enables location-based access controls for patient privacy protection",
+    "osha": "Supports OSHA workplace safety requirements for staff location tracking"
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "messageType": "ORF",
+  "triggerEvent": "R04",
+  "name": "Response to Query; Transmission of Requested Observation",
+  "description": "Sent to transmit specific requested observation data in response to targeted queries",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Results Reporting",
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'ORF^R04'"]
+    },
+    {
+      "type": "segment",
+      "segment": "MSA",
+      "name": "Message Acknowledgment",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "QRD",
+      "name": "Query Definition",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "QRF",
+      "name": "Query Filter",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "group",
+      "name": "QUERY_RESPONSE",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": "unbounded"},
+      "structure": [
+        {
+          "type": "group",
+          "name": "PATIENT",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "PID",
+              "name": "Patient Identification",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "NTE",
+              "name": "Notes and Comments",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 0}
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "name": "ORDER",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": "unbounded"},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "ORC",
+              "name": "Common Order",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "OBR",
+              "name": "Observation Request",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "NTE",
+              "name": "Notes and Comments",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 0}
+            },
+            {
+              "type": "group",
+              "name": "OBSERVATION",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": "unbounded"},
+              "structure": [
+                {
+                  "type": "segment",
+                  "segment": "OBX",
+                  "name": "Observation/Result",
+                  "usage": "O",
+                  "cardinality": {"min": 0, "max": 1}
+                },
+                {
+                  "type": "segment",
+                  "segment": "NTE",
+                  "name": "Notes and Comments",
+                  "usage": "O",
+                  "cardinality": {"min": 0, "max": 0}
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "segment",
+      "segment": "ERR",
+      "name": "Error",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    },
+    {
+      "type": "segment",
+      "segment": "DSC",
+      "name": "Continuation Pointer",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1}
+    }
+  ],
+  "useCases": [
+    "Targeted clinical result transmission",
+    "Specific test result delivery",
+    "Focused observation data queries",
+    "Clinical decision support data"
+  ],
+  "examples": [
+    "MSH|^~\\&|LAB|HOSPITAL|||20231201170000||ORF^R04|MSG000017|P|2.3",
+    "MSA|AA|QRY000002|Specific query processed|",
+    "QRD|20231201170000|R|I|QRY000002|||1^RD|12345678|RES^CBC",
+    "PID|||12345678^^^HOSPITAL^MR||DOE^JOHN^MIDDLE||19800101|M",
+    "OBR|1|LAB002||CBC^Complete Blood Count^LN|||20231201140000||||||||LAB123^JONES^MARY",
+    "OBX|1|NM|HGB^Hemoglobin^LN|1|14.2|g/dL|12.0-16.0|N|||F"
+  ]
+}

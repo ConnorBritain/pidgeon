@@ -1,0 +1,64 @@
+{
+  "table": "0104",
+  "name": "Version ID",
+  "description": "HL7 version identification codes for message compatibility",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "type": "hl7_defined",
+  "values": [
+    {
+      "code": "2.0",
+      "description": "Release 2.0",
+      "definition": "HL7 version 2.0 release"
+    },
+    {
+      "code": "2.0D",
+      "description": "Demo 2.0",
+      "definition": "HL7 version 2.0 demonstration release"
+    },
+    {
+      "code": "2.1",
+      "description": "Release 2. 1",
+      "definition": "HL7 version 2.1 release"
+    },
+    {
+      "code": "2.2",
+      "description": "Release 2.2",
+      "definition": "HL7 version 2.2 release"
+    },
+    {
+      "code": "2.3",
+      "description": "Release 2.3",
+      "definition": "HL7 version 2.3 release"
+    },
+    {
+      "code": "2.3.1",
+      "description": "Release 2.3.1",
+      "definition": "HL7 version 2.3.1 release"
+    },
+    {
+      "code": "2.4",
+      "description": "Release 2.4",
+      "definition": "HL7 version 2.4 release"
+    },
+    {
+      "code": "2.5",
+      "description": "Release 2.5",
+      "definition": "HL7 version 2.5 release"
+    },
+    {
+      "code": "2.5.1",
+      "description": "Release 1.5.1",
+      "definition": "HL7 version 2.5.1 release"
+    },
+    {
+      "code": "2.6",
+      "description": "Release 2.6",
+      "definition": "HL7 version 2.6 release"
+    }
+  ],
+  "usedIn": [
+    "MSH.12"
+  ],
+  "notes": "Critical for HL7 version compatibility and message parsing validation"
+}

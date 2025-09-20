@@ -1,0 +1,166 @@
+{
+  "messageType": "ORU",
+  "triggerEvent": "R01",
+  "messageStructure": "ORU_R01",
+  "name": "Unsolicited Transmission of Observation Message",
+  "description": "Sent to transmit laboratory results, radiology reports, or other observation data",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "Observation Reporting",
+  "chapter": "7",
+  "chapterName": "Observation Reporting",
+  "businessPurpose": "Transmit observation results, laboratory values, radiology reports, and other clinical findings",
+  "timing": "Sent when results are available, verified, and ready for clinical review",
+  "responseMessage": "ACK^R01^ACK",
+  "searchTerms": ["R01", "results", "laboratory", "observation", "unsolicited"],
+  "structure": [
+    {
+      "type": "segment",
+      "segment": "MSH",
+      "name": "Message Header",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "notes": ["MSH.9 must be 'ORU^R01'"]
+    },
+    {
+      "type": "group",
+      "name": "RESPONSE",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": "unbounded"},
+      "structure": [
+        {
+          "type": "group",
+          "name": "PATIENT",
+          "usage": "O",
+          "cardinality": {"min": 0, "max": 1},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "PID",
+              "name": "Patient Identification",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "PD1",
+              "name": "Additional Demographics",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "NTE",
+              "name": "Notes and Comments",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 0}
+            },
+            {
+              "type": "group",
+              "name": "VISIT",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 1},
+              "structure": [
+                {
+                  "type": "segment",
+                  "segment": "PV1",
+                  "name": "Patient Visit",
+                  "usage": "R",
+                  "cardinality": {"min": 1, "max": 1}
+                },
+                {
+                  "type": "segment",
+                  "segment": "PV2",
+                  "name": "Patient Visit - Additional Information",
+                  "usage": "O",
+                  "cardinality": {"min": 0, "max": 1}
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "name": "ORDER_OBSERVATION",
+          "usage": "R",
+          "cardinality": {"min": 1, "max": "unbounded"},
+          "structure": [
+            {
+              "type": "segment",
+              "segment": "ORC",
+              "name": "Common Order",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "OBR",
+              "name": "Observation Request",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": 1}
+            },
+            {
+              "type": "segment",
+              "segment": "NTE",
+              "name": "Notes and Comments",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 0}
+            },
+            {
+              "type": "group",
+              "name": "OBSERVATION",
+              "usage": "R",
+              "cardinality": {"min": 1, "max": "unbounded"},
+              "structure": [
+                {
+                  "type": "segment",
+                  "segment": "OBX",
+                  "name": "Observation/Result",
+                  "usage": "O",
+                  "cardinality": {"min": 0, "max": 1}
+                },
+                {
+                  "type": "segment",
+                  "segment": "NTE",
+                  "name": "Notes and Comments",
+                  "usage": "O",
+                  "cardinality": {"min": 0, "max": 0}
+                }
+              ]
+            },
+            {
+              "type": "segment",
+              "segment": "CTI",
+              "name": "Clinical Trial Identification",
+              "usage": "O",
+              "cardinality": {"min": 0, "max": 0}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "segment",
+      "segment": "DSC",
+      "name": "Continuation Pointer",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "notes": ["Used for message continuation"]
+    }
+  ],
+  "requiredSegments": ["MSH", "PID", "OBR", "OBX"],
+  "optionalSegments": ["PD1", "NTE", "PV1", "PV2", "ORC", "CTI", "DSC"],
+  "useCases": [
+    "Laboratory result transmission",
+    "Radiology report delivery",
+    "Pathology result reporting",
+    "Microbiology culture results"
+  ],
+  "examples": [
+    "MSH|^~\\&|LAB|HOSPITAL|||20231201140000||ORU^R01|123456794|P|2.3",
+    "PID|||12345678^^^HOSPITAL^MR||DOE^JOHN^MIDDLE||19800101|M",
+    "PV1||I|3E^301^A^HOSPITAL^R",
+    "OBR|1||LAB001|||20231201130000|||||||||||||20231201140000|||F",
+    "OBX|1|NM|GLU^Glucose^LN||95|mg/dL|70-110|N|||F"
+  ]
+}

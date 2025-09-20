@@ -1,0 +1,66 @@
+{
+  "triggerEvent": "M04",
+  "name": "Master File - Charge Description",
+  "description": "Master file updates for billing charge descriptions, procedure codes, and revenue cycle reference data",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "8",
+  "chapterName": "Master Files",
+  "messageStructure": "MFN^M04",
+  "hl7Reference": "HL7 v2.3 Chapter 8 Master Files - HL7.eu/HL7v2x/v23/std23",
+  "segments": {
+    "required": [
+      "MSH",
+      "MFI",
+      "MFE",
+      "CDM"
+    ],
+    "optional": [
+      "PRC"
+    ]
+  },
+  "businessPurpose": "Synchronize charge description master data across billing systems to ensure accurate revenue cycle processing",
+  "timing": "Sent when charge codes change, including new procedures, fee updates, or billing rule modifications",
+  "responseMessage": "MFK^M04^MFK",
+  "standardNotes": [
+    "M04 handles charge description master file updates for billing and revenue cycle systems",
+    "CDM segment contains charge description and billing code information",
+    "PRC segment provides pricing and cost information for procedures",
+    "Essential for maintaining accurate billing and compliance with fee schedules",
+    "Updates must be coordinated with payer contract terms and regulatory requirements"
+  ],
+  "realWorldScenarios": [
+    "New CPT codes added to billing system for current year updates",
+    "Facility fees adjusted for outpatient procedure pricing changes",
+    "Emergency department charge descriptions updated for new triage protocols",
+    "Surgery center adds new minimally invasive procedure to charge master",
+    "Hospital updates room and board charges for different service levels",
+    "Physician practice modifies consultation fees per insurance contract updates"
+  ],
+  "generationRules": {
+    "MSH.9": "MFN^M04",
+    "MFI.1": "Charge Description master file identifier",
+    "MFI.3": "File-level event code (REP, UPD)",
+    "MFE.1": "Record-level event code (MAD, MUP, MDL)",
+    "MFE.4": "Primary key value (charge code)",
+    "CDM.1": "Set ID - CDM",
+    "CDM.2": "Charge Code",
+    "CDM.3": "Charge Description",
+    "CDM.4": "Description Override Indicator",
+    "CDM.5": "Exploding Charges",
+    "CDM.6": "Procedure Code",
+    "CDM.7": "Active/Inactive Flag",
+    "PRC.1": "Primary Key Value",
+    "PRC.2": "Facility ID",
+    "PRC.3": "Department",
+    "PRC.4": "Valid Patient Classes",
+    "PRC.5": "Price",
+    "requiredDataQuality": "Critical - charge accuracy affects revenue integrity, compliance, and payer relationships",
+    "tableReferences": {
+      "MFI.3": "HL7-0178 (File Level Event Code)",
+      "MFE.1": "HL7-0180 (Record Level Event Code)",
+      "CDM.4": "HL7-0268 (Override)",
+      "CDM.7": "HL7-0183 (Active/Inactive)"
+    }
+  }
+}

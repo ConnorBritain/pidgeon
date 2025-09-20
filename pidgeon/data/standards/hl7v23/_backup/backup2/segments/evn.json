@@ -1,0 +1,73 @@
+{
+  "segment": "EVN",
+  "name": "Event Type",
+  "description": "Communicates trigger event information including event type, timing, and responsible parties",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "usage": "R",
+  "cardinality": {
+    "min": 1,
+    "max": 1
+  },
+  "fields": {
+    "EVN.1": {
+      "name": "Event Type Code",
+      "description": "Code that corresponds to the trigger event that caused the message",
+      "dataType": "ID",
+      "usage": "R",
+      "cardinality": {"min": 1, "max": 1},
+      "table": "0003",
+      "examples": ["A01", "A08", "A03"]
+    },
+    "EVN.2": {
+      "name": "Recorded Date/Time",
+      "description": "Date and time the event was recorded in the system",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["200202150945", "20220815143022"]
+    },
+    "EVN.3": {
+      "name": "Date/Time Planned Event",
+      "description": "Date and time the event was originally planned to occur",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["20220815140000"]
+    },
+    "EVN.4": {
+      "name": "Event Reason Code",
+      "description": "Reason for the event occurring",
+      "dataType": "ID",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "table": "0062",
+      "examples": ["01", "02", "03"]
+    },
+    "EVN.5": {
+      "name": "Operator ID",
+      "description": "Individual responsible for triggering the event",
+      "dataType": "CN",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["12345^SMITH^JOHN", "54321^DOE^JANE"]
+    },
+    "EVN.6": {
+      "name": "Event Occurred",
+      "description": "Actual date and time when the triggering event occurred",
+      "dataType": "TS",
+      "usage": "O",
+      "cardinality": {"min": 0, "max": 1},
+      "examples": ["200202150930", "20220815142500"]
+    }
+  },
+  "examples": [
+    "EVN|A01|200202150945|||12345^SMITH^JOHN|200202150930",
+    "EVN|A08|20220815143022|20220815140000|02|54321^DOE^JANE|20220815142500",
+    "EVN|A03|20220816090000||01||20220816085500"
+  ],
+  "notes": [
+    "EVN.1 (Event Type Code) is required and should match MSH.9 trigger event",
+    "EVN.6 (Event Occurred) may differ from EVN.2 (when recorded in system)"
+  ]
+}

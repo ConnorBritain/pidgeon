@@ -1,0 +1,62 @@
+{
+  "triggerEvent": "P06",
+  "name": "End Account",
+  "description": "Closes and finalizes a patient account when billing activities are complete or no longer needed",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "chapter": "6",
+  "chapterName": "Financial Management",
+  "messageStructure": "BAR^P06",
+  "hl7Reference": "HL7 v2.3 Chapter 6 Financial Management - HL7.eu/HL7v2x/v23/std23",
+  "segments": {
+    "required": [
+      "MSH",
+      "EVN",
+      "PID"
+    ],
+    "optional": [
+      "PV1",
+      "GT1",
+      "IN1",
+      "IN2",
+      "IN3"
+    ]
+  },
+  "businessPurpose": "Formally close patient accounts that have completed billing cycles or are no longer needed for financial processing",
+  "timing": "Sent when account has zero balance, all billing is complete, or account needs to be closed for administrative reasons",
+  "responseMessage": "ACK^P06^ACK",
+  "standardNotes": [
+    "P06 closes accounts but preserves historical billing data",
+    "Use after all financial transactions have been completed and reconciled",
+    "Account closure should follow organizational data retention policies",
+    "EVN.2 should contain the account closure date/time",
+    "Different from P02 (purge) which removes account data entirely",
+    "Closed accounts typically remain in system for historical reporting"
+  ],
+  "realWorldScenarios": [
+    "Patient account has zero balance after final insurance payment",
+    "Long-term care patient discharged with all billing resolved",
+    "Self-pay account fully paid and ready for closure",
+    "Deceased patient account closed after estate settlement complete",
+    "Clinical trial account closure after study completion and final billing",
+    "Worker's compensation case closed after claim resolution"
+  ],
+  "generationRules": {
+    "MSH.9": "BAR^P06",
+    "EVN.1": "P06",
+    "EVN.2": "Account closure date/time",
+    "EVN.6": "Account closure timestamp",
+    "PID": "Patient identification for account being closed",
+    "PV1": "Visit information if account closure relates to specific encounter",
+    "GT1": "Final guarantor information for account closure",
+    "IN1": "Final primary insurance information",
+    "IN2": "Final additional insurance details",
+    "IN3": "Final insurance certification information",
+    "requiredDataQuality": "Critical - account closure affects financial reporting and audit compliance",
+    "tableReferences": {
+      "EVN.1": "Event Type Code",
+      "PV1.2": "HL7-0004 (Patient Class)",
+      "GT1.2": "HL7-0063 (Relationship)"
+    }
+  }
+}

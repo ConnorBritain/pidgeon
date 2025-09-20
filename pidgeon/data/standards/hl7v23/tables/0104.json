@@ -1,64 +1,41 @@
 {
-  "table": "0104",
+  "code": "0104",
   "name": "Version ID",
-  "description": "HL7 version identification codes for message compatibility",
-  "standard": "hl7v23",
-  "version": "2.3",
-  "type": "hl7_defined",
+  "version": "HL7 v2.3",
+  "chapter": "Control/Query",
+  "description": "HL7 Standard Tables - Tables defined by the HL7 organization. Most tables in this category are related to the standard and its message structures.",
+  "type": "HL7",
   "values": [
     {
-      "code": "2.0",
+      "value": "2.0",
       "description": "Release 2.0",
-      "definition": "HL7 version 2.0 release"
+      "comment": "September 1988",
+      "sort_order": 1
     },
     {
-      "code": "2.0D",
+      "value": "2.0D",
       "description": "Demo 2.0",
-      "definition": "HL7 version 2.0 demonstration release"
+      "comment": "October 1988",
+      "sort_order": 2
     },
     {
-      "code": "2.1",
+      "value": "2.1",
       "description": "Release 2. 1",
-      "definition": "HL7 version 2.1 release"
+      "comment": "March 1990",
+      "sort_order": 3
     },
     {
-      "code": "2.2",
+      "value": "2.2",
       "description": "Release 2.2",
-      "definition": "HL7 version 2.2 release"
+      "comment": "December 1994",
+      "sort_order": 4
     },
     {
-      "code": "2.3",
+      "value": "2.3",
       "description": "Release 2.3",
-      "definition": "HL7 version 2.3 release"
-    },
-    {
-      "code": "2.3.1",
-      "description": "Release 2.3.1",
-      "definition": "HL7 version 2.3.1 release"
-    },
-    {
-      "code": "2.4",
-      "description": "Release 2.4",
-      "definition": "HL7 version 2.4 release"
-    },
-    {
-      "code": "2.5",
-      "description": "Release 2.5",
-      "definition": "HL7 version 2.5 release"
-    },
-    {
-      "code": "2.5.1",
-      "description": "Release 1.5.1",
-      "definition": "HL7 version 2.5.1 release"
-    },
-    {
-      "code": "2.6",
-      "description": "Release 2.6",
-      "definition": "HL7 version 2.6 release"
+      "comment": "March 1997",
+      "sort_order": 5
     }
   ],
-  "usedIn": [
-    "MSH.12"
-  ],
-  "notes": "Critical for HL7 version compatibility and message parsing validation"
+  "value_count": 5
 }

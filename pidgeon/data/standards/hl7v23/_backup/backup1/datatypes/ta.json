@@ -1,0 +1,86 @@
+{
+  "dataType": "TA",
+  "name": "Telephone Address",
+  "description": "The TA data type is used to represent telephone contact information with structured components for different types of telephone communication. It provides a way to specify telephone numbers along with their type and use codes, enabling healthcare systems to maintain organized contact information for patients, providers, and other healthcare entities. TA has been largely superseded by XTN (Extended Telecommunications Number) in later HL7 versions but remains important for backward compatibility.",
+  "standard": "hl7v23",
+  "version": "2.3",
+  "category": "composite",
+  "components": {
+    "TA.1": {
+      "name": "Telephone Number",
+      "dataType": "TN",
+      "description": "The actual telephone number in standard format. Contains the phone number that can be dialed to reach the contact.",
+      "length": 40,
+      "usage": "optional",
+      "position": 1
+    },
+    "TA.2": {
+      "name": "Telecommunication Use Code",
+      "dataType": "ID",
+      "description": "Indicates the intended use or purpose of the telephone number (e.g., home, work, emergency). Specifies when and how the number should be used.",
+      "length": 3,
+      "usage": "optional",
+      "position": 2,
+      "table": "0201"
+    },
+    "TA.3": {
+      "name": "Telecommunication Equipment Type",
+      "dataType": "ID",
+      "description": "Specifies the type of telecommunications equipment or service (e.g., phone, fax, pager, cellular). Indicates the communication method and capabilities.",
+      "length": 8,
+      "usage": "optional",
+      "position": 3,
+      "table": "0202"
+    }
+  },
+  "length": 51,
+  "constraints": {
+    "encoding": "Components separated by ^ (component separator)",
+    "useCode": "Telecommunication use code should reference valid values from table 0201",
+    "equipmentType": "Equipment type should reference valid values from table 0202",
+    "phoneFormat": "Telephone number should follow standard formatting conventions"
+  },
+  "usage": [
+    "Patient contact telephone numbers with usage specifications",
+    "Provider and staff contact information with equipment types",
+    "Emergency contact numbers with priority and use indicators",
+    "Healthcare facility and department telephone directories",
+    "Insurance and guarantor contact information",
+    "Appointment scheduling and communication contact points"
+  ],
+  "examples": [
+    "555-123-4567^PRN^PH",
+    "(555) 987-6543^WPN^PH",
+    "555-456-7890^EMC^CP",
+    "1-800-555-0123^ORN^PH",
+    "555-234-5678^ASN^FX",
+    "+1-555-345-6789^WPN^PH"
+  ],
+  "commonFields": [
+    "Patient telephone contact fields with use and equipment specifications",
+    "Provider and staff directory information with contact categorization",
+    "Emergency contact telephone numbers with priority designations",
+    "Healthcare facility contact directories and department listings",
+    "Insurance and guarantor contact information with business rules"
+  ],
+  "generationHints": {
+    "typical": "Use realistic phone numbers with appropriate use codes and equipment types",
+    "useCodes": ["PRN (Primary)", "WPN (Work)", "ORN (Other)", "EMC (Emergency)", "ASN (Answering Service)"],
+    "equipmentTypes": ["PH (Telephone)", "FX (Fax)", "CP (Cellular Phone)", "PG (Pager)", "BP (Beeper)"],
+    "phoneFormats": ["555-123-4567", "(555) 123-4567", "1-800-555-1234", "+1-555-123-4567"],
+    "realistic": "Generate contextually appropriate combinations of use codes and equipment types"
+  },
+  "relatedDataTypes": {
+    "XTN": "Extended Telecommunications Number - enhanced replacement for TA",
+    "TN": "Telephone Number - used for the phone number component",
+    "ID": "Coded Value - used for use code and equipment type components",
+    "ST": "String - alternative for simple telephone number storage"
+  },
+  "implementationNotes": {
+    "legacy": "TA is primarily used for backward compatibility with older HL7 implementations",
+    "migration": "New implementations should consider using XTN for enhanced telecommunications capabilities",
+    "validation": "Validate use codes and equipment types against specified HL7 tables",
+    "formatting": "Support various telephone number formatting conventions for international use",
+    "routing": "Use codes and equipment types enable intelligent message routing and communication"
+  }
+}
