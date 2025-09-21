@@ -25,13 +25,20 @@ public static class ServiceRegistrationExtensions
         
         // Register services by convention
         RegisterServicesByConvention(services, coreAssembly);
-        
+
         // Register adapters by convention
         RegisterAdaptersByConvention(services, coreAssembly);
-        
+
+        // Register field path plugins by convention
+        services.AddFieldPathPlugins();
+
+        // Register configuration and field path services
+        services.AddScoped<Application.Interfaces.Configuration.IConfigurationService, Application.Services.Configuration.ConfigurationService>();
+        services.AddScoped<Application.Interfaces.Configuration.IFieldPathResolver, Application.Services.Configuration.FieldPathResolverService>();
+
         // Register de-identification services
         services.AddDeIdentificationServices();
-        
+
         // Register AI services
         services.AddAIServices();
         
@@ -196,6 +203,42 @@ public static class ServiceRegistrationExtensions
             services.AddScoped(helperType);
         }
         
+        return services;
+    }
+
+    /// <summary>
+    /// Registers all field path plugins using convention-based discovery.
+    /// Scans for IStandardFieldPathPlugin implementations and registers them automatically.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddFieldPathPlugins(this IServiceCollection services)
+    {
+        var coreAssembly = Assembly.GetAssembly(typeof(ServiceRegistrationExtensions))!;
+
+        // Find all field path plugin types by convention
+        var fieldPathPluginTypes = coreAssembly.GetTypes()
+            .Where(type => type.IsClass &&
+                          !type.IsAbstract &&
+                          type.Name.EndsWith("FieldPathPlugin") &&
+                          type.Namespace?.Contains("Infrastructure.Configuration") == true)
+            .ToList();
+
+        foreach (var pluginType in fieldPathPluginTypes)
+        {
+            // Register the concrete plugin
+            services.AddScoped(pluginType);
+
+            // Register as IStandardFieldPathPlugin interface
+            var fieldPathInterface = pluginType.GetInterfaces()
+                .FirstOrDefault(i => i.Name == "IStandardFieldPathPlugin");
+
+            if (fieldPathInterface != null)
+            {
+                services.AddScoped(fieldPathInterface, provider => provider.GetRequiredService(pluginType));
+            }
+        }
+
         return services;
     }
 

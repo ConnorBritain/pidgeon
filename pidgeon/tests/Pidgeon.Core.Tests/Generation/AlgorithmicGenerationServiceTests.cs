@@ -7,6 +7,12 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Pidgeon.Core.Application.Services.Generation;
 using Pidgeon.Core.Generation;
 using Pidgeon.Core.Domain.Clinical.Entities;
+using Pidgeon.Core.Domain.Configuration;
+using Pidgeon.Core.Domain.Configuration.Entities;
+using Pidgeon.Core.Application.Interfaces.Reference;
+using Pidgeon.Core.Application.Interfaces.Generation;
+using Pidgeon.Core.Application.Interfaces.Configuration;
+using Moq;
 using Xunit;
 
 namespace Pidgeon.Core.Tests.Generation;
@@ -22,7 +28,32 @@ public class AlgorithmicGenerationServiceTests
 
     public AlgorithmicGenerationServiceTests()
     {
-        _service = new GenerationService(NullLogger<GenerationService>.Instance);
+        // Create mock dependencies
+        var mockDemographicsService = new Mock<IDemographicsDataService>();
+        var mockConstraintResolver = new Mock<IConstraintResolver>();
+        var mockLockSessionService = new Mock<ILockSessionService>();
+        var mockFieldPathResolver = new Mock<IFieldPathResolver>();
+
+        // Setup basic mock responses for demographics (returns List<string>)
+        mockDemographicsService.Setup(x => x.GetFirstNamesAsync(It.IsAny<string>()))
+            .ReturnsAsync(new List<string> { "John", "Jane", "Robert", "Sarah", "Michael" });
+        mockDemographicsService.Setup(x => x.GetLastNamesAsync())
+            .ReturnsAsync(new List<string> { "Smith", "Johnson", "Williams", "Brown", "Jones" });
+
+        // Setup constraint resolver to return success for all validations
+        mockConstraintResolver.Setup(x => x.ValidateValueAsync(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<FieldConstraints>()))
+            .ReturnsAsync(Pidgeon.Core.Result<bool>.Success(true));
+
+        // Setup lock session service to return empty session by default
+        mockLockSessionService.Setup(x => x.GetSessionAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.FromResult(Pidgeon.Core.Result<LockSession>.Failure("Session not found")));
+
+        _service = new GenerationService(
+            NullLogger<GenerationService>.Instance,
+            mockDemographicsService.Object,
+            mockConstraintResolver.Object,
+            mockLockSessionService.Object,
+            mockFieldPathResolver.Object);
         _defaultOptions = new GenerationOptions();
     }
 

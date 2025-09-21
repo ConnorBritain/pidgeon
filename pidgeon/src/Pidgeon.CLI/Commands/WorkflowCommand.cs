@@ -5,6 +5,7 @@
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Domain.Transformation.Entities;
 using Pidgeon.Core.Application.Interfaces.Workflow;
+using Pidgeon.Core.Common.Types;
 using Pidgeon.CLI.Services;
 using System.CommandLine;
 using System.Text.Json;
@@ -19,12 +20,17 @@ public class WorkflowCommand : CommandBuilderBase
 {
     private readonly ConfigurationStorage _configStorage;
     private readonly IWorkflowExecutionService? _workflowExecutionService;
+    private readonly ProTierValidationService _proTierValidation;
 
     // FIXME: Need proper DI container integration for CLI commands to inject IWorkflowExecutionService
-    public WorkflowCommand(ILogger<WorkflowCommand> logger, IWorkflowExecutionService? workflowExecutionService = null) : base(logger)
+    public WorkflowCommand(
+        ILogger<WorkflowCommand> logger,
+        ProTierValidationService proTierValidation,
+        IWorkflowExecutionService? workflowExecutionService = null) : base(logger)
     {
         _configStorage = new ConfigurationStorage();
         _workflowExecutionService = workflowExecutionService;
+        _proTierValidation = proTierValidation;
     }
 
     public override Command CreateCommand()
@@ -58,10 +64,13 @@ public class WorkflowCommand : CommandBuilderBase
             var template = parseResult.GetValue(templateOption);
             var skipProCheck = parseResult.GetValue(skipProCheckFlag);
 
-            // Pro tier feature gating
-            if (!skipProCheck && !IsProTierEnabled())
+            // Pro tier feature validation using new subscription system
+            var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
+                FeatureFlags.WorkflowWizard, skipProCheck, cancellationToken);
+
+            if (validationResult.IsFailure)
             {
-                DisplayProTierMessage();
+                Console.WriteLine(validationResult.Error.Message);
                 return 1;
             }
 
@@ -150,10 +159,13 @@ public class WorkflowCommand : CommandBuilderBase
             var name = parseResult.GetValue(nameOption)!;
             var skipProCheck = parseResult.GetValue(skipProCheckFlag);
 
-            // Pro tier feature gating
-            if (!skipProCheck && !IsProTierEnabled())
+            // Pro tier feature validation using new subscription system
+            var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
+                FeatureFlags.WorkflowWizard, skipProCheck, cancellationToken);
+
+            if (validationResult.IsFailure)
             {
-                DisplayProTierMessage();
+                Console.WriteLine(validationResult.Error.Message);
                 return 1;
             }
 
@@ -607,33 +619,6 @@ public class WorkflowCommand : CommandBuilderBase
         };
     }
 
-    private bool IsProTierEnabled()
-    {
-        // TODO: Implement actual Pro tier validation
-        return false;
-    }
-
-    private void DisplayProTierMessage()
-    {
-        Console.WriteLine("🔒 Pro Feature: Workflow Wizard");
-        Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        Console.WriteLine();
-        Console.WriteLine("The Workflow Wizard is a Pro-tier feature that provides:");
-        Console.WriteLine("  • Interactive guided scenario creation");
-        Console.WriteLine("  • Multi-step workflow orchestration");
-        Console.WriteLine("  • Vendor configuration integration");
-        Console.WriteLine("  • Advanced validation workflows");
-        Console.WriteLine();
-        Console.WriteLine("Upgrade to Pidgeon Pro to unlock this feature:");
-        Console.WriteLine("  • $29/month per user");
-        Console.WriteLine("  • All CLI features plus Pro workflows");
-        Console.WriteLine("  • Enhanced datasets and AI models");
-        Console.WriteLine("  • Priority support");
-        Console.WriteLine();
-        Console.WriteLine("Learn more: https://pidgeon.health/pro");
-        Console.WriteLine();
-        Console.WriteLine("For development/testing, use: --skip-pro-check");
-    }
 
     private string PromptForString(string prompt, string defaultValue)
     {

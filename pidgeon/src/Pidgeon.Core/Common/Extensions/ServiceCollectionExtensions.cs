@@ -67,6 +67,12 @@ public static class ServiceCollectionExtensions
         // Register constraint resolution system
         services.AddConstraintResolution();
 
+        // Register lock session management system
+        services.AddLockSessionManagement();
+
+        // Register subscription management system
+        services.AddSubscriptionManagement();
+
         return services;
     }
 
@@ -167,6 +173,42 @@ public static class ServiceCollectionExtensions
         // TODO: Add FHIR and NCPDP plugins when implemented
         // services.AddScoped<IConstraintResolverPlugin, FHIRConstraintResolverPlugin>();
         // services.AddScoped<IConstraintResolverPlugin, NCPDPConstraintResolverPlugin>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the lock session management system with all required services.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddLockSessionManagement(this IServiceCollection services)
+    {
+        // Register core lock session service
+        services.AddScoped<Pidgeon.Core.Application.Interfaces.Configuration.ILockSessionService,
+                          Pidgeon.Core.Application.Services.Configuration.LockSessionService>();
+
+        // Register file system storage provider as default
+        services.AddScoped<Pidgeon.Core.Application.Interfaces.Configuration.ILockStorageProvider,
+                          Pidgeon.Core.Infrastructure.Configuration.FileSystemLockStorageProvider>();
+
+        // Register session export/import service for template marketplace functionality
+        services.AddScoped<Pidgeon.Core.Application.Interfaces.Configuration.ISessionExportService,
+                          Pidgeon.Core.Application.Services.Configuration.SessionExportService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the subscription management system with all required services.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddSubscriptionManagement(this IServiceCollection services)
+    {
+        // Register core subscription service
+        services.AddScoped<Pidgeon.Core.Application.Interfaces.Subscription.ISubscriptionService,
+                          Pidgeon.Core.Application.Services.Subscription.SubscriptionService>();
 
         return services;
     }

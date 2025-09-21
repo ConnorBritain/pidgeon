@@ -6,6 +6,8 @@ using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Comparison;
 using Pidgeon.Core.Domain.Comparison.Entities;
+using Pidgeon.Core.Common.Types;
+using Pidgeon.CLI.Services;
 
 namespace Pidgeon.CLI.Commands;
 
@@ -16,18 +18,21 @@ namespace Pidgeon.CLI.Commands;
 public class DiffCommand : CommandBuilderBase
 {
     private readonly IMessageDiffService _diffService;
+    private readonly ProTierValidationService _proTierValidation;
 
     public DiffCommand(
         ILogger<DiffCommand> logger,
-        IMessageDiffService diffService) 
+        IMessageDiffService diffService,
+        ProTierValidationService proTierValidation)
         : base(logger)
     {
         _diffService = diffService;
+        _proTierValidation = proTierValidation;
     }
 
     public override Command CreateCommand()
     {
-        var command = new Command("diff", "[Pro] Compare two artifacts (files or folders). Field-aware for HL7; JSON-tree for FHIR. Emits hints.");
+        var command = new Command("diff", "🔒 Pro: Compare two artifacts (files or folders). Field-aware for HL7; JSON-tree for FHIR. Emits hints.");
 
         // Positional arguments for natural usage: pidgeon diff file1 file2
         var pathsArgument = new Argument<string[]>("paths")
@@ -107,8 +112,8 @@ public class DiffCommand : CommandBuilderBase
                 var skipProCheck = parseResult.GetValue(skipProCheckOption);
 
                 return await ExecuteDiffAsync(
-                    _diffService, leftPath, rightPath, ignoreFields, 
-                    reportFile, severity, useAi, aiModel, noAi, skipProCheck);
+                    _diffService, leftPath, rightPath, ignoreFields,
+                    reportFile, severity, useAi, aiModel, noAi, skipProCheck, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -131,30 +136,16 @@ public class DiffCommand : CommandBuilderBase
         bool useAi,
         string? aiModel,
         bool noAi,
-        bool skipProCheck)
+        bool skipProCheck,
+        CancellationToken cancellationToken)
     {
-        // Check Pro tier unless skipped
-        if (!skipProCheck)
+        // Pro tier feature validation using new subscription system
+        var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
+            FeatureFlags.DiffAnalysis, skipProCheck, cancellationToken);
+
+        if (validationResult.IsFailure)
         {
-            Console.WriteLine("Pro Feature: Diff Analysis");
-            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            Console.WriteLine();
-            Console.WriteLine("The Diff Analysis is a Pro-tier feature that provides:");
-            Console.WriteLine("  • Field-level comparison with semantic understanding");
-            Console.WriteLine("  • AI-powered root cause analysis and fix suggestions");
-            Console.WriteLine("  • Local AI models for healthcare-compliant analysis");
-            Console.WriteLine("  • Visual HTML reports with side-by-side differences");
-            Console.WriteLine("  • Batch comparison of entire directories");
-            Console.WriteLine();
-            Console.WriteLine("Upgrade to Pidgeon Pro to unlock this feature:");
-            Console.WriteLine("  • $29/month per user");
-            Console.WriteLine("  • All CLI features plus Pro workflows and AI analysis");
-            Console.WriteLine("  • Enhanced datasets and local AI models");
-            Console.WriteLine("  • Priority support");
-            Console.WriteLine();
-            Console.WriteLine("Learn more: https://pidgeon.health/pro");
-            Console.WriteLine();
-            Console.WriteLine("For development/testing, use: --skip-pro-check");
+            Console.WriteLine(validationResult.Error.Message);
             return 1;
         }
 

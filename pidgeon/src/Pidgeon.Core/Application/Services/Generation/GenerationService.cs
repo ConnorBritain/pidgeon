@@ -8,6 +8,7 @@ using Pidgeon.Core.Generation.Types;
 using Pidgeon.Core.Generation;
 using Pidgeon.Core.Application.Interfaces.Reference;
 using Pidgeon.Core.Application.Interfaces.Generation;
+using Pidgeon.Core.Application.Interfaces.Configuration;
 using Pidgeon.Core.Domain.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -23,16 +24,22 @@ internal class GenerationService : IGenerationService
     private readonly ILogger<GenerationService> _logger;
     private readonly IDemographicsDataService _demographicsService;
     private readonly IConstraintResolver _constraintResolver;
+    private readonly ILockSessionService _lockSessionService;
+    private readonly IFieldPathResolver _fieldPathResolver;
     private readonly Random _random;
 
     public GenerationService(
         ILogger<GenerationService> logger,
         IDemographicsDataService demographicsService,
-        IConstraintResolver constraintResolver)
+        IConstraintResolver constraintResolver,
+        ILockSessionService lockSessionService,
+        IFieldPathResolver fieldPathResolver)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _demographicsService = demographicsService ?? throw new ArgumentNullException(nameof(demographicsService));
         _constraintResolver = constraintResolver ?? throw new ArgumentNullException(nameof(constraintResolver));
+        _lockSessionService = lockSessionService ?? throw new ArgumentNullException(nameof(lockSessionService));
+        _fieldPathResolver = fieldPathResolver ?? throw new ArgumentNullException(nameof(fieldPathResolver));
         _random = new Random();
     }
 
@@ -165,6 +172,9 @@ internal class GenerationService : IGenerationService
         _logger.LogDebug("Generated patient using demographic data: {MRN} - {Name}, Age {Age}",
             mrn, $"{firstName} {lastName}", calculatedAge);
 
+        // Apply locked values from session if specified
+        patient = await ApplyLockedValuesAsync(patient, options, "Patient");
+
         return patient;
     }
 
@@ -214,7 +224,7 @@ internal class GenerationService : IGenerationService
                 Id = GeneratePrescriptionNumber(random),
                 Patient = patient,
                 Medication = medication,
-                Prescriber = await GenerateProviderAsync(random),
+                Prescriber = await GenerateProviderAsync(random, options),
                 Dosage = GenerateDosageInstructions(random, medication),
                 DatePrescribed = GeneratePrescriptionDate(random),
                 Instructions = GenerateSpecialInstructions(random, medication)
@@ -237,13 +247,16 @@ internal class GenerationService : IGenerationService
             {
                 Id = GenerateEncounterNumber(random),
                 Patient = patient,
-                Provider = await GenerateProviderAsync(random),
+                Provider = await GenerateProviderAsync(random, options),
                 Type = GenerateEncounterTypeEnum(random),
                 Status = EncounterStatus.Finished,
                 StartTime = GenerateEncounterDate(random),
                 Location = GenerateFacilityName(random),
                 Priority = EncounterPriority.Routine
             };
+
+            // Apply locked values from session if specified
+            encounter = await ApplyLockedValuesAsync(encounter, options, "Encounter");
 
             _logger.LogDebug("Generated encounter using demographic data: {EncounterId} for {Patient}",
                 encounter.Id, encounter.Patient.Name.DisplayName);
@@ -254,7 +267,7 @@ internal class GenerationService : IGenerationService
 
     public Result<Provider> GenerateProvider(GenerationOptions options)
     {
-        return ExecuteGeneration(options, 3000, "provider", async (random) => await GenerateProviderAsync(random));
+        return ExecuteGeneration(options, 3000, "provider", async (random) => await GenerateProviderAsync(random, options));
     }
 
     public Result<ObservationResult> GenerateObservationResult(GenerationOptions options)
@@ -295,6 +308,209 @@ internal class GenerationService : IGenerationService
     }
 
     #region Private Generation Methods
+
+    /// <summary>
+    /// Applies locked field values from a session to an entity based on semantic path mappings.
+    /// Returns a new instance with locked values applied.
+    /// </summary>
+    private async Task<T> ApplyLockedValuesAsync<T>(T entity, GenerationOptions options, string messageType) where T : class
+    {
+        if (string.IsNullOrEmpty(options.LockSessionName))
+        {
+            return entity;
+        }
+
+        try
+        {
+            var sessionResult = await _lockSessionService.GetSessionAsync(options.LockSessionName, CancellationToken.None);
+            if (sessionResult.IsFailure)
+            {
+                _logger.LogWarning("Could not load lock session {SessionName}: {Error}",
+                    options.LockSessionName, sessionResult.Error.Message);
+                return entity;
+            }
+
+            var session = sessionResult.Value;
+            if (!session.LockedValues.Any())
+            {
+                return entity;
+            }
+
+            _logger.LogDebug("Applying {Count} locked values from session {SessionName} to {EntityType}",
+                session.LockedValues.Count, options.LockSessionName, typeof(T).Name);
+
+            var modifiedEntity = entity;
+            foreach (var lockedValue in session.LockedValues)
+            {
+                modifiedEntity = await ApplySemanticPathValue(modifiedEntity, lockedValue.FieldPath, lockedValue.Value, messageType);
+            }
+
+            return modifiedEntity;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to apply locked values from session {SessionName}", options.LockSessionName);
+            return entity; // Return entity unchanged on error
+        }
+    }
+
+    /// <summary>
+    /// Applies a single semantic path value to an entity, returning a modified copy.
+    /// </summary>
+    private async Task<T> ApplySemanticPathValue<T>(T entity, string semanticPath, string value, string messageType) where T : class
+    {
+        try
+        {
+            // For Patient entities, map common semantic paths
+            if (entity is Patient patient)
+            {
+                var modifiedPatient = await ApplyPatientSemanticPath(patient, semanticPath, value);
+                return (T)(object)modifiedPatient;
+            }
+
+            // For Provider entities, map provider semantic paths
+            if (entity is Provider provider)
+            {
+                var modifiedProvider = await ApplyProviderSemanticPath(provider, semanticPath, value);
+                return (T)(object)modifiedProvider;
+            }
+
+            // For Encounter entities, map encounter semantic paths
+            if (entity is Encounter encounter)
+            {
+                var modifiedEncounter = await ApplyEncounterSemanticPath(encounter, semanticPath, value);
+                return (T)(object)modifiedEncounter;
+            }
+
+            _logger.LogDebug("No semantic path mapping available for entity type {EntityType} and path {SemanticPath}",
+                typeof(T).Name, semanticPath);
+            return entity;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to apply semantic path {SemanticPath} = '{Value}' to {EntityType}",
+                semanticPath, value, typeof(T).Name);
+            return entity;
+        }
+    }
+
+    /// <summary>
+    /// Applies semantic path values to Patient entity properties, returning a modified copy.
+    /// </summary>
+    private async Task<Patient> ApplyPatientSemanticPath(Patient patient, string semanticPath, string value)
+    {
+        await Task.Yield(); // Make async
+
+        return semanticPath.ToLowerInvariant() switch
+        {
+            "patient.mrn" => patient with
+            {
+                MedicalRecordNumber = value,
+                Id = value // MRN often used as primary ID
+            },
+
+            "patient.lastname" => patient with
+            {
+                Name = PersonName.Create(value, patient.Name?.Given)
+            },
+
+            "patient.firstname" => patient with
+            {
+                Name = PersonName.Create(patient.Name?.Family, value)
+            },
+
+            "patient.dateofbirth" when DateTime.TryParseExact(value, "yyyyMMdd", null, System.Globalization.DateTimeStyles.None, out var dob) =>
+                patient with { BirthDate = dob },
+
+            "patient.dateofbirth" when DateTime.TryParse(value, out var dobAlt) =>
+                patient with { BirthDate = dobAlt },
+
+            "patient.sex" => patient with
+            {
+                Gender = value.ToUpperInvariant() switch
+                {
+                    "M" => Domain.Clinical.Entities.Gender.Male,
+                    "F" => Domain.Clinical.Entities.Gender.Female,
+                    _ => Domain.Clinical.Entities.Gender.Unknown
+                }
+            },
+
+            "patient.phonenumber" => patient with { PhoneNumber = value },
+
+            "patient.ssn" => patient with { SocialSecurityNumber = value },
+
+            "patient.ethnicity" => patient,
+
+            "patient.language" => patient,
+
+            "patient.religion" => patient,
+
+            "patient.maritalstatus" => patient,
+
+            _ => patient
+        };
+    }
+
+    /// <summary>
+    /// Applies semantic path values to Provider entity properties, returning a modified copy.
+    /// </summary>
+    private async Task<Provider> ApplyProviderSemanticPath(Provider provider, string semanticPath, string value)
+    {
+        await Task.Yield(); // Make async
+
+        return semanticPath.ToLowerInvariant() switch
+        {
+            "provider.id" => provider with
+            {
+                Id = value,
+                NpiNumber = value // Often the same
+            },
+
+            "provider.lastname" => provider with
+            {
+                Name = PersonName.Create(value, provider.Name?.Given)
+            },
+
+            "provider.firstname" => provider with
+            {
+                Name = PersonName.Create(provider.Name?.Family, value)
+            },
+
+            "provider.npi" => provider,
+
+            "provider.specialty" => provider,
+
+            "provider.department" => provider,
+
+            _ => provider
+        };
+    }
+
+    /// <summary>
+    /// Applies semantic path values to Encounter entity properties, returning a modified copy.
+    /// </summary>
+    private async Task<Encounter> ApplyEncounterSemanticPath(Encounter encounter, string semanticPath, string value)
+    {
+        await Task.Yield();
+
+        return semanticPath.ToLowerInvariant() switch
+        {
+            "encounter.location" => encounter with { Location = value },
+
+            "encounter.admissiondate" when DateTime.TryParse(value, out var admitDate) =>
+                encounter,
+
+            "encounter.class" => encounter,
+
+            "encounter.room" => encounter,
+
+            "encounter.bed" => encounter,
+
+            "encounter.facility" => encounter with { Location = value },
+
+            _ => encounter
+        };
+    }
 
     private string GenerateDeterministicId(Random random, string prefix)
     {
@@ -374,19 +590,27 @@ internal class GenerationService : IGenerationService
             .ToList();
     }
 
-    private async Task<Provider> GenerateProviderAsync(Random random)
+    private async Task<Provider> GenerateProviderAsync(Random random, GenerationOptions? options = null)
     {
         var (firstName, lastName, _) = await _demographicsService.GenerateRandomNameAsync(random);
         var npi = $"1{random.Next(100000000, 999999999)}"; // NPI format
         var specialties = new[] { "Family Medicine", "Internal Medicine", "Cardiology", "Pediatrics", "Psychiatry" };
 
-        return new Provider
+        var provider = new Provider
         {
             Id = npi,
             Name = PersonName.Create(lastName, firstName),
             NpiNumber = npi,
             Specialty = specialties[random.Next(specialties.Length)]
         };
+
+        // Apply locked values from session if specified
+        if (options != null)
+        {
+            provider = await ApplyLockedValuesAsync(provider, options, "Provider");
+        }
+
+        return provider;
     }
 
     private ObservationResult GenerateObservationResult(Random random)

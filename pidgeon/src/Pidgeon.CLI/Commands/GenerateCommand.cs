@@ -46,6 +46,7 @@ public class GenerateCommand : CommandBuilderBase
         var modeOption = CreateOptionalOption("--mode", "Generation mode: procedural|local-ai|api-ai", "procedural");
         var seedOption = CreateNullableOption("--seed", "Deterministic seed for reproducible data");
         var vendorOption = CreateNullableOption("--vendor", "Apply vendor pattern (e.g., epic, cerner, meditech)");
+        var useLockOption = CreateNullableOption("--use-lock", "Apply field values from a lock session");
 
         command.Add(messageTypeArg);
         command.Add(countOption);
@@ -54,6 +55,7 @@ public class GenerateCommand : CommandBuilderBase
         command.Add(modeOption);
         command.Add(seedOption);
         command.Add(vendorOption);
+        command.Add(useLockOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
@@ -96,6 +98,7 @@ public class GenerateCommand : CommandBuilderBase
                     seed = parsedSeed;
                 }
                 var vendor = parseResult.GetValue(vendorOption);
+                var useLock = parseResult.GetValue(useLockOption);
 
                 // Validate Pro features if needed
                 if ((mode == "local-ai" || mode == "api-ai") && !IsProFeatureAvailable())
@@ -114,11 +117,17 @@ public class GenerateCommand : CommandBuilderBase
                 {
                     Console.WriteLine($"Standard: {request.Standard} (inferred from message type)");
                 }
+
+                if (!string.IsNullOrEmpty(useLock))
+                {
+                    Console.WriteLine($"🔒 Using lock session: {useLock}");
+                }
             
                 var options = new GenerationOptions
                 {
                     UseAI = mode != "procedural",
                     Seed = seed,
+                    LockSessionName = useLock,
                     // TODO: Map vendor string to VendorProfile enum
                     VendorProfile = null
                 };

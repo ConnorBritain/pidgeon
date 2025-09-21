@@ -41,10 +41,10 @@ public static class ServiceCollectionExtensions
     {
         var assembly = Assembly.GetExecutingAssembly();
         var serviceTypes = assembly.GetTypes()
-            .Where(type => type.IsClass && 
-                          !type.IsAbstract && 
+            .Where(type => type.IsClass &&
+                          !type.IsAbstract &&
                           type.Namespace?.Contains("CLI.Services") == true &&
-                          type.Name.EndsWith("Service"))
+                          (type.Name.EndsWith("Service") || type.Name.EndsWith("Helper")))
             .ToList();
 
         foreach (var serviceType in serviceTypes)

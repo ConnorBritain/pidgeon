@@ -58,6 +58,12 @@ public record GenerationOptions
     public Dictionary<string, object> Context { get; init; } = new();
 
     /// <summary>
+    /// Gets the lock session name to use for field value constraints.
+    /// When specified, generation will apply locked semantic path values from the session.
+    /// </summary>
+    public string? LockSessionName { get; init; }
+
+    /// <summary>
     /// Creates default generation options for algorithmic generation.
     /// </summary>
     public static GenerationOptions Default => new();
