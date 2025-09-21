@@ -656,7 +656,8 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
             {
                 // Component-level lookup (e.g., PID.3.5)
                 var fieldName = $"{pathParts[0]}.{pathParts[1]}";
-                element = ExtractComponentElement(fields, fieldName, fieldPath, segmentData);
+                var componentPath = pathParts[2];
+                element = ExtractComponentElement(fields, fieldName, componentPath, segmentData);
             }
 
             return element;
@@ -1167,49 +1168,111 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
     
     private StandardElement? ExtractComponentElement(JsonElement fields, string fieldName, string componentPath, JsonElement segmentData)
     {
-        if (!fields.TryGetProperty(fieldName, out var fieldData))
+        // Step 1: Find the field in the fields array
+        JsonElement fieldData = default;
+        bool fieldFound = false;
+
+        if (fields.ValueKind == JsonValueKind.Array)
         {
-            return null;
-        }
-        
-        if (!fieldData.TryGetProperty("components", out var components))
-        {
-            return null;
-        }
-        
-        if (!components.TryGetProperty(componentPath, out var componentData))
-        {
-            return null;
-        }
-        
-        var element = new StandardElement
-        {
-            Path = componentPath,
-            Name = componentData.TryGetProperty("name", out var name) ? name.GetString() ?? "" : "",
-            Description = componentData.TryGetProperty("description", out var desc) ? desc.GetString() ?? "" : "",
-            Standard = _config.StandardId,
-            Version = _config.Version,
-            DataType = componentData.TryGetProperty("dataType", out var dataType) ? dataType.GetString() ?? "" : "",
-            Usage = componentData.TryGetProperty("usage", out var usage) ? usage.GetString() ?? "" : "",
-            MaxLength = componentData.TryGetProperty("length", out var length) ? length.GetInt32() : null,
-            ParentPath = fieldName,
-            Examples = ExtractExamples(componentData),
-            ValidValues = ExtractValidValues(componentData)
-        };
-        
-        // Check for table reference
-        if (componentData.TryGetProperty("table", out var table))
-        {
-            var tableRef = table.GetString();
-            if (!string.IsNullOrEmpty(tableRef))
+            // Array format: search for field by field_name
+            foreach (var field in fields.EnumerateArray())
             {
-                element = element with
+                if (field.TryGetProperty("field_name", out var fieldNameProp))
                 {
-                    Description = element.Description + $" (Table {tableRef})"
-                };
+                    var currentFieldName = fieldNameProp.GetString();
+                    if (currentFieldName == fieldName)
+                    {
+                        fieldData = field;
+                        fieldFound = true;
+                        break;
+                    }
+                }
             }
         }
-        
+
+        if (!fieldFound)
+        {
+            return null;
+        }
+
+        if (!fieldData.TryGetProperty("data_type", out var dataTypeElement))
+        {
+            return null;
+        }
+
+        var dataTypeName = dataTypeElement.GetString();
+        if (string.IsNullOrEmpty(dataTypeName))
+        {
+            return null;
+        }
+
+        // Step 2: Load the data type definition to get its components
+        var dataTypeFile = Path.Combine(_dataBasePath, "data_types", $"{dataTypeName.ToLowerInvariant()}.json");
+        if (!File.Exists(dataTypeFile))
+        {
+            return null;
+        }
+
+        var dataTypeJson = File.ReadAllText(dataTypeFile);
+        using var dataTypeDoc = JsonDocument.Parse(dataTypeJson);
+        var dataTypeRoot = dataTypeDoc.RootElement;
+
+        if (!dataTypeRoot.TryGetProperty("fields", out var dataTypeFields))
+        {
+            return null;
+        }
+
+        // Step 3: Find the specific component by position
+        if (!int.TryParse(componentPath, out var componentPosition))
+        {
+            return null;
+        }
+
+        JsonElement? componentData = null;
+        foreach (var field in dataTypeFields.EnumerateArray())
+        {
+            if (field.TryGetProperty("position", out var positionElement) &&
+                positionElement.GetInt32() == componentPosition)
+            {
+                componentData = field;
+                break;
+            }
+        }
+
+        if (!componentData.HasValue)
+        {
+            return null;
+        }
+
+        var component = componentData.Value;
+        var fullPath = $"{fieldName}.{componentPath}";
+
+        var element = new StandardElement
+        {
+            Path = fullPath,
+            Name = component.TryGetProperty("field_description", out var desc) ? desc.GetString() ?? "" : "",
+            Description = component.TryGetProperty("field_description", out var desc2) ? desc2.GetString() ?? "" : "",
+            Standard = _config.StandardId,
+            Version = _config.Version,
+            DataType = component.TryGetProperty("data_type", out var compDataType) ? compDataType.GetString() ?? "" : "",
+            Usage = component.TryGetProperty("optionality", out var usage) ? usage.GetString() ?? "" : "",
+            MaxLength = component.TryGetProperty("length", out var length) ?
+                (int.TryParse(length.GetString(), out var len) ? len : (int?)null) : null,
+            ParentPath = fieldName,
+            Examples = ExtractExamples(component),
+            ValidValues = ExtractValidValues(component)
+        };
+
+        // Check for table reference
+        if (component.TryGetProperty("table", out var table) && !string.IsNullOrEmpty(table.GetString()))
+        {
+            var tableRef = table.GetString();
+            element = element with
+            {
+                Description = element.Description + $" (Table {tableRef})"
+            };
+        }
+
         return element;
     }
     

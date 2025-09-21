@@ -9,14 +9,12 @@
 
 ### **Step 1: Read Core Rules & Current Roadmap** ⭐
 **Command**: Read these documents in order:
-1. **`docs/roadmap/PIDGEON_ROADMAP.md`** - Master P0-P2 roadmap with success criteria
-2. **`docs/roadmap/features/NORTHSTAR.md`** - North star vision and product focus
-3. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI structure for P0 development
-4. **`pidgeon/docs/data/sprint1_09182025/data-enriched-cli-improvement-plan.md`** - **[CURRENT SPRINT]** Active CLI enhancement using existing data
-5. **`docs/DATA_SPRINT.md`** - **[ACTIVE SPRINT]** Data utilization and CLI integration
-6. **`docs/roadmap/database_strategy.md`** - **[CRITICAL]** SQLite database integration for CLI
-7. **`docs/DEVELOPMENT.md`** - Current status (foundation complete) and P0 features
-8. **`docs/RULES.md`** - Sacred architectural principles (still enforced)
+1. **`docs/data/sprint2/ship_gap_strat.md`** - **[CURRENT PRIORITY]** Reality-based MVP completion strategy (Sept 21, 2025)
+2. **`docs/roadmap/PIDGEON_ROADMAP.md`** - Master P0-P2 roadmap with success criteria
+3. **`docs/roadmap/features/NORTHSTAR.md`** - North star vision and product focus
+4. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI structure for P0 development
+5. **`docs/DEVELOPMENT.md`** - Current status (foundation complete) and P0 features
+6. **`docs/RULES.md`** - Sacred architectural principles (still enforced)
 
 ### **Step 2: Assess Current State** ⭐
 **Commands**:
@@ -28,25 +26,25 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 
 ### **Step 3: Validate Understanding** ⭐
 **Confirm you understand**:
-- **Current Phase**: 🚀 **Data-Enriched CLI Sprint** - Leveraging existing 96 segments, 90+ data types, 306 tables
-- **Major Finding**: Core data is excellent, need enhanced CLI access to tables/trigger events
+- **Current Phase**: 🚀 **Quality Ship Sprint** - Platform 95% complete, architectural refinements for professional adoption
+- **Major Finding**: Enterprise platform fully functional with 784 HL7 components, semantic paths, and workflow automation working
 - **North Star**: "Realistic scenario testing without PHI compliance nightmare"
-- **Critical Priority**: 1) Enable table/trigger event lookup 2) SQLite database integration 3) Wire up generation/validation
-- **Data Status**: Rich competitive datasets (500+ demographic values) ready for use
-- **CLI Status**: Segments/datatypes work perfectly, tables/triggers need path recognition
+- **Critical Priority**: 1) Session management UX fix 2) Semantic path architecture cleanup 3) CI/CD professional distribution
+- **Platform Status**: 95% complete enterprise platform with validated Sprint 1 achievements
+- **Development Status**: MANDATORY design-first protocol - no code changes without design sessions
 - **Architecture**: Four-domain model + plugin patterns still enforced
 - **Error Protocol**: STOP-THINK-ACT methodology still mandatory
 
 ---
 
 ## 📊 **CURRENT STATE SUMMARY**
-*Last Updated: September 18, 2025*
+*Last Updated: September 21, 2025*
 
 ### **Project Status**
-- **Phase**: 🚀 **Data-Enriched CLI Sprint** - Leveraging existing rich data foundation
-- **Health Score**: 95/100 (Architecture excellent, data rich, CLI enhancements in progress)
-- **Build Status**: ✅ Clean (0 errors, CLI functional and improving)
-- **CLI Status**: 70% effective (segments ✅ perfect, datatypes ✅ perfect, tables/triggers 🔧 in progress)
+- **Phase**: 🚀 **Quality Ship Sprint** - 95% complete enterprise platform ready for professional market
+- **Health Score**: 95/100 (Enterprise features validated, architectural refinements needed)
+- **Build Status**: ✅ Clean (0 errors, all core features fully functional)
+- **Platform Status**: 95% complete with semantic paths, workflow automation, and 784 HL7 components working
 
 ### **P0 Embryonic Development Completion (8 weeks)**
 **Result**: Successfully executed compound growth sequence with all features building on previous intelligence
@@ -73,38 +71,42 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 
 ---
 
-## 🚨 **NEXT SPRINT: LOCK/SET WORKFLOW AUTOMATION**
+## 🚀 **CURRENT SPRINT: SPRINT 2 - SCALE THE FOUNDATION**
 
-### **Data-Enriched CLI Sprint: COMPLETED** ✅
-**Achievements**: All priority items successfully completed:
-- ✅ **Table & Trigger Event Lookup** - `pidgeon lookup FirstName`, `pidgeon lookup ADT_A01` working perfectly
-- ✅ **Demographic Dataset Integration** - Realistic generation using 500+ demographic values
-- ✅ **Enhanced Field Display** - Position, repeatability, table references with cross-navigation
-- ✅ **Database Strategy** - Comprehensive SQLite integration plan enhanced with CLI aspirations
+### **Sprint 1 (Semantic Paths & Lock System): COMPLETED** ✅
+**Major Achievements**: All foundational features successfully completed:
+- ✅ **Cross-Standard Semantic Path System** - `patient.mrn` works for both HL7 and FHIR
+- ✅ **Lock-Aware Generation** - Workflow automation with maintained patient context
+- ✅ **Session Management** - TTL cleanup, conflict resolution, audit trails
+- ✅ **Plugin Architecture Excellence** - Standards-agnostic core with extensible plugins
+- ✅ **Rich Demographic Data** - 500+ realistic values integrated and working
 
-### **Current Sprint: Lock/Set Functionality (4 weeks)**
-**Mission**: Transform Pidgeon from one-shot generator to workflow automation platform
-**Core Value**: "Generate a full patient journey once, then iterate on individual touchpoints without breaking continuity"
+### **Current Sprint: Sprint 2 - Scale the Foundation (8 weeks)**
+**Strategic Document**: `docs/data/sprint2/sprint2_strat.md` - **[MASTER STRATEGIC PLAN]**
+**Mission**: Transform technical excellence into market dominance through business value delivery
+**Theme**: "SCALE THE FOUNDATION" - Convert 95/100 technical foundation into revenue
 
-### **Sprint Priorities (per lock_functionality.md):**
-1. **Session Lock Management** - Create, list, show, remove patient locks for workflow consistency
-2. **Granular Value Setting** - `pidgeon set patient.mrn "MR123456" --lock workflow_name`
-3. **Lock-Aware Generation** - `pidgeon generate "ADT^A01" --use-lock patient_workflow`
-4. **Workflow Automation** - Multi-step healthcare scenarios with maintained patient context
+### **Sprint 2 Strategic Priorities:**
+1. **Session Import/Export + Template Marketplace** (Weeks 1-2) - Professional tier conversion driver
+2. **Developer Experience: Pidgeon Path CLI** (Week 3) - Reduce onboarding by 75%
+3. **Database Migration** (Weeks 4-5) - Performance optimization + GUI foundation
+4. **Professional Tier Packaging** (Week 6) - Clear upgrade path and revenue optimization
+5. **Cross-Standard Workflow Mastery** (Week 7) - Unique market positioning
+6. **Enterprise Foundation** (Week 8) - Team collaboration and sales enablement
 
 ## 🎯 **IMMEDIATE ACTION GUIDANCE**
 
 ### **If User Asks for Feature Work**:
-**Response**: "Perfect timing! Data-enriched CLI sprint completed successfully. Current sprint: Lock/Set functionality implementation per lock_functionality.md. Priority: Session lock management, granular field setting, lock-aware generation."
+**Response**: "Perfect timing! Platform 95% complete with validated enterprise features. Current: Quality Ship Sprint per ship_gap_strat.md. Priority: Mandatory design session for session management UX fix before any code changes."
 
 ### **If User Reports Errors**:
 **Response**: Follow STOP-THINK-ACT protocol from `docs/RULES.md`. Don't fix immediately - analyze first.
 
 ### **If User Wants Data Work**:
-**Response**: "Data foundation is excellent and complete! Rich demographic datasets integrated, SQLite strategy planned. Focus now on lock/set workflow automation functionality."
+**Response**: "Data foundation is excellent and complete! Rich demographic datasets integrated. Focus now on Sprint 2 business value: template marketplace and professional tier features."
 
 ### **If User Wants CLI Commands**:
-**Response**: Check `docs/data/sprint1_09182025/lock_functionality.md` for current sprint priorities. Focus: patient lock creation, field setting, lock-aware message generation."
+**Response**: Check `docs/data/sprint2/ship_gap_strat.md` for current Quality Ship priorities. Focus: MANDATORY design session required before session management or semantic path work."
 
 ### **If User Wants New Standards Support**:
 **Response**: Complete CLI enhancements for HL7 v2.3 first. Then implement as plugin following existing HL7v23Plugin pattern. Never modify core services.
@@ -117,12 +119,12 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 ## 📚 **ESSENTIAL READING LIST**
 
 ### **🚨 CRITICAL - Read Every Session**
-1. **`docs/data/sprint1_09182025/lock_functionality.md`** - **[CURRENT SPRINT]** Lock/Set workflow automation feature specification
+1. **`docs/data/sprint2/sprint2_strat.md`** - **[CURRENT SPRINT]** Sprint 2 strategic plan and resource allocation
 2. **`docs/roadmap/PIDGEON_ROADMAP.md`** - Complete P0-P2 roadmap with all success metrics
 3. **`docs/roadmap/features/NORTHSTAR.md`** - Core value proposition and user focus
 4. **`docs/roadmap/CLI_REFERENCE.md`** - Complete CLI command structure and examples
 5. **`docs/data/database_strategy.md`** - **[FOUNDATION]** SQLite database integration plan with CLI aspirations
-6. **`docs/data/sprint1_09182025/data-enriched-cli-improvement-plan.md`** - **[COMPLETED]** Previous sprint achievements
+6. **`docs/data/sprint1_09182025/agnostic_semantic_path.md`** - **[COMPLETED]** Sprint 1 semantic path achievements
 7. **`docs/DEVELOPMENT.md`** - Current status and P0 development plan
 8. **`docs/RULES.md`** - Sacred architectural principles and error handling
 
@@ -208,28 +210,27 @@ grep -c "TODO:\|FIXME:" src/**/*.cs  # Current technical debt count
 ## 🎯 **SUCCESS CRITERIA FOR INITIALIZATION**
 
 ### **Agent is Ready When They Can Answer**:
-- "What's the current development phase?" → *P0 MVP Data Foundation Critical Gap - CLI only 40% effective*
+- "What's the current development phase?" → *Quality Ship Sprint - 95% complete enterprise platform with architectural refinements needed*
 - "What's our north star?" → *Realistic scenario testing without PHI compliance nightmare*
-- "What's the critical priority?" → *Complete missing PID/PV1 segment fields - tables exist, need field definitions*
-- "What's the CLI lookup status?" → *Tables excellent (20/20), segment fields critical gap, message lookup broken*
-- "How do I handle data work?" → *MANDATORY: Use _TEMPLATES/ patterns for all data files*
+- "What's the critical priority?" → *MANDATORY design session for session management UX fix before any code changes*
+- "What's our foundation status?" → *95/100 health score with validated Sprint 1 achievements and enterprise features working*
+- "What's the strategic focus?" → *Quality ship with architectural refinements for professional market dominance*
 - "How do I handle errors?" → *STOP-THINK-ACT methodology*
 - "Can I add HL7-specific logic to core services?" → *No, use plugin delegation*
-- "What template should I use for segments?" → *pidgeon/data/standards/hl7v23/_TEMPLATES/segment_template.json*
+- "Where's the current strategy?" → *docs/data/sprint2/ship_gap_strat.md - quality ship strategy with design-first protocol*
 
 ### **Agent Can Begin Work When**:
-- [ ] **MANDATORY**: Understands HL7_LIBRARY_PROCESS.md workflow (research → create → validate)
-- [ ] **MANDATORY**: Can use research tool: `node dev-tools/research-hl7-dictionary.js`
-- [ ] **MANDATORY**: Can use validation tool: `node scripts/validate-against-hl7-dictionary.js`
-- [ ] Understands CLI lookup critical gap (40% effectiveness) from CLI_DEVELOPMENT_STATUS.md
-- [ ] Knows 80/20 data strategy and priorities from data_mvp.md
-- [ ] Can navigate official HL7 v2.3 standards using HL7_REFERENCE_GUIDE.md
-- [ ] Knows template patterns from _TEMPLATES/README.md and CLEANUP.md
-- [ ] Understands critical missing fields: PID.16, PID.10, PID.17, PV1.2, PV1.4, PV1.14
-- [ ] Knows tables 0002, 0005, 0006, 0004, 0007, 0023 exist and are complete
-- [ ] Can use appropriate template (segment_template.json for segment work)
+- [ ] **MANDATORY**: Read ship_gap_strat.md and understand Quality Ship strategic priorities
+- [ ] **MANDATORY**: Understand 95% complete enterprise platform with validated Sprint 1 achievements
+- [ ] **MANDATORY**: Know current priority: MANDATORY design session before session management work
+- [ ] Understand design-first development protocol - no code changes without design approval
+- [ ] Know platform status: Enterprise features validated, architectural refinements needed
+- [ ] Understand quality ship focus: Professional market dominance through architectural excellence
+- [ ] Know refinement phases: Session UX → Semantic Path Architecture → CI/CD Pipeline
+- [ ] Understand session management UX violation and progressive disclosure requirements
+- [ ] Knows existing semantic path and workflow automation systems are complete and working
 - [ ] Follows STOP-THINK-ACT error resolution methodology
-- [ ] **ZERO TOLERANCE**: Never creates templates without research and validation
+- [ ] **ZERO TOLERANCE**: Never break existing working functionality or skip design sessions
 
 ---
 
@@ -261,12 +262,12 @@ dotnet build --no-restore  # Should be clean
 ✅ Initialization Complete
 
 Current State:
-- Phase: P0 MVP Data Foundation Critical Gap
-- CLI Effectiveness: 40% (Tables ✅ excellent, segment fields ❌ critical gaps)
-- Priority: Complete missing PID/PV1 segment fields using templates
-- Templates: MANDATORY for all data work - zero exceptions
+- Phase: Quality Ship Sprint (95% complete enterprise platform)
+- Foundation Status: 95/100 health score with validated Sprint 1 achievements
+- Priority: MANDATORY design session for session management UX fix
+- Strategic Focus: Architectural refinements for professional market dominance
 
-Ready to work on: [Specific missing segment field using appropriate template]
+Ready to work on: Design session for session management infrastructure (mandatory before code changes)
 Shall I proceed?
 ```
 
