@@ -193,317 +193,299 @@
       "sort_order": 31
     },
     {
-      "value": "PIN",
-      "description": "Patient information",
+      "value": "PPP",
+      "description": "Patient pathway (problem-oriented)",
       "comment": "",
       "sort_order": 32
     },
     {
-      "value": "PPP",
-      "description": "Patient pathway (problem-oriented)",
+      "value": "PPR",
+      "description": "Patient problem",
       "comment": "",
       "sort_order": 33
-    },
-    {
-      "value": "PPR",
-      "description": "Patient problem",
-      "comment": "",
-      "sort_order": 34
-    },
-    {
-      "value": "PPR",
-      "description": "Patient problem",
-      "comment": "",
-      "sort_order": 35
     },
     {
       "value": "PPT",
       "description": "Patient pathway (goal oriented)",
       "comment": "",
-      "sort_order": 36
+      "sort_order": 34
     },
     {
       "value": "PPV",
       "description": "Patient goal response",
       "comment": "",
-      "sort_order": 37
+      "sort_order": 35
     },
     {
       "value": "PRQ",
       "description": "Patient care problem query",
       "comment": "",
-      "sort_order": 38
+      "sort_order": 36
     },
     {
       "value": "PRR",
       "description": "Patient problem response",
       "comment": "",
-      "sort_order": 39
+      "sort_order": 37
     },
     {
       "value": "PTQ",
       "description": "Patient pathway (problem-oriented) query",
       "comment": "",
-      "sort_order": 40
+      "sort_order": 38
     },
     {
       "value": "PTR",
       "description": "Patient pathway (problem-oriented) response",
       "comment": "",
-      "sort_order": 41
+      "sort_order": 39
     },
     {
       "value": "PTU",
       "description": "Patient pathway (goal-oriented) query",
       "comment": "",
-      "sort_order": 42
+      "sort_order": 40
     },
     {
       "value": "PTV",
       "description": "Patient pathway (goal-oriented) response",
       "comment": "",
-      "sort_order": 43
+      "sort_order": 41
     },
     {
       "value": "QRY",
       "description": "Query",
       "comment": "",
-      "sort_order": 44
+      "sort_order": 42
     },
     {
       "value": "RAR",
       "description": "Pharmacy administration information",
       "comment": "",
-      "sort_order": 45
+      "sort_order": 43
     },
     {
       "value": "RAS",
       "description": "Pharmacy administration message",
       "comment": "",
-      "sort_order": 46
+      "sort_order": 44
     },
     {
       "value": "RCI",
       "description": "Return clinical information",
       "comment": "",
-      "sort_order": 47
+      "sort_order": 45
     },
     {
       "value": "RCL",
       "description": "Return clinical list",
       "comment": "",
-      "sort_order": 48
+      "sort_order": 46
     },
     {
       "value": "RDE",
       "description": "Pharmacy encoded order message",
       "comment": "",
-      "sort_order": 49
+      "sort_order": 47
     },
     {
       "value": "RDR",
       "description": "Pharmacy dispense information",
       "comment": "",
-      "sort_order": 50
+      "sort_order": 48
     },
     {
       "value": "RDS",
       "description": "Pharmacy dispense message",
       "comment": "",
-      "sort_order": 51
+      "sort_order": 49
     },
     {
       "value": "REF",
       "description": "Patient referral",
       "comment": "",
-      "sort_order": 52
+      "sort_order": 50
     },
     {
       "value": "RER",
       "description": "Pharmacy encoded order information",
       "comment": "",
-      "sort_order": 53
+      "sort_order": 51
     },
     {
       "value": "RGR",
       "description": "Pharmacy dose information",
       "comment": "",
-      "sort_order": 54
+      "sort_order": 52
     },
     {
       "value": "RGV",
       "description": "Pharmacy give message",
       "comment": "",
-      "sort_order": 55
+      "sort_order": 53
     },
     {
       "value": "ROC",
       "description": "Request clinical information",
       "comment": "",
-      "sort_order": 56
+      "sort_order": 54
     },
     {
       "value": "ROD",
       "description": "Request patient demographics",
       "comment": "",
-      "sort_order": 57
+      "sort_order": 55
     },
     {
       "value": "ROR",
       "description": "Pharmacy prescription order response",
       "comment": "",
-      "sort_order": 58
+      "sort_order": 56
     },
     {
       "value": "RPA",
       "description": "Return patient authorization",
       "comment": "",
-      "sort_order": 59
+      "sort_order": 57
     },
     {
       "value": "RPI",
       "description": "Return patient information",
       "comment": "",
-      "sort_order": 60
+      "sort_order": 58
     },
     {
       "value": "RPL",
       "description": "Return patient display list",
       "comment": "",
-      "sort_order": 61
+      "sort_order": 59
     },
     {
       "value": "RPR",
       "description": "Return patient list",
       "comment": "",
-      "sort_order": 62
+      "sort_order": 60
     },
     {
       "value": "RQA",
       "description": "Request patient authorization",
       "comment": "",
-      "sort_order": 63
+      "sort_order": 61
     },
     {
       "value": "RQI",
       "description": "Request patient information",
       "comment": "",
-      "sort_order": 64
+      "sort_order": 62
     },
     {
       "value": "RRA",
       "description": "Pharmacy administration acknowledgment",
       "comment": "",
-      "sort_order": 65
+      "sort_order": 63
     },
     {
       "value": "RRD",
       "description": "Pharmacy dispense acknowledgment",
       "comment": "",
-      "sort_order": 66
+      "sort_order": 64
     },
     {
       "value": "RRE",
       "description": "Pharmacy encoded order acknowledgment",
       "comment": "",
-      "sort_order": 67
+      "sort_order": 65
     },
     {
       "value": "RRG",
       "description": "Pharmacy give acknowledgment",
       "comment": "",
-      "sort_order": 68
+      "sort_order": 66
     },
     {
       "value": "RRI",
       "description": "Return patient referral",
       "comment": "",
-      "sort_order": 69
+      "sort_order": 67
     },
     {
       "value": "SIU",
       "description": "Schedule information unsolicited",
       "comment": "",
-      "sort_order": 70
+      "sort_order": 68
     },
     {
       "value": "SPQ",
       "description": "Stored procedure request",
       "comment": "",
-      "sort_order": 71
+      "sort_order": 69
     },
     {
       "value": "SQM",
       "description": "Schedule query",
       "comment": "",
-      "sort_order": 72
+      "sort_order": 70
     },
     {
       "value": "SQR",
       "description": "Schedule query response",
       "comment": "",
-      "sort_order": 73
+      "sort_order": 71
     },
     {
       "value": "SRM",
       "description": "Study registration",
       "comment": "",
-      "sort_order": 74
-    },
-    {
-      "value": "SRM",
-      "description": "Schedule request",
-      "comment": "",
-      "sort_order": 75
+      "sort_order": 72
     },
     {
       "value": "SRR",
       "description": "Scheduled request response",
       "comment": "",
-      "sort_order": 76
+      "sort_order": 73
     },
     {
       "value": "TBR",
       "description": "Tabular response",
       "comment": "",
-      "sort_order": 77
+      "sort_order": 74
     },
     {
       "value": "UDM",
       "description": "Unsolicited display message",
       "comment": "",
-      "sort_order": 78
+      "sort_order": 75
     },
     {
       "value": "VQQ",
       "description": "Virtual table query",
       "comment": "",
-      "sort_order": 79
+      "sort_order": 76
     },
     {
       "value": "VXQ",
       "description": "Query for vaccination record",
       "comment": "",
-      "sort_order": 80
+      "sort_order": 77
     },
     {
       "value": "VXR",
       "description": "Vaccination query record response",
       "comment": "",
-      "sort_order": 81
+      "sort_order": 78
     },
     {
       "value": "VXU",
       "description": "Unsolicited vaccination record update",
       "comment": "",
-      "sort_order": 82
+      "sort_order": 79
     },
     {
       "value": "VXX",
       "description": "Vaccination query response with multiple PID matches",
       "comment": "",
-      "sort_order": 83
+      "sort_order": 80
     }
   ],
-  "value_count": 83
+  "value_count": 80
 }

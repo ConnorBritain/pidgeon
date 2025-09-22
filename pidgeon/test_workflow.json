@@ -1,0 +1,47 @@
+{
+  "id": "7b1c30b4-878a-4a50-9774-b31290372cf9",
+  "name": "Test MVP Workflow",
+  "description": "MVP test workflow",
+  "standards": [
+    "HL7v2"
+  ],
+  "vendorConfigurations": [],
+  "steps": [
+    {
+      "id": "633f6b59-a8ea-4769-97a1-cd83e788fdff",
+      "name": "1",
+      "description": "Generate Test Messages",
+      "stepType": 1,
+      "order": 1,
+      "required": true,
+      "parameters": {},
+      "inputDependencies": [],
+      "outputs": [],
+      "estimatedDuration": "00:05:00",
+      "validationCriteria": [],
+      "metadata": {}
+    },
+    {
+      "id": "f45040d6-7b32-4d00-a132-4e5bd8d0f437",
+      "name": "6",
+      "description": "integration,mvp,test",
+      "stepType": 0,
+      "order": 2,
+      "required": true,
+      "parameters": {},
+      "inputDependencies": [
+        "633f6b59-a8ea-4769-97a1-cd83e788fdff"
+      ],
+      "outputs": [],
+      "estimatedDuration": "00:05:00",
+      "validationCriteria": [],
+      "metadata": {}
+    }
+  ],
+  "tags": [],
+  "estimatedDuration": "00:10:00",
+  "createdDate": "2025-09-22T05:53:45.9007774Z",
+  "lastModified": "2025-09-22T05:53:45.8991885Z",
+  "version": "1.0",
+  "metadata": {}
+}

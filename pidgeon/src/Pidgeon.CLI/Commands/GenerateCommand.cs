@@ -18,14 +18,17 @@ namespace Pidgeon.CLI.Commands;
 public class GenerateCommand : CommandBuilderBase
 {
     private readonly IMessageGenerationService _messageGenerationService;
+    private readonly SessionHelper _sessionHelper;
 
     public GenerateCommand(
         ILogger<GenerateCommand> logger,
         IMessageGenerationService messageGenerationService,
+        SessionHelper sessionHelper,
         FirstTimeUserService firstTimeUserService)
         : base(logger, firstTimeUserService)
     {
         _messageGenerationService = messageGenerationService;
+        _sessionHelper = sessionHelper;
     }
 
     public override Command CreateCommand()
@@ -46,7 +49,8 @@ public class GenerateCommand : CommandBuilderBase
         var modeOption = CreateOptionalOption("--mode", "Generation mode: procedural|local-ai|api-ai", "procedural");
         var seedOption = CreateNullableOption("--seed", "Deterministic seed for reproducible data");
         var vendorOption = CreateNullableOption("--vendor", "Apply vendor pattern (e.g., epic, cerner, meditech)");
-        var useLockOption = CreateNullableOption("--use-lock", "Apply field values from a lock session");
+        var sessionOption = CreateNullableOption("--session", "Use specific session (overrides current session)");
+        var noSessionOption = CreateBooleanOption("--no-session", "Force pure random generation (ignore current session)");
 
         command.Add(messageTypeArg);
         command.Add(countOption);
@@ -55,7 +59,8 @@ public class GenerateCommand : CommandBuilderBase
         command.Add(modeOption);
         command.Add(seedOption);
         command.Add(vendorOption);
-        command.Add(useLockOption);
+        command.Add(sessionOption);
+        command.Add(noSessionOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
@@ -98,7 +103,11 @@ public class GenerateCommand : CommandBuilderBase
                     seed = parsedSeed;
                 }
                 var vendor = parseResult.GetValue(vendorOption);
-                var useLock = parseResult.GetValue(useLockOption);
+                var sessionOverride = parseResult.GetValue(sessionOption);
+                var noSession = parseResult.GetValue(noSessionOption);
+
+                // Determine which session to use (smart session management)
+                string? sessionToUse = await DetermineSessionAsync(sessionOverride, noSession, cancellationToken);
 
                 // Validate Pro features if needed
                 if ((mode == "local-ai" || mode == "api-ai") && !IsProFeatureAvailable())
@@ -118,16 +127,16 @@ public class GenerateCommand : CommandBuilderBase
                     Console.WriteLine($"Standard: {request.Standard} (inferred from message type)");
                 }
 
-                if (!string.IsNullOrEmpty(useLock))
+                if (!string.IsNullOrEmpty(sessionToUse))
                 {
-                    Console.WriteLine($"🔒 Using lock session: {useLock}");
+                    Console.WriteLine($"🔒 Using session: {sessionToUse}");
                 }
             
                 var options = new GenerationOptions
                 {
                     UseAI = mode != "procedural",
                     Seed = seed,
-                    LockSessionName = useLock,
+                    LockSessionName = sessionToUse,
                     // TODO: Map vendor string to VendorProfile enum
                     VendorProfile = null
                 };
@@ -193,14 +202,20 @@ public class GenerateCommand : CommandBuilderBase
         }
     }
 
-    /// <summary>
-    /// Checks if Pro features are available for the current user.
-    /// TODO: Implement actual license checking logic.
-    /// </summary>
+    private async Task<string?> DetermineSessionAsync(string? sessionOverride, bool noSession, CancellationToken cancellationToken)
+    {
+        if (noSession)
+            return null;
+
+        if (!string.IsNullOrEmpty(sessionOverride))
+            return sessionOverride;
+
+        return await _sessionHelper.GetCurrentSessionAsync(cancellationToken);
+    }
+
     private static bool IsProFeatureAvailable()
     {
         // TODO: Replace with actual license validation
-        // For now, return false to demonstrate feature gating
         return false;
     }
 }

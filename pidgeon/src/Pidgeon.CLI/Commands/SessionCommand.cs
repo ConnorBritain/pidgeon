@@ -4,7 +4,6 @@
 
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Configuration;
-using Pidgeon.Core.Domain.Configuration.Entities;
 using Pidgeon.CLI.Services;
 using System.CommandLine;
 using System.Text.Json;
@@ -12,373 +11,680 @@ using System.Text.Json;
 namespace Pidgeon.CLI.Commands;
 
 /// <summary>
-/// CLI command for importing and exporting lock sessions as templates.
-/// Enables template marketplace functionality and workflow sharing.
+/// CLI command for comprehensive session management.
+/// Provides explicit control over session lifecycle, import/export, and status.
 /// </summary>
 public class SessionCommand : CommandBuilderBase
 {
-    private readonly ISessionExportService _sessionExportService;
     private readonly ILockSessionService _lockSessionService;
-    private readonly TemplateConfigHelper _templateConfigHelper;
+    private readonly SessionHelper _sessionHelper;
 
     public SessionCommand(
         ILogger<SessionCommand> logger,
-        ISessionExportService sessionExportService,
         ILockSessionService lockSessionService,
-        TemplateConfigHelper templateConfigHelper)
+        SessionHelper sessionHelper)
         : base(logger)
     {
-        _sessionExportService = sessionExportService;
         _lockSessionService = lockSessionService;
-        _templateConfigHelper = templateConfigHelper;
+        _sessionHelper = sessionHelper;
     }
 
     public override Command CreateCommand()
     {
-        var command = new Command("session", "Import and export lock sessions as templates for workflow sharing");
+        var command = new Command("session", "Manage sessions for maintaining field values across commands");
 
-        // Subcommands
+        // Add subcommands
+        command.Add(CreateStatusCommand());
+        command.Add(CreateSaveCommand());
+        command.Add(CreateCreateCommand());
+        command.Add(CreateUseCommand());
+        command.Add(CreateListCommand());
+        command.Add(CreateShowCommand());
+        command.Add(CreateClearCommand());
+        command.Add(CreateRemoveCommand());
         command.Add(CreateExportCommand());
         command.Add(CreateImportCommand());
-        command.Add(CreateValidateCommand());
+
+        // Default action when no subcommand is provided
+        SetCommandAction(command, async (parseResult, cancellationToken) =>
+        {
+            return await HandleStatusCommand(cancellationToken);
+        });
 
         return command;
     }
 
-    private Command CreateExportCommand()
+    /// <summary>
+    /// pidgeon session (default) - Show current session status
+    /// </summary>
+    private Command CreateStatusCommand()
     {
-        var command = new Command("export", "Export a lock session as a template file");
+        var command = new Command("status", "Show current session status");
+
+        SetCommandAction(command, async (parseResult, cancellationToken) =>
+        {
+            return await HandleStatusCommand(cancellationToken);
+        });
+
+        return command;
+    }
+
+    /// <summary>
+    /// pidgeon session save <name> - Save temporary session permanently
+    /// </summary>
+    private Command CreateSaveCommand()
+    {
+        var command = new Command("save", "Save temporary session with a permanent name");
 
         var nameArg = new Argument<string>("name")
         {
-            Description = "Name of the lock session to export"
+            Description = "Name for the permanent session"
         };
-
-        var outputOption = CreateNullableOption("--output", "Output file path (default: <session-name>.yaml)");
-        var formatOption = CreateOptionalOption("--format", "Export format: yaml|json", "yaml");
-        var templateOption = CreateBooleanOption("--template", "Include template metadata for marketplace sharing");
-        var includeTimestampsOption = CreateBooleanOption("--include-timestamps", "Include creation and lock timestamps");
-        var prettyOption = CreateBooleanOption("--pretty", "Format output for readability", true);
-
-        // Template metadata options
-        var authorOption = CreateNullableOption("--author", "Template author name");
-        var descriptionOption = CreateNullableOption("--description", "Template description");
-        var categoryOption = CreateNullableOption("--category", "Template category (emergency, surgical, lab, etc.)");
-        var versionOption = CreateOptionalOption("--version", "Template version", "1.0.0");
-
         command.Add(nameArg);
-        command.Add(outputOption);
-        command.Add(formatOption);
-        command.Add(templateOption);
-        command.Add(includeTimestampsOption);
-        command.Add(prettyOption);
-        command.Add(authorOption);
-        command.Add(descriptionOption);
-        command.Add(categoryOption);
-        command.Add(versionOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            try
-            {
-                var sessionName = parseResult.GetValue(nameArg)!;
-                var output = parseResult.GetValue(outputOption);
-                var formatStr = parseResult.GetValue(formatOption)!;
-                var isTemplate = parseResult.GetValue(templateOption);
-                var includeTimestamps = parseResult.GetValue(includeTimestampsOption);
-                var pretty = parseResult.GetValue(prettyOption);
-                var authorFlag = parseResult.GetValue(authorOption);
-                var description = parseResult.GetValue(descriptionOption);
-                var categoryFlag = parseResult.GetValue(categoryOption);
-                var version = parseResult.GetValue(versionOption)!;
-
-                // Get smart defaults using config helper
-                var format = await _templateConfigHelper.GetExportFormatAsync(formatStr);
-                var author = await _templateConfigHelper.GetTemplateAuthorAsync(authorFlag, isTemplate);
-                var category = await _templateConfigHelper.GetTemplateCategoryAsync(categoryFlag, isTemplate);
-
-                // Build export options
-                var options = new ExportOptions
-                {
-                    IncludeMetadata = isTemplate,
-                    IncludeTimestamps = includeTimestamps,
-                    PrettyFormat = pretty,
-                    TemplateMetadata = isTemplate ? new TemplateMetadata
-                    {
-                        Name = sessionName,
-                        Description = description ?? "",
-                        Author = author ?? "",
-                        Version = version,
-                        Category = category ?? "",
-                        Tags = [],
-                        Verified = false
-                    } : null
-                };
-
-                // Export session
-                var result = await _sessionExportService.ExportSessionAsync(sessionName, format, options, cancellationToken);
-
-                if (result.IsFailure)
-                {
-                    Console.WriteLine($"❌ Failed to export session: {result.Error.Message}");
-                    return 1;
-                }
-
-                // Determine output file
-                var outputFile = output ?? $"{sessionName}.{(format == ExportFormat.Json ? "json" : "yaml")}";
-
-                // Write to file
-                await File.WriteAllTextAsync(outputFile, result.Value, cancellationToken);
-
-                Console.WriteLine($"✅ Exported session '{sessionName}' to {outputFile}");
-                Console.WriteLine($"   Format: {format}");
-                Console.WriteLine($"   Size: {result.Value.Length:N0} characters");
-
-                if (isTemplate)
-                {
-                    Console.WriteLine($"   Template: Ready for marketplace sharing");
-                    Console.WriteLine();
-                    Console.WriteLine("💡 Share your template:");
-                    Console.WriteLine($"   pidgeon template publish {outputFile}");
-                }
-
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Unexpected error exporting session");
-                Console.WriteLine($"❌ Error: {ex.Message}");
-                return 1;
-            }
+            var name = parseResult.GetValue(nameArg)!;
+            return await HandleSaveCommand(name, cancellationToken);
         });
 
         return command;
     }
 
-    private Command CreateImportCommand()
+    /// <summary>
+    /// pidgeon session create <name> - Create new named session and switch to it
+    /// </summary>
+    private Command CreateCreateCommand()
     {
-        var command = new Command("import", "Import a lock session from a template file");
+        var command = new Command("create", "Create new named session and switch to it");
+
+        var nameArg = new Argument<string>("name")
+        {
+            Description = "Name for the new session"
+        };
+        var descriptionOption = CreateNullableOption("--description", "Description for the session");
+
+        command.Add(nameArg);
+        command.Add(descriptionOption);
+
+        SetCommandAction(command, async (parseResult, cancellationToken) =>
+        {
+            var name = parseResult.GetValue(nameArg)!;
+            var description = parseResult.GetValue(descriptionOption);
+            return await HandleCreateCommand(name, description, cancellationToken);
+        });
+
+        return command;
+    }
+
+    /// <summary>
+    /// pidgeon session use <name> - Switch to existing session
+    /// </summary>
+    private Command CreateUseCommand()
+    {
+        var command = new Command("use", "Switch to existing session");
+
+        var nameArg = new Argument<string>("name")
+        {
+            Description = "Name of the session to switch to"
+        };
+        command.Add(nameArg);
+
+        SetCommandAction(command, async (parseResult, cancellationToken) =>
+        {
+            var name = parseResult.GetValue(nameArg)!;
+            return await HandleUseCommand(name, cancellationToken);
+        });
+
+        return command;
+    }
+
+    /// <summary>
+    /// pidgeon session list - List all sessions with status
+    /// </summary>
+    private Command CreateListCommand()
+    {
+        var command = new Command("list", "List all sessions with status");
+
+        SetCommandAction(command, async (parseResult, cancellationToken) =>
+        {
+            return await HandleListCommand(cancellationToken);
+        });
+
+        return command;
+    }
+
+    /// <summary>
+    /// pidgeon session show [name] - Show session details
+    /// </summary>
+    private Command CreateShowCommand()
+    {
+        var command = new Command("show", "Show session details");
+
+        var nameArg = new Argument<string?>("name")
+        {
+            Description = "Name of session to show (current session if not specified)",
+            Arity = ArgumentArity.ZeroOrOne
+        };
+        command.Add(nameArg);
+
+        SetCommandAction(command, async (parseResult, cancellationToken) =>
+        {
+            var name = parseResult.GetValue(nameArg);
+            return await HandleShowCommand(name, cancellationToken);
+        });
+
+        return command;
+    }
+
+    /// <summary>
+    /// pidgeon session clear - Clear current session
+    /// </summary>
+    private Command CreateClearCommand()
+    {
+        var command = new Command("clear", "Clear current session");
+
+        SetCommandAction(command, async (parseResult, cancellationToken) =>
+        {
+            return await HandleClearCommand(cancellationToken);
+        });
+
+        return command;
+    }
+
+    /// <summary>
+    /// pidgeon session remove <name> - Remove specific session
+    /// </summary>
+    private Command CreateRemoveCommand()
+    {
+        var command = new Command("remove", "Remove specific session");
+
+        var nameArg = new Argument<string>("name")
+        {
+            Description = "Name of the session to remove"
+        };
+        command.Add(nameArg);
+
+        SetCommandAction(command, async (parseResult, cancellationToken) =>
+        {
+            var name = parseResult.GetValue(nameArg)!;
+            return await HandleRemoveCommand(name, cancellationToken);
+        });
+
+        return command;
+    }
+
+    /// <summary>
+    /// pidgeon session export <file> - Export session as template
+    /// </summary>
+    private Command CreateExportCommand()
+    {
+        var command = new Command("export", "Export session as template");
 
         var fileArg = new Argument<string>("file")
         {
-            Description = "Path to the template file to import"
+            Description = "Output file path (JSON format)"
         };
+        var sessionOption = CreateNullableOption("--session", "Session to export (current if not specified)");
 
-        var nameOption = CreateNullableOption("--name", "Name for the imported session (default: use name from file)");
-        var overwriteOption = CreateBooleanOption("--overwrite", "Overwrite existing session with same name");
-        var validateOption = CreateBooleanOption("--validate", "Validate template before import", true);
-        var preserveTimestampsOption = CreateBooleanOption("--preserve-timestamps", "Preserve original timestamps from template");
-        var dryRunOption = CreateBooleanOption("--dry-run", "Show what would be imported without creating session");
+        command.Add(fileArg);
+        command.Add(sessionOption);
+
+        SetCommandAction(command, async (parseResult, cancellationToken) =>
+        {
+            var file = parseResult.GetValue(fileArg)!;
+            var sessionName = parseResult.GetValue(sessionOption);
+            return await HandleExportCommand(file, sessionName, cancellationToken);
+        });
+
+        return command;
+    }
+
+    /// <summary>
+    /// pidgeon session import <file> - Import session template
+    /// </summary>
+    private Command CreateImportCommand()
+    {
+        var command = new Command("import", "Import session template");
+
+        var fileArg = new Argument<string>("file")
+        {
+            Description = "Template file path (JSON format)"
+        };
+        var nameOption = CreateNullableOption("--name", "Name for imported session (derived from file if not specified)");
 
         command.Add(fileArg);
         command.Add(nameOption);
-        command.Add(overwriteOption);
-        command.Add(validateOption);
-        command.Add(preserveTimestampsOption);
-        command.Add(dryRunOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            try
-            {
-                var filePath = parseResult.GetValue(fileArg)!;
-                var name = parseResult.GetValue(nameOption);
-                var overwrite = parseResult.GetValue(overwriteOption);
-                var validate = parseResult.GetValue(validateOption);
-                var preserveTimestamps = parseResult.GetValue(preserveTimestampsOption);
-                var dryRun = parseResult.GetValue(dryRunOption);
-
-                // Validate file exists
-                if (!File.Exists(filePath))
-                {
-                    Console.WriteLine($"❌ File not found: {filePath}");
-                    return 1;
-                }
-
-                // Build import options
-                var options = new ImportOptions
-                {
-                    SessionName = name,
-                    OverwriteExisting = overwrite,
-                    ValidateBeforeImport = validate,
-                    PreserveTimestamps = preserveTimestamps
-                };
-
-                if (dryRun)
-                {
-                    // Validate only, don't import
-                    var sessionData = await File.ReadAllTextAsync(filePath, cancellationToken);
-                    var validationResult = await _sessionExportService.ValidateSessionDataAsync(sessionData);
-
-                    if (validationResult.IsFailure)
-                    {
-                        Console.WriteLine($"❌ Validation failed: {validationResult.Error.Message}");
-                        return 1;
-                    }
-
-                    var validation = validationResult.Value;
-                    Console.WriteLine($"📋 Dry Run - Template Analysis");
-                    Console.WriteLine($"   File: {filePath}");
-                    Console.WriteLine($"   Format: {validation.DetectedFormat}");
-                    Console.WriteLine($"   Valid: {(validation.IsValid ? "✅ Yes" : "❌ No")}");
-
-                    if (validation.Errors.Any())
-                    {
-                        Console.WriteLine("   Errors:");
-                        foreach (var error in validation.Errors)
-                        {
-                            Console.WriteLine($"     • {error}");
-                        }
-                    }
-
-                    if (validation.Warnings.Any())
-                    {
-                        Console.WriteLine("   Warnings:");
-                        foreach (var warning in validation.Warnings)
-                        {
-                            Console.WriteLine($"     • {warning}");
-                        }
-                    }
-
-                    return validation.IsValid ? 0 : 1;
-                }
-
-                // Import session
-                var result = await _sessionExportService.ImportSessionFromFileAsync(filePath, options, cancellationToken);
-
-                if (result.IsFailure)
-                {
-                    Console.WriteLine($"❌ Failed to import session: {result.Error.Message}");
-                    return 1;
-                }
-
-                var session = result.Value;
-                Console.WriteLine($"✅ Imported session: {session.Name}");
-                Console.WriteLine($"   Session ID: {session.SessionId}");
-                Console.WriteLine($"   Scope: {session.Scope}");
-                Console.WriteLine($"   Locked Values: {session.LockedValues.Count}");
-                Console.WriteLine($"   File: {filePath}");
-
-                if (!string.IsNullOrEmpty(session.Description))
-                {
-                    Console.WriteLine($"   Description: {session.Description}");
-                }
-
-                Console.WriteLine();
-                Console.WriteLine("💡 Next steps:");
-                Console.WriteLine($"   pidgeon lock show {session.Name}");
-                Console.WriteLine($"   pidgeon generate \"ADT^A01\" --use-lock {session.Name}");
-
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Unexpected error importing session");
-                Console.WriteLine($"❌ Error: {ex.Message}");
-                return 1;
-            }
+            var file = parseResult.GetValue(fileArg)!;
+            var name = parseResult.GetValue(nameOption);
+            return await HandleImportCommand(file, name, cancellationToken);
         });
 
         return command;
     }
 
-    private Command CreateValidateCommand()
+    // Command Handlers
+
+    private async Task<int> HandleStatusCommand(CancellationToken cancellationToken)
     {
-        var command = new Command("validate", "Validate a template file without importing");
+        var currentSession = await _sessionHelper.GetCurrentSessionAsync(cancellationToken);
 
-        var fileArg = new Argument<string>("file")
+        if (currentSession == null)
         {
-            Description = "Path to the template file to validate"
-        };
+            Console.WriteLine("❌ No active session");
+            Console.WriteLine("💡 Create a session by setting a value:");
+            Console.WriteLine("   pidgeon set patient.mrn \"TEST123\"");
+            Console.WriteLine("💡 Or create a named session:");
+            Console.WriteLine("   pidgeon session create my_scenario");
+            return 0;
+        }
 
-        var formatOption = CreateNullableOption("--format", "Expected format: yaml|json (auto-detect if not specified)");
-        var detailedOption = CreateBooleanOption("--detailed", "Show detailed validation information");
-
-        command.Add(fileArg);
-        command.Add(formatOption);
-        command.Add(detailedOption);
-
-        SetCommandAction(command, async (parseResult, cancellationToken) =>
+        var sessionResult = await _lockSessionService.GetSessionAsync(currentSession, cancellationToken);
+        if (sessionResult.IsFailure)
         {
-            try
+            Console.WriteLine($"❌ Current session '{currentSession}' not found");
+            await _sessionHelper.ClearCurrentSessionAsync(cancellationToken);
+            return 1;
+        }
+
+        var session = sessionResult.Value;
+        var isTemporary = await _sessionHelper.IsTemporarySessionAsync(currentSession, cancellationToken);
+
+        Console.WriteLine($"🔒 Current Session: {currentSession}");
+        Console.WriteLine($"   Type: {(isTemporary ? "Temporary (expires in 24h unless saved)" : "Permanent")}");
+        Console.WriteLine($"   Values: {session.LockedValues.Count} field(s) set");
+        Console.WriteLine($"   Created: {session.CreatedAt:yyyy-MM-dd HH:mm:ss}");
+
+        if (session.LockedValues.Any())
+        {
+            Console.WriteLine();
+            Console.WriteLine("💡 Commands:");
+            Console.WriteLine("   pidgeon set --list                 # Show all values");
+            Console.WriteLine("   pidgeon generate \"ADT^A01\"          # Use in generation");
+            if (isTemporary)
             {
-                var filePath = parseResult.GetValue(fileArg)!;
-                var formatStr = parseResult.GetValue(formatOption);
-                var detailed = parseResult.GetValue(detailedOption);
-
-                // Validate file exists
-                if (!File.Exists(filePath))
-                {
-                    Console.WriteLine($"❌ File not found: {filePath}");
-                    return 1;
-                }
-
-                ExportFormat? expectedFormat = null;
-                if (!string.IsNullOrEmpty(formatStr))
-                {
-                    if (!Enum.TryParse<ExportFormat>(formatStr, true, out var format))
-                    {
-                        Console.WriteLine($"❌ Invalid format: {formatStr}");
-                        Console.WriteLine("Valid formats: yaml, json");
-                        return 1;
-                    }
-                    expectedFormat = format;
-                }
-
-                // Read and validate file
-                var sessionData = await File.ReadAllTextAsync(filePath, cancellationToken);
-                var result = await _sessionExportService.ValidateSessionDataAsync(sessionData, expectedFormat);
-
-                if (result.IsFailure)
-                {
-                    Console.WriteLine($"❌ Validation failed: {result.Error.Message}");
-                    return 1;
-                }
-
-                var validation = result.Value;
-
-                Console.WriteLine($"📋 Template Validation: {filePath}");
-                Console.WriteLine($"   Format: {validation.DetectedFormat?.ToString() ?? "Unknown"}");
-                Console.WriteLine($"   Valid: {(validation.IsValid ? "✅ Yes" : "❌ No")}");
-                Console.WriteLine($"   Size: {sessionData.Length:N0} characters");
-
-                if (validation.Errors.Any())
-                {
-                    Console.WriteLine();
-                    Console.WriteLine($"❌ Errors ({validation.Errors.Count}):");
-                    foreach (var error in validation.Errors)
-                    {
-                        Console.WriteLine($"   • {error}");
-                    }
-                }
-
-                if (validation.Warnings.Any())
-                {
-                    Console.WriteLine();
-                    Console.WriteLine($"⚠️  Warnings ({validation.Warnings.Count}):");
-                    foreach (var warning in validation.Warnings)
-                    {
-                        Console.WriteLine($"   • {warning}");
-                    }
-                }
-
-                if (validation.IsValid)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("✅ Template is ready for import");
-                    Console.WriteLine($"   pidgeon session import {filePath}");
-                }
-
-                return validation.IsValid ? 0 : 1;
+                Console.WriteLine("   pidgeon session save <name>       # Save permanently");
             }
-            catch (Exception ex)
+        }
+
+        return 0;
+    }
+
+    private async Task<int> HandleSaveCommand(string name, CancellationToken cancellationToken)
+    {
+        var currentSession = await _sessionHelper.GetCurrentSessionAsync(cancellationToken);
+        if (currentSession == null)
+        {
+            Console.WriteLine("❌ No active session to save");
+            Console.WriteLine("💡 Create a session first:");
+            Console.WriteLine("   pidgeon set patient.mrn \"TEST123\"");
+            return 1;
+        }
+
+        var isTemporary = await _sessionHelper.IsTemporarySessionAsync(currentSession, cancellationToken);
+        if (!isTemporary)
+        {
+            Console.WriteLine($"❌ Session '{currentSession}' is already permanent");
+            Console.WriteLine("💡 Use 'pidgeon session create <name>' to create a new session");
+            return 1;
+        }
+
+        var result = await _sessionHelper.SaveTemporarySessionAsync(currentSession, name, cancellationToken);
+        if (result.IsFailure)
+        {
+            Console.WriteLine($"❌ Failed to save session: {result.Error.Message}");
+            return 1;
+        }
+
+        Console.WriteLine($"✅ Saved session: {currentSession} → {name}");
+        Console.WriteLine("ℹ️  Permanent sessions persist until manually deleted");
+        return 0;
+    }
+
+    private async Task<int> HandleCreateCommand(string name, string? description, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var sessionName = await _sessionHelper.CreateNamedSessionAsync(name, description, cancellationToken);
+            Console.WriteLine($"✅ Created and switched to session: {sessionName}");
+            Console.WriteLine("💡 Set values with: pidgeon set <field> <value>");
+            return 0;
+        }
+        catch (InvalidOperationException ex)
+        {
+            Console.WriteLine($"❌ {ex.Message}");
+            Console.WriteLine("💡 Use a different name or remove the existing session first");
+            return 1;
+        }
+    }
+
+    private async Task<int> HandleUseCommand(string name, CancellationToken cancellationToken)
+    {
+        var sessionResult = await _lockSessionService.GetSessionAsync(name, cancellationToken);
+        if (sessionResult.IsFailure)
+        {
+            Console.WriteLine($"❌ Session '{name}' not found");
+            Console.WriteLine("💡 List available sessions: pidgeon session list");
+            return 1;
+        }
+
+        await _sessionHelper.SetCurrentSessionAsync(name, isTemporary: false, cancellationToken);
+
+        var session = sessionResult.Value;
+        Console.WriteLine($"✅ Current session: {name} ({session.LockedValues.Count} fields set)");
+        Console.WriteLine("💡 Use 'pidgeon set --list' to see all field values");
+
+        return 0;
+    }
+
+    private async Task<int> HandleListCommand(CancellationToken cancellationToken)
+    {
+        var sessions = await _lockSessionService.ListSessionsAsync(cancellationToken);
+        if (sessions.IsFailure)
+        {
+            Console.WriteLine($"❌ Failed to list sessions: {sessions.Error.Message}");
+            return 1;
+        }
+
+        var currentSession = await _sessionHelper.GetCurrentSessionAsync(cancellationToken);
+
+        if (!sessions.Value.Any())
+        {
+            Console.WriteLine("No sessions found.");
+            Console.WriteLine("💡 Create a session:");
+            Console.WriteLine("   pidgeon set patient.mrn \"TEST123\"     # Auto-creates temporary session");
+            Console.WriteLine("   pidgeon session create my_scenario     # Creates named session");
+            return 0;
+        }
+
+        Console.WriteLine("📋 Available Sessions:");
+        Console.WriteLine();
+
+        foreach (var session in sessions.Value.OrderBy(s => s.Name))
+        {
+            var isTemporary = await _sessionHelper.IsTemporarySessionAsync(session.Name, cancellationToken);
+            var isCurrent = session.Name == currentSession;
+            var prefix = isCurrent ? "→ " : "  ";
+            var suffix = isCurrent ? " [current]" : "";
+            var type = isTemporary ? "temporary" : "permanent";
+
+            Console.WriteLine($"{prefix}{session.Name} ({session.LockedValues.Count} fields, {type}){suffix}");
+            if (!string.IsNullOrEmpty(session.Description))
             {
-                Logger.LogError(ex, "Unexpected error validating template");
-                Console.WriteLine($"❌ Error: {ex.Message}");
+                Console.WriteLine($"    {session.Description}");
+            }
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("💡 Commands:");
+        Console.WriteLine("   pidgeon session use <name>        # Switch to session");
+        Console.WriteLine("   pidgeon session show <name>       # Show session details");
+
+        return 0;
+    }
+
+    private async Task<int> HandleShowCommand(string? name, CancellationToken cancellationToken)
+    {
+        string sessionName;
+        if (string.IsNullOrEmpty(name))
+        {
+            var current = await _sessionHelper.GetCurrentSessionAsync(cancellationToken);
+            if (current == null)
+            {
+                Console.WriteLine("❌ No current session to show");
+                Console.WriteLine("💡 Specify a session name or create one first");
                 return 1;
             }
-        });
+            sessionName = current;
+        }
+        else
+        {
+            sessionName = name;
+        }
 
-        return command;
+        var sessionResult = await _lockSessionService.GetSessionAsync(sessionName, cancellationToken);
+        if (sessionResult.IsFailure)
+        {
+            Console.WriteLine($"❌ Session '{sessionName}' not found");
+            return 1;
+        }
+
+        var session = sessionResult.Value;
+        var isTemporary = await _sessionHelper.IsTemporarySessionAsync(sessionName, cancellationToken);
+
+        Console.WriteLine($"🔒 Session: {sessionName}");
+        Console.WriteLine($"   Type: {(isTemporary ? "Temporary (expires in 24h unless saved)" : "Permanent")}");
+        Console.WriteLine($"   Created: {session.CreatedAt:yyyy-MM-dd HH:mm:ss}");
+        if (!string.IsNullOrEmpty(session.Description))
+        {
+            Console.WriteLine($"   Description: {session.Description}");
+        }
+        Console.WriteLine();
+
+        if (!session.LockedValues.Any())
+        {
+            Console.WriteLine("No values set yet.");
+            Console.WriteLine("💡 Set values: pidgeon set <field> <value>");
+            return 0;
+        }
+
+        foreach (var value in session.LockedValues.OrderBy(v => v.FieldPath))
+        {
+            Console.WriteLine($"📝 {value.FieldPath} = \"{value.Value}\"");
+            if (!string.IsNullOrEmpty(value.Reason))
+            {
+                Console.WriteLine($"   Reason: {value.Reason}");
+            }
+            Console.WriteLine($"   Set: {value.LockedAt:yyyy-MM-dd HH:mm:ss}");
+            Console.WriteLine();
+        }
+
+        Console.WriteLine($"📊 Total: {session.LockedValues.Count} value(s) set");
+
+        return 0;
+    }
+
+    private async Task<int> HandleClearCommand(CancellationToken cancellationToken)
+    {
+        var currentSession = await _sessionHelper.GetCurrentSessionAsync(cancellationToken);
+        if (currentSession == null)
+        {
+            Console.WriteLine("❌ No active session to clear");
+            return 0;
+        }
+
+        await _sessionHelper.ClearCurrentSessionAsync(cancellationToken);
+        Console.WriteLine("✅ Cleared session context");
+        Console.WriteLine("💡 Next 'set' command will create a new session");
+
+        return 0;
+    }
+
+    private async Task<int> HandleRemoveCommand(string name, CancellationToken cancellationToken)
+    {
+        var sessionResult = await _lockSessionService.GetSessionAsync(name, cancellationToken);
+        if (sessionResult.IsFailure)
+        {
+            Console.WriteLine($"❌ Session '{name}' not found");
+            return 1;
+        }
+
+        // Check if it's the current session
+        var currentSession = await _sessionHelper.GetCurrentSessionAsync(cancellationToken);
+        if (currentSession == name)
+        {
+            await _sessionHelper.ClearCurrentSessionAsync(cancellationToken);
+        }
+
+        var removeResult = await _lockSessionService.RemoveSessionAsync(name, cancellationToken);
+        if (removeResult.IsFailure)
+        {
+            Console.WriteLine($"❌ Failed to remove session: {removeResult.Error.Message}");
+            return 1;
+        }
+
+        Console.WriteLine($"✅ Removed session: {name}");
+        if (currentSession == name)
+        {
+            Console.WriteLine("💡 Session was current - cleared session context");
+        }
+
+        return 0;
+    }
+
+    private async Task<int> HandleExportCommand(string file, string? sessionName, CancellationToken cancellationToken)
+    {
+        // Determine which session to export
+        string targetSession;
+        if (string.IsNullOrEmpty(sessionName))
+        {
+            var current = await _sessionHelper.GetCurrentSessionAsync(cancellationToken);
+            if (current == null)
+            {
+                Console.WriteLine("❌ No current session to export");
+                Console.WriteLine("💡 Specify session name: --session <name>");
+                return 1;
+            }
+            targetSession = current;
+        }
+        else
+        {
+            targetSession = sessionName;
+        }
+
+        var sessionResult = await _lockSessionService.GetSessionAsync(targetSession, cancellationToken);
+        if (sessionResult.IsFailure)
+        {
+            Console.WriteLine($"❌ Session '{targetSession}' not found");
+            return 1;
+        }
+
+        var session = sessionResult.Value;
+
+        // Create template structure for export
+        var template = new
+        {
+            name = targetSession,
+            description = session.Description ?? $"Exported session from {targetSession}",
+            created = session.CreatedAt,
+            exported = DateTime.UtcNow,
+            values = session.LockedValues.Select(v => new
+            {
+                field = v.FieldPath,
+                value = v.Value,
+                reason = v.Reason
+            }).ToArray()
+        };
+
+        try
+        {
+            var json = JsonSerializer.Serialize(template, new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            await File.WriteAllTextAsync(file, json, cancellationToken);
+            Console.WriteLine($"✅ Exported session: {targetSession} → {file}");
+            Console.WriteLine($"📊 Exported {session.LockedValues.Count} field value(s)");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Failed to export session: {ex.Message}");
+            return 1;
+        }
+
+        return 0;
+    }
+
+    private async Task<int> HandleImportCommand(string file, string? name, CancellationToken cancellationToken)
+    {
+        if (!File.Exists(file))
+        {
+            Console.WriteLine($"❌ File not found: {file}");
+            return 1;
+        }
+
+        try
+        {
+            var json = await File.ReadAllTextAsync(file, cancellationToken);
+            var template = JsonSerializer.Deserialize<JsonElement>(json);
+
+            // Determine session name
+            var sessionName = name;
+            if (string.IsNullOrEmpty(sessionName))
+            {
+                if (template.TryGetProperty("name", out var nameProperty))
+                {
+                    sessionName = nameProperty.GetString();
+                }
+                else
+                {
+                    sessionName = Path.GetFileNameWithoutExtension(file);
+                }
+            }
+
+            if (string.IsNullOrEmpty(sessionName))
+            {
+                Console.WriteLine("❌ Unable to determine session name");
+                Console.WriteLine("💡 Specify name: --name <session_name>");
+                return 1;
+            }
+
+            // Extract description
+            var description = template.TryGetProperty("description", out var descProperty) ?
+                             descProperty.GetString() :
+                             "Imported session template";
+
+            // Create the session
+            var newSessionName = await _sessionHelper.CreateNamedSessionAsync(sessionName, description, cancellationToken);
+
+            // Import values
+            if (template.TryGetProperty("values", out var valuesProperty) && valuesProperty.ValueKind == JsonValueKind.Array)
+            {
+                var importedCount = 0;
+                foreach (var valueElement in valuesProperty.EnumerateArray())
+                {
+                    if (valueElement.TryGetProperty("field", out var fieldProperty) &&
+                        valueElement.TryGetProperty("value", out var valueProperty))
+                    {
+                        var fieldPath = fieldProperty.GetString();
+                        var value = valueProperty.GetString();
+                        var reason = valueElement.TryGetProperty("reason", out var reasonProperty) ?
+                                   reasonProperty.GetString() :
+                                   "Imported from template";
+
+                        if (!string.IsNullOrEmpty(fieldPath) && !string.IsNullOrEmpty(value))
+                        {
+                            var setResult = await _lockSessionService.SetValueAsync(
+                                newSessionName, fieldPath, value, reason, cancellationToken);
+
+                            if (setResult.IsSuccess)
+                            {
+                                importedCount++;
+                            }
+                        }
+                    }
+                }
+
+                Console.WriteLine($"✅ Imported session: {newSessionName}");
+                Console.WriteLine($"📊 Imported {importedCount} field value(s) from {file}");
+                Console.WriteLine($"🔒 Current session: {newSessionName}");
+            }
+            else
+            {
+                Console.WriteLine($"✅ Created session: {newSessionName} (no values in template)");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Failed to import session: {ex.Message}");
+            return 1;
+        }
+
+        return 0;
     }
 }

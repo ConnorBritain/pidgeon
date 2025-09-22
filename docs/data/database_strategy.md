@@ -1,5 +1,12 @@
 # HL7 Database Strategy - From Web Scraping to Production Database
 
+## 🚨 **CRITICAL UPDATE** (September 22, 2025)
+**DISCOVERY**: Current CLI works perfectly via JSON files - SQLite database is **NOT REQUIRED FOR MVP**
+- **Reality**: All features (lookup, generation, validation, sessions) use JSON-based implementations
+- **Database Status**: Complete SQLite implementation exists but is **NOT INTEGRATED with CLI**
+- **Ship Decision**: Database migration is **POST-SHIP PERFORMANCE OPTIMIZATION**, not ship requirement
+- **Business Value**: SQLite becomes **Professional tier performance enhancement** (1ms vs 100ms lookups)
+
 ## Executive Summary
 Transform scraped HL7 v2.3 data from Caristix into a normalized, efficient SQLite database that powers Pidgeon's generation, validation, and lookup capabilities while enabling value-add data sets for tiered pricing.
 
@@ -465,6 +472,188 @@ pidgeon/
 - Version migration scripts
 - Backwards compatibility
 - Data integrity verification
+
+---
+
+## Phase 7: Semantic Path Integration (NEW)
+
+### 7.1 Official HL7 v2-to-FHIR Mapping Integration
+Building on our comprehensive HL7 structure database, we're adding **semantic path mapping** capabilities derived from official HL7 v2-to-FHIR Implementation Guide CSV files.
+
+**Data Source**: Apache 2.0 licensed CSV files from HL7 International
+- **Location**: `data/interop/hl7-fhir-mappings/` (~1.6MB curated dataset)
+- **Content**: 279 mapping files (75 segments, 105 datatypes, 99 codesystems)
+- **Update Strategy**: Git subtree from official HL7 repository
+
+### 7.2 Two-Tier Semantic Path Architecture
+**Design Goal**: Progressive disclosure system balancing simplicity (80% of users) with completeness (advanced interoperability scenarios)
+
+```sql
+-- Semantic path definitions (generated from official mappings)
+CREATE TABLE semantic_paths (
+    id INTEGER PRIMARY KEY,
+    semantic_path TEXT NOT NULL UNIQUE,           -- 'patient.mrn'
+    tier TEXT NOT NULL CHECK(tier IN ('essential', 'advanced')),
+    category TEXT NOT NULL,                       -- 'patient', 'encounter', etc.
+    description TEXT NOT NULL,
+    hl7_field TEXT,                              -- 'PID-3'
+    fhir_path TEXT,                              -- 'Patient.identifier[2]'
+    source_file TEXT,                            -- Original CSV file reference
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category) REFERENCES semantic_categories(name)
+);
+
+-- Standard-specific mappings (from CSV data)
+CREATE TABLE standard_mappings (
+    id INTEGER PRIMARY KEY,
+    semantic_path_id INTEGER REFERENCES semantic_paths(id),
+    standard TEXT NOT NULL,                       -- 'HL7v23', 'FHIRv4'
+    field_path TEXT NOT NULL,                     -- 'PID.3.1', 'Patient.identifier[0].value'
+    data_type TEXT,                               -- 'CX', 'Identifier'
+    cardinality_min INTEGER DEFAULT 0,
+    cardinality_max INTEGER DEFAULT 1,            -- -1 for unlimited
+    conditions TEXT,                              -- JSON array of IF/THEN conditions
+    comments TEXT,
+    vocabulary_mapping TEXT,                      -- Code system translations
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Path aliases (smart resolution: patient.mrn → patient.identifiers.mrn)
+CREATE TABLE path_aliases (
+    id INTEGER PRIMARY KEY,
+    alias TEXT NOT NULL,                         -- 'patient.identifiers.mrn'
+    semantic_path_id INTEGER REFERENCES semantic_paths(id),
+    priority INTEGER DEFAULT 0                   -- Higher = preferred
+);
+
+-- Conditional mapping logic (from CSV IF/THEN statements)
+CREATE TABLE conditional_mappings (
+    id INTEGER PRIMARY KEY,
+    standard_mapping_id INTEGER REFERENCES standard_mappings(id),
+    condition_type TEXT NOT NULL,                -- 'IF', 'ELSE_IF', 'ELSE'
+    condition_expression TEXT,                   -- 'PV1-2.1 NOT EQUALS "P"'
+    result_path TEXT,                           -- Alternative field path
+    result_value TEXT                           -- Static value to set
+);
+
+-- Vocabulary mappings (from codesystems CSVs)
+CREATE TABLE vocabulary_mappings (
+    id INTEGER PRIMARY KEY,
+    hl7_table TEXT,                             -- 'Table 0001'
+    hl7_code TEXT,                              -- 'M'
+    hl7_display TEXT,                           -- 'Male'
+    fhir_system TEXT,                           -- 'http://hl7.org/fhir/administrative-gender'
+    fhir_code TEXT,                             -- 'male'
+    fhir_display TEXT                           -- 'Male'
+);
+
+-- Semantic categories for organization
+CREATE TABLE semantic_categories (
+    name TEXT PRIMARY KEY,                       -- 'patient', 'encounter', 'observation'
+    display_name TEXT NOT NULL,                 -- 'Patient Demographics'
+    description TEXT,
+    sort_order INTEGER DEFAULT 0
+);
+
+-- Performance indexes
+CREATE INDEX idx_semantic_paths_tier ON semantic_paths(tier);
+CREATE INDEX idx_semantic_paths_category ON semantic_paths(category);
+CREATE INDEX idx_standard_mappings_standard ON standard_mappings(standard);
+CREATE INDEX idx_standard_mappings_path ON standard_mappings(semantic_path_id, standard);
+CREATE INDEX idx_path_aliases_alias ON path_aliases(alias);
+CREATE INDEX idx_vocabulary_mappings_hl7 ON vocabulary_mappings(hl7_table, hl7_code);
+```
+
+### 7.3 Integration with Existing Schema
+**Key Integration Points**:
+1. **Link to existing fields table**: `semantic_paths.hl7_field` → `segments.code + '.' + fields.position`
+2. **Vocabulary mapping integration**: `vocabulary_mappings.hl7_table` → `code_tables.table_number`
+3. **Data type correlation**: `standard_mappings.data_type` → `data_types.code`
+
+### 7.4 CSV Import Pipeline
+```csharp
+public class SemanticPathImportPipeline
+{
+    // Phase 1: Parse official CSV mappings
+    public async Task<ImportedMappingData> ImportOfficialMappingsAsync()
+    {
+        var parser = new V2ToFhirMappingParser();
+        var mappingData = new ImportedMappingData();
+
+        // Import segment mappings (75 files)
+        var segmentFiles = Directory.GetFiles("data/interop/hl7-fhir-mappings/segments");
+        foreach (var file in segmentFiles)
+        {
+            var rows = await parser.ParseSegmentMappingAsync(file);
+            mappingData.SegmentMappings[file] = rows;
+        }
+
+        // Import datatype and codesystem mappings...
+        return mappingData;
+    }
+
+    // Phase 2: Generate semantic paths with tier classification
+    public async Task<List<GeneratedSemanticPath>> GenerateSemanticPathsAsync(ImportedMappingData data)
+    {
+        var generator = new SemanticPathGenerator();
+        return await generator.GenerateSemanticPathsAsync(data);
+    }
+
+    // Phase 3: Persist to SQLite database
+    public async Task PersistToDatabase(List<GeneratedSemanticPath> paths, IDbConnection db)
+    {
+        // Insert semantic paths with tier classification
+        // Create standard mappings for HL7 and FHIR
+        // Build vocabulary mappings from codesystem files
+        // Generate intelligent aliases
+    }
+}
+```
+
+### 7.5 Performance Integration
+**Target Performance** (aligns with existing goals):
+- **Essential Paths (Tier 1)**: <1ms lookup (in-memory indexes)
+- **Advanced Paths (Tier 2)**: <5ms complex queries with joins
+- **Cross-Standard Resolution**: <10ms HL7 ↔ FHIR path translation
+- **Fuzzy Search**: <100ms full-text search across semantic paths
+
+**Query Optimization Examples**:
+```sql
+-- Essential path lookup (optimized for CLI speed)
+SELECT sp.semantic_path, sp.description, sm_hl7.field_path as hl7_path, sm_fhir.field_path as fhir_path
+FROM semantic_paths sp
+JOIN standard_mappings sm_hl7 ON sp.id = sm_hl7.semantic_path_id AND sm_hl7.standard = 'HL7v23'
+JOIN standard_mappings sm_fhir ON sp.id = sm_fhir.semantic_path_id AND sm_fhir.standard = 'FHIRv4'
+WHERE sp.tier = 'essential' AND sp.semantic_path = ?;
+
+-- Cross-standard path resolution
+SELECT hl7_mapping.field_path as hl7_field, fhir_mapping.field_path as fhir_field
+FROM semantic_paths sp
+JOIN standard_mappings hl7_mapping ON sp.id = hl7_mapping.semantic_path_id AND hl7_mapping.standard = 'HL7v23'
+JOIN standard_mappings fhir_mapping ON sp.id = fhir_mapping.semantic_path_id AND fhir_mapping.standard = 'FHIRv4'
+WHERE sp.semantic_path = ?;
+
+-- Fuzzy search with alias resolution
+SELECT DISTINCT sp.semantic_path, sp.description, sp.tier
+FROM semantic_paths sp
+LEFT JOIN path_aliases pa ON sp.id = pa.semantic_path_id
+WHERE sp.semantic_path LIKE ? OR sp.description LIKE ? OR pa.alias LIKE ?
+ORDER BY sp.tier, sp.semantic_path;
+```
+
+### 7.6 Integration with CLI Commands
+**Enhanced PathCommand functionality**:
+```bash
+# Tier 1 (Essential) - Default behavior
+pidgeon path list                    # Shows 25-30 essential paths
+pidgeon path resolve patient.mrn     # <1ms lookup from database
+
+# Tier 2 (Advanced) - Complete functionality
+pidgeon path list --complete         # Shows 200+ paths from database
+pidgeon path search "identifier"     # Fuzzy search across all paths
+pidgeon path translate patient.mrn --from hl7 --to fhir  # Cross-standard resolution
+```
 
 ---
 
