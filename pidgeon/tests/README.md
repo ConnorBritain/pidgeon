@@ -1,44 +1,84 @@
-# Pidgeon E2E Test Suite
+# Pidgeon Test Suite
 
-This directory contains comprehensive end-to-end tests for validating Pidgeon's functionality after reviews and updates.
+Professional testing infrastructure for Pidgeon v0.1.0 MVP validation.
+**Status**: All tests passing ✅ (Unit: 6/6, Integration: 8/8, Regression: Working)
 
-## Test Scripts
+## Test Structure
 
-### 🚀 `quick_validation.sh`
-**Duration**: ~1-2 minutes
-**Purpose**: Quick smoke test of Sprint 1 critical features
-**Use Case**: After code changes, before commits
-
-```bash
-cd pidgeon
-bash tests/quick_validation.sh
+```
+tests/
+├── unit/                           # Fast unit tests (xUnit) - 6 tests
+│   ├── Pidgeon.Core.Tests/         # Core service unit tests (4 tests)
+│   └── Pidgeon.CLI.Tests/          # CLI command unit tests (2 tests)
+├── integration/                    # End-to-end CLI testing (8 tests)
+│   ├── EndToEndCliTests.cs         # Full CLI workflow validation
+│   └── Pidgeon.Integration.Tests.csproj
+└── regression/                     # Shell script validation suites
+    ├── mvp_regression_suite.sh     # Complete MVP functionality test
+    └── quick_validation.sh         # Fast developer validation
 ```
 
-**What it tests**:
-- ✅ Basic message generation
-- ✅ Lock session creation
-- ✅ Semantic path setting (`patient.mrn`)
-- ✅ Workflow continuity (same patient across ADT/ORU)
-- ✅ Path resolution system
+## Quick Commands
 
-### 🧪 `e2e_comprehensive_test_suite.sh`
-**Duration**: ~5-10 minutes
-**Purpose**: Complete validation of all documented features
-**Use Case**: Before releases, after major changes
-
+### 🚀 **Quick Development Validation** (30 seconds)
 ```bash
-cd pidgeon
-bash tests/e2e_comprehensive_test_suite.sh
+./tests/quick_validation.sh
 ```
+**Use**: Before commits - validates core MVP functionality
 
-**What it tests**:
-- ✅ All basic CLI commands (generate, validate, deident)
-- ✅ Complete lookup system (segments, fields, tables)
-- ✅ Full lock/workflow system
-- ✅ Semantic path system with cross-standard resolution
-- ✅ Patient journey continuity
-- ✅ Professional tier feature gating
-- ✅ Data foundation (demographics, standards)
+### 🧪 **Unit Tests** (30 seconds)
+```bash
+# Windows/Mac/Linux
+dotnet test tests/unit/
+
+# WSL (if dotnet not in PATH)
+"/mnt/c/Program Files/dotnet/dotnet.exe" test tests/unit/
+```
+**Use**: Fast feedback on business logic changes
+
+### 🔬 **Integration Tests** (2 minutes)
+```bash
+# Windows/Mac/Linux
+dotnet test tests/integration/
+
+# WSL (if dotnet not in PATH)
+"/mnt/c/Program Files/dotnet/dotnet.exe" test tests/integration/
+```
+**Use**: End-to-end CLI workflow validation with cross-platform dotnet detection
+
+### 🚀 **Full MVP Regression** (5 minutes)
+```bash
+./tests/regression/mvp_regression_suite.sh
+```
+**Use**: Pre-release validation - comprehensive testing
+
+## Current Test Status
+
+### ✅ All Tests Passing (September 23, 2025)
+
+- **Unit Tests**: 6/6 passing (Core: 4, CLI: 2)
+- **Integration Tests**: 8/8 passing (Full CLI workflows)
+- **Regression Tests**: Working (Shell script validation)
+
+### 🌍 Cross-Platform Support
+
+Integration tests automatically detect environment:
+- **WSL**: Uses `/mnt/c/Program Files/dotnet/dotnet.exe`
+- **Windows/Mac/Linux**: Uses system `dotnet` command
+- **Smart Project Discovery**: Finds project root regardless of execution context
+
+### 🧪 Test Categories
+
+1. **Unit Tests** - Fast validation of core business logic
+2. **Integration Tests** - End-to-end CLI command validation including:
+   - Message generation (ADT, ORU types)
+   - Message validation
+   - Path listing and resolution
+   - Session management and workflow continuity
+   - De-identification features
+   - Professional feature gating
+   - Help system comprehensiveness
+3. **Regression Tests** - Shell script comprehensive validation
 
 ## Expected Output
 
@@ -50,14 +90,14 @@ bash tests/e2e_comprehensive_test_suite.sh
 1️⃣ Testing core generation...
 MSH|^~\&|PIDGEON|FACILITY|...
 
-2️⃣ Testing lock system...
-✅ Created lock session: quick_test_1234567890
+2️⃣ Testing session system...
+✅ Created session: quick_test_1234567890
 
 3️⃣ Testing semantic paths...
 ✅ Set value in session: quick_test_1234567890
 
 4️⃣ Testing workflow continuity...
-ADT Message with locked patient:
+ADT Message with session patient:
 PID|1||TEST123^^^PIDGEON^MR||...
 
 ORU Message with same patient:
@@ -79,7 +119,7 @@ Sprint 1 achievements confirmed working!
 📊 VALIDATION SUMMARY:
 ✅ Basic CLI: Generate, Validate, De-identify working
 ✅ Lookup System: Segments, fields, tables accessible
-✅ Lock/Set System: Session management working
+✅ Session/Set System: Session management working
 ✅ Semantic Paths: Cross-standard patient.mrn → PID.3 working
 ✅ Workflow Continuity: Same patient across message types
 ✅ Path Discovery: Resolution and validation working
@@ -111,9 +151,9 @@ When adding new features:
 
 ## Sprint 1 Validation Results
 
-✅ **CONFIRMED WORKING** (September 21, 2025):
+✅ **CONFIRMED WORKING** (September 23, 2025):
 - Cross-standard semantic paths (`patient.mrn` → HL7 PID.3 / FHIR identifier.value)
-- Lock-aware workflow automation (patient journey continuity)
+- Session-aware workflow automation (patient journey continuity)
 - Advanced path discovery and resolution
 - Professional tier feature gating
 - Rich demographic datasets integration

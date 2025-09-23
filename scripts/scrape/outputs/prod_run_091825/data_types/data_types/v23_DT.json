@@ -1,9 +1,0 @@
-{
-  "code": "DT",
-  "name": "Date",
-  "version": "HL7 v2.3",
-  "description": "In prior versions of HL7, this data type was always specified to be in the format YYYYMMDD. In the current and future versions, the precision of a date may be expressed by limiting the number of digits used with the format specification YYYY[MM[DD]]. Thus, YYYY is used to specify a precision of “year,” YYYYMM specifies a precision of “month,” and YYYYMMDD specifies a precision of “day.” \n\nBy site-specific agreement, YYYYMMDD may be used where backward compatibility must be maintained. \n\nExamples:\n \n|19880704| \n|199503|",
-  "category": "primitive",
-  "fields": [],
-  "field_count": 0
-}

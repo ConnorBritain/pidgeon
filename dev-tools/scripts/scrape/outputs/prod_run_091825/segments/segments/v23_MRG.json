@@ -1,0 +1,80 @@
+{
+  "code": "MRG",
+  "name": "Merge patient information",
+  "version": "HL7 v2.3",
+  "chapter": "Patient Administration",
+  "description": "The MRG segment provides receiving applications with information necessary to initiate the merging of patient data as well as groups of records. It is intended that this segment be used throughout the Standard to allow the merging of registration, accounting, and clinical records within specific applications\n\nSegment notes: MRG merge patient information \nThe assigning facility ID, the fourth component of the patient identifiers, is an HD data type that is uniquely associated with the facility that originally assigned the number. A given institution, or group of intercommunicating institutions, should establish a list of facilities that may be potential assignors of patient identification (and other important identification) numbers. The list will be one of the institution’s master dictionary lists. Since third parties (other than the assignors of patient identification numbers) may send or receive HL7 messages containing patient identification numbers, the assigning facility ID in the patient identification numbers may not be the same as those of the sending and receiving systems identified in the MSH. The assigning facility ID must be unique across applications at a given site. This field is required in HL7 implementations that have more than a single Patient Administration application assigning such numbers",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "MRG.1",
+      "field_description": "Prior Patient ID - Internal",
+      "length": "20",
+      "data_type": "CX",
+      "optionality": "R",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 2,
+      "field_name": "MRG.2",
+      "field_description": "Prior Alternate Patient ID",
+      "length": "20",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "∞",
+      "table": ""
+    },
+    {
+      "position": 3,
+      "field_name": "MRG.3",
+      "field_description": "Prior Patient Account Number",
+      "length": "20",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 4,
+      "field_name": "MRG.4",
+      "field_description": "Prior Patient ID - External",
+      "length": "20",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 5,
+      "field_name": "MRG.5",
+      "field_description": "Prior Visit Number",
+      "length": "20",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 6,
+      "field_name": "MRG.6",
+      "field_description": "Prior Alternate Visit ID",
+      "length": "20",
+      "data_type": "CX",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 7,
+      "field_name": "MRG.7",
+      "field_description": "Prior Patient Name",
+      "length": "48",
+      "data_type": "XPN",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    }
+  ],
+  "field_count": 7
+}
