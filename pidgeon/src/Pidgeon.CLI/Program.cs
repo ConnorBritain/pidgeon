@@ -30,7 +30,7 @@ internal class Program
     {
         // Create the host builder with dependency injection
         var host = CreateHostBuilder(args).Build();
-        
+
         try
         {
             // Check for explicit welcome/init commands
@@ -126,6 +126,7 @@ internal class Program
                 // Add console services
                 services.AddSingleton<IConsoleOutput, ConsoleOutput>();
                 services.AddSingleton<BannerService>();
+
             });
     }
 

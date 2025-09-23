@@ -42,4 +42,11 @@
     <ProjectReference Include="..\Pidgeon.Core\Pidgeon.Core.csproj" />
   </ItemGroup>
 
+  <!-- Embedded AI Models for instant availability -->
+  <ItemGroup>
+    <EmbeddedResource Include="embedded-models\tinyllama-chat.gguf">
+      <LogicalName>tinyllama-chat.gguf</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

@@ -27,13 +27,36 @@ public class ModelManagementService : IModelManagementService
         _logger = logger;
         _httpClient = httpClient;
         
-        // Use ~/.pidgeon/models directory as specified in architecture
-        var userHome = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        _modelsDirectory = Path.Combine(userHome, ".pidgeon", "models");
+        // Use system-wide application data directory to avoid OneDrive/iCloud sync issues
+        _modelsDirectory = GetSystemModelDirectory();
         
         // TODO: Make model registry URL configurable
         
         Directory.CreateDirectory(_modelsDirectory);
+    }
+
+    /// <summary>
+    /// Gets the appropriate system-wide model storage directory for the current platform.
+    /// Avoids user profile directories that sync with OneDrive/iCloud.
+    /// </summary>
+    private static string GetSystemModelDirectory()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            // Windows: Use ProgramData (not synced by OneDrive)
+            var programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            return Path.Combine(programData, "Pidgeon", "models");
+        }
+        else if (OperatingSystem.IsMacOS())
+        {
+            // macOS: Use system-wide Application Support (not synced by iCloud)
+            return "/Library/Application Support/Pidgeon/models";
+        }
+        else
+        {
+            // Linux: Use standard system directory
+            return "/opt/pidgeon/models";
+        }
     }
 
     public async Task<Result<IReadOnlyList<ModelMetadata>>> ListAvailableModelsAsync(CancellationToken cancellationToken = default)
@@ -153,6 +176,20 @@ public class ModelManagementService : IModelManagementService
                 return Result<ModelInfo>.Failure($"Model validation failed: {string.Join(", ", validationResult.Value?.Errors ?? new List<string> { "Unknown validation error" })}");
             }
 
+            // Prepare model for immediate use (trigger antivirus scan now, not at runtime)
+            progress?.Report(new DownloadProgress
+            {
+                Stage = "preparing",
+                StatusMessage = "Preparing model for use..."
+            });
+
+            var preparationResult = await PrepareModelForUse(targetPath, progress, cancellationToken);
+            if (!preparationResult.IsSuccess)
+            {
+                _logger.LogWarning("Model preparation had issues but continuing: {Error}", preparationResult.Error);
+                // Don't fail the download for preparation issues - model is still usable
+            }
+
             var modelInfo = await CreateModelInfoFromFile(targetPath);
             if (modelInfo == null)
             {
@@ -257,11 +294,11 @@ public class ModelManagementService : IModelManagementService
                 Name = "OpenAI GPT-OSS-20B",
                 Description = "OpenAI's open-source 20B parameter model with strong reasoning capabilities, optimized for healthcare analysis",
                 Version = "1.0",
-                Tier = "Pro",
-                SizeBytes = 13761300984, // 13.7GB
-                DownloadUrl = "https://huggingface.co/openai/gpt-oss-20b/resolve/main/model.safetensors",
+                Tier = "Enterprise",
+                SizeBytes = 12533218048, // 11.67GB (Q4_K_M GGUF)
+                DownloadUrl = "https://huggingface.co/bartowski/openai_gpt-oss-20b-GGUF/resolve/main/openai_gpt-oss-20b-Q4_K_M.gguf",
                 Checksum = "sha256:to-be-calculated",
-                Format = "SafeTensors",
+                Format = "GGUF",
                 HealthcareSpecialty = "Clinical",
                 Requirements = new SystemRequirements
                 {
@@ -280,7 +317,7 @@ public class ModelManagementService : IModelManagementService
             {
                 Id = "biomistral-7b",
                 Name = "BioMistral-7B",
-                Description = "Mistral-7B fine-tuned on PubMed Central for biomedical domain expertise",
+                Description = "Mistral-7B fine-tuned on PubMed Central for clinical completeness and biomedical domain expertise",
                 Version = "1.0",
                 Tier = "Pro",
                 SizeBytes = 4368709120, // ~4.1GB GGUF Q4_K_M
@@ -349,29 +386,6 @@ public class ModelManagementService : IModelManagementService
                 SupportedStandards = new List<string> { "HL7", "FHIR", "JSON", "XML" }
             },
             
-            new ModelMetadata
-            {
-                Id = "tinyllama-chat",
-                Name = "TinyLlama-1.1B-Chat",
-                Description = "Ultra-lightweight 1.1B parameter model for resource-constrained analysis",
-                Version = "1.0",
-                Tier = "Free",
-                SizeBytes = 668123136, // ~637MB GGUF Q4_K_M  
-                DownloadUrl = "https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf",
-                Checksum = "sha256:to-be-calculated",
-                Format = "GGUF",
-                HealthcareSpecialty = "General",
-                Requirements = new SystemRequirements
-                {
-                    MinRamMB = 2048, // 2GB minimum
-                    RecommendedRamMB = 3072, // 3GB recommended
-                    MinCpuCores = 2,
-                    SupportsGpu = true,
-                    EstimatedTokensPerSecond = 50
-                },
-                UseCases = new List<string> { "Basic diff analysis", "Quick suggestions", "Low-latency responses" },
-                SupportedStandards = new List<string> { "HL7", "FHIR" }
-            },
             new ModelMetadata
             {
                 Id = "biogpt-clinical",
@@ -764,12 +778,12 @@ public class ModelManagementService : IModelManagementService
         var sizeMB = failedModel.SizeBytes / (1024.0 * 1024.0);
         if (sizeMB > 8000) // > 8GB
         {
-            alternatives.Add("• phi2-healthcare (1.5GB) - Efficient clinical analysis");
-            alternatives.Add("• tinyllama-medical (800MB) - Lightweight healthcare model");
+            alternatives.Add("• phi3-mini-instruct (2.2GB) - CPU-optimized efficiency");
+            alternatives.Add("• biomistral-7b (4.1GB) - Clinical completeness focus");
         }
         else if (sizeMB > 2000) // > 2GB
         {
-            alternatives.Add("• tinyllama-medical (800MB) - Lightweight healthcare model");
+            alternatives.Add("• phi3-mini-instruct (2.2GB) - CPU-optimized efficiency");
         }
 
         // Add troubleshooting steps
@@ -791,8 +805,110 @@ public class ModelManagementService : IModelManagementService
         return format.ToUpperInvariant() switch
         {
             "GGUF" => "llama-cpp",
-            "ONNX" => "onnx-runtime", 
+            "ONNX" => "onnx-runtime",
             _ => "generic"
         };
+    }
+
+    /// <summary>
+    /// Prepares a downloaded model for immediate use by triggering antivirus scanning
+    /// and performing readiness checks. This prevents runtime delays when users
+    /// first try to use AI features.
+    /// </summary>
+    private async Task<Result> PrepareModelForUse(string modelPath, IProgress<DownloadProgress>? progress, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var fileInfo = new FileInfo(modelPath);
+            var fileSizeMB = fileInfo.Length / (1024.0 * 1024.0);
+
+            // Estimate scanning time based on file size (rough heuristic)
+            var estimatedScanTimeSeconds = Math.Max(30, (int)(fileSizeMB / 10)); // ~10MB/second scan rate
+            var estimatedMinutes = Math.Ceiling(estimatedScanTimeSeconds / 60.0);
+
+            _logger.LogInformation("Preparing model for use - estimated time: {Minutes} minutes for {SizeMB:F1}MB file",
+                estimatedMinutes, fileSizeMB);
+
+            progress?.Report(new DownloadProgress
+            {
+                Stage = "preparing",
+                StatusMessage = $"Preparing model for use (antivirus scanning in progress - estimated: {estimatedMinutes} min)"
+            });
+
+            // Trigger antivirus scan by attempting to read the file
+            var startTime = DateTime.UtcNow;
+            var progressUpdateInterval = TimeSpan.FromSeconds(5);
+            var lastProgressUpdate = startTime;
+            var maxWaitTime = TimeSpan.FromMinutes(30); // Reasonable timeout
+
+            while (DateTime.UtcNow - startTime < maxWaitTime)
+            {
+                try
+                {
+                    // Attempt to open the file with exclusive access to check if it's still locked
+                    using var testStream = new FileStream(modelPath, FileMode.Open, FileAccess.Read, FileShare.None);
+                    var buffer = new byte[1024];
+                    await testStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+
+                    // If we reach here, file is no longer locked
+                    var elapsedMinutes = (DateTime.UtcNow - startTime).TotalMinutes;
+                    _logger.LogInformation("Model preparation completed in {Minutes:F1} minutes", elapsedMinutes);
+
+                    progress?.Report(new DownloadProgress
+                    {
+                        Stage = "completed",
+                        StatusMessage = $"Model ready for use! (prepared in {elapsedMinutes:F1} minutes)"
+                    });
+
+                    return Result.Success();
+                }
+                catch (IOException) when (DateTime.UtcNow - lastProgressUpdate > progressUpdateInterval)
+                {
+                    // File still locked, update progress
+                    var elapsed = DateTime.UtcNow - startTime;
+                    var elapsedMinutes = elapsed.TotalMinutes;
+                    var remainingMinutes = Math.Max(0, estimatedMinutes - elapsedMinutes);
+
+                    progress?.Report(new DownloadProgress
+                    {
+                        Stage = "preparing",
+                        StatusMessage = $"Still preparing model (antivirus scanning) - estimated {remainingMinutes:F0} min remaining"
+                    });
+
+                    lastProgressUpdate = DateTime.UtcNow;
+                }
+                catch (IOException)
+                {
+                    // File still locked, wait a bit more
+                }
+
+                await Task.Delay(1000, cancellationToken); // Check every second
+            }
+
+            // Timeout reached - log warning but don't fail
+            var totalMinutes = (DateTime.UtcNow - startTime).TotalMinutes;
+            _logger.LogWarning("Model preparation timed out after {Minutes:F1} minutes. Model may still be usable but could be slow on first use.", totalMinutes);
+
+            progress?.Report(new DownloadProgress
+            {
+                Stage = "completed",
+                StatusMessage = "Model download completed (preparation timed out - may be slow on first use)"
+            });
+
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error during model preparation: {Error}", ex.Message);
+
+            progress?.Report(new DownloadProgress
+            {
+                Stage = "completed",
+                StatusMessage = "Model download completed (preparation had issues - may be slow on first use)"
+            });
+
+            // Don't fail - model is still usable
+            return Result.Success();
+        }
     }
 }

@@ -4,7 +4,11 @@
 
 using System.CommandLine;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Pidgeon.Core.Application.Interfaces.Comparison;
+using Pidgeon.Core.Application.Interfaces.Generation;
+using Pidgeon.Core.Application.Interfaces.Reference;
+using Pidgeon.Core.Application.Services.Intelligence;
 using Pidgeon.Core.Domain.Comparison.Entities;
 using Pidgeon.Core.Common.Types;
 using Pidgeon.CLI.Services;
@@ -13,21 +17,28 @@ namespace Pidgeon.CLI.Commands;
 
 /// <summary>
 /// CLI command for comparing healthcare messages with field-level differences.
-/// Pro feature with algorithmic analysis and AI-powered insights.
+/// Pro feature with algorithmic analysis, constraint validation, and AI-powered insights.
+/// Enhanced with demographic data validation and procedural scoring.
 /// </summary>
 public class DiffCommand : CommandBuilderBase
 {
     private readonly IMessageDiffService _diffService;
     private readonly ProTierValidationService _proTierValidation;
+    private readonly FieldIntelligenceService _fieldIntelligence;
 
     public DiffCommand(
         ILogger<DiffCommand> logger,
         IMessageDiffService diffService,
-        ProTierValidationService proTierValidation)
+        ProTierValidationService proTierValidation,
+        IConstraintResolver constraintResolver,
+        IDemographicsDataService demographicsService,
+        ILoggerFactory loggerFactory)
         : base(logger)
     {
         _diffService = diffService;
         _proTierValidation = proTierValidation;
+        _fieldIntelligence = new FieldIntelligenceService(constraintResolver, demographicsService,
+            loggerFactory.CreateLogger<FieldIntelligenceService>());
     }
 
     public override Command CreateCommand()
@@ -50,6 +61,7 @@ public class DiffCommand : CommandBuilderBase
         var aiOption = CreateBooleanOption("--ai", "Enable AI analysis (auto-detects best available model)");
         var modelOption = CreateNullableOption("--model", "Specify AI model (e.g., tinyllama-chat, phi2-healthcare)");
         var noAiOption = CreateBooleanOption("--no-ai", "Disable AI analysis (override config default)");
+        var basicModeOption = CreateBooleanOption("--basic", "Use basic diff mode (disables constraint validation and demographic analysis)");
         var skipProCheckOption = CreateBooleanOption("--skip-pro-check", "Skip Pro tier check (for development/testing)");
 
         command.Add(pathsArgument);
@@ -61,6 +73,7 @@ public class DiffCommand : CommandBuilderBase
         command.Add(aiOption);
         command.Add(modelOption);
         command.Add(noAiOption);
+        command.Add(basicModeOption);
         command.Add(skipProCheckOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
@@ -109,11 +122,12 @@ public class DiffCommand : CommandBuilderBase
                 var useAi = parseResult.GetValue(aiOption);
                 var aiModel = parseResult.GetValue(modelOption);
                 var noAi = parseResult.GetValue(noAiOption);
+                var basicMode = parseResult.GetValue(basicModeOption);
                 var skipProCheck = parseResult.GetValue(skipProCheckOption);
 
                 return await ExecuteDiffAsync(
                     _diffService, leftPath, rightPath, ignoreFields,
-                    reportFile, severity, useAi, aiModel, noAi, skipProCheck, cancellationToken);
+                    reportFile, severity, useAi, aiModel, noAi, basicMode, skipProCheck, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -136,6 +150,7 @@ public class DiffCommand : CommandBuilderBase
         bool useAi,
         string? aiModel,
         bool noAi,
+        bool basicMode,
         bool skipProCheck,
         CancellationToken cancellationToken)
     {
@@ -149,8 +164,19 @@ public class DiffCommand : CommandBuilderBase
             return 1;
         }
 
-        Console.WriteLine("Message Diff Analysis");
-        Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        // Enhanced mode is default unless explicitly disabled with --basic
+        bool enhancedMode = !basicMode;
+
+        if (enhancedMode)
+        {
+            Console.WriteLine("🔍 Enhanced Healthcare Analysis");
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        }
+        else
+        {
+            Console.WriteLine("Message Diff Analysis");
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        }
         Console.WriteLine();
 
         // Smart AI capability checking with our new logic
@@ -201,7 +227,7 @@ public class DiffCommand : CommandBuilderBase
             Console.WriteLine($"   Right: {Path.GetFileName(rightPath)}");
             Console.WriteLine();
 
-            var context = await CreateDiffContextAsync(ignoreFields, ComparisonType.MessageToMessage, enableAI, selectedModel, false);
+            var context = await CreateEnhancedDiffContextAsync(ignoreFields, ComparisonType.MessageToMessage, enableAI, selectedModel, enhancedMode);
             var result = await diffService.CompareMessageFilesAsync(leftPath, rightPath, context);
 
             if (result.IsFailure)
@@ -211,7 +237,14 @@ public class DiffCommand : CommandBuilderBase
             }
 
             var diff = result.Value;
-            DisplayDiffResults(diff, severity);
+            if (enhancedMode)
+            {
+                await DisplayEnhancedDiffResultsAsync(diff, severity);
+            }
+            else
+            {
+                DisplayDiffResults(diff, severity);
+            }
 
             // Generate report if specified
             if (!string.IsNullOrEmpty(reportFile))
@@ -230,7 +263,12 @@ public class DiffCommand : CommandBuilderBase
         return 0;
     }
 
-    private async Task<DiffContext> CreateDiffContextAsync(string? ignoreFields, ComparisonType comparisonType, bool useAi = false, string? aiModel = null, bool noAi = false)
+    private async Task<DiffContext> CreateEnhancedDiffContextAsync(
+        string? ignoreFields,
+        ComparisonType comparisonType,
+        bool useAi = false,
+        string? aiModel = null,
+        bool enhancedMode = false)
     {
         var ignoredFieldsList = new List<string>();
         if (!string.IsNullOrEmpty(ignoreFields))
@@ -241,19 +279,23 @@ public class DiffCommand : CommandBuilderBase
         }
 
         // Smart AI decision logic
-        bool enableAI = await DetermineAIUsageAsync(useAi, noAi, aiModel);
+        bool enableAI = await DetermineAIUsageAsync(useAi, false, aiModel);
         
         if (enableAI && string.IsNullOrEmpty(aiModel))
         {
             aiModel = await SelectBestAvailableModelAsync();
         }
 
+        var purpose = enhancedMode
+            ? $"Enhanced CLI diff analysis{(enableAI ? $" with {aiModel ?? "auto-selected"} AI" : "")}"
+            : $"CLI diff analysis{(enableAI ? $" with {aiModel ?? "auto-selected"} AI" : "")}";
+
         return new DiffContext
         {
             ComparisonType = comparisonType,
             IgnoredFields = ignoredFieldsList,
             InitiatedBy = Environment.UserName,
-            Purpose = $"CLI diff analysis{(enableAI ? $" with {aiModel ?? "auto-selected"} AI" : "")}",
+            Purpose = purpose,
             EnableAIAnalysis = enableAI,
             AnalysisOptions = new ComparisonOptions
             {
@@ -466,5 +508,144 @@ public class DiffCommand : CommandBuilderBase
         else if (fileName.Contains("q2")) score -= 0.05;
         
         return Math.Min(0.95, score); // Cap at 95%
+    }
+
+    /// <summary>
+    /// Displays enhanced diff results with constraint resolution and demographic validation.
+    /// Provides healthcare-specific analysis with procedural validation.
+    /// </summary>
+    private async Task DisplayEnhancedDiffResultsAsync(MessageDiff diff, string minSeverity)
+    {
+        Console.WriteLine($"Similarity: {diff.SimilarityScore:P1}");
+        Console.WriteLine($"Differences: {diff.Summary.TotalDifferences}");
+
+        if (diff.Summary.TotalDifferences == 0)
+        {
+            Console.WriteLine("Files are identical!");
+            return;
+        }
+
+        // Show difference breakdown
+        if (diff.Summary.CriticalDifferences > 0)
+            Console.WriteLine($"  Critical: {diff.Summary.CriticalDifferences}");
+        if (diff.Summary.WarningDifferences > 0)
+            Console.WriteLine($"  Warning: {diff.Summary.WarningDifferences}");
+        if (diff.Summary.InformationalDifferences > 0)
+            Console.WriteLine($"  Info: {diff.Summary.InformationalDifferences}");
+
+        Console.WriteLine();
+
+        // Enhanced field-level intelligence analysis
+        await PerformFieldIntelligenceAnalysisAsync(diff);
+
+        // Show AI insights if available
+        if (diff.Insights.Any())
+        {
+            Console.WriteLine();
+            Console.WriteLine("Analysis Insights:");
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+            foreach (var insight in diff.Insights.Take(3))
+            {
+                Console.WriteLine($"• {insight.Title}");
+                Console.WriteLine($"  {insight.Description}");
+                if (!string.IsNullOrEmpty(insight.RecommendedAction))
+                {
+                    Console.WriteLine($"  Action: {insight.RecommendedAction}");
+                }
+                Console.WriteLine();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Performs enhanced field-level intelligence analysis using constraint resolution data.
+    /// Provides healthcare-specific context for field differences.
+    /// </summary>
+    private async Task PerformFieldIntelligenceAnalysisAsync(MessageDiff diff)
+    {
+        try
+        {
+            var analysisCount = 0;
+            var maxAnalyses = 5; // Limit output for readability
+
+            // Extract actual field differences from the MessageDiff object
+            foreach (var difference in diff.FieldDifferences.Take(maxAnalyses))
+            {
+                if (string.IsNullOrEmpty(difference.FieldPath) ||
+                    string.IsNullOrEmpty(difference.LeftValue) ||
+                    string.IsNullOrEmpty(difference.RightValue))
+                    continue;
+
+                var intelligence = await _fieldIntelligence.AnalyzeFieldDifferenceAsync(
+                    difference.FieldPath,
+                    difference.LeftValue,
+                    difference.RightValue);
+
+                if (intelligence.Confidence > 0.5)
+                {
+                    Console.WriteLine($"   {difference.FieldPath} ({intelligence.FieldName}): \"{difference.LeftValue}\" → \"{difference.RightValue}\"");
+
+                    // Show validation messages
+                    foreach (var message in intelligence.ValidationResult.Messages.Take(1))
+                    {
+                        Console.WriteLine($"   ✅ {message}");
+                    }
+
+                    // Show clinical impact with appropriate icon
+                    var impactIcon = intelligence.ClinicalImpact.Level switch
+                    {
+                        ImpactLevel.None => "💡",
+                        ImpactLevel.Low => "⚠️",
+                        ImpactLevel.Administrative => "🏥",
+                        ImpactLevel.Clinical => "🔬",
+                        ImpactLevel.High => "🚨",
+                        _ => "📋"
+                    };
+
+                    Console.WriteLine($"   {impactIcon} Impact: {intelligence.ClinicalImpact.Description}");
+
+                    // Show recommendation if available
+                    if (!string.IsNullOrEmpty(intelligence.ClinicalImpact.Recommendation))
+                    {
+                        Console.WriteLine($"   💡 Recommendation: {intelligence.ClinicalImpact.Recommendation}");
+                    }
+
+                    Console.WriteLine();
+                    analysisCount++;
+                }
+            }
+
+            // Summary message
+            if (analysisCount == 0)
+            {
+                Console.WriteLine("Field intelligence: No significant differences requiring detailed analysis");
+            }
+            else
+            {
+                var totalDifferences = diff.FieldDifferences.Count;
+                var validationCount = await GetValidationDataCount();
+                Console.WriteLine($"Analyzed {analysisCount}/{totalDifferences} differences using {validationCount} constraint values");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "Failed to perform field intelligence analysis");
+            Console.WriteLine("Field intelligence: analysis unavailable");
+        }
+    }
+
+    private async Task<int> GetValidationDataCount()
+    {
+        try
+        {
+            var firstNames = await _fieldIntelligence.DemographicsService.GetFirstNamesAsync();
+            var lastNames = await _fieldIntelligence.DemographicsService.GetLastNamesAsync();
+            return firstNames.Count + lastNames.Count;
+        }
+        catch
+        {
+            return 0;
+        }
     }
 }

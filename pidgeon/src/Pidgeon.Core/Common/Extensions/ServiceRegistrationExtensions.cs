@@ -245,38 +245,58 @@ public static class ServiceRegistrationExtensions
     /// <summary>
     /// Registers all AI services using convention-based discovery.
     /// Scans for AI provider implementations and registers them automatically.
+    /// Providers are registered as singletons to maintain model state across commands.
     /// </summary>
     /// <param name="services">The service collection</param>
     /// <returns>The service collection for method chaining</returns>
     public static IServiceCollection AddAIServices(this IServiceCollection services)
     {
         var coreAssembly = Assembly.GetAssembly(typeof(ServiceRegistrationExtensions))!;
-        
+
         // Note: HttpClient configuration is handled in CLI layer
         // Find all AI service types by convention
         var aiServiceTypes = coreAssembly.GetTypes()
-            .Where(type => type.IsClass && 
-                          !type.IsAbstract && 
+            .Where(type => type.IsClass &&
+                          !type.IsAbstract &&
                           (type.Name.Contains("Model") || type.Name.Contains("AI") || type.Name.Contains("Intelligence") || type.Name.Contains("Provider")) &&
                           type.Namespace?.Contains("Application.Services.Intelligence") == true)
             .ToList();
 
         foreach (var serviceType in aiServiceTypes)
         {
-            // Register the concrete service
-            services.AddScoped(serviceType);
-            
+            // Provider services are singletons to maintain loaded models across CLI commands
+            // Other AI services remain scoped
+            bool isProvider = serviceType.Name.Contains("Provider");
+
+            if (isProvider)
+            {
+                // Register provider as singleton to prevent model reload
+                services.AddSingleton(serviceType);
+            }
+            else
+            {
+                // Register other AI services as scoped
+                services.AddScoped(serviceType);
+            }
+
             // Register for all interfaces it implements
             var interfaces = serviceType.GetInterfaces()
                 .Where(i => i.Namespace?.Contains("Application.Interfaces.Intelligence") == true)
                 .ToList();
-                
+
             foreach (var interfaceType in interfaces)
             {
-                services.AddScoped(interfaceType, provider => provider.GetRequiredService(serviceType));
+                if (isProvider)
+                {
+                    services.AddSingleton(interfaceType, provider => provider.GetRequiredService(serviceType));
+                }
+                else
+                {
+                    services.AddScoped(interfaceType, provider => provider.GetRequiredService(serviceType));
+                }
             }
         }
-        
+
         return services;
     }
 

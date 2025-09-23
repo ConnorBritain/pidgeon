@@ -73,6 +73,9 @@ public static class ServiceCollectionExtensions
         // Register subscription management system
         services.AddSubscriptionManagement();
 
+        // Register AI intelligence services
+        services.AddAIIntelligenceServices();
+
         return services;
     }
 
@@ -209,6 +212,23 @@ public static class ServiceCollectionExtensions
         // Register core subscription service
         services.AddScoped<Pidgeon.Core.Application.Interfaces.Subscription.ISubscriptionService,
                           Pidgeon.Core.Application.Services.Subscription.SubscriptionService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers AI intelligence services for message modification and analysis.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddAIIntelligenceServices(this IServiceCollection services)
+    {
+        // Register AI message modification service
+        services.AddScoped<Pidgeon.Core.Application.Interfaces.Intelligence.IAIMessageModificationService,
+                          Pidgeon.Core.Application.Services.Intelligence.AIMessageModificationService>();
+
+        // Register field intelligence service (if not already registered by convention)
+        services.AddScoped<Pidgeon.Core.Application.Services.Intelligence.FieldIntelligenceService>();
 
         return services;
     }

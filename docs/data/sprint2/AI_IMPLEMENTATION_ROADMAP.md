@@ -1,805 +1,674 @@
-# AI Implementation Roadmap: Practical Integration Guide
+# Real AI Inference Implementation Roadmap
 **Date**: September 22, 2025
-**Status**: Implementation Ready
-**Context**: Converting strategy into actionable development plan
+**Status**: Implementation Ready - Real AI Inference Focus
+**Context**: Replacing AI Theater with Genuine Local AI Models
 
 ---
 
-## 🎯 **INTEGRATION WITH CURRENT MVP**
+## 🎯 **CORE DECISION: REAL AI INFERENCE, NO SIMULATION**
 
-Based on our successful MVP testing, we now integrate these revolutionary AI features with the **3 ship-ready capabilities**:
+### **Current State Discovery**
+✅ **Successfully Downloaded Models**: phi3-mini-instruct (2.39GB) confirmed working
+✅ **AI Theater Identified**: Current LlamaCppProvider uses pattern matching, not real inference
+❌ **User Rejection**: "No AI theatre, we need real inference"
 
-### **Current State (Ship Ready)**:
-✅ **Workflow Wizard** - Interactive scenario creation
-✅ **Local AI Models** - TinyLlama, Phi3, BioMistral working perfectly
-✅ **Basic Diff + AI** - Field comparison with simple AI insights
-
-### **Enhanced State (Revolutionary)**:
-🚀 **Data-Driven Diff** - Constraint validation + demographic intelligence
-🚀 **AI Message Wizard** - Validated modification with smart swapping
-🚀 **Integrated Workflows** - End-to-end procedural → AI → validated pipelines
+### **New Direction: Genuine AI with LLamaSharp**
+🚀 **Real Model Inference**: Use actual phi3-mini-instruct 3.8B parameter model
+🚀 **LLamaSharp Integration**: Replace simulation with genuine .NET AI inference
+🚀 **Healthcare-Specific Prompting**: Leverage real model capabilities for HL7/FHIR expertise
+🚀 **Safe AI Operations**: Implement proper fallbacks and validation
 
 ---
 
-## 🏗️ **PHASE 1: ENHANCED DIFF INTEGRATION (Week 1)**
+## 🏗️ **PHASE 1: REAL AI INFRASTRUCTURE (Week 1)**
 
-### **1.1 Extend Current DiffCommand.cs**
+### **1.1 Replace AI Theater with LLamaSharp**
 
 ```csharp
-// Current working implementation in Commands/DiffCommand.cs
-public class DiffCommand : CommandBuilderBase
+// REMOVE: All simulation methods from LlamaCppProvider.cs
+// DELETE: SimulateTinyLlamaInference, GenerateTinyLlamaHL7DiffResponse, etc.
+
+// NEW: Real AI inference using LLamaSharp
+public class LlamaCppProvider : ILocalModelProvider, IAIAnalysisProvider
 {
-    private readonly IConstraintResolver _constraintResolver; // NEW
-    private readonly IDemographicsDataService _demographicsService; // NEW
+    private LLamaWeights? _weights;
+    private LLamaContext? _context;
+    private InteractiveExecutor? _executor;
+    private readonly ILogger<LlamaCppProvider> _logger;
 
-    public async Task<int> ExecuteAsync(DiffOptions options)
+    public async Task<Result<string>> LoadModelAsync(string modelPath, CancellationToken cancellationToken = default)
     {
-        // EXISTING: Basic diff comparison (working perfectly)
-        var basicResult = await _diffService.CompareMessagesAsync(
-            options.LeftPath, options.RightPath);
-
-        // NEW: Enhanced analysis when --enhanced flag used
-        if (options.Enhanced)
+        try
         {
-            var enhancedResult = await PerformEnhancedAnalysisAsync(
-                basicResult, options.LeftPath, options.RightPath);
-
-            await DisplayEnhancedResultsAsync(enhancedResult);
-        }
-        else
-        {
-            // EXISTING: Display basic results (preserve current functionality)
-            await DisplayBasicResultsAsync(basicResult);
-        }
-
-        return basicResult.IsSuccess ? 0 : 1;
-    }
-
-    private async Task<EnhancedDiffResult> PerformEnhancedAnalysisAsync(
-        BasicDiffResult basicResult, string leftPath, string rightPath)
-    {
-        var fieldAnalyses = new List<FieldAnalysis>();
-
-        foreach (var difference in basicResult.Differences)
-        {
-            // Use our constraint resolution system
-            var constraintsResult = await _constraintResolver.GetConstraintsAsync(difference.FieldPath);
-
-            if (constraintsResult.IsSuccess)
+            var parameters = new ModelParams(modelPath)
             {
-                var constraints = constraintsResult.Value;
+                ContextSize = 4096,      // Enough for HL7 messages + analysis
+                GpuLayerCount = 0,       // CPU inference for safety/compatibility
+                Seed = (uint)Random.Shared.Next(),
+                UseMemorymap = true,
+                UseMemoryLock = false,
+                Threads = Environment.ProcessorCount / 2
+            };
 
-                // Validate both values against constraints
-                var leftValid = await _constraintResolver.ValidateValueAsync(
-                    difference.FieldPath, difference.LeftValue, constraints);
-                var rightValid = await _constraintResolver.ValidateValueAsync(
-                    difference.FieldPath, difference.RightValue, constraints);
+            _weights = LLamaWeights.LoadFromFile(parameters);
+            _context = _weights.CreateContext(parameters);
+            _executor = new InteractiveExecutor(_context);
 
-                // Check against demographic datasets
-                var leftRealistic = await ValidateAgainstDemographicsAsync(
-                    difference.FieldPath, difference.LeftValue?.ToString());
-                var rightRealistic = await ValidateAgainstDemographicsAsync(
-                    difference.FieldPath, difference.RightValue?.ToString());
+            _logger.LogInformation("Successfully loaded model {ModelPath} with {ContextSize} context",
+                modelPath, parameters.ContextSize);
 
-                fieldAnalyses.Add(new FieldAnalysis
-                {
-                    FieldPath = difference.FieldPath,
-                    FieldName = GetFieldDisplayName(difference.FieldPath),
-                    LeftValue = difference.LeftValue,
-                    RightValue = difference.RightValue,
-                    LeftValid = leftValid.IsSuccess,
-                    RightValid = rightValid.IsSuccess,
-                    LeftRealistic = leftRealistic.IsRealistic,
-                    RightRealistic = rightRealistic.IsRealistic,
-                    ClinicalImpact = AssessClinicalImpact(difference.FieldPath),
-                    Confidence = CalculateConfidence(leftValid, rightValid, leftRealistic, rightRealistic)
-                });
-            }
+            return Result<string>.Success("Model loaded successfully");
         }
-
-        // Enhanced AI analysis with healthcare context
-        var enhancedAIPrompt = CreateEnhancedAIPrompt(basicResult, fieldAnalyses);
-        var aiInsights = await _aiProvider.GenerateInsightAsync(enhancedAIPrompt);
-
-        return new EnhancedDiffResult
+        catch (Exception ex)
         {
-            BasicResult = basicResult,
-            FieldAnalyses = fieldAnalyses,
-            AIInsights = aiInsights
+            _logger.LogError(ex, "Failed to load model {ModelPath}", modelPath);
+            return Result<string>.Failure($"Failed to load model: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<string>> AnalyzeAsync(string prompt, AnalysisRequest request, CancellationToken cancellationToken = default)
+    {
+        if (_executor == null)
+            return Result<string>.Failure("No model loaded. Call LoadModelAsync first.");
+
+        try
+        {
+            // Create healthcare-specific system prompt
+            var systemPrompt = CreateHealthcareSystemPrompt(request.Context);
+            var fullPrompt = $"{systemPrompt}\n\nUser Request:\n{prompt}";
+
+            _logger.LogDebug("Executing real AI inference for context: {Context}", request.Context);
+
+            var inferenceParams = new InferenceParams()
+            {
+                Temperature = 0.7f,      // Balanced creativity/consistency
+                AntiPrompts = new[] { "[DONE]", "User:", "Human:" },
+                MaxTokens = 1024,        // Sufficient for HL7 analysis
+                RepeatPenalty = 1.1f
+            };
+
+            var response = new StringBuilder();
+            await foreach (var token in _executor.InferAsync(fullPrompt, inferenceParams, cancellationToken))
+            {
+                response.Append(token);
+            }
+
+            var result = response.ToString().Trim();
+            _logger.LogDebug("AI inference completed. Response length: {Length}", result.Length);
+
+            return Result<string>.Success(result);
+        }
+        catch (OperationCanceledException)
+        {
+            return Result<string>.Failure("AI inference was cancelled");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "AI inference failed");
+            return Result<string>.Failure($"AI inference failed: {ex.Message}");
+        }
+    }
+
+    private string CreateHealthcareSystemPrompt(string context)
+    {
+        var basePrompt = @"You are a healthcare interoperability specialist with deep expertise in HL7, FHIR, and healthcare data standards.
+You provide accurate, clinically-informed analysis while maintaining patient privacy and data security.
+
+Core capabilities:
+- HL7 v2.x message structure and field meanings
+- Healthcare terminology and clinical context
+- Data validation and constraint checking
+- Realistic healthcare scenarios and demographics
+- Integration testing and troubleshooting
+
+Always provide:
+1. Specific, actionable insights
+2. Clinical context for technical decisions
+3. Safety considerations for healthcare data
+4. Clear explanations in plain language";
+
+        return context switch
+        {
+            "hl7_diff_analysis" => $@"{basePrompt}
+
+TASK: Analyze differences between HL7 messages and provide clinical interpretation.
+Focus on:
+- Clinical significance of each field difference
+- Whether changes suggest same vs different patients
+- Data quality and realism issues
+- Potential causes and troubleshooting steps",
+
+            "message_modification" => $@"{basePrompt}
+
+TASK: Help modify HL7 messages based on clinical scenarios.
+Focus on:
+- Understanding clinical intent behind requested changes
+- Suggesting realistic, valid field values
+- Maintaining message integrity and relationships
+- Ensuring clinical plausibility of modifications",
+
+            "validation_analysis" => $@"{basePrompt}
+
+TASK: Analyze HL7 message validation results and provide guidance.
+Focus on:
+- Explaining validation errors in clinical terms
+- Suggesting fixes that maintain clinical accuracy
+- Identifying potential data source issues
+- Recommending best practices for compliance",
+
+            "vendor_pattern_analysis" => $@"{basePrompt}
+
+TASK: Analyze vendor-specific HL7 implementation patterns.
+Focus on:
+- Identifying system-specific field usage patterns
+- Suggesting configuration improvements
+- Highlighting interoperability considerations
+- Recommending testing strategies",
+
+            _ => basePrompt
         };
     }
 
-    private async Task<DemographicValidationResult> ValidateAgainstDemographicsAsync(
-        string fieldPath, string value)
+    public void Dispose()
     {
-        if (string.IsNullOrEmpty(value))
-            return new DemographicValidationResult { IsRealistic = true, Confidence = 0.5 };
-
-        // Use our rich demographic datasets
-        return fieldPath.ToUpperInvariant() switch
-        {
-            var p when p.Contains("PID.5") => // Patient Name components
-                await _demographicsService.ValidateNameComponentsAsync(value),
-
-            var p when p.Contains("PID.11") => // Address components
-                await _demographicsService.ValidateAddressComponentsAsync(value),
-
-            var p when p.Contains("PID.13") => // Phone Number
-                await _demographicsService.ValidatePhoneNumberAsync(value),
-
-            _ => new DemographicValidationResult { IsRealistic = true, Confidence = 0.5 }
-        };
-    }
-
-    private string CreateEnhancedAIPrompt(BasicDiffResult basicResult, List<FieldAnalysis> fieldAnalyses)
-    {
-        return $@"
-        Enhanced HL7 Message Difference Analysis:
-
-        Basic Statistics: {basicResult.Similarity}% similarity, {basicResult.Differences.Count} differences
-
-        Field-by-Field Analysis:
-        {string.Join("\n", fieldAnalyses.Select(a =>
-            $"- {a.FieldName} ({a.FieldPath}): '{a.LeftValue}' → '{a.RightValue}'\n" +
-            $"  Validation: Left={a.LeftValid}, Right={a.RightValid}\n" +
-            $"  Realism: Left={a.LeftRealistic}, Right={a.RightRealistic}\n" +
-            $"  Clinical Impact: {a.ClinicalImpact}\n" +
-            $"  Confidence: {a.Confidence:P0}"))}
-
-        Context: These are HL7 healthcare messages. Focus on:
-        1. Clinical significance of each difference
-        2. Whether differences suggest same patient vs different patients
-        3. Data quality issues (unrealistic values)
-        4. Potential root causes for the differences
-        5. Recommendations for investigation
-
-        Provide practical, healthcare-focused analysis.
-        ";
+        _executor?.Dispose();
+        _context?.Dispose();
+        _weights?.Dispose();
     }
 }
 ```
 
-### **1.2 Add Enhanced Demographics Service**
+### **1.2 Add LLamaSharp Dependencies**
+
+```xml
+<!-- Add to Pidgeon.Core.csproj -->
+<PackageReference Include="LLamaSharp" Version="0.13.0" />
+<PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.13.0" />
+```
+
+### **1.3 Enhanced Auto-Loading in AIMessageModificationService**
 
 ```csharp
-public interface IDemographicsDataService
+// EXISTING auto-loading logic enhanced for real AI
+private async Task<Result<string>> EnsureModelLoadedAsync(CancellationToken cancellationToken = default)
 {
-    // EXISTING methods (preserve current functionality)
-    Task<(string firstName, string lastName, string middleName)> GenerateRandomNameAsync(Random random);
-    Task<Address> GenerateRandomAddressAsync(Random random);
+    if (_modelEnsured) return Result<string>.Success("Model already loaded");
 
-    // NEW methods for validation
-    Task<DemographicValidationResult> ValidateNameComponentsAsync(string nameValue);
-    Task<DemographicValidationResult> ValidateAddressComponentsAsync(string addressValue);
-    Task<DemographicValidationResult> ValidatePhoneNumberAsync(string phoneValue);
-    Task<IList<string>> GetSampleValues(string category, int count);
-}
+    var installedModelsResult = await _modelManagement.ListInstalledModelsAsync(cancellationToken);
+    if (!installedModelsResult.IsSuccess)
+        return Result<string>.Failure($"Failed to get installed models: {installedModelsResult.Error}");
 
-public class DemographicsDataService : IDemographicsDataService
-{
-    private readonly ILogger<DemographicsDataService> _logger;
-    private readonly Dictionary<string, IList<string>> _demographicDatasets;
+    var models = installedModelsResult.Value;
+    if (!models.Any())
+        return Result<string>.Failure("No AI models are installed. Please download a model using 'pidgeon ai download <model-id>'");
 
-    public async Task<DemographicValidationResult> ValidateNameComponentsAsync(string nameValue)
+    // Prioritize healthcare-capable models for real inference
+    var preferredModel = models
+        .Where(m => m.Id.Contains("phi3") || m.Id.Contains("biomistral")) // Healthcare-focused models first
+        .OrderByDescending(m => m.SizeBytes) // Larger models generally more capable
+        .FirstOrDefault() ?? models.OrderByDescending(m => m.SizeBytes).First();
+
+    _logger.LogInformation("Auto-loading AI model: {ModelId} ({Size:F1} GB)",
+        preferredModel.Id, preferredModel.SizeBytes / 1024.0 / 1024.0 / 1024.0);
+
+    if (_aiProvider is ILocalModelProvider localProvider)
     {
-        // Parse HL7 name format: LastName^FirstName^MiddleName
-        var components = nameValue.Split('^');
+        var loadResult = await localProvider.LoadModelAsync(preferredModel.FilePath, cancellationToken);
+        if (!loadResult.IsSuccess)
+            return Result<string>.Failure($"Failed to load model {preferredModel.Id}: {loadResult.Error}");
 
-        var firstNameValid = components.Length > 1 &&
-            _demographicDatasets["FirstName"].Contains(components[1], StringComparer.OrdinalIgnoreCase);
-        var lastNameValid = components.Length > 0 &&
-            _demographicDatasets["LastName"].Contains(components[0], StringComparer.OrdinalIgnoreCase);
-
-        var confidence = (firstNameValid, lastNameValid) switch
-        {
-            (true, true) => 0.95,
-            (true, false) or (false, true) => 0.70,
-            (false, false) => 0.30
-        };
-
-        return new DemographicValidationResult
-        {
-            IsRealistic = firstNameValid || lastNameValid,
-            Confidence = confidence,
-            Details = $"FirstName: {(firstNameValid ? "✅" : "❓")}, LastName: {(lastNameValid ? "✅" : "❓")}"
-        };
+        _modelEnsured = true;
+        _logger.LogInformation("Successfully loaded AI model {ModelId} for real inference", preferredModel.Id);
+        return Result<string>.Success($"Model {preferredModel.Id} loaded successfully");
     }
 
-    public async Task<DemographicValidationResult> ValidateAddressComponentsAsync(string addressValue)
+    return Result<string>.Failure("AI provider does not support local model loading");
+}
+```
+
+---
+
+## 🧬 **PHASE 2: REAL AI MESSAGE MODIFICATION (Week 2)**
+
+### **2.1 Healthcare-Specific Prompting**
+
+```csharp
+public async Task<Result<ModificationPlan>> ParsePatientModificationIntentAsync(
+    string intent, PatientInfo currentPatient)
+{
+    var demographicsSamples = new
     {
-        // Parse HL7 address components and validate against geographic datasets
-        var zipCodeMatch = System.Text.RegularExpressions.Regex.Match(addressValue, @"\b\d{5}\b");
-        var zipValid = zipCodeMatch.Success &&
-            _demographicDatasets["ZipCode"].Contains(zipCodeMatch.Value);
+        FirstNames = await _demographicsService.GetSampleValues("FirstName", 10),
+        LastNames = await _demographicsService.GetSampleValues("LastName", 10),
+        ZipCodes = await _demographicsService.GetSampleValues("ZipCode", 5)
+    };
 
-        // Check for city names
-        var cityValid = _demographicDatasets["City"].Any(city =>
-            addressValue.Contains(city, StringComparison.OrdinalIgnoreCase));
+    // Real AI prompt leveraging model's healthcare knowledge
+    var prompt = $@"CLINICAL SCENARIO MODIFICATION REQUEST
 
-        var confidence = (zipValid, cityValid) switch
+Current Patient:
+Name: {currentPatient.Name}
+DOB: {currentPatient.DateOfBirth}
+Gender: {currentPatient.Gender}
+Address: {currentPatient.Address}
+
+Modification Intent: ""{intent}""
+
+Available Realistic Demographics:
+First Names: {string.Join(", ", demographicsSamples.FirstNames)}
+Last Names: {string.Join(", ", demographicsSamples.LastNames)}
+Zip Codes: {string.Join(", ", demographicsSamples.ZipCodes)}
+
+Please analyze this clinical modification request and provide specific HL7 field changes.
+Consider clinical plausibility, demographic realism, and proper HL7 formatting.
+
+For each proposed change, explain:
+1. Clinical reasoning for the modification
+2. How it affects patient care representation
+3. Compliance with HL7 v2.3 standards
+4. Realistic value selection from provided demographics
+
+Return your analysis in this JSON format:
+{{
+  ""fieldChanges"": [
+    {{
+      ""fieldPath"": ""PID.5"",
+      ""currentValue"": ""{currentPatient.Name}"",
+      ""proposedValue"": ""[New HL7 formatted name]"",
+      ""reasoning"": ""Clinical justification for this change"",
+      ""confidence"": 0.95
+    }}
+  ],
+  ""clinicalAnalysis"": [
+    {{
+      ""aspect"": ""Age Demographics"",
+      ""impact"": ""Changes patient care protocols"",
+      ""considerations"": ""Geriatric vs pediatric care differences""
+    }}
+  ],
+  ""validationChecks"": [
+    {{
+      ""field"": ""PID.7"",
+      ""check"": ""Date format YYYYMMDD"",
+      ""status"": ""valid""
+    }}
+  ]
+}}
+
+Focus on clinical accuracy and realistic healthcare scenarios.";
+
+    var analysisRequest = new AnalysisRequest
+    {
+        Context = "message_modification",
+        MessageType = "ADT",
+        RequestId = Guid.NewGuid().ToString()
+    };
+
+    // Use REAL AI inference instead of pattern matching
+    var aiResult = await _aiProvider.AnalyzeAsync(prompt, analysisRequest, cancellationToken);
+
+    if (!aiResult.IsSuccess)
+        return Result<ModificationPlan>.Failure($"AI analysis failed: {aiResult.Error}");
+
+    try
+    {
+        // Parse real AI response (not hardcoded patterns)
+        var modificationPlan = JsonSerializer.Deserialize<ModificationPlan>(aiResult.Value, new JsonSerializerOptions
         {
-            (true, true) => 0.90,
-            (true, false) => 0.75,
-            (false, true) => 0.60,
-            (false, false) => 0.40
-        };
+            PropertyNameCaseInsensitive = true,
+            AllowTrailingCommas = true
+        });
 
-        return new DemographicValidationResult
-        {
-            IsRealistic = zipValid || cityValid,
-            Confidence = confidence,
-            Details = $"ZipCode: {(zipValid ? "✅" : "❓")}, City: {(cityValid ? "✅" : "❓")}"
-        };
+        return Result<ModificationPlan>.Success(modificationPlan);
+    }
+    catch (JsonException ex)
+    {
+        _logger.LogWarning("Failed to parse AI response as JSON, using fallback parsing: {Error}", ex.Message);
+
+        // Fallback: Extract information from natural language response
+        var fallbackPlan = await ParseNaturalLanguageResponse(aiResult.Value, currentPatient);
+        return Result<ModificationPlan>.Success(fallbackPlan);
     }
 }
 ```
 
-### **1.3 Enhanced CLI Interface**
+### **2.2 Enhanced AI Model Management Commands**
 
 ```bash
-# EXISTING (preserve current functionality)
-pidgeon diff msg1.hl7 msg2.hl7 --ai --skip-pro-check
+# Real AI model operations
+pidgeon ai models list
+pidgeon ai models load phi3-mini-instruct
+pidgeon ai models info phi3-mini-instruct
+pidgeon ai models benchmark --model phi3-mini-instruct --task healthcare_analysis
 
-# NEW enhanced options
-pidgeon diff msg1.hl7 msg2.hl7 --enhanced --ai
-pidgeon diff msg1.hl7 msg2.hl7 --enhanced --validate-demographics
-pidgeon diff msg1.hl7 msg2.hl7 --enhanced --report enhanced_diff.html
+# Real inference testing
+pidgeon ai test --model phi3-mini-instruct --prompt "Analyze this HL7 PID segment"
+pidgeon ai test --model biomistral-7b --context message_modification
 ```
 
 ---
 
-## 🧙‍♂️ **PHASE 2: AI MESSAGE MODIFICATION (Week 2)**
+## 🔄 **PHASE 3: REAL AI VALIDATION & SAFETY (Week 3)**
 
-### **2.1 Create AI Modification Command**
-
-```csharp
-// NEW command: Commands/AiModifyCommand.cs
-public class AiModifyCommand : CommandBuilderBase
-{
-    private readonly IMessageModificationService _modificationService;
-    private readonly ISessionManagementService _sessionService;
-    private readonly IConstraintResolver _constraintResolver;
-
-    public async Task<int> ExecuteAsync(AiModifyOptions options)
-    {
-        if (options.Wizard)
-        {
-            return await RunWizardModeAsync(options);
-        }
-        else if (!string.IsNullOrEmpty(options.Intent))
-        {
-            return await RunIntentModeAsync(options);
-        }
-        else
-        {
-            Console.WriteLine("❌ Please specify either --wizard or --intent 'description'");
-            return 1;
-        }
-    }
-
-    private async Task<int> RunWizardModeAsync(AiModifyOptions options)
-    {
-        Console.WriteLine("🧙‍♂️ HL7 Message Modification Wizard");
-        Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-
-        // Load original message
-        var originalMessage = await File.ReadAllTextAsync(options.MessagePath);
-        var messageAnalysis = await _modificationService.AnalyzeMessageAsync(originalMessage);
-
-        Console.WriteLine($"📋 Current Message: {messageAnalysis.MessageType} ({messageAnalysis.Description})");
-
-        // Show current session context
-        var currentSession = await _sessionService.GetCurrentSessionAsync();
-        if (currentSession != null)
-        {
-            var lockedFields = await currentSession.GetLockedFieldsAsync();
-            Console.WriteLine($"🔒 Locked Fields: {string.Join(", ", lockedFields)}");
-        }
-
-        // Interactive modification menu
-        while (true)
-        {
-            Console.WriteLine("\n💬 What would you like to modify?");
-            Console.WriteLine("1. Change patient demographics (age, gender, name)");
-            Console.WriteLine("2. Modify admission details (date, type, attending physician)");
-            Console.WriteLine("3. Update insurance information");
-            Console.WriteLine("4. Change room/bed assignment");
-            Console.WriteLine("5. Custom field modification");
-            Console.WriteLine("6. Apply clinical scenario template");
-            Console.WriteLine("7. Finish and save changes");
-
-            var choice = Console.ReadLine();
-
-            switch (choice)
-            {
-                case "1":
-                    await ModifyPatientDemographicsAsync(originalMessage, messageAnalysis);
-                    break;
-                case "2":
-                    await ModifyAdmissionDetailsAsync(originalMessage, messageAnalysis);
-                    break;
-                // ... other cases
-                case "7":
-                    return await FinalizeChangesAsync(options);
-                default:
-                    Console.WriteLine("❌ Invalid choice. Please select 1-7.");
-                    break;
-            }
-        }
-    }
-
-    private async Task ModifyPatientDemographicsAsync(string message, MessageAnalysis analysis)
-    {
-        Console.WriteLine("\n🏥 Patient Demographics Modification");
-        Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-
-        // Show current patient info
-        var currentPatient = analysis.ExtractPatientInfo();
-        Console.WriteLine($"Current Patient: {currentPatient.Name}, DOB: {currentPatient.DateOfBirth}, Gender: {currentPatient.Gender}");
-
-        Console.WriteLine("\n💬 Describe the patient changes you'd like:");
-        var userIntent = Console.ReadLine();
-
-        // Use AI to parse intent and suggest changes
-        var modifications = await _modificationService.ParsePatientModificationIntentAsync(
-            userIntent, currentPatient);
-
-        Console.WriteLine("\n🤖 AI Analysis:");
-        foreach (var modification in modifications.ProposedChanges)
-        {
-            Console.WriteLine($"   {modification.ValidationStatus} {modification.Description}");
-        }
-
-        Console.WriteLine("\n📋 Proposed Changes:");
-        foreach (var change in modifications.FieldChanges)
-        {
-            Console.WriteLine($"   {change.FieldPath}: \"{change.CurrentValue}\" → \"{change.ProposedValue}\"");
-        }
-
-        // Validate changes against constraints
-        var validationResult = await ValidateProposedChangesAsync(modifications);
-        Console.WriteLine("\n🔧 Validation Check:");
-        foreach (var fieldResult in validationResult.FieldResults)
-        {
-            var status = fieldResult.IsValid ? "✅" : "❌";
-            Console.WriteLine($"   {status} {fieldResult.FieldPath}: {fieldResult.ValidationMessage}");
-        }
-
-        Console.Write("\nApply changes? [Y/n] ");
-        var confirm = Console.ReadLine();
-        if (confirm?.ToLowerInvariant() != "n")
-        {
-            await ApplyModificationsAsync(modifications);
-        }
-    }
-
-    private async Task<ValidationResult> ValidateProposedChangesAsync(ModificationPlan modifications)
-    {
-        var fieldResults = new List<FieldValidationResult>();
-
-        foreach (var change in modifications.FieldChanges)
-        {
-            // Validate against constraints
-            var constraintsResult = await _constraintResolver.GetConstraintsAsync(change.FieldPath);
-            if (constraintsResult.IsSuccess)
-            {
-                var constraints = constraintsResult.Value;
-                var validationResult = await _constraintResolver.ValidateValueAsync(
-                    change.FieldPath, change.ProposedValue, constraints);
-
-                fieldResults.Add(new FieldValidationResult
-                {
-                    FieldPath = change.FieldPath,
-                    IsValid = validationResult.IsSuccess,
-                    ValidationMessage = validationResult.IsSuccess
-                        ? GetFieldDescription(change.FieldPath, constraints)
-                        : validationResult.ErrorMessage
-                });
-            }
-        }
-
-        return new ValidationResult(fieldResults);
-    }
-
-    private string GetFieldDescription(string fieldPath, FieldConstraints constraints)
-    {
-        var validationDetails = new List<string>();
-
-        if (constraints.MaxLength.HasValue)
-            validationDetails.Add($"Max length: {constraints.MaxLength}");
-
-        if (constraints.TableReference != null)
-            validationDetails.Add($"Valid codes per table {constraints.TableReference}");
-
-        if (constraints.DataType != null)
-            validationDetails.Add($"Data type: {constraints.DataType}");
-
-        return string.Join(", ", validationDetails);
-    }
-}
-```
-
-### **2.2 Message Modification Service**
+### **3.1 AI Response Validation**
 
 ```csharp
-public interface IMessageModificationService
+public class AIResponseValidator
 {
-    Task<MessageAnalysis> AnalyzeMessageAsync(string message);
-    Task<ModificationPlan> ParsePatientModificationIntentAsync(string intent, PatientInfo currentPatient);
-    Task<MessageModificationResult> ApplyModificationsAsync(ModificationPlan plan);
-}
-
-public class MessageModificationService : IMessageModificationService
-{
-    private readonly IAIProvider _aiProvider;
     private readonly IConstraintResolver _constraintResolver;
     private readonly IDemographicsDataService _demographicsService;
 
-    public async Task<ModificationPlan> ParsePatientModificationIntentAsync(
-        string intent, PatientInfo currentPatient)
+    public async Task<Result<ValidatedAIResponse>> ValidateAIResponseAsync(
+        string aiResponse, AnalysisRequest request)
     {
-        var demographicsSamples = new
+        var validationErrors = new List<string>();
+        var warnings = new List<string>();
+
+        try
         {
-            FirstNames = await _demographicsService.GetSampleValues("FirstName", 10),
-            LastNames = await _demographicsService.GetSampleValues("LastName", 10),
-            ZipCodes = await _demographicsService.GetSampleValues("ZipCode", 5),
-            PhoneCodes = await _demographicsService.GetSampleValues("PhoneNumber", 3)
-        };
-
-        var prompt = $@"
-        Healthcare HL7 Patient Modification Request:
-
-        User Intent: '{intent}'
-
-        Current Patient Information:
-        - Name: {currentPatient.Name}
-        - Date of Birth: {currentPatient.DateOfBirth}
-        - Gender: {currentPatient.Gender}
-        - Address: {currentPatient.Address}
-        - Phone: {currentPatient.Phone}
-
-        Available Realistic Demographics:
-        - First Names: {string.Join(", ", demographicsSamples.FirstNames)}
-        - Last Names: {string.Join(", ", demographicsSamples.LastNames)}
-        - Zip Codes: {string.Join(", ", demographicsSamples.ZipCodes)}
-        - Phone Patterns: {string.Join(", ", demographicsSamples.PhoneCodes)}
-
-        HL7 Field Mapping:
-        - Patient Name: PID.5 (format: LastName^FirstName^MiddleName)
-        - Date of Birth: PID.7 (format: YYYYMMDD)
-        - Gender: PID.8 (M/F/O/U from table 0001)
-        - Address: PID.11 (format: Street^City^State^ZipCode)
-        - Phone: PID.13 (format: (XXX)XXX-XXXX)
-
-        Please analyze the intent and provide:
-        1. Which fields need to be modified
-        2. Realistic values using the available demographics
-        3. Proper HL7 formatting for each field
-        4. Explanation of each change
-
-        Return as JSON with this structure:
-        {{
-          ""fieldChanges"": [
-            {{
-              ""fieldPath"": ""PID.5"",
-              ""currentValue"": ""current value"",
-              ""proposedValue"": ""new value"",
-              ""reasoning"": ""why this change""
-            }}
-          ],
-          ""proposedChanges"": [
-            {{
-              ""description"": ""Change patient name to realistic female name"",
-              ""validationStatus"": ""✅"",
-              ""confidence"": 0.95
-            }}
-          ]
-        }}
-        ";
-
-        return await _aiProvider.GenerateStructuredResponseAsync<ModificationPlan>(prompt);
-    }
-
-    public async Task<MessageModificationResult> ApplyModificationsAsync(ModificationPlan plan)
-    {
-        // Smart procedural swapping using constraint validation
-        var appliedChanges = new List<AppliedChange>();
-        var errors = new List<string>();
-
-        foreach (var change in plan.FieldChanges)
-        {
-            try
+            // 1. JSON Structure Validation
+            if (request.Context == "message_modification")
             {
-                // Validate the change first
-                var constraints = await _constraintResolver.GetConstraintsAsync(change.FieldPath);
-                if (constraints.IsSuccess)
-                {
-                    var validation = await _constraintResolver.ValidateValueAsync(
-                        change.FieldPath, change.ProposedValue, constraints.Value);
+                var modificationPlan = JsonSerializer.Deserialize<ModificationPlan>(aiResponse);
 
-                    if (validation.IsSuccess)
+                // 2. Field Path Validation
+                foreach (var change in modificationPlan.FieldChanges)
+                {
+                    if (!IsValidHL7FieldPath(change.FieldPath))
                     {
-                        // Apply the change using smart swapping
-                        var swapResult = await PerformSmartSwapAsync(change, constraints.Value);
-                        appliedChanges.Add(swapResult);
+                        validationErrors.Add($"Invalid HL7 field path: {change.FieldPath}");
                     }
-                    else
+
+                    // 3. Value Format Validation
+                    var constraintsResult = await _constraintResolver.GetConstraintsAsync(change.FieldPath);
+                    if (constraintsResult.IsSuccess)
                     {
-                        errors.Add($"Validation failed for {change.FieldPath}: {validation.ErrorMessage}");
+                        var validation = await _constraintResolver.ValidateValueAsync(
+                            change.FieldPath, change.ProposedValue, constraintsResult.Value);
+
+                        if (!validation.IsSuccess)
+                        {
+                            warnings.Add($"Field {change.FieldPath}: {validation.ErrorMessage}");
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                errors.Add($"Error applying change to {change.FieldPath}: {ex.Message}");
-            }
-        }
 
-        return new MessageModificationResult
+                // 4. Demographic Realism Check
+                await ValidateDemographicRealism(modificationPlan, warnings);
+            }
+
+            // 5. Clinical Plausibility Assessment
+            var clinicalScore = AssessClinicalPlausibility(aiResponse, request);
+            if (clinicalScore < 0.7)
+            {
+                warnings.Add($"Low clinical plausibility score: {clinicalScore:P0}");
+            }
+
+            return Result<ValidatedAIResponse>.Success(new ValidatedAIResponse
+            {
+                OriginalResponse = aiResponse,
+                ValidationErrors = validationErrors,
+                Warnings = warnings,
+                ClinicalPlausibilityScore = clinicalScore,
+                IsValid = validationErrors.Count == 0
+            });
+        }
+        catch (Exception ex)
         {
-            AppliedChanges = appliedChanges,
-            Errors = errors,
-            Success = errors.Count == 0
-        };
+            return Result<ValidatedAIResponse>.Failure($"AI response validation failed: {ex.Message}");
+        }
     }
 
-    private async Task<AppliedChange> PerformSmartSwapAsync(
-        FieldChange change, FieldConstraints constraints)
+    private async Task ValidateDemographicRealism(ModificationPlan plan, List<string> warnings)
     {
-        // Use demographic datasets for realistic swapping when appropriate
-        var finalValue = change.ProposedValue;
-
-        // For name fields, ensure proper HL7 formatting
-        if (change.FieldPath.Contains("PID.5") && !change.ProposedValue.Contains("^"))
+        foreach (var change in plan.FieldChanges.Where(c => c.FieldPath.Contains("PID")))
         {
-            // Convert "John Smith" to "Smith^John"
-            var nameParts = change.ProposedValue.Split(' ');
-            if (nameParts.Length >= 2)
+            if (change.FieldPath.Contains("PID.5")) // Name
             {
-                finalValue = $"{nameParts[^1]}^{string.Join(" ", nameParts[..^1])}";
+                var nameValidation = await _demographicsService.ValidateNameComponentsAsync(change.ProposedValue);
+                if (!nameValidation.IsRealistic)
+                {
+                    warnings.Add($"Unrealistic name suggested: {change.ProposedValue}");
+                }
             }
         }
+    }
 
-        // For date fields, ensure proper format
-        if (constraints.DataType == "TS" || constraints.DataType == "DT")
+    private double AssessClinicalPlausibility(string aiResponse, AnalysisRequest request)
+    {
+        var plausibilityIndicators = new[]
         {
-            finalValue = FormatDateForHL7(change.ProposedValue);
-        }
-
-        return new AppliedChange
-        {
-            FieldPath = change.FieldPath,
-            OriginalValue = change.CurrentValue,
-            NewValue = finalValue,
-            ValidationPassed = true,
-            SwappingMethod = DetermineSwappingMethod(change.FieldPath, constraints)
+            aiResponse.Contains("clinical", StringComparison.OrdinalIgnoreCase),
+            aiResponse.Contains("patient", StringComparison.OrdinalIgnoreCase),
+            aiResponse.Contains("healthcare", StringComparison.OrdinalIgnoreCase),
+            aiResponse.Contains("HL7", StringComparison.OrdinalIgnoreCase),
+            !aiResponse.Contains("I don't know", StringComparison.OrdinalIgnoreCase),
+            !aiResponse.Contains("not sure", StringComparison.OrdinalIgnoreCase)
         };
+
+        return (double)plausibilityIndicators.Count(x => x) / plausibilityIndicators.Length;
     }
 }
 ```
 
-### **2.3 Enhanced CLI Commands**
-
-```bash
-# AI Message Modification Wizard
-pidgeon ai modify patient.hl7 --wizard
-pidgeon ai modify admission.hl7 --intent "make this a 65-year-old diabetic female"
-
-# Field-specific assistance
-pidgeon ai suggest-value PID.5 --context "elderly male patient"
-pidgeon ai suggest-value PV1.3 --context "emergency department"
-
-# Template-based modification
-pidgeon ai modify baseline.hl7 --template diabetes_workflow
-pidgeon ai modify baseline.hl7 --template pediatric_admission
-```
-
----
-
-## 🔄 **PHASE 3: WORKFLOW INTEGRATION (Week 3)**
-
-### **3.1 Enhanced Workflow Templates**
-
-Building on our successful Workflow Wizard, add AI-enhanced templates:
-
-```bash
-# EXISTING workflow templates (working perfectly)
-pidgeon workflow templates
-# → Integration Testing (15 min, Beginner)
-# → Vendor Migration (30 min, Intermediate)
-# → De-identification Pipeline (45 min, Advanced)
-
-# NEW AI-enhanced templates
-pidgeon workflow templates --ai-enhanced
-# → AI Message Modification Demo (20 min, Intermediate)
-# → Data-Driven Validation Testing (25 min, Advanced)
-# → Smart Message Generation Pipeline (30 min, Professional)
-```
-
-### **3.2 End-to-End Workflow Example**
-
-```bash
-# Complete workflow using all enhanced features
-pidgeon workflow wizard --name "AI Enhanced Integration Test" --template ai_validation
-
-# Step 1: Generate baseline with constraints
-pidgeon generate "ADT^A01" --output baseline.hl7 --validate-constraints
-
-# Step 2: Set session values for consistency
-pidgeon set patient.mrn "TEST123456"
-pidgeon set facility.id "MAIN_CAMPUS"
-
-# Step 3: AI-modify for test scenario
-pidgeon ai modify baseline.hl7 --intent "make this a diabetic emergency admission" --output modified.hl7
-
-# Step 4: Enhanced diff analysis
-pidgeon diff baseline.hl7 modified.hl7 --enhanced --ai --report analysis.html
-
-# Step 5: Validate final message
-pidgeon validate modified.hl7 --strict --use-demographics
-```
-
-### **3.3 Integration with Existing MVP Features**
+### **3.2 Safe AI Execution with Timeouts**
 
 ```csharp
-// Enhanced WorkflowCommand.cs integration
-public class WorkflowCommand : CommandBuilderBase
+public async Task<Result<string>> SafeAIExecutionAsync(
+    string prompt, AnalysisRequest request, CancellationToken cancellationToken = default)
 {
-    // EXISTING successful implementation (preserve)
-    public async Task<int> ExecuteWizardAsync(WorkflowOptions options) { ... }
+    using var timeoutCts = new CancellationTokenSource(TimeSpan.FromMinutes(2)); // AI timeout
+    using var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(
+        cancellationToken, timeoutCts.Token);
 
-    // NEW AI-enhanced step types
-    private async Task<WorkflowStep> CreateAIModificationStepAsync()
+    try
     {
-        return new WorkflowStep
-        {
-            StepType = WorkflowStepType.AIModification,
-            Name = "AI Message Modification",
-            Description = "Use AI to modify messages with constraint validation",
-            Parameters = new Dictionary<string, object>
-            {
-                ["intent"] = "Describe desired modifications",
-                ["validate_constraints"] = true,
-                ["use_demographics"] = true
-            },
-            EstimatedDuration = TimeSpan.FromMinutes(5)
-        };
-    }
+        // Ensure model is loaded before inference
+        var loadResult = await EnsureModelLoadedAsync(combinedCts.Token);
+        if (!loadResult.IsSuccess)
+            return Result<string>.Failure(loadResult.Error);
 
-    private async Task<WorkflowStep> CreateEnhancedDiffStepAsync()
-    {
-        return new WorkflowStep
+        // Execute real AI inference with safety controls
+        var aiResult = await _aiProvider.AnalyzeAsync(prompt, request, combinedCts.Token);
+
+        if (!aiResult.IsSuccess)
         {
-            StepType = WorkflowStepType.EnhancedDiff,
-            Name = "Data-Driven Diff Analysis",
-            Description = "Compare messages with constraint validation and AI insights",
-            Parameters = new Dictionary<string, object>
-            {
-                ["enhanced_analysis"] = true,
-                ["validate_demographics"] = true,
-                ["ai_insights"] = true,
-                ["generate_report"] = true
-            },
-            EstimatedDuration = TimeSpan.FromMinutes(3)
-        };
+            _logger.LogWarning("AI inference failed: {Error}. Using fallback response.", aiResult.Error);
+            return GenerateFallbackResponse(request);
+        }
+
+        // Validate AI response for safety and accuracy
+        var validationResult = await _responseValidator.ValidateAIResponseAsync(aiResult.Value, request);
+
+        if (!validationResult.IsSuccess || !validationResult.Value.IsValid)
+        {
+            var errors = validationResult.IsSuccess
+                ? string.Join(", ", validationResult.Value.ValidationErrors)
+                : validationResult.Error;
+
+            _logger.LogWarning("AI response validation failed: {Errors}. Using fallback.", errors);
+            return GenerateFallbackResponse(request);
+        }
+
+        // Log successful real AI inference
+        _logger.LogInformation("Real AI inference completed successfully for context: {Context}", request.Context);
+        return aiResult;
     }
+    catch (OperationCanceledException) when (timeoutCts.Token.IsCancellationRequested)
+    {
+        _logger.LogWarning("AI inference timed out after 2 minutes. Using fallback response.");
+        return GenerateFallbackResponse(request);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Unexpected error during AI inference. Using fallback response.");
+        return GenerateFallbackResponse(request);
+    }
+}
+
+private Result<string> GenerateFallbackResponse(AnalysisRequest request)
+{
+    // Simple, safe fallback for when real AI fails
+    return request.Context switch
+    {
+        "message_modification" => Result<string>.Success(@"{
+            ""fieldChanges"": [],
+            ""clinicalAnalysis"": [{
+                ""aspect"": ""AI Unavailable"",
+                ""impact"": ""Using manual modification mode"",
+                ""considerations"": ""AI analysis temporarily unavailable - please modify fields manually""
+            }]
+        }"),
+
+        "hl7_diff_analysis" => Result<string>.Success(
+            "AI analysis temporarily unavailable. Please review field differences manually and consult HL7 v2.3 specifications for validation."),
+
+        _ => Result<string>.Success("AI analysis temporarily unavailable. Please proceed with manual analysis.")
+    };
 }
 ```
 
 ---
 
-## 📊 **PHASE 4: TESTING & VALIDATION (Week 4)**
+## 🚀 **PHASE 4: PRODUCTION DEPLOYMENT (Week 4)**
 
-### **4.1 Integration Testing Strategy**
+### **4.1 Performance Optimization**
+
+```csharp
+// Model caching and warm-up strategies
+public class OptimizedModelManager
+{
+    private static readonly ConcurrentDictionary<string, (LLamaWeights weights, DateTime lastUsed)> _modelCache = new();
+    private readonly SemaphoreSlim _loadingSemaphore = new(1, 1);
+
+    public async Task<Result<string>> LoadModelWithCachingAsync(string modelPath, CancellationToken cancellationToken)
+    {
+        await _loadingSemaphore.WaitAsync(cancellationToken);
+        try
+        {
+            // Check if model is already cached and recently used
+            var modelKey = Path.GetFileName(modelPath);
+            if (_modelCache.TryGetValue(modelKey, out var cached) &&
+                DateTime.UtcNow - cached.lastUsed < TimeSpan.FromMinutes(30))
+            {
+                _logger.LogInformation("Using cached model: {ModelKey}", modelKey);
+                return Result<string>.Success("Cached model ready");
+            }
+
+            // Load fresh model
+            var loadResult = await LoadModelFreshAsync(modelPath, cancellationToken);
+            if (loadResult.IsSuccess)
+            {
+                _modelCache[modelKey] = (_weights, DateTime.UtcNow);
+            }
+
+            return loadResult;
+        }
+        finally
+        {
+            _loadingSemaphore.Release();
+        }
+    }
+}
+```
+
+### **4.2 Monitoring and Metrics**
+
+```csharp
+public class AIMetricsCollector
+{
+    private readonly ILogger<AIMetricsCollector> _logger;
+
+    public void RecordInference(string modelId, string context, TimeSpan duration, bool success)
+    {
+        _logger.LogInformation("AI Inference: Model={ModelId}, Context={Context}, Duration={Duration}ms, Success={Success}",
+            modelId, context, duration.TotalMilliseconds, success);
+
+        // TODO: Export to metrics system (Prometheus, Application Insights, etc.)
+    }
+
+    public void RecordModelLoad(string modelId, TimeSpan loadTime, long modelSizeBytes)
+    {
+        _logger.LogInformation("AI Model Load: Model={ModelId}, LoadTime={LoadTime}ms, Size={Size}MB",
+            modelId, loadTime.TotalMilliseconds, modelSizeBytes / 1024 / 1024);
+    }
+}
+```
+
+### **4.3 Production Testing Plan**
 
 ```bash
-# Test the complete enhanced pipeline
+# Comprehensive real AI testing
 cd "/mnt/c/Users/Connor.England.FUSIONMGT/OneDrive - Fusion/Documents/Code/CRE Code/hl7generator/pidgeon"
 
-# 1. Generate test messages with constraint validation
-"/mnt/c/Program Files/dotnet/dotnet.exe" run --project src/Pidgeon.CLI -- generate "ADT^A01" --validate-constraints --output test1.hl7
+# 1. Verify model downloads and loading
+"/mnt/c/Program Files/dotnet/dotnet.exe" run --project src/Pidgeon.CLI -- ai models load phi3-mini-instruct
+"/mnt/c/Program Files/dotnet/dotnet.exe" run --project src/Pidgeon.CLI -- ai test --context healthcare_analysis
 
-# 2. Create AI modifications
-"/mnt/c/Program Files/dotnet/dotnet.exe" run --project src/Pidgeon.CLI -- ai modify test1.hl7 --intent "make this a pediatric patient" --output test2.hl7
+# 2. Test real AI message modification
+"/mnt/c/Program Files/dotnet/dotnet.exe" run --project src/Pidgeon.CLI -- generate "ADT^A01" --output baseline.hl7
+"/mnt/c/Program Files/dotnet/dotnet.exe" run --project src/Pidgeon.CLI -- ai modify baseline.hl7 --intent "make this a 75-year-old diabetic male"
 
-# 3. Enhanced diff analysis
-"/mnt/c/Program Files/dotnet/dotnet.exe" run --project src/Pidgeon.CLI -- diff test1.hl7 test2.hl7 --enhanced --ai --report enhanced_test.html
+# 3. Test AI timeout and fallback handling
+"/mnt/c/Program Files/dotnet/dotnet.exe" run --project src/Pidgeon.CLI -- ai modify baseline.hl7 --intent "very complex modification requiring extensive analysis"
 
-# 4. Validate final results
-"/mnt/c/Program Files/dotnet/dotnet.exe" run --project src/Pidgeon.CLI -- validate test2.hl7 --strict --use-demographics
-```
-
-### **4.2 Performance Benchmarks**
-
-| Feature | Target Performance | Success Criteria |
-|---------|-------------------|------------------|
-| Enhanced Diff | <10 seconds | Constraint validation + AI analysis |
-| AI Modification | <15 seconds | Intent parsing + validation + application |
-| Demographic Validation | <1 second | Real-time feedback during modification |
-| Constraint Resolution | <500ms | Field validation using datasets |
-
-### **4.3 Data Quality Validation**
-
-```csharp
-// Test demographic dataset integration
-[Test]
-public async Task DemographicValidation_WithRealNames_ReturnsHighConfidence()
-{
-    var result = await _demographicsService.ValidateNameComponentsAsync("Smith^John");
-
-    Assert.IsTrue(result.IsRealistic);
-    Assert.IsTrue(result.Confidence > 0.8);
-    Assert.Contains("✅", result.Details);
-}
-
-[Test]
-public async Task ConstraintValidation_WithInvalidLength_ReturnsFailure()
-{
-    var constraints = new FieldConstraints { MaxLength = 10 };
-    var result = await _constraintResolver.ValidateValueAsync(
-        "PID.5", "VeryLongPatientNameThatExceedsMaximumLength", constraints);
-
-    Assert.IsFalse(result.IsSuccess);
-    Assert.Contains("length", result.ErrorMessage.ToLower());
-}
+# 4. Performance benchmarking
+"/mnt/c/Program Files/dotnet/dotnet.exe" run --project src/Pidgeon.CLI -- ai benchmark --model phi3-mini-instruct --iterations 10
 ```
 
 ---
 
-## 🚀 **IMMEDIATE NEXT STEPS**
+## 📊 **SUCCESS CRITERIA**
 
-### **Week 1: Enhanced Diff Implementation**
-1. **Day 1-2**: Extend current DiffCommand.cs with constraint resolution
-2. **Day 3-4**: Add demographic validation to field analysis
-3. **Day 5**: Enhanced AI prompting with healthcare context
-4. **Weekend**: Integration testing with existing AI models
+### **Technical Validation - Real AI**
+- [ ] Complete removal of all AI theater/simulation code
+- [ ] Successful LLamaSharp integration with phi3-mini-instruct
+- [ ] Real model inference working end-to-end
+- [ ] AI response validation and safety controls operational
+- [ ] Fallback mechanisms working when AI fails
+- [ ] Performance targets: <30 seconds for AI inference
 
-### **Week 2: AI Message Modification**
-1. **Day 1-2**: Create AiModifyCommand.cs and wizard interface
-2. **Day 3-4**: Implement smart swapping with demographic datasets
-3. **Day 5**: Integration with session management system
-4. **Weekend**: End-to-end workflow testing
+### **User Experience - Transparent AI**
+- [ ] Clear indication when real AI vs fallback is used
+- [ ] Graceful degradation when models unavailable
+- [ ] Helpful error messages for AI-related issues
+- [ ] Performance feedback during model loading/inference
+- [ ] Option to disable AI and use procedural generation only
 
-### **Week 3: Workflow Integration**
-1. **Day 1-2**: Enhanced workflow templates with AI steps
-2. **Day 3-4**: Integration testing with existing workflow system
-3. **Day 5**: Performance optimization and error handling
-4. **Weekend**: User experience testing and refinement
-
-### **Week 4: Production Ready**
-1. **Day 1-2**: Comprehensive testing and bug fixes
-2. **Day 3-4**: Documentation and examples
-3. **Day 5**: Final integration testing and performance validation
-4. **Weekend**: Deployment preparation and launch readiness
+### **Healthcare Quality - Clinical Accuracy**
+- [ ] AI responses demonstrate actual healthcare knowledge
+- [ ] Clinical plausibility validation working
+- [ ] Demographic realism properly validated
+- [ ] HL7 specification compliance maintained
+- [ ] No hallucinated or unsafe medical recommendations
 
 ---
 
-## 🎯 **SUCCESS VALIDATION**
+## 🎯 **IMMEDIATE IMPLEMENTATION PLAN**
 
-### **Technical Validation**
-- [ ] All existing MVP features continue working (no regressions)
-- [ ] Enhanced diff integrates with current AI model system
-- [ ] AI modifications validate through constraint resolution system
-- [ ] Demographic datasets provide realistic validation
-- [ ] Performance targets met for all enhanced features
+### **Step 1: Remove AI Theater (Today)**
+1. Delete all `Simulate*` methods from LlamaCppProvider.cs
+2. Remove hardcoded response generation functions
+3. Replace with genuine LLamaSharp inference calls
 
-### **User Experience Validation**
-- [ ] Progressive disclosure: basic → enhanced features
-- [ ] Clear upgrade path from free to professional features
-- [ ] Intuitive wizard interfaces with helpful guidance
-- [ ] Error messages provide actionable feedback
-- [ ] Integration feels seamless, not bolted-on
+### **Step 2: LLamaSharp Integration (This Week)**
+1. Add LLamaSharp package dependencies
+2. Implement real model loading and inference
+3. Test with existing phi3-mini-instruct model
+4. Add proper error handling and timeouts
 
-### **Business Model Validation**
-- [ ] Enhanced features clearly differentiated as Pro tier
-- [ ] Free tier provides substantial value but encourages upgrade
-- [ ] AI capabilities justify subscription pricing
-- [ ] Enterprise features support team collaboration needs
+### **Step 3: Safety & Validation (Next Week)**
+1. Implement AI response validation
+2. Add fallback mechanisms for AI failures
+3. Create healthcare-specific prompt templates
+4. Add performance monitoring and metrics
+
+### **Step 4: Production Ready (Week 4)**
+1. Comprehensive testing with multiple models
+2. Performance optimization and caching
+3. Documentation and user guidance
+4. Deployment validation and monitoring
 
 ---
 
-**This roadmap transforms our successful MVP into revolutionary AI-enhanced capabilities while preserving all existing functionality. The phased approach ensures we can ship incrementally while building toward the complete vision of data-driven healthcare AI intelligence.**
-
-<function_calls>
-<invoke name="TodoWrite">
-<parameter name="todos">[{"content": "Develop implementation plan for data-driven diff and AI message modification", "status": "completed", "activeForm": "Completed comprehensive implementation roadmap"}]
+**CORE COMMITMENT**: Provide genuine AI inference that leverages real model capabilities for healthcare interoperability, while maintaining safety, performance, and user experience standards. No shortcuts, no simulation, no "AI theater" - only authentic AI assistance for healthcare professionals.
