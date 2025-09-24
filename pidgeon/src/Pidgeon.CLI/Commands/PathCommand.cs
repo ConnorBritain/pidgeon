@@ -242,7 +242,7 @@ public class PathCommand : CommandBuilderBase
         return command;
     }
 
-    private async Task<int> ShowUniversalPathsAsync(
+    private Task<int> ShowUniversalPathsAsync(
         string format,
         string? category,
         bool descriptions,
@@ -293,7 +293,7 @@ public class PathCommand : CommandBuilderBase
         Console.WriteLine("💡 Use 'pidgeon path list <message-type>' to see message-specific paths");
         Console.WriteLine("💡 Use 'pidgeon path resolve <path> <message-type>' to see standard mappings");
 
-        return 0;
+        return Task.FromResult(0);
     }
 
     private async Task<int> ShowMessageTypePathsAsync(
@@ -487,7 +487,7 @@ public class PathCommand : CommandBuilderBase
         }
     }
 
-    private async Task<int> SearchSemanticPathsAsync(
+    private Task<int> SearchSemanticPathsAsync(
         string query,
         string? messageType,
         string? standard,
@@ -555,7 +555,7 @@ public class PathCommand : CommandBuilderBase
         Console.WriteLine("💡 Use 'pidgeon path resolve <path> <message-type>' for standard-specific mappings");
         Console.WriteLine("💡 Use 'pidgeon path list' to see all available paths");
 
-        return 0;
+        return Task.FromResult(0);
     }
 
     private static Dictionary<string, Dictionary<string, string>> GroupPathsByCategory(

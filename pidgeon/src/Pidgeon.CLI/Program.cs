@@ -81,7 +81,10 @@ internal class Program
             
             // Create the root command with all subcommands
             var rootCommand = CreateRootCommand(host.Services);
-            
+
+            // Note: In System.CommandLine 2.0.0-beta5, completion support is enabled by default
+            // via the Directives system. No explicit EnableCompletions() call needed.
+
             // Parse and invoke the command using beta5 API
             return await rootCommand.Parse(args).InvokeAsync();
         }

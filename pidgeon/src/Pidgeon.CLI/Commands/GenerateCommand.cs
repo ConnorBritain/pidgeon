@@ -36,19 +36,26 @@ public class GenerateCommand : CommandBuilderBase
         var command = new Command("generate", "Generate synthetic messages/resources with smart standard inference");
 
         // Positional arguments for smart inference: pidgeon generate <message-type> or pidgeon generate <standard> <message-type>
-        var messageTypeArg = new Argument<string[]>("args")
+        var messageTypeArg = new Argument<string[]>("message-types")
         {
-            Description = "Message type (e.g., \"ADT^A01\", Patient, NewRx) or explicit standard + message type",
+            Description = "Message type (e.g., ADT^A01, Patient, NewRx) - supports 239+ HL7/FHIR/NCPDP types",
             Arity = ArgumentArity.OneOrMore
         };
+
+        // Add smart completions that work during tab completion but don't affect help display
+        HealthcareCompletions.AddSmartCompletionsToArgument(messageTypeArg);
         
         // Options
         var countOption = CreateIntegerOption("--count", "Number of messages to generate", 1);
         var outputOption = CreateNullableOption("--output", "Output file path (optional, defaults to console)");
         var formatOption = CreateOptionalOption("--format", "Output format: auto|hl7|json|ndjson", "auto");
+        HealthcareCompletions.AddFormatCompletions(formatOption);
+
         var modeOption = CreateOptionalOption("--mode", "Generation mode: procedural|local-ai|api-ai", "procedural");
+        HealthcareCompletions.AddGenerationModeCompletions(modeOption);
         var seedOption = CreateNullableOption("--seed", "Deterministic seed for reproducible data");
         var vendorOption = CreateNullableOption("--vendor", "Apply vendor pattern (e.g., epic, cerner, meditech)");
+        HealthcareCompletions.AddVendorCompletions(vendorOption);
         var sessionOption = CreateNullableOption("--session", "Use specific session (overrides current session)");
         var noSessionOption = CreateBooleanOption("--no-session", "Force pure random generation (ignore current session)");
 

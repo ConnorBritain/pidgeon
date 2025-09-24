@@ -21,7 +21,7 @@ public class InfoCommand : CommandBuilderBase
     {
         var command = new Command("info", "Display information about Pidgeon and supported standards");
 
-        SetInfoCommandAction(command, async (parseResult, cancellationToken) =>
+        SetInfoCommandAction(command, (parseResult, cancellationToken) =>
         {
             Console.WriteLine("Pidgeon Healthcare Interoperability Platform");
             Console.WriteLine("Version: 1.0.0-dev");
@@ -29,8 +29,8 @@ public class InfoCommand : CommandBuilderBase
             Console.WriteLine("Supported Standards:");
             Console.WriteLine("- HL7 v2.3 (ADT messages)");
             Console.WriteLine();
-            Console.WriteLine("For more information, visit: https://github.com/your-repo/Pidgeon");
-            return 0;
+            Console.WriteLine("For more information, visit: https://github.com/ConnorBritain/Pidgeon");
+            return Task.FromResult(0);
         });
 
         return command;

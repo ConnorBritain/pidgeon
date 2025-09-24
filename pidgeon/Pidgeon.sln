@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pidgeon.CLI", "src\Pidgeon.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pidgeon.Core.Tests", "tests\Pidgeon.Core.Tests\Pidgeon.Core.Tests.csproj", "{8D40F1EF-2637-41A8-8B93-F9F6B5154442}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pidgeon.Core.Tests", "tests\unit\Pidgeon.Core.Tests\Pidgeon.Core.Tests.csproj", "{8D40F1EF-2637-41A8-8B93-F9F6B5154442}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

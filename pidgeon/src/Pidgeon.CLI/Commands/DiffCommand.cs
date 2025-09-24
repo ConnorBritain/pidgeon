@@ -56,8 +56,10 @@ public class DiffCommand : CommandBuilderBase
         var leftOption = CreateNullableOption("--left", "Explicitly specify baseline file/folder (overrides positional)");
         var rightOption = CreateNullableOption("--right", "Explicitly specify candidate file/folder (overrides positional)");
         var ignoreOption = CreateNullableOption("--ignore", "Comma-list of fields/segments to ignore (e.g., MSH-7, PID.3[*].assigningAuthority)");
+        HealthcareCompletions.AddFieldPathCompletions(ignoreOption);
         var reportOption = CreateNullableOption("--report", "HTML/JSON diff report with triage hints");
         var severityOption = CreateOptionalOption("--severity", "hint|warn|error", "hint");
+        HealthcareCompletions.AddSeverityCompletions(severityOption);
         var aiOption = CreateBooleanOption("--ai", "Enable AI analysis (auto-detects best available model)");
         var modelOption = CreateNullableOption("--model", "Specify AI model (e.g., tinyllama-chat, phi2-healthcare)");
         var noAiOption = CreateBooleanOption("--no-ai", "Disable AI analysis (override config default)");

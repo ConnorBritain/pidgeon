@@ -355,7 +355,7 @@ public class SetCommand : CommandBuilderBase
         }
     }
 
-    private async Task<IReadOnlyList<string>> GetRelevantMessageTypesForSemanticPath(string semanticPath)
+    private Task<IReadOnlyList<string>> GetRelevantMessageTypesForSemanticPath(string semanticPath)
     {
         try
         {
@@ -386,12 +386,12 @@ public class SetCommand : CommandBuilderBase
                 messageTypes.AddRange(new[] { "Patient", "ADT^A01" });
             }
 
-            return messageTypes;
+            return Task.FromResult<IReadOnlyList<string>>(messageTypes);
         }
         catch (Exception)
         {
             // Fallback to safe defaults
-            return new[] { "Patient", "ADT^A01" };
+            return Task.FromResult<IReadOnlyList<string>>(new[] { "Patient", "ADT^A01" });
         }
     }
 
