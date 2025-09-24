@@ -55,20 +55,38 @@ public class ConfigCommand : CommandBuilderBase
 
     private Command CreateAnalyzeCommand()
     {
-        var samplesOption = CreateRequiredOption("--samples", "Path to file or directory containing sample messages (auto-detects HL7/FHIR/NCPDP)");
-        var saveOption = CreateNullableOption("--save", "Save inferred configuration to file (JSON format)");
+        // Positional argument for samples path
+        var samplesArg = new Argument<string>("samples")
+        {
+            Description = "Path to file or directory containing sample messages (auto-detects HL7/FHIR/NCPDP)"
+        };
+
+        // Options with short flags
+        var saveOption = CreateNullableOption("--save", "-s", "Save inferred configuration to file (JSON format)");
         var seedOption = CreateNullableOption("--seed", "Deterministic seed for reproducible analysis");
-        var minConfidenceOption = CreateNullableOption("--min-confidence", "Minimum confidence threshold (0.0-1.0, default: 0.6)");
-        var verboseOption = CreateFlag("--verbose", "Show detailed analysis progress");
+        var minConfidenceOption = CreateNullableOption("--min-confidence", "-c", "Minimum confidence threshold (0.0-1.0, default: 0.6)");
+        var verboseOption = CreateBooleanOption("--verbose", "-v", "Show detailed analysis progress");
+
+        // Redundant option for backward compatibility
+        var samplesOption = CreateNullableOption("--samples", "Path to samples (redundant - use positional arg)");
 
         var command = new Command("analyze", "Infer vendor patterns from sample messages (auto-detects HL7/FHIR/NCPDP)")
         {
-            samplesOption, saveOption, seedOption, minConfidenceOption, verboseOption
+            samplesArg, saveOption, seedOption, minConfidenceOption, verboseOption, samplesOption
         };
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            var samples = parseResult.GetValue(samplesOption)!;
+            // Get samples path from positional arg or fallback to option
+            var samples = parseResult.GetValue(samplesArg) ?? parseResult.GetValue(samplesOption);
+
+            if (string.IsNullOrEmpty(samples))
+            {
+                Console.WriteLine("Error: Samples path is required. Usage:");
+                Console.WriteLine("  pidgeon config analyze <samples-path>");
+                Console.WriteLine("  pidgeon config analyze --samples <samples-path>");
+                return 1;
+            }
             var save = parseResult.GetValue(saveOption);
             var seedValue = parseResult.GetValue(seedOption);
             var minConfidenceValue = parseResult.GetValue(minConfidenceOption);

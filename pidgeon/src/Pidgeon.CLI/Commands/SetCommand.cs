@@ -48,11 +48,11 @@ public class SetCommand : CommandBuilderBase
             Arity = ArgumentArity.ZeroOrOne
         };
 
-        // Options
-        var reasonOption = CreateNullableOption("--reason", "Reason for setting this value");
-        var listOption = CreateBooleanOption("--list", "List current values in the current session");
-        var removeOption = CreateBooleanOption("--remove", "Remove the specified field value from the current session");
-        var sessionOption = CreateNullableOption("--session", "Override session (advanced: use specific session instead of current)");
+        // Options with short flags
+        var reasonOption = CreateNullableOption("--reason", "-r", "Reason for setting this value");
+        var listOption = CreateBooleanOption("--list", "-l", "List current values in the current session");
+        var removeOption = CreateBooleanOption("--remove", "-x", "Remove the specified field value from the current session");
+        var sessionOption = CreateNullableOption("--session", "-s", "Override session (advanced: use specific session instead of current)");
 
         command.Add(fieldArg);
         command.Add(valueArg);

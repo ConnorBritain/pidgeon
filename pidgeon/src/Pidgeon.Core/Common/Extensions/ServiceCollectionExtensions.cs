@@ -76,6 +76,12 @@ public static class ServiceCollectionExtensions
         // Register AI intelligence services
         services.AddAIIntelligenceServices();
 
+        // Register search services for Find command
+        services.AddSearchServices();
+
+        // Register procedural analysis engine for enhanced diff analysis
+        services.AddProceduralAnalysisEngine();
+
         return services;
     }
 
@@ -229,6 +235,38 @@ public static class ServiceCollectionExtensions
 
         // Register field intelligence service (if not already registered by convention)
         services.AddScoped<Pidgeon.Core.Application.Services.Intelligence.FieldIntelligenceService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers search services for the Find command functionality.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddSearchServices(this IServiceCollection services)
+    {
+        // Register field discovery service
+        services.AddScoped<Pidgeon.Core.Application.Interfaces.Search.IFieldDiscoveryService,
+                          Pidgeon.Core.Application.Services.Search.FieldDiscoveryService>();
+
+        // Register message search service
+        services.AddScoped<Pidgeon.Core.Application.Interfaces.Search.IMessageSearchService,
+                          Pidgeon.Core.Application.Services.Search.MessageSearchService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the procedural analysis engine for enhanced diff analysis.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddProceduralAnalysisEngine(this IServiceCollection services)
+    {
+        // Register the procedural analysis engine
+        services.AddScoped<Pidgeon.Core.Application.Interfaces.Comparison.IProceduralAnalysisEngine,
+                          Pidgeon.Core.Application.Services.Comparison.ProceduralAnalysisEngine>();
 
         return services;
     }

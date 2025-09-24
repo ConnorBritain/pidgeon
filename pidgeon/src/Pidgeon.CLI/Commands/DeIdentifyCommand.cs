@@ -29,27 +29,59 @@ public class DeIdentifyCommand : CommandBuilderBase
     {
         var command = new Command("deident", "De-identify real messages/resources (on-device), preserving referential integrity");
 
-        // Options matching CLI_REFERENCE.md specification
-        var inputOption = CreateRequiredOption("--in", "File or folder of source data");
-        var outputOption = CreateRequiredOption("--out", "Output file/folder (created if missing)");
-        var dateShiftOption = CreateNullableOption("--date-shift", "Shift dates by +/-N days (e.g., 30d, -14d)");
-        var keepIdsOption = CreateNullableOption("--keep-ids", "Comma-list of identifiers to keep unhashed (e.g., visitId)");
-        var saltOption = CreateNullableOption("--salt", "Salt for deterministic hashing");
-        var previewOption = CreateBooleanOption("--preview", "Show sample before/after rows without writing files");
+        // Positional arguments for input and output
+        var inputArg = new Argument<string>("input")
+        {
+            Description = "File or folder of source data"
+        };
+        var outputArg = new Argument<string>("output")
+        {
+            Description = "Output file/folder (created if missing)"
+        };
 
-        command.Add(inputOption);
-        command.Add(outputOption);
+        // Options
+        var dateShiftOption = CreateNullableOption("--date-shift", "-d", "Shift dates by +/-N days (e.g., 30d, -14d)");
+        var keepIdsOption = CreateNullableOption("--keep-ids", "-k", "Comma-list of identifiers to keep unhashed (e.g., visitId)");
+        var saltOption = CreateNullableOption("--salt", "-s", "Salt for deterministic hashing");
+        var previewOption = CreateBooleanOption("--preview", "-p", "Show sample before/after rows without writing files");
+
+        // Redundant options for backward compatibility
+        var inputOption = CreateNullableOption("--in", "-i", "File or folder of source data (redundant - use positional args)");
+        var outputOption = CreateNullableOption("--out", "-o", "Output file/folder (redundant - use positional args)");
+
+        command.Add(inputArg);
+        command.Add(outputArg);
         command.Add(dateShiftOption);
         command.Add(keepIdsOption);
         command.Add(saltOption);
         command.Add(previewOption);
+        command.Add(inputOption);
+        command.Add(outputOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
             try
             {
-                var inputPath = parseResult.GetValue(inputOption);
-                var outputPath = parseResult.GetValue(outputOption);
+                // Get input/output from positional args or fallback to options
+                var inputPath = parseResult.GetValue(inputArg) ?? parseResult.GetValue(inputOption);
+                var outputPath = parseResult.GetValue(outputArg) ?? parseResult.GetValue(outputOption);
+
+                // Validate required arguments
+                if (string.IsNullOrEmpty(inputPath))
+                {
+                    Console.WriteLine("Error: Input path is required. Usage:");
+                    Console.WriteLine("  pidgeon deident <input> <output>");
+                    Console.WriteLine("  pidgeon deident --in <input> --out <output>");
+                    return 1;
+                }
+
+                if (string.IsNullOrEmpty(outputPath))
+                {
+                    Console.WriteLine("Error: Output path is required. Usage:");
+                    Console.WriteLine("  pidgeon deident <input> <output>");
+                    Console.WriteLine("  pidgeon deident --in <input> --out <output>");
+                    return 1;
+                }
                 var dateShiftStr = parseResult.GetValue(dateShiftOption);
                 var keepIds = parseResult.GetValue(keepIdsOption);
                 var salt = parseResult.GetValue(saltOption);

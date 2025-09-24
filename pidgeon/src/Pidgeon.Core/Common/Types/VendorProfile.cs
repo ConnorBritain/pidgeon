@@ -96,11 +96,11 @@ public static class VendorProfileExtensions
 
     /// <summary>
     /// Determines if the vendor profile requires subscription tier access.
+    /// Currently disabled for beta launch - all vendor profiles are available.
     /// </summary>
     public static bool RequiresSubscription(this VendorProfile profile) => profile switch
     {
-        VendorProfile.Generic => false,
-        _ => true // All specific vendor templates require Professional+ tier
+        _ => false // All vendor profiles available during beta launch
     };
 
     /// <summary>

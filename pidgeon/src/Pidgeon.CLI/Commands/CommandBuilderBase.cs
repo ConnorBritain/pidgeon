@@ -60,11 +60,34 @@ public abstract class CommandBuilderBase
     }
 
     /// <summary>
+    /// Creates an optional string option with short alias and default value.
+    /// </summary>
+    protected static Option<string> CreateOptionalOption(string name, string shortAlias, string description, string defaultValue)
+    {
+        return new Option<string>(name, shortAlias)
+        {
+            Description = description,
+            DefaultValueFactory = _ => defaultValue
+        };
+    }
+
+    /// <summary>
     /// Creates an optional nullable string option.
     /// </summary>
     protected static Option<string?> CreateNullableOption(string name, string description)
     {
         return new Option<string?>(name)
+        {
+            Description = description
+        };
+    }
+
+    /// <summary>
+    /// Creates an optional nullable string option with short alias.
+    /// </summary>
+    protected static Option<string?> CreateNullableOption(string name, string shortAlias, string description)
+    {
+        return new Option<string?>(name, shortAlias)
         {
             Description = description
         };
@@ -83,11 +106,35 @@ public abstract class CommandBuilderBase
     }
 
     /// <summary>
+    /// Creates a boolean option with short alias.
+    /// </summary>
+    protected static Option<bool> CreateBooleanOption(string name, string shortAlias, string description, bool defaultValue = false)
+    {
+        return new Option<bool>(name, shortAlias)
+        {
+            Description = description,
+            DefaultValueFactory = _ => defaultValue
+        };
+    }
+
+    /// <summary>
     /// Creates an integer option with default value.
     /// </summary>
     protected static Option<int> CreateIntegerOption(string name, string description, int defaultValue)
     {
         return new Option<int>(name)
+        {
+            Description = description,
+            DefaultValueFactory = _ => defaultValue
+        };
+    }
+
+    /// <summary>
+    /// Creates an integer option with short alias.
+    /// </summary>
+    protected static Option<int> CreateIntegerOption(string name, string shortAlias, string description, int defaultValue)
+    {
+        return new Option<int>(name, shortAlias)
         {
             Description = description,
             DefaultValueFactory = _ => defaultValue

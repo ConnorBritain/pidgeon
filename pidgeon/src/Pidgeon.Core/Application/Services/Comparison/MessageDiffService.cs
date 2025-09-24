@@ -24,17 +24,20 @@ public class MessageDiffService : IMessageDiffService
     private readonly IMessageValidationService _validationService;
     private readonly IGenerationService _generationService;
     private readonly IAIAnalysisProvider? _aiProvider;
+    private readonly IProceduralAnalysisEngine? _proceduralEngine;
 
     public MessageDiffService(
         ILogger<MessageDiffService> logger,
         IMessageValidationService validationService,
         IGenerationService generationService,
-        IAIAnalysisProvider? aiProvider = null)
+        IAIAnalysisProvider? aiProvider = null,
+        IProceduralAnalysisEngine? proceduralEngine = null)
     {
         _logger = logger;
         _validationService = validationService;
         _aiProvider = aiProvider;
         _generationService = generationService;
+        _proceduralEngine = proceduralEngine;
     }
 
     public async Task<Result<MessageDiff>> CompareMessagesAsync(
@@ -89,6 +92,25 @@ public class MessageDiffService : IMessageDiffService
 
             // Generate algorithmic insights
             var insights = await GenerateAlgorithmicInsightsAsync(fieldDifferences.Value, context);
+
+            // Add procedural analysis insights if engine is available
+            if (_proceduralEngine != null && fieldDifferences.Value.Any())
+            {
+                var proceduralResult = await _proceduralEngine.AnalyzeAsync(fieldDifferences.Value, context, cancellationToken);
+                if (proceduralResult.IsSuccess)
+                {
+                    // Convert procedural analysis to insights
+                    var proceduralInsights = ConvertProceduralAnalysisToInsights(proceduralResult.Value);
+                    insights.AddRange(proceduralInsights);
+
+                    _logger.LogInformation("Added procedural analysis with score {Score:F2} and {Count} recommendations",
+                        proceduralResult.Value.ProceduralScore, proceduralResult.Value.Recommendations.Count);
+                }
+                else
+                {
+                    _logger.LogWarning("Procedural analysis failed: {Error}", proceduralResult.Error);
+                }
+            }
             
             // Enhance with AI insights if provider is available and enabled
             _logger.LogInformation("AI Analysis Check - EnableAIAnalysis: {EnableAI}, _aiProvider: {HasProvider}", 
@@ -761,5 +783,96 @@ public class MessageDiffService : IMessageDiffService
             ("PID", 1) => false, // Set ID is optional in most cases
             _ => false
         };
+    }
+
+    /// <summary>
+    /// Converts procedural analysis results into analysis insights for consistent display.
+    /// </summary>
+    private List<AnalysisInsight> ConvertProceduralAnalysisToInsights(ProceduralAnalysisResult proceduralResult)
+    {
+        var insights = new List<AnalysisInsight>();
+
+        // Add constraint validation insights if there are violations
+        if (proceduralResult.ConstraintValidation.ViolationCount > 0)
+        {
+            insights.Add(new AnalysisInsight
+            {
+                InsightType = InsightType.ComplianceIssue,
+                Title = "Constraint Validation Issues",
+                Description = $"Found {proceduralResult.ConstraintValidation.ViolationCount} constraint violations with {proceduralResult.ConstraintValidation.ComplianceScore:P1} compliance score",
+                RelatedFields = proceduralResult.ConstraintValidation.Violations.Select(v => v.FieldPath).ToList(),
+                Confidence = proceduralResult.ConstraintValidation.ComplianceScore,
+                Severity = proceduralResult.ConstraintValidation.ViolationCount > 5 ? InsightSeverity.High : InsightSeverity.Medium,
+                HealthcareCategory = HealthcareCategory.Administrative,
+                RecommendedAction = "Review field values against standard constraints",
+                AnalysisSource = new AnalysisSource
+                {
+                    SourceType = AnalysisSourceType.Algorithmic,
+                    EngineName = "Pidgeon Procedural Analysis Engine",
+                    Version = proceduralResult.Metadata.EngineVersion,
+                    IsLocal = true,
+                    ProcessingTime = proceduralResult.Metadata.ExecutionTime
+                }
+            });
+        }
+
+        // Add demographic analysis insights if there are quality issues
+        if (proceduralResult.DemographicAnalysis.QualityScore < 1.0 && proceduralResult.DemographicAnalysis.Issues.Any())
+        {
+            insights.Add(new AnalysisInsight
+            {
+                InsightType = InsightType.DataQuality,
+                Title = "Demographic Data Quality Issues",
+                Description = $"Demographic data quality score: {proceduralResult.DemographicAnalysis.QualityScore:P1} ({proceduralResult.DemographicAnalysis.Issues.Count} issues found)",
+                RelatedFields = proceduralResult.DemographicAnalysis.Issues.Select(i => i.FieldPath).Distinct().ToList(),
+                Confidence = 1.0 - proceduralResult.DemographicAnalysis.QualityScore,
+                Severity = proceduralResult.DemographicAnalysis.QualityScore < 0.7 ? InsightSeverity.Medium : InsightSeverity.Low,
+                HealthcareCategory = HealthcareCategory.PatientIdentification,
+                RecommendedAction = "Validate demographic fields against standard formats",
+                AnalysisSource = new AnalysisSource
+                {
+                    SourceType = AnalysisSourceType.Algorithmic,
+                    EngineName = "Pidgeon Procedural Analysis Engine",
+                    Version = proceduralResult.Metadata.EngineVersion,
+                    IsLocal = true,
+                    ProcessingTime = proceduralResult.Metadata.ExecutionTime
+                }
+            });
+        }
+
+        // Add clinical impact insights if impact level is significant
+        if (proceduralResult.ClinicalImpact.ImpactLevel > ClinicalImpactLevel.None)
+        {
+            var severity = proceduralResult.ClinicalImpact.ImpactLevel switch
+            {
+                ClinicalImpactLevel.Critical => InsightSeverity.High,
+                ClinicalImpactLevel.High => InsightSeverity.High,
+                ClinicalImpactLevel.Moderate => InsightSeverity.Medium,
+                _ => InsightSeverity.Low
+            };
+
+            insights.Add(new AnalysisInsight
+            {
+                InsightType = InsightType.WorkflowInsight,
+                Title = $"Clinical Impact Assessment: {proceduralResult.ClinicalImpact.ImpactLevel}",
+                Description = $"Changes may affect patient care (Safety: {proceduralResult.ClinicalImpact.PatientSafetyScore:P0}, Quality: {proceduralResult.ClinicalImpact.CareQualityScore:P0}, Operations: {proceduralResult.ClinicalImpact.OperationalScore:P0})",
+                RelatedFields = proceduralResult.ClinicalImpact.ImpactAreas.Select(a => a.Area).ToList(),
+                Confidence = Math.Max(proceduralResult.ClinicalImpact.PatientSafetyScore,
+                    Math.Max(proceduralResult.ClinicalImpact.CareQualityScore, proceduralResult.ClinicalImpact.OperationalScore)),
+                Severity = severity,
+                HealthcareCategory = HealthcareCategory.ClinicalData,
+                RecommendedAction = proceduralResult.ClinicalImpact.ClinicalRecommendations.FirstOrDefault() ?? "Review clinical impact with healthcare staff",
+                AnalysisSource = new AnalysisSource
+                {
+                    SourceType = AnalysisSourceType.Algorithmic,
+                    EngineName = "Pidgeon Procedural Analysis Engine",
+                    Version = proceduralResult.Metadata.EngineVersion,
+                    IsLocal = true,
+                    ProcessingTime = proceduralResult.Metadata.ExecutionTime
+                }
+            });
+        }
+
+        return insights;
     }
 }

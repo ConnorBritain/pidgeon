@@ -35,7 +35,7 @@ public class WorkflowCommand : CommandBuilderBase
 
     public override Command CreateCommand()
     {
-        var command = new Command("workflow", "🔒 Pro: Interactive workflow wizard for multi-step healthcare scenarios");
+        var command = new Command("workflow", "⚠️  Beta: Interactive workflow wizard for multi-step healthcare scenarios");
 
         // Add subcommands
         command.Add(CreateWizardCommand());
@@ -49,11 +49,11 @@ public class WorkflowCommand : CommandBuilderBase
 
     private Command CreateWizardCommand()
     {
-        var nameOption = CreateNullableOption("--name", "Name for the workflow scenario");
-        var templateOption = CreateNullableOption("--template", "Start from a template");
+        var nameOption = CreateNullableOption("--name", "-n", "Name for the workflow scenario");
+        var templateOption = CreateNullableOption("--template", "-t", "Start from a template");
         var skipProCheckFlag = CreateFlag("--skip-pro-check", "Skip Pro tier validation (development only)");
 
-        var command = new Command("wizard", "🔒 Pro: Interactive guided workflow creation")
+        var command = new Command("wizard", "⚠️  Beta: Interactive guided workflow creation")
         {
             nameOption, templateOption, skipProCheckFlag
         };
@@ -107,7 +107,7 @@ public class WorkflowCommand : CommandBuilderBase
 
     private Command CreateListCommand()
     {
-        var formatOption = CreateNullableOption("--format", "Output format (table|json, default: table)");
+        var formatOption = CreateNullableOption("--format", "-f", "Output format (table|json, default: table)");
 
         var command = new Command("list", "List available workflow scenarios and templates")
         {
@@ -149,7 +149,7 @@ public class WorkflowCommand : CommandBuilderBase
         var nameOption = CreateRequiredOption("--name", "Name of workflow scenario to run");
         var skipProCheckFlag = CreateFlag("--skip-pro-check", "Skip Pro tier validation (development only)");
 
-        var command = new Command("run", "🔒 Pro: Execute a workflow scenario")
+        var command = new Command("run", "⚠️  Beta: Execute a workflow scenario")
         {
             nameOption, skipProCheckFlag
         };

@@ -103,7 +103,7 @@ internal class GenerationService : IGenerationService
             random);
 
         var genderCode = genderResult.IsSuccess ? genderResult.Value?.ToString() : "U";
-        var gender = ParseGender(genderCode);
+        var gender = ParseGender(genderCode ?? "U");
 
         // Generate patient identifier with HL7 constraints (PID.3)
         var identifierResult = await _constraintResolver.GenerateConstrainedValueAsync(
@@ -158,7 +158,7 @@ internal class GenerationService : IGenerationService
 
         var patient = new Patient
         {
-            Id = mrn, // Use MRN as the primary ID
+            Id = mrn ?? "UNK", // Use MRN as the primary ID
             MedicalRecordNumber = mrn,
             Name = PersonName.Create(lastName, firstName),
             Gender = gender,

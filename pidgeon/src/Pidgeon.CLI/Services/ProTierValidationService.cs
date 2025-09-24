@@ -40,6 +40,13 @@ public class ProTierValidationService
     {
         try
         {
+            // Beta launch: All features available for testing and feedback collection
+            _logger.LogInformation("Feature access granted for beta launch: {Feature}", feature);
+            return Result.Success();
+
+            // Note: Original subscription validation logic preserved below for future re-enablement
+            #pragma warning disable CS0162 // Unreachable code detected
+
             // Development bypass
             if (skipProCheck)
             {
@@ -56,6 +63,8 @@ public class ProTierValidationService
             // Format the error message for CLI display
             var formattedError = FormatSubscriptionErrorForCLI(validationResult.Error.Message, feature);
             return Result.Failure(formattedError);
+
+            #pragma warning restore CS0162 // Unreachable code detected
         }
         catch (Exception ex)
         {

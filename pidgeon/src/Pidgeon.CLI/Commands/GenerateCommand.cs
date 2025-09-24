@@ -46,15 +46,15 @@ public class GenerateCommand : CommandBuilderBase
         HealthcareCompletions.AddSmartCompletionsToArgument(messageTypeArg);
         
         // Options
-        var countOption = CreateIntegerOption("--count", "Number of messages to generate", 1);
-        var outputOption = CreateNullableOption("--output", "Output file path (optional, defaults to console)");
-        var formatOption = CreateOptionalOption("--format", "Output format: auto|hl7|json|ndjson", "auto");
+        var countOption = CreateIntegerOption("--count", "-c", "Number of messages to generate", 1);
+        var outputOption = CreateNullableOption("--output", "-o", "Output file path (optional, defaults to console)");
+        var formatOption = CreateOptionalOption("--format", "-f", "Output format: auto|hl7|json|ndjson", "auto");
         HealthcareCompletions.AddFormatCompletions(formatOption);
 
-        var modeOption = CreateOptionalOption("--mode", "Generation mode: procedural|local-ai|api-ai", "procedural");
+        var modeOption = CreateOptionalOption("--mode", "-m", "Generation mode: procedural|model|api", "procedural");
         HealthcareCompletions.AddGenerationModeCompletions(modeOption);
-        var seedOption = CreateNullableOption("--seed", "Deterministic seed for reproducible data");
-        var vendorOption = CreateNullableOption("--vendor", "Apply vendor pattern (e.g., epic, cerner, meditech)");
+        var seedOption = CreateNullableOption("--seed", "-s", "Deterministic seed for reproducible data");
+        var vendorOption = CreateNullableOption("--vendor", "-v", "Apply vendor pattern (e.g., epic, cerner, meditech)");
         HealthcareCompletions.AddVendorCompletions(vendorOption);
         var sessionOption = CreateNullableOption("--session", "Use specific session (overrides current session)");
         var noSessionOption = CreateBooleanOption("--no-session", "Force pure random generation (ignore current session)");
@@ -116,11 +116,13 @@ public class GenerateCommand : CommandBuilderBase
                 // Determine which session to use (smart session management)
                 string? sessionToUse = await DetermineSessionAsync(sessionOverride, noSession, cancellationToken);
 
-                // Validate Pro features if needed
-                if ((mode == "local-ai" || mode == "api-ai") && !IsProFeatureAvailable())
+                // Check AI mode availability
+                if (mode == "model" || mode == "api")
                 {
-                    Console.WriteLine("AI generation modes require Pidgeon Pro. Using procedural mode.");
-                    Console.WriteLine("Upgrade at: pidgeon login --pro");
+                    var modeDesc = mode == "model" ? "Local AI models" : "Cloud AI APIs";
+                    Console.WriteLine($"⚠️  {modeDesc} are in beta development. Check documentation and release notes for more information.");
+                    Console.WriteLine("💡 You can try it, but ensure you have recommended specs or use our secure cloud AI APIs for performance.");
+                    Console.WriteLine("    Using procedural mode for now.");
                     mode = "procedural";
                 }
 
@@ -220,9 +222,4 @@ public class GenerateCommand : CommandBuilderBase
         return await _sessionHelper.GetCurrentSessionAsync(cancellationToken);
     }
 
-    private static bool IsProFeatureAvailable()
-    {
-        // TODO: Replace with actual license validation
-        return false;
-    }
 }

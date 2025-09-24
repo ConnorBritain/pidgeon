@@ -43,7 +43,7 @@ public class DiffCommand : CommandBuilderBase
 
     public override Command CreateCommand()
     {
-        var command = new Command("diff", "🔒 Pro: Compare two artifacts (files or folders). Field-aware for HL7; JSON-tree for FHIR. Emits hints.");
+        var command = new Command("diff", "⚠️  Beta: Compare two artifacts (files or folders). Field-aware for HL7; JSON-tree for FHIR. Emits hints.");
 
         // Positional arguments for natural usage: pidgeon diff file1 file2
         var pathsArgument = new Argument<string[]>("paths")
@@ -53,17 +53,17 @@ public class DiffCommand : CommandBuilderBase
         };
 
         // Optional explicit flags for when users want to be specific
-        var leftOption = CreateNullableOption("--left", "Explicitly specify baseline file/folder (overrides positional)");
-        var rightOption = CreateNullableOption("--right", "Explicitly specify candidate file/folder (overrides positional)");
-        var ignoreOption = CreateNullableOption("--ignore", "Comma-list of fields/segments to ignore (e.g., MSH-7, PID.3[*].assigningAuthority)");
+        var leftOption = CreateNullableOption("--left", "-l", "Explicitly specify baseline file/folder (overrides positional)");
+        var rightOption = CreateNullableOption("--right", "-r", "Explicitly specify candidate file/folder (overrides positional)");
+        var ignoreOption = CreateNullableOption("--ignore", "-i", "Comma-list of fields/segments to ignore (e.g., MSH-7, PID.3[*].assigningAuthority)");
         HealthcareCompletions.AddFieldPathCompletions(ignoreOption);
-        var reportOption = CreateNullableOption("--report", "HTML/JSON diff report with triage hints");
-        var severityOption = CreateOptionalOption("--severity", "hint|warn|error", "hint");
+        var reportOption = CreateNullableOption("--report", "-o", "HTML/JSON diff report with triage hints");
+        var severityOption = CreateOptionalOption("--severity", "-s", "hint|warn|error", "hint");
         HealthcareCompletions.AddSeverityCompletions(severityOption);
-        var aiOption = CreateBooleanOption("--ai", "Enable AI analysis (auto-detects best available model)");
-        var modelOption = CreateNullableOption("--model", "Specify AI model (e.g., tinyllama-chat, phi2-healthcare)");
+        var aiOption = CreateBooleanOption("--ai", "-a", "Enable AI analysis (auto-detects best available model)");
+        var modelOption = CreateNullableOption("--model", "-m", "Specify AI model (e.g., tinyllama-chat, phi2-healthcare)");
         var noAiOption = CreateBooleanOption("--no-ai", "Disable AI analysis (override config default)");
-        var basicModeOption = CreateBooleanOption("--basic", "Use basic diff mode (disables constraint validation and demographic analysis)");
+        var basicModeOption = CreateBooleanOption("--basic", "-b", "Use basic diff mode (disables constraint validation and demographic analysis)");
         var skipProCheckOption = CreateBooleanOption("--skip-pro-check", "Skip Pro tier check (for development/testing)");
 
         command.Add(pathsArgument);

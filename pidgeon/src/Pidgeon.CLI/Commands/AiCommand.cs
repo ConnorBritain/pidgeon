@@ -45,14 +45,8 @@ public class AiCommand : CommandBuilderBase
 
     public override Command CreateCommand()
     {
-        var command = new Command("ai", "⚠️  AI features coming in v0.1.0 (use --dev for early access)");
+        var command = new Command("ai", "⚠️  Beta: AI-powered healthcare message operations (hardware dependent)");
 
-        // Global development flag for early AI access
-        var devOption = CreateBooleanOption("--dev", "Enable development AI features (v0.1.0 preview)");
-        var devShortOption = CreateBooleanOption("-d", "Enable development AI features (v0.1.0 preview)");
-
-        command.Add(devOption);
-        command.Add(devShortOption);
 
         // Model management subcommands
         command.Add(CreateListCommand());
@@ -82,10 +76,6 @@ public class AiCommand : CommandBuilderBase
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            // Check if development mode is enabled
-            if (!CheckDevModeOrShowComingSoon(parseResult))
-                return 0;
-
             var showAvailable = parseResult.GetValue(availableOption);
             var showInstalled = parseResult.GetValue(installedOption);
             var simpleFormat = parseResult.GetValue(simpleOption);
@@ -298,10 +288,6 @@ public class AiCommand : CommandBuilderBase
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            // Check if development mode is enabled
-            if (!CheckDevModeOrShowComingSoon(parseResult))
-                return 0;
-
             var modelId = parseResult.GetValue(modelIdArg);
             var useBackground = parseResult.GetValue(backgroundOption);
             var checkStatus = parseResult.GetValue(statusOption);
@@ -414,10 +400,6 @@ public class AiCommand : CommandBuilderBase
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            // Check if development mode is enabled
-            if (!CheckDevModeOrShowComingSoon(parseResult))
-                return 0;
-
             var modelId = parseResult.GetValue(modelIdArg);
             if (string.IsNullOrEmpty(modelId))
             {
@@ -464,10 +446,6 @@ public class AiCommand : CommandBuilderBase
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            // Check if development mode is enabled
-            if (!CheckDevModeOrShowComingSoon(parseResult))
-                return 0;
-
             var modelId = parseResult.GetValue(modelIdArg);
             if (string.IsNullOrEmpty(modelId))
             {
@@ -540,7 +518,7 @@ public class AiCommand : CommandBuilderBase
 
     private Command CreateModifyCommand()
     {
-        var command = new Command("modify", "🔒 Pro: Modify a healthcare message using AI assistance");
+        var command = new Command("modify", "⚠️  Beta: Modify a healthcare message using AI assistance (hardware dependent)");
 
         // Primary argument - the file to modify (positional for ease)
         var fileArg = new Argument<string>("file")
@@ -574,10 +552,6 @@ public class AiCommand : CommandBuilderBase
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            // Check if development mode is enabled
-            if (!CheckDevModeOrShowComingSoon(parseResult))
-                return 0;
-
             var file = parseResult.GetValue(fileArg)!;
             var intent = parseResult.GetValue(intentOption);
             var wizard = parseResult.GetValue(wizardOption);
@@ -602,7 +576,7 @@ public class AiCommand : CommandBuilderBase
 
     private Command CreateSuggestCommand()
     {
-        var command = new Command("suggest-value", "🔒 Pro: Suggest a realistic value for a specific field");
+        var command = new Command("suggest", "⚠️  Beta: Suggest a realistic value for a specific field (hardware dependent)");
 
         var fieldArg = new Argument<string>("field")
         {
@@ -622,10 +596,6 @@ public class AiCommand : CommandBuilderBase
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            // Check if development mode is enabled
-            if (!CheckDevModeOrShowComingSoon(parseResult))
-                return 0;
-
             var field = parseResult.GetValue(fieldArg)!;
             var context = parseResult.GetValue(contextArg)!;
             var skipProCheck = parseResult.GetValue(skipProCheckOption);
@@ -638,7 +608,7 @@ public class AiCommand : CommandBuilderBase
 
     private Command CreateTemplateCommand()
     {
-        var command = new Command("template", "🔒 Pro: Apply a predefined modification template");
+        var command = new Command("template", "⚠️  Beta: Apply a predefined modification template (hardware dependent)");
 
         var fileArg = new Argument<string>("file")
         {
@@ -661,10 +631,6 @@ public class AiCommand : CommandBuilderBase
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
-            // Check if development mode is enabled
-            if (!CheckDevModeOrShowComingSoon(parseResult))
-                return 0;
-
             var file = parseResult.GetValue(fileArg)!;
             var template = parseResult.GetValue(templateArg)!;
             var output = parseResult.GetValue(outputOption);
@@ -1436,37 +1402,6 @@ public class AiCommand : CommandBuilderBase
         };
     }
 
-    /// <summary>
-    /// Checks if development mode is enabled and shows coming soon message if not.
-    /// </summary>
-    private static bool CheckDevModeOrShowComingSoon(ParseResult parseResult)
-    {
-        // Check if any dev flags are present in the command line
-        var commandLineTokens = parseResult.Tokens.Select(t => t.Value).ToArray();
-        var devEnabled = commandLineTokens.Contains("--dev") || commandLineTokens.Contains("-d");
-
-        if (!devEnabled)
-        {
-            Console.WriteLine();
-            Console.WriteLine("🚀 AI Features Coming Soon!");
-            Console.WriteLine();
-            Console.WriteLine("AI-powered healthcare message analysis and modification will be available in Pidgeon v0.1.0.");
-            Console.WriteLine();
-            Console.WriteLine("📅 Expected Release: Next update cycle");
-            Console.WriteLine("🔬 Early Access: Add --dev or -d flag to try experimental features");
-            Console.WriteLine("📢 Stay Updated: Run 'pidgeon info --version' to check for updates");
-            Console.WriteLine();
-            Console.WriteLine("🎯 Coming AI Features:");
-            Console.WriteLine("  • Intelligent message modification with healthcare context");
-            Console.WriteLine("  • Field value suggestions based on clinical best practices");
-            Console.WriteLine("  • Automated compliance checking and recommendations");
-            Console.WriteLine("  • Natural language to HL7 conversion assistance");
-            Console.WriteLine();
-            return false;
-        }
-
-        return true;
-    }
 
     /// <summary>
     /// Shows an animated progress indicator to reassure users that AI processing is active.

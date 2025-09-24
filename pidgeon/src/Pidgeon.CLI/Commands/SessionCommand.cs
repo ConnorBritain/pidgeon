@@ -102,7 +102,7 @@ public class SessionCommand : CommandBuilderBase
         {
             Description = "Name for the new session"
         };
-        var descriptionOption = CreateNullableOption("--description", "Description for the session");
+        var descriptionOption = CreateNullableOption("--description", "-d", "Description for the session");
 
         command.Add(nameArg);
         command.Add(descriptionOption);
@@ -225,7 +225,7 @@ public class SessionCommand : CommandBuilderBase
         {
             Description = "Output file path (JSON format)"
         };
-        var sessionOption = CreateNullableOption("--session", "Session to export (current if not specified)");
+        var sessionOption = CreateNullableOption("--session", "-s", "Session to export (current if not specified)");
 
         command.Add(fileArg);
         command.Add(sessionOption);
@@ -251,7 +251,7 @@ public class SessionCommand : CommandBuilderBase
         {
             Description = "Template file path (JSON format)"
         };
-        var nameOption = CreateNullableOption("--name", "Name for imported session (derived from file if not specified)");
+        var nameOption = CreateNullableOption("--name", "-n", "Name for imported session (derived from file if not specified)");
 
         command.Add(fileArg);
         command.Add(nameOption);

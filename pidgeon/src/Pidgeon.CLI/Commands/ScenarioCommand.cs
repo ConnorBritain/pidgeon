@@ -36,11 +36,11 @@ public class ScenarioCommand : CommandBuilderBase
             Description = "Clinical scenario type (admission-with-labs, diabetes-management, emergency-visit, etc.)"
         };
 
-        // Options  
-        var outputOption = CreateNullableOption("--output", "Output file path (optional, defaults to console)");
-        var seedOption = CreateNullableOption("--seed", "Deterministic seed for reproducible scenarios");
-        var formatOption = CreateOptionalOption("--format", "Output format: json|ndjson", "json");
-        var standardOption = CreateOptionalOption("--standard", "Healthcare standard: fhir|hl7|ncpdp", "fhir");
+        // Options with short flags
+        var outputOption = CreateNullableOption("--output", "-o", "Output file path (optional, defaults to console)");
+        var seedOption = CreateNullableOption("--seed", "-s", "Deterministic seed for reproducible scenarios");
+        var formatOption = CreateOptionalOption("--format", "-f", "Output format: json|ndjson", "json");
+        var standardOption = CreateOptionalOption("--standard", "-t", "Healthcare standard: fhir|hl7|ncpdp", "fhir");
 
         command.Add(scenarioTypeArg);
         command.Add(outputOption);

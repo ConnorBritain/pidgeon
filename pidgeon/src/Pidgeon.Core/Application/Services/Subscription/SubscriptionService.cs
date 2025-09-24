@@ -57,12 +57,13 @@ public class SubscriptionService : ISubscriptionService
             var config = configResult.Value;
 
             // TODO: Check for subscription key or license file
-            // For now, default to Free tier since config doesn't have subscription info yet
-            if (false) // !string.IsNullOrEmpty(config.DefaultAIProvider)
-            {
-                _logger.LogDebug("AI provider configured - assuming Professional tier");
-                return Result<SubscriptionTier>.Success(SubscriptionTier.Professional);
-            }
+            // Beta launch: Default to Free tier (all features enabled for testing)
+            // Future: Will check subscription configuration here
+            // if (!string.IsNullOrEmpty(config.DefaultAIProvider))
+            // {
+            //     _logger.LogDebug("AI provider configured - assuming Professional tier");
+            //     return Result<SubscriptionTier>.Success(SubscriptionTier.Professional);
+            // }
 
             // Default to Free tier
             _logger.LogDebug("No subscription indicators found - defaulting to Free tier");

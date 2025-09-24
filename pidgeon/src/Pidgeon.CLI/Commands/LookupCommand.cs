@@ -36,17 +36,17 @@ public class LookupCommand : CommandBuilderBase
         };
 
         // Options for different lookup modes
-        var searchOption = CreateNullableOption("--search", "Search across all standards for elements matching query");
-        var standardOption = CreateNullableOption("--standard", "Explicit standard (hl7v23, fhir-r4, ncpdp)");
-        var vendorOption = CreateNullableOption("--vendor", "Show vendor-specific variations (epic, cerner, allscripts)");
-        var formatOption = CreateOptionalOption("--format", "Output format: text|json|table", "text");
+        var searchOption = CreateNullableOption("--search", "-s", "Search across all standards for elements matching query");
+        var standardOption = CreateNullableOption("--standard", "-t", "Explicit standard (hl7v23, fhir-r4, ncpdp)");
+        var vendorOption = CreateNullableOption("--vendor", "-v", "Show vendor-specific variations (epic, cerner, allscripts)");
+        var formatOption = CreateOptionalOption("--format", "-f", "Output format: text|json|table", "text");
         var segmentsOption = CreateBooleanOption("--segments", "List all segments/resources in specified standard");
         var childrenOption = CreateBooleanOption("--children", "List child elements of specified path");
         var examplesOption = CreateBooleanOption("--examples", "Show detailed examples and usage patterns");
         var crossRefOption = CreateBooleanOption("--cross-ref", "Show cross-references to other standards");
-        
-        // Pro features
-        var interactiveOption = CreateBooleanOption("--interactive", "🔒 Pro: Interactive browsing mode with TUI");
+
+        // Beta features
+        var interactiveOption = CreateBooleanOption("--inter", "-i", "⚠️  Beta: Interactive TUI browsing mode (in development)");
 
         command.Add(pathArg);
         command.Add(searchOption);
@@ -74,11 +74,12 @@ public class LookupCommand : CommandBuilderBase
                 var showCrossRef = parseResult.GetValue(crossRefOption);
                 var interactive = parseResult.GetValue(interactiveOption);
 
-                // Check for Pro features
-                if (interactive && !IsProFeatureAvailable())
+                // Check for interactive TUI mode availability
+                if (interactive)
                 {
-                    Console.WriteLine("🔒 Interactive browsing mode requires Pidgeon Pro.");
-                    Console.WriteLine("   Upgrade at: pidgeon account upgrade");
+                    Console.WriteLine("⚠️  Interactive TUI browsing mode is currently in development.");
+                    Console.WriteLine("💡 This feature will provide a terminal-based interface for exploring healthcare standards.");
+                    Console.WriteLine("    For now, use standard lookup commands. Check release notes for updates.");
                     Console.WriteLine();
                 }
 
@@ -283,8 +284,8 @@ public class LookupCommand : CommandBuilderBase
         Console.WriteLine("  pidgeon lookup MSH.3 --vendor cerner      # Cerner implementation notes");
         Console.WriteLine();
         
-        Console.WriteLine("🔒 Pro Features:");
-        Console.WriteLine("  pidgeon lookup --interactive               # TUI browsing mode");
+        Console.WriteLine("⚠️  Beta Features:");
+        Console.WriteLine("  pidgeon lookup --inter                     # Visual terminal browser (in development)");
         Console.WriteLine("  pidgeon lookup PID.3 --cross-ref          # Cross-standard mappings");
         
         return 0;
@@ -433,9 +434,4 @@ public class LookupCommand : CommandBuilderBase
         return description.Substring(0, maxLength - 3) + "...";
     }
 
-    private static bool IsProFeatureAvailable()
-    {
-        // TODO: Implement actual license checking
-        return false;
-    }
 }

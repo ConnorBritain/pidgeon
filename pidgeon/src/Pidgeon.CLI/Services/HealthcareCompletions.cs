@@ -80,13 +80,13 @@ public static class HealthcareCompletions
     ];
 
     /// <summary>
-    /// Generation modes (with tier indicators).
+    /// Generation modes (beta features noted).
     /// </summary>
     public static readonly string[] GenerationModes =
     [
-        "procedural",      // Free
-        "local-ai",        // Pro
-        "api-ai"           // Pro/Enterprise
+        "procedural",      // Stable
+        "model",           // Beta (hardware dependent local models)
+        "api"              // Beta (cloud APIs in development)
     ];
 
     /// <summary>
