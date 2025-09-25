@@ -10,6 +10,7 @@ using Pidgeon.CLI.Extensions;
 using Pidgeon.CLI.Output;
 using Pidgeon.CLI.Services;
 using Pidgeon.Core.Extensions;
+using Pidgeon.Data;
 using System.CommandLine;
 using System.Reflection;
 
@@ -30,6 +31,9 @@ internal class Program
     {
         // Create the host builder with dependency injection
         var host = CreateHostBuilder(args).Build();
+
+        // Force load Pidgeon.Data assembly to make embedded resources available
+        _ = DataAssemblyMarker.AssemblyName;
 
         try
         {
@@ -108,7 +112,8 @@ internal class Program
             {
                 logging.ClearProviders();
                 logging.AddConsole();
-                logging.SetMinimumLevel(LogLevel.Information);
+                // Default to Warning level to avoid info spam, use --verbose for Information
+                logging.SetMinimumLevel(LogLevel.Warning);
             })
             .ConfigureServices((context, services) =>
             {
@@ -142,7 +147,7 @@ internal class Program
     {
         var rootCommand = new RootCommand("Pidgeon Healthcare Interoperability Platform")
         {
-            Description = "AI-augmented universal healthcare standards platform supporting HL7, FHIR, and NCPDP"
+            Description = "Universal healthcare standards platform supporting HL7, FHIR, and NCPDP"
         };
 
         // Add global options
@@ -168,4 +173,5 @@ internal class Program
 
         return rootCommand;
     }
+
 }

@@ -160,6 +160,12 @@ public class ConstraintResolver : IConstraintResolver
                 return ValidateBasic(value, constraints);
             }
 
+            // Handle null value for plugin validation
+            if (value == null)
+            {
+                return Result<bool>.Success(true); // Already checked required constraint above
+            }
+
             return await plugin.ValidateValueAsync(value, constraints);
         }
         catch (Exception ex)

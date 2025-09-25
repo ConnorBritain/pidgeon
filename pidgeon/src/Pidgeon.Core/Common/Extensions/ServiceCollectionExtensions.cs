@@ -73,8 +73,10 @@ public static class ServiceCollectionExtensions
         // Register subscription management system
         services.AddSubscriptionManagement();
 
+#if ENABLE_AI
         // Register AI intelligence services
         services.AddAIIntelligenceServices();
+#endif
 
         // Register search services for Find command
         services.AddSearchServices();
@@ -133,9 +135,10 @@ public static class ServiceCollectionExtensions
         
         // Register HL7 reference plugins for different versions
         services.AddHL7ReferencePlugin("2.3", "hl7v23", "HL7 v2.3");
-        services.AddHL7ReferencePlugin("2.4", "hl7v24", "HL7 v2.4");
-        services.AddHL7ReferencePlugin("2.5", "hl7v25", "HL7 v2.5");
-        services.AddHL7ReferencePlugin("2.5.1", "hl7v251", "HL7 v2.5.1");
+        // TODO: Add these when we have the data files
+        // services.AddHL7ReferencePlugin("2.4", "hl7v24", "HL7 v2.4");
+        // services.AddHL7ReferencePlugin("2.5", "hl7v25", "HL7 v2.5");
+        // services.AddHL7ReferencePlugin("2.5.1", "hl7v251", "HL7 v2.5.1");
         
         return services;
     }
@@ -222,6 +225,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+#if ENABLE_AI
     /// <summary>
     /// Registers AI intelligence services for message modification and analysis.
     /// </summary>
@@ -238,6 +242,7 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+#endif
 
     /// <summary>
     /// Registers search services for the Find command functionality.

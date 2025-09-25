@@ -114,7 +114,7 @@ public class MappingImportService
         return data;
     }
 
-    private async Task<MappingFileInfo> CreateMappingFileInfoAsync(string filePath, MappingFileType fileType)
+    private Task<MappingFileInfo> CreateMappingFileInfoAsync(string filePath, MappingFileType fileType)
     {
         var fileName = Path.GetFileName(filePath);
         var fileInfo = new FileInfo(filePath);
@@ -130,7 +130,7 @@ public class MappingImportService
         // TODO: Count actual rows by parsing - for now estimate from file size
         var estimatedRows = (int)(fileInfo.Length / 200); // Rough estimate
 
-        return new MappingFileInfo
+        return Task.FromResult(new MappingFileInfo
         {
             FilePath = filePath,
             FileName = fileName,
@@ -139,7 +139,7 @@ public class MappingImportService
             TargetType = targetType,
             RowCount = estimatedRows,
             LastModified = fileInfo.LastWriteTime
-        };
+        });
     }
 }
 

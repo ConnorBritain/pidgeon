@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- This is a data-only project, no executable output needed -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- Embed data files as resources for binary distribution -->
+  <ItemGroup>
+    <EmbeddedResource Include="standards\**\*.json">
+      <LogicalName>data.standards.%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="standards\**\*.md">
+      <LogicalName>data.standards.%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="interop\**\*">
+      <LogicalName>data.interop.%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="schema.sql">
+      <LogicalName>data.schema.sql</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

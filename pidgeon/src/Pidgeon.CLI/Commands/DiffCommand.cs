@@ -60,8 +60,8 @@ public class DiffCommand : CommandBuilderBase
         var reportOption = CreateNullableOption("--report", "-o", "HTML/JSON diff report with triage hints");
         var severityOption = CreateOptionalOption("--severity", "-s", "hint|warn|error", "hint");
         HealthcareCompletions.AddSeverityCompletions(severityOption);
-        var aiOption = CreateBooleanOption("--ai", "-a", "Enable AI analysis (auto-detects best available model)");
-        var modelOption = CreateNullableOption("--model", "-m", "Specify AI model (e.g., tinyllama-chat, phi2-healthcare)");
+        var aiOption = CreateBooleanOption("--ai", "-a", "Enable AI analysis (coming in future release)");
+        var modelOption = CreateNullableOption("--model", "-m", "Specify AI model (coming in future release)");
         var noAiOption = CreateBooleanOption("--no-ai", "Disable AI analysis (override config default)");
         var basicModeOption = CreateBooleanOption("--basic", "-b", "Use basic diff mode (disables constraint validation and demographic analysis)");
         var skipProCheckOption = CreateBooleanOption("--skip-pro-check", "Skip Pro tier check (for development/testing)");

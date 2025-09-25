@@ -232,7 +232,7 @@ public class FHIRFieldPathPlugin : IStandardFieldPathPlugin
         });
     }
 
-    private async Task<Result> ValidateResourceTypeAsync(string resourceType, string messageType)
+    private Task<Result> ValidateResourceTypeAsync(string resourceType, string messageType)
     {
         try
         {
@@ -241,16 +241,16 @@ public class FHIRFieldPathPlugin : IStandardFieldPathPlugin
 
             if (!isValidResource)
             {
-                return Result.Failure($"Semantic path is for '{resourceType}' resource but message type is '{messageType}'");
+                return Task.FromResult(Result.Failure($"Semantic path is for '{resourceType}' resource but message type is '{messageType}'"));
             }
 
-            return Result.Success();
+            return Task.FromResult(Result.Success());
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error validating resource type {ResourceType} for message {MessageType}",
                 resourceType, messageType);
-            return Result.Success(); // Permissive fallback on error
+            return Task.FromResult(Result.Success()); // Permissive fallback on error
         }
     }
 

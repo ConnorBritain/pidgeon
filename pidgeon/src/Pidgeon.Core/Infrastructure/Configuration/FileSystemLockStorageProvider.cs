@@ -33,7 +33,7 @@ public class FileSystemLockStorageProvider : ILockStorageProvider
         };
     }
 
-    public async Task<Result> InitializeAsync(CancellationToken cancellationToken = default)
+    public Task<Result> InitializeAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -50,12 +50,12 @@ public class FileSystemLockStorageProvider : ILockStorageProvider
                 _logger.LogInformation("Created lock sessions directory: {Directory}", lockSessionsDir);
             }
 
-            return Result.Success();
+            return Task.FromResult(Result.Success());
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to initialize lock storage provider");
-            return Result.Failure($"Failed to initialize storage: {ex.Message}");
+            return Task.FromResult(Result.Failure($"Failed to initialize storage: {ex.Message}"));
         }
     }
 

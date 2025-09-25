@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Caching.Memory;
@@ -32,7 +33,7 @@ public class HL7ConstraintResolverPlugin : IConstraintResolverPlugin
     public string StandardId => "hl7v23";
     public int Priority => 100;
 
-    private string? _dataBasePath;
+    private Assembly? _dataAssembly;
 
     public HL7ConstraintResolverPlugin(
         IStandardReferenceService referenceService,
@@ -42,6 +43,20 @@ public class HL7ConstraintResolverPlugin : IConstraintResolverPlugin
         _referenceService = referenceService ?? throw new ArgumentNullException(nameof(referenceService));
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+        // Find the data assembly containing embedded resources
+        var resourcePrefix = "data.standards.hl7v23";
+        _dataAssembly = AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(a => HasEmbeddedResources(a, resourcePrefix));
+
+        if (_dataAssembly != null)
+        {
+            _logger.LogInformation("HL7ConstraintResolverPlugin using embedded resources from {Assembly}", _dataAssembly.GetName().Name);
+        }
+        else
+        {
+            _logger.LogWarning("HL7ConstraintResolverPlugin could not find embedded resources, will use file system fallback");
+        }
     }
 
     public bool CanResolve(string context)
@@ -186,13 +201,12 @@ public class HL7ConstraintResolverPlugin : IConstraintResolverPlugin
     {
         try
         {
-            // Load the segment JSON file directly
+            // Load the segment JSON from embedded resources or file system
             var segmentName = segmentElement.Path.ToLowerInvariant();
-            var segmentFilePath = GetSegmentFilePath(segmentName);
+            var json = await LoadSegmentDataAsync(segmentName);
 
-            if (File.Exists(segmentFilePath))
+            if (!string.IsNullOrEmpty(json))
             {
-                var json = await File.ReadAllTextAsync(segmentFilePath);
                 var jsonDoc = JsonDocument.Parse(json);
                 var root = jsonDoc.RootElement;
 
@@ -243,35 +257,111 @@ public class HL7ConstraintResolverPlugin : IConstraintResolverPlugin
         return string.IsNullOrEmpty(tableValue) ? null : tableValue;
     }
 
-    private string GetSegmentFilePath(string segmentName)
+    private async Task<string?> LoadSegmentDataAsync(string segmentName)
     {
-        EnsureDataPathInitialized();
-        return Path.Combine(_dataBasePath!, "segments", $"{segmentName}.json");
+        if (_dataAssembly != null)
+        {
+            var resourceName = $"data.standards.hl7v23.segments.{segmentName}.json";
+            try
+            {
+                using var stream = _dataAssembly.GetManifestResourceStream(resourceName);
+                if (stream != null)
+                {
+                    using var reader = new StreamReader(stream);
+                    return await reader.ReadToEndAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Error loading embedded segment resource {ResourceName}", resourceName);
+            }
+        }
+
+        // Fallback to file system for development
+        try
+        {
+            var segmentFilePath = GetSegmentFilePathFallback(segmentName);
+            if (File.Exists(segmentFilePath))
+            {
+                return await File.ReadAllTextAsync(segmentFilePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error loading segment file for {SegmentName}", segmentName);
+        }
+
+        return null;
     }
 
-    private string GetTableFilePath(string tableId)
+    private async Task<string?> LoadTableDataAsync(string tableId)
     {
-        EnsureDataPathInitialized();
-        return Path.Combine(_dataBasePath!, "tables", $"{tableId}.json");
+        if (_dataAssembly != null)
+        {
+            var resourceName = $"data.standards.hl7v23.tables.{tableId}.json";
+            try
+            {
+                using var stream = _dataAssembly.GetManifestResourceStream(resourceName);
+                if (stream != null)
+                {
+                    using var reader = new StreamReader(stream);
+                    return await reader.ReadToEndAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Error loading embedded table resource {ResourceName}", resourceName);
+            }
+        }
+
+        // Fallback to file system for development
+        try
+        {
+            var tableFilePath = GetTableFilePathFallback(tableId);
+            if (File.Exists(tableFilePath))
+            {
+                return await File.ReadAllTextAsync(tableFilePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error loading table file for {TableId}", tableId);
+        }
+
+        return null;
     }
 
-    private void EnsureDataPathInitialized()
+    private string GetSegmentFilePathFallback(string segmentName)
     {
-        if (_dataBasePath != null)
-            return;
-
-        // Try multiple paths to find data directory
         var possiblePaths = new[]
         {
-            Path.Combine(AppContext.BaseDirectory, "data", "standards", "hl7v23"),
-            Path.Combine(Directory.GetCurrentDirectory(), "data", "standards", "hl7v23"),
-            Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "data", "standards", "hl7v23")
+            Path.Combine(AppContext.BaseDirectory, "data", "standards", "hl7v23", "segments", $"{segmentName}.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "data", "standards", "hl7v23", "segments", $"{segmentName}.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "data", "standards", "hl7v23", "segments", $"{segmentName}.json")
         };
 
-        _dataBasePath = possiblePaths.FirstOrDefault(Directory.Exists)
-                        ?? possiblePaths[0]; // fallback to first path
+        return possiblePaths.FirstOrDefault(File.Exists) ?? possiblePaths[0];
+    }
 
-        _logger.LogDebug("HL7ConstraintResolverPlugin using data path: {DataPath}", _dataBasePath);
+    private string GetTableFilePathFallback(string tableId)
+    {
+        var possiblePaths = new[]
+        {
+            Path.Combine(AppContext.BaseDirectory, "data", "standards", "hl7v23", "tables", $"{tableId}.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "data", "standards", "hl7v23", "tables", $"{tableId}.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "data", "standards", "hl7v23", "tables", $"{tableId}.json")
+        };
+
+        return possiblePaths.FirstOrDefault(File.Exists) ?? possiblePaths[0];
+    }
+
+    /// <summary>
+    /// Checks if embedded resources exist for the specified resource prefix.
+    /// </summary>
+    private static bool HasEmbeddedResources(Assembly assembly, string resourcePrefix)
+    {
+        var resourceNames = assembly.GetManifestResourceNames();
+        return resourceNames.Any(name => name.StartsWith(resourcePrefix, StringComparison.OrdinalIgnoreCase));
     }
 
     private string? ExtractTableReference(Pidgeon.Core.Domain.Reference.Entities.StandardElement fieldElement)
@@ -346,7 +436,7 @@ public class HL7ConstraintResolverPlugin : IConstraintResolverPlugin
         var cacheKey = $"hl7-table:{tableId}";
         if (_cache.TryGetValue<List<string>>(cacheKey, out var cachedValues))
         {
-            if (cachedValues!.Any())
+            if (cachedValues != null && cachedValues.Any())
             {
                 return Result<object>.Success(cachedValues[random.Next(cachedValues.Count)]);
             }
@@ -391,10 +481,9 @@ public class HL7ConstraintResolverPlugin : IConstraintResolverPlugin
 
         try
         {
-            var tableFilePath = GetTableFilePath(tableId);
-            if (File.Exists(tableFilePath))
+            var json = await LoadTableDataAsync(tableId);
+            if (!string.IsNullOrEmpty(json))
             {
-                var json = await File.ReadAllTextAsync(tableFilePath);
                 var jsonDoc = JsonDocument.Parse(json);
                 var root = jsonDoc.RootElement;
 

@@ -1,4 +1,5 @@
 using System.Data;
+using System.Reflection;
 using Microsoft.Data.Sqlite;
 using Pidgeon.Core.Domain.Interop;
 
@@ -44,62 +45,88 @@ public class SqliteInteropDatabase : IDisposable
     }
 
     /// <summary>
-    /// Creates database schema from complete_schema.sql file.
+    /// Creates database schema from embedded schema.sql file.
     /// </summary>
     private async Task CreateSchemaAsync()
     {
-        // Look for complete_schema.sql in pidgeon/data/
-        var projectPath = FindProjectRoot();
-        var schemaPath = Path.Combine(projectPath, "data", "complete_schema.sql");
-
-        if (!File.Exists(schemaPath))
+        var schemaSql = await LoadSchemaFromEmbeddedResourcesAsync();
+        if (string.IsNullOrEmpty(schemaSql))
         {
-            // Fallback: look for original schema.sql
-            schemaPath = Path.Combine(projectPath, "data", "schema.sql");
+            throw new FileNotFoundException("Schema file not found in embedded resources. Looking for data.schema.sql");
         }
 
-        if (!File.Exists(schemaPath))
-        {
-            throw new FileNotFoundException($"Schema file not found at {schemaPath}. Looking for complete_schema.sql or schema.sql");
-        }
-
-        var schemaSql = await File.ReadAllTextAsync(schemaPath);
         await ExecuteNonQueryAsync(schemaSql);
     }
 
     /// <summary>
-    /// Finds the pidgeon project root directory by looking for Pidgeon.sln.
+    /// Loads schema SQL from embedded resources or file system fallback.
     /// </summary>
-    private static string FindProjectRoot()
+    private async Task<string?> LoadSchemaFromEmbeddedResourcesAsync()
     {
-        var currentDir = Directory.GetCurrentDirectory();
-        while (currentDir != null)
+        // Try to find embedded schema from data assembly
+        var dataAssembly = FindDataAssembly();
+        if (dataAssembly != null)
         {
-            // Look for pidgeon root (has Pidgeon.sln file)
-            if (File.Exists(Path.Combine(currentDir, "Pidgeon.sln")))
+            var resourceName = "data.schema.sql";
+            try
             {
-                return currentDir;
-            }
-
-            // Keep going up to find pidgeon directory
-            currentDir = Directory.GetParent(currentDir)?.FullName;
-        }
-
-        // Fallback: look for pidgeon directory in current path
-        var pathParts = Directory.GetCurrentDirectory().Split(Path.DirectorySeparatorChar);
-        for (int i = pathParts.Length - 1; i >= 0; i--)
-        {
-            if (pathParts[i] == "pidgeon")
-            {
-                var pidgeonPath = string.Join(Path.DirectorySeparatorChar.ToString(), pathParts.Take(i + 1));
-                if (Directory.Exists(pidgeonPath))
+                using var stream = dataAssembly.GetManifestResourceStream(resourceName);
+                if (stream != null)
                 {
-                    return pidgeonPath;
+                    using var reader = new StreamReader(stream);
+                    return await reader.ReadToEndAsync();
                 }
             }
+            catch
+            {
+                // Continue to fallback
+            }
         }
 
-        return Directory.GetCurrentDirectory();
+        // Fallback to file system for development
+        return await LoadSchemaFromFileSystemFallbackAsync();
+    }
+
+    /// <summary>
+    /// Fallback method to load schema from file system during development.
+    /// </summary>
+    private async Task<string?> LoadSchemaFromFileSystemFallbackAsync()
+    {
+        var possiblePaths = new[]
+        {
+            Path.Combine(AppContext.BaseDirectory, "data", "schema.sql"),
+            Path.Combine(Directory.GetCurrentDirectory(), "data", "schema.sql"),
+            Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "data", "schema.sql")
+        };
+
+        foreach (var path in possiblePaths)
+        {
+            if (File.Exists(path))
+            {
+                return await File.ReadAllTextAsync(path);
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Finds the assembly containing embedded data resources.
+    /// </summary>
+    private static Assembly? FindDataAssembly()
+    {
+        var resourcePrefix = "data.";
+        return AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(a => HasEmbeddedResources(a, resourcePrefix));
+    }
+
+    /// <summary>
+    /// Checks if embedded resources exist for the specified resource prefix.
+    /// </summary>
+    private static bool HasEmbeddedResources(Assembly assembly, string resourcePrefix)
+    {
+        var resourceNames = assembly.GetManifestResourceNames();
+        return resourceNames.Any(name => name.StartsWith(resourcePrefix, StringComparison.OrdinalIgnoreCase));
     }
 
     // ============================================================================

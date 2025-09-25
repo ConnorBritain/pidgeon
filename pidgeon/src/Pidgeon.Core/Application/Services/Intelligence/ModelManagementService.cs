@@ -49,13 +49,20 @@ public class ModelManagementService : IModelManagementService
         }
         else if (OperatingSystem.IsMacOS())
         {
-            // macOS: Use system-wide Application Support (not synced by iCloud)
-            return "/Library/Application Support/Pidgeon/models";
+            // macOS: Use user Application Support directory
+            var userAppSupport = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            return Path.Combine(userAppSupport, "Pidgeon", "models");
         }
         else
         {
-            // Linux: Use standard system directory
-            return "/opt/pidgeon/models";
+            // Linux: Use XDG Base Directory Specification
+            var xdgDataHome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+            if (string.IsNullOrEmpty(xdgDataHome))
+            {
+                var homeDir = Environment.GetEnvironmentVariable("HOME") ?? "/tmp";
+                xdgDataHome = Path.Combine(homeDir, ".local", "share");
+            }
+            return Path.Combine(xdgDataHome, "pidgeon", "models");
         }
     }
 

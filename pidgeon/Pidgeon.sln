@@ -9,10 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pidgeon.Core", "src\Pidgeon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pidgeon.CLI", "src\Pidgeon.CLI\Pidgeon.CLI.csproj", "{EA5FDCFB-2A8A-40CE-896C-A17BFA217D4B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pidgeon.Core.Tests", "tests\unit\Pidgeon.Core.Tests\Pidgeon.Core.Tests.csproj", "{8D40F1EF-2637-41A8-8B93-F9F6B5154442}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,18 +43,6 @@ Global
 		{EA5FDCFB-2A8A-40CE-896C-A17BFA217D4B}.Release|x64.Build.0 = Release|Any CPU
 		{EA5FDCFB-2A8A-40CE-896C-A17BFA217D4B}.Release|x86.ActiveCfg = Release|Any CPU
 		{EA5FDCFB-2A8A-40CE-896C-A17BFA217D4B}.Release|x86.Build.0 = Release|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Debug|x64.Build.0 = Debug|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Debug|x86.Build.0 = Debug|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Release|x64.ActiveCfg = Release|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Release|x64.Build.0 = Release|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Release|x86.ActiveCfg = Release|Any CPU
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,7 +50,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{CADB50E1-4E44-4DF2-838F-0633F69EA046} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{EA5FDCFB-2A8A-40CE-896C-A17BFA217D4B} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
-		{8D40F1EF-2637-41A8-8B93-F9F6B5154442} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4479A374-3D51-44BD-B51B-64D0E6714EFF}

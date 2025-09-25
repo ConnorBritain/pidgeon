@@ -1,0 +1,110 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PIDGEON_CLI_PROJECT: 'pidgeon/src/Pidgeon.CLI/Pidgeon.CLI.csproj'
+  PIDGEON_CORE_PROJECT: 'pidgeon/src/Pidgeon.Core/Pidgeon.Core.csproj'
+  PIDGEON_TESTS_PROJECT: 'pidgeon/tests/Pidgeon.Tests/Pidgeon.Tests.csproj'
+
+jobs:
+  test:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore pidgeon/Pidgeon.sln
+
+    - name: Build solution
+      run: dotnet build pidgeon/Pidgeon.sln --configuration Release --no-restore
+
+    - name: Run tests
+      run: dotnet test pidgeon/Pidgeon.sln --configuration Release --no-build --verbosity normal --logger trx --results-directory TestResults
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.os }}
+        path: TestResults/*.trx
+
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore pidgeon/Pidgeon.sln
+
+    - name: Build solution
+      run: dotnet build pidgeon/Pidgeon.sln --configuration Release --no-restore
+
+    - name: Check formatting
+      run: dotnet format pidgeon/Pidgeon.sln --verify-no-changes --verbosity diagnostic
+
+  build-quick:
+    name: Quick Build Test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Test single-file build
+      run: |
+        dotnet publish ${{ env.PIDGEON_CLI_PROJECT }} \
+          --configuration Release \
+          --runtime linux-x64 \
+          --self-contained true \
+          --output ./test-build \
+          /p:PublishSingleFile=true \
+          /p:EnableCompressionInSingleFile=true \
+          /p:DebugType=embedded
+
+    - name: Verify executable
+      run: |
+        chmod +x ./test-build/pidgeon
+        ./test-build/pidgeon --version
+        ./test-build/pidgeon --help
+
+    - name: Check binary size
+      run: |
+        BINARY_SIZE=$(du -m ./test-build/pidgeon | cut -f1)
+        echo "Binary size: ${BINARY_SIZE}MB"
+        if [ $BINARY_SIZE -gt 100 ]; then
+          echo "❌ Binary too large: ${BINARY_SIZE}MB (max: 100MB)"
+          exit 1
+        else
+          echo "✅ Binary size acceptable: ${BINARY_SIZE}MB"
+        fi

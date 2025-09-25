@@ -25,9 +25,7 @@
     <AssemblyDescription>Healthcare data generation, validation, and testing platform</AssemblyDescription>
     <AssemblyCompany>Pidgeon Health</AssemblyCompany>
     <AssemblyProduct>Pidgeon CLI</AssemblyProduct>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-    <InformationalVersion>1.0.0</InformationalVersion>
+    <!-- Version is inherited from Directory.Build.props -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,7 +38,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Pidgeon.Core\Pidgeon.Core.csproj" />
+    <ProjectReference Include="..\Pidgeon.Data\Pidgeon.Data.csproj" />
   </ItemGroup>
-
 
 </Project>

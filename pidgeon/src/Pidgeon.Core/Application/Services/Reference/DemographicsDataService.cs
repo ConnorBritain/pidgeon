@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Reflection;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Reference;
@@ -17,6 +18,8 @@ public class DemographicsDataService : IDemographicsDataService
 {
     private readonly ILogger<DemographicsDataService> _logger;
     private readonly string _dataBasePath;
+    private readonly bool _useEmbeddedResources;
+    private readonly Assembly? _dataAssembly;
     private readonly Dictionary<string, List<string>> _cachedTables = new();
     private readonly object _cacheLock = new();
 
@@ -30,11 +33,27 @@ public class DemographicsDataService : IDemographicsDataService
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        // Use the same data path as JsonHL7ReferencePlugin
-        var currentDir = Directory.GetCurrentDirectory();
-        _dataBasePath = Path.Combine(currentDir, "data", "standards", "hl7v23", "tables");
+        // Try embedded resources first, fallback to file system
+        // Check all loaded assemblies for embedded resources since resources are in Pidgeon.Data assembly
+        var resourcePrefix = "data.standards.hl7v23.tables";
+        var dataAssembly = AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(a => HasEmbeddedResources(a, resourcePrefix));
 
-        _logger.LogInformation("DemographicsDataService initialized with data path: {DataPath}", _dataBasePath);
+        if (dataAssembly != null)
+        {
+            _useEmbeddedResources = true;
+            _dataAssembly = dataAssembly;
+            _dataBasePath = string.Empty; // Not needed for embedded resources
+            _logger.LogInformation("DemographicsDataService using embedded resources from {Assembly}", dataAssembly.GetName().Name);
+        }
+        else
+        {
+            _useEmbeddedResources = false;
+            _dataAssembly = null;
+            var currentDir = Directory.GetCurrentDirectory();
+            _dataBasePath = Path.Combine(currentDir, "data", "standards", "hl7v23", "tables");
+            _logger.LogInformation("DemographicsDataService using file system path: {DataPath}", _dataBasePath);
+        }
     }
 
     public async Task<List<string>> GetFirstNamesAsync(string? gender = null)
@@ -93,14 +112,22 @@ public class DemographicsDataService : IDemographicsDataService
 
         try
         {
-            var tableFile = Path.Combine(_dataBasePath, $"{tableName}.json");
-            if (!File.Exists(tableFile))
+            string json;
+            if (_useEmbeddedResources && _dataAssembly != null)
             {
-                _logger.LogWarning("Table file not found: {TableFile}", tableFile);
-                return new List<string>();
+                var resourceName = $"data.standards.hl7v23.tables.{tableName}.json";
+                json = await LoadEmbeddedResourceAsync(_dataAssembly, resourceName);
             }
-
-            var json = await File.ReadAllTextAsync(tableFile);
+            else
+            {
+                var tableFile = Path.Combine(_dataBasePath, $"{tableName}.json");
+                if (!File.Exists(tableFile))
+                {
+                    _logger.LogWarning("Table file not found: {TableFile}", tableFile);
+                    return new List<string>();
+                }
+                json = await File.ReadAllTextAsync(tableFile);
+            }
             var tableData = JsonSerializer.Deserialize<JsonElement>(json, JsonOptions);
 
             var values = new List<string>();
@@ -227,5 +254,27 @@ public class DemographicsDataService : IDemographicsDataService
         }
 
         _logger.LogInformation("Demographics data cache cleared");
+    }
+
+    /// <summary>
+    /// Checks if embedded resources exist for the specified resource prefix.
+    /// </summary>
+    private static bool HasEmbeddedResources(Assembly assembly, string resourcePrefix)
+    {
+        var resourceNames = assembly.GetManifestResourceNames();
+        return resourceNames.Any(name => name.StartsWith(resourcePrefix, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// Loads content from embedded resource.
+    /// </summary>
+    private static async Task<string> LoadEmbeddedResourceAsync(Assembly assembly, string resourceName)
+    {
+        using var stream = assembly.GetManifestResourceStream(resourceName);
+        if (stream == null)
+            throw new FileNotFoundException($"Embedded resource not found: {resourceName}");
+
+        using var reader = new StreamReader(stream);
+        return await reader.ReadToEndAsync();
     }
 }

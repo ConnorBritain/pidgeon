@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Generation;
 using Pidgeon.Core.Application.Interfaces.Reference;
 using Pidgeon.Core.Common.Types;
+using System.Reflection;
 using System.Text.Json;
 
 namespace Pidgeon.Core.Application.Services.Intelligence;
@@ -19,7 +20,7 @@ public class FieldIntelligenceService
     private readonly IConstraintResolver _constraintResolver;
     private readonly IDemographicsDataService _demographicsService;
     private readonly ILogger<FieldIntelligenceService> _logger;
-    private readonly string _dataBasePath;
+    private readonly Assembly? _dataAssembly;
 
     public IDemographicsDataService DemographicsService => _demographicsService;
 
@@ -31,7 +32,20 @@ public class FieldIntelligenceService
         _constraintResolver = constraintResolver;
         _demographicsService = demographicsService;
         _logger = logger;
-        _dataBasePath = Path.Combine(AppContext.BaseDirectory, "data", "standards", "hl7v23");
+
+        // Find the data assembly containing embedded resources
+        var resourcePrefix = "data.standards.hl7v23";
+        _dataAssembly = AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(a => HasEmbeddedResources(a, resourcePrefix));
+
+        if (_dataAssembly != null)
+        {
+            _logger.LogInformation("FieldIntelligenceService using embedded resources from {Assembly}", _dataAssembly.GetName().Name);
+        }
+        else
+        {
+            _logger.LogWarning("FieldIntelligenceService could not find embedded resources, will use file system fallback");
+        }
     }
 
     /// <summary>
@@ -81,11 +95,10 @@ public class FieldIntelligenceService
 
         try
         {
-            var segmentFile = Path.Combine(_dataBasePath, "segments", $"{segmentCode.ToLower()}.json");
-            if (!File.Exists(segmentFile))
+            var segmentJson = await LoadSegmentDataAsync(segmentCode.ToLower());
+            if (string.IsNullOrEmpty(segmentJson))
                 return null;
 
-            var segmentJson = await File.ReadAllTextAsync(segmentFile);
             var segmentData = JsonSerializer.Deserialize<SegmentDefinition>(segmentJson);
 
             var field = segmentData?.Fields?.FirstOrDefault(f => f.Position.ToString() == fieldPosition);
@@ -365,6 +378,70 @@ public class FieldIntelligenceService
             baseConfidence += 0.1;
 
         return Math.Min(0.95, baseConfidence);
+    }
+
+    /// <summary>
+    /// Loads segment data from embedded resources or file system fallback.
+    /// </summary>
+    private async Task<string?> LoadSegmentDataAsync(string segmentName)
+    {
+        if (_dataAssembly != null)
+        {
+            var resourceName = $"data.standards.hl7v23.segments.{segmentName}.json";
+            try
+            {
+                using var stream = _dataAssembly.GetManifestResourceStream(resourceName);
+                if (stream != null)
+                {
+                    using var reader = new StreamReader(stream);
+                    return await reader.ReadToEndAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Error loading embedded segment resource {ResourceName}", resourceName);
+            }
+        }
+
+        // Fallback to file system for development
+        try
+        {
+            var segmentFile = GetSegmentFilePathFallback(segmentName);
+            if (File.Exists(segmentFile))
+            {
+                return await File.ReadAllTextAsync(segmentFile);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error loading segment file for {SegmentName}", segmentName);
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Gets fallback file system path for segment data.
+    /// </summary>
+    private string GetSegmentFilePathFallback(string segmentName)
+    {
+        var possiblePaths = new[]
+        {
+            Path.Combine(AppContext.BaseDirectory, "data", "standards", "hl7v23", "segments", $"{segmentName}.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "data", "standards", "hl7v23", "segments", $"{segmentName}.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "data", "standards", "hl7v23", "segments", $"{segmentName}.json")
+        };
+
+        return possiblePaths.FirstOrDefault(File.Exists) ?? possiblePaths[0];
+    }
+
+    /// <summary>
+    /// Checks if embedded resources exist for the specified resource prefix.
+    /// </summary>
+    private static bool HasEmbeddedResources(Assembly assembly, string resourcePrefix)
+    {
+        var resourceNames = assembly.GetManifestResourceNames();
+        return resourceNames.Any(name => name.StartsWith(resourcePrefix, StringComparison.OrdinalIgnoreCase));
     }
 }
 

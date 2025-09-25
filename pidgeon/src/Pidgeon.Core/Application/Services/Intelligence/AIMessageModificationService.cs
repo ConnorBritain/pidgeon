@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#if ENABLE_AI
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces;
 using Pidgeon.Core.Application.Interfaces.Generation;
@@ -316,16 +317,18 @@ public class AIMessageModificationService : IAIMessageModificationService
         DemographicContext demographicContext)
     {
         // Use exact format from working test
-        return $@"Healthcare HL7 Message Modification Request:
-
-User Intent: '{userIntent}'
-
-Current HL7 Message:
-{string.Join("\n", messageStructure.OriginalLines)}
-
-ONLY provide the modifications in this exact format.
-
-### Response:";
+        var promptBuilder = new StringBuilder();
+        promptBuilder.AppendLine("Healthcare HL7 Message Modification Request:");
+        promptBuilder.AppendLine();
+        promptBuilder.AppendLine($"User Intent: '{userIntent}'");
+        promptBuilder.AppendLine();
+        promptBuilder.AppendLine("Current HL7 Message:");
+        promptBuilder.AppendLine(string.Join("\n", messageStructure.OriginalLines));
+        promptBuilder.AppendLine();
+        promptBuilder.AppendLine("ONLY provide the modifications in this exact format.");
+        promptBuilder.AppendLine();
+        promptBuilder.AppendLine("### Response:");
+        return promptBuilder.ToString();
     }
 
     private ModificationPlan ParseAIResponseToModificationPlan(AnalysisResult aiResponse, string originalIntent)
@@ -720,13 +723,13 @@ ONLY provide the modifications in this exact format.
         return match.Success ? match.Groups[1].Value : response.Trim();
     }
 
-    private async Task<string?> GetDemographicValueAsync(string fieldPath, string proposedValue)
+    private Task<string?> GetDemographicValueAsync(string fieldPath, string proposedValue)
     {
         // Use demographic data to make value more realistic
         if (fieldPath.Contains("PID.5") && proposedValue.Contains("^"))
         {
             // Already in correct format
-            return proposedValue;
+            return Task.FromResult<string?>(proposedValue);
         }
 
         if (fieldPath.Contains("PID.5"))
@@ -735,11 +738,11 @@ ONLY provide the modifications in this exact format.
             var parts = proposedValue.Split(' ');
             if (parts.Length >= 2)
             {
-                return $"{parts[1]}^{parts[0]}";
+                return Task.FromResult<string?>($"{parts[1]}^{parts[0]}");
             }
         }
 
-        return null;
+        return Task.FromResult<string?>(null);
     }
 
     private async Task<Result<bool>> ValidateFieldValueAsync(string fieldPath, string value)
@@ -1092,3 +1095,4 @@ ONLY provide the modifications in this exact format.
         public string RecommendedStrategy { get; init; } = string.Empty;
     }
 }
+#endif

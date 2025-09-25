@@ -1,0 +1,55 @@
+{
+  "name": "@pidgeonhealth/cli",
+  "version": "0.1.0",
+  "description": "Healthcare message testing and validation CLI",
+  "keywords": [
+    "healthcare",
+    "hl7",
+    "fhir",
+    "ncpdp",
+    "interoperability",
+    "testing",
+    "validation",
+    "cli"
+  ],
+  "homepage": "https://pidgeon.health",
+  "bugs": {
+    "url": "https://github.com/PidgeonHealth/pidgeon/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PidgeonHealth/pidgeon.git"
+  },
+  "license": "MPL-2.0",
+  "author": "Pidgeon Health, Inc.",
+  "main": "index.js",
+  "bin": {
+    "pidgeon": "bin/pidgeon"
+  },
+  "scripts": {
+    "postinstall": "node scripts/download-binary.js",
+    "preuninstall": "node scripts/cleanup.js",
+    "test": "node scripts/test-binary.js"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "bin/",
+    "scripts/",
+    "checksums.json",
+    "index.js",
+    "README.md"
+  ],
+  "devDependencies": {},
+  "dependencies": {}
+}

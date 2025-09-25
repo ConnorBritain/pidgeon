@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#if ENABLE_AI
 using Microsoft.Extensions.Logging;
 using Pidgeon.Core.Application.Interfaces.Intelligence;
 using Pidgeon.CLI.Services;
@@ -1475,3 +1476,4 @@ public class AiCommand : CommandBuilderBase
         }
     }
 }
+#endif

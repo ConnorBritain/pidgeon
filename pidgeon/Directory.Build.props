@@ -1,0 +1,81 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <!-- Publishing configuration for non-test projects -->
+  <PropertyGroup Condition="'$(IsTestProject)' != 'true'">
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <PublishTrimmed>false</PublishTrimmed>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <!-- Common properties for all projects -->
+  <PropertyGroup>
+    <!-- Version Information -->
+    <Version>0.1.0</Version>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <InformationalVersion>0.1.0</InformationalVersion>
+    <!-- Disable automatic source revision for clean version display -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+
+    <!-- Package Metadata -->
+    <Product>Pidgeon CLI</Product>
+    <Company>Pidgeon Health, Inc.</Company>
+    <Copyright>Copyright © Pidgeon Health, Inc. 2024</Copyright>
+    <Description>Healthcare message testing and validation CLI</Description>
+
+    <!-- Common Properties -->
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <WarningsNotAsErrors>NU1603</WarningsNotAsErrors>
+
+    <!-- License -->
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://pidgeon.health</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/PidgeonHealth/pidgeon</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <!-- Publishing properties for non-test projects -->
+  <PropertyGroup Condition="'$(IsTestProject)' != 'true'">
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishTrimmed>false</PublishTrimmed>
+    <TrimMode>link</TrimMode>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
+  <!-- Runtime-specific optimizations -->
+  <PropertyGroup Condition="$(RuntimeIdentifier.Contains('win'))">
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(RuntimeIdentifier.Contains('linux')) OR $(RuntimeIdentifier.Contains('osx'))">
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
+
+  <!-- Handle native library conflicts -->
+  <PropertyGroup>
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+  </PropertyGroup>
+
+
+  <!-- Conditional Compilation Symbols -->
+  <!-- Phase 0: AI features disabled by default to avoid LLamaSharp native library conflicts -->
+  <!-- To enable AI features: dotnet build -p:EnableAI=true -->
+  <PropertyGroup>
+    <DefineConstants Condition="'$(EnableAI)' == 'true'">$(DefineConstants);ENABLE_AI</DefineConstants>
+  </PropertyGroup>
+</Project>

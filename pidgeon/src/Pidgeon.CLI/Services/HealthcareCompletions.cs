@@ -4,6 +4,8 @@
 
 using System.CommandLine;
 using System.CommandLine.Completions;
+using System.Reflection;
+using System.Text.Json;
 
 namespace Pidgeon.CLI.Services;
 
@@ -286,6 +288,14 @@ public static class HealthcareCompletions
     {
         try
         {
+            // Try embedded resources first
+            var dataAssembly = FindDataAssembly();
+            if (dataAssembly != null)
+            {
+                return LoadHL7MessageTypesFromEmbeddedResources(dataAssembly);
+            }
+
+            // Fallback to file system (development mode)
             var dataPath = GetDataPath();
             var triggerEventsPath = Path.Combine(dataPath, "standards", "hl7v23", "trigger_events");
 
@@ -328,6 +338,14 @@ public static class HealthcareCompletions
     {
         try
         {
+            // Try embedded resources first
+            var dataAssembly = FindDataAssembly();
+            if (dataAssembly != null)
+            {
+                return LoadHL7SegmentsFromEmbeddedResources(dataAssembly);
+            }
+
+            // Fallback to file system (development mode)
             var dataPath = GetDataPath();
             var segmentsPath = Path.Combine(dataPath, "standards", "hl7v23", "segments");
 
@@ -475,5 +493,67 @@ public static class HealthcareCompletions
     private static string[] GetFallbackFieldPaths()
     {
         return Array.Empty<string>();
+    }
+
+    /// <summary>
+    /// Finds the assembly containing embedded data resources.
+    /// </summary>
+    private static Assembly? FindDataAssembly()
+    {
+        var resourcePrefix = "data.standards.hl7v23";
+        return AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(a => HasEmbeddedResources(a, resourcePrefix));
+    }
+
+    /// <summary>
+    /// Checks if embedded resources exist for the specified resource prefix.
+    /// </summary>
+    private static bool HasEmbeddedResources(Assembly assembly, string resourcePrefix)
+    {
+        var resourceNames = assembly.GetManifestResourceNames();
+        return resourceNames.Any(name => name.StartsWith(resourcePrefix, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// Loads HL7 message types from embedded resources.
+    /// </summary>
+    private static string[] LoadHL7MessageTypesFromEmbeddedResources(Assembly dataAssembly)
+    {
+        var messageTypes = new List<string>();
+        var resourceNames = dataAssembly.GetManifestResourceNames();
+        var triggerEventResources = resourceNames
+            .Where(name => name.StartsWith("data.standards.hl7v23.trigger_events.", StringComparison.OrdinalIgnoreCase))
+            .Where(name => name.EndsWith(".json", StringComparison.OrdinalIgnoreCase));
+
+        foreach (var resourceName in triggerEventResources)
+        {
+            var fileName = resourceName.Split('.').TakeLast(2).First(); // Get filename without .json
+            var messageType = ConvertFileNameToMessageType(fileName);
+            if (!string.IsNullOrEmpty(messageType))
+            {
+                messageTypes.Add(messageType);
+            }
+        }
+
+        messageTypes.Sort();
+        return messageTypes.ToArray();
+    }
+
+    /// <summary>
+    /// Loads HL7 segments from embedded resources.
+    /// </summary>
+    private static string[] LoadHL7SegmentsFromEmbeddedResources(Assembly dataAssembly)
+    {
+        var resourceNames = dataAssembly.GetManifestResourceNames();
+        var segmentResources = resourceNames
+            .Where(name => name.StartsWith("data.standards.hl7v23.segments.", StringComparison.OrdinalIgnoreCase))
+            .Where(name => name.EndsWith(".json", StringComparison.OrdinalIgnoreCase));
+
+        var segments = segmentResources
+            .Select(name => name.Split('.').TakeLast(2).First().ToUpperInvariant()) // Get filename without .json
+            .OrderBy(s => s)
+            .ToArray();
+
+        return segments;
     }
 }

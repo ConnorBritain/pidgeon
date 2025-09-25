@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
@@ -33,6 +34,8 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
     private readonly HL7VersionConfig _config;
     private string _dataBasePath;
     private bool _isInitialized;
+    private bool _useEmbeddedResources;
+    private string _resourcePrefix = string.Empty;
     private readonly object _initLock = new object();
     
     private static readonly Regex HL7PathPattern = new(@"^[A-Z]{2,3}(\.\d+){0,2}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -78,21 +81,32 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
 
             _logger.LogDebug("Initializing JsonHL7ReferencePlugin for {StandardName}...", _config.StandardName);
 
-            // Try multiple paths to find data directory
-            var possiblePaths = new[]
+            // Try embedded resources first
+            var assembly = Assembly.GetExecutingAssembly();
+            _resourcePrefix = $"data.standards.{_config.DataPath}";
+
+            if (HasEmbeddedResources(assembly, _resourcePrefix))
             {
-                Path.Combine(AppContext.BaseDirectory, "data", "standards", _config.DataPath),
-                Path.Combine(Directory.GetCurrentDirectory(), "data", "standards", _config.DataPath),
-                Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "data", "standards", _config.DataPath)
-            };
+                _useEmbeddedResources = true;
+                _logger.LogInformation("JsonHL7ReferencePlugin ({StandardName}) using embedded resources",
+                    _config.StandardName);
+            }
+            else
+            {
+                // Fallback to file system approach
+                var possiblePaths = new[]
+                {
+                    Path.Combine(AppContext.BaseDirectory, "data", "standards", _config.DataPath),
+                    Path.Combine(Directory.GetCurrentDirectory(), "data", "standards", _config.DataPath),
+                    Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "data", "standards", _config.DataPath)
+                };
 
-            _dataBasePath = possiblePaths.FirstOrDefault(Directory.Exists)
-                            ?? possiblePaths[0]; // fallback to first path
+                _dataBasePath = possiblePaths.FirstOrDefault(Directory.Exists)
+                                ?? possiblePaths[0];
 
-            _logger.LogInformation("JsonHL7ReferencePlugin ({StandardName}) using data path: {DataPath}",
-                _config.StandardName, _dataBasePath);
-            _logger.LogInformation("Segments directory exists: {Exists}",
-                Directory.Exists(Path.Combine(_dataBasePath, "segments")));
+                _logger.LogInformation("JsonHL7ReferencePlugin ({StandardName}) using file system path: {DataPath}",
+                    _config.StandardName, _dataBasePath);
+            }
 
             _isInitialized = true;
         }
@@ -585,15 +599,9 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
 
     private async Task<StandardElement?> LoadSegmentElementAsync(string segmentName, CancellationToken cancellationToken)
     {
-        var segmentFile = Path.Combine(_dataBasePath, "segments", $"{segmentName.ToLowerInvariant()}.json");
-        if (!File.Exists(segmentFile))
-        {
-            return null;
-        }
-
         try
         {
-            var json = await File.ReadAllTextAsync(segmentFile, cancellationToken);
+            var json = await LoadResourceContentAsync($"segments/{segmentName.ToLowerInvariant()}.json", cancellationToken);
             var segmentData = JsonSerializer.Deserialize<JsonElement>(json, JsonOptions);
 
             if (!segmentData.TryGetProperty("code", out var codeProp))
@@ -627,16 +635,10 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
     {
         var pathParts = fieldPath.Split('.');
         var segmentName = pathParts[0];
-        var segmentFile = Path.Combine(_dataBasePath, "segments", $"{segmentName.ToLowerInvariant()}.json");
-        
-        if (!File.Exists(segmentFile))
-        {
-            return null;
-        }
 
         try
         {
-            var json = await File.ReadAllTextAsync(segmentFile, cancellationToken);
+            var json = await LoadResourceContentAsync($"segments/{segmentName.ToLowerInvariant()}.json", cancellationToken);
             var segmentData = JsonSerializer.Deserialize<JsonElement>(json, JsonOptions);
 
             if (!segmentData.TryGetProperty("fields", out var fields))
@@ -1385,12 +1387,61 @@ public class JsonHL7ReferencePlugin : IStandardReferencePlugin, IAdvancedStandar
 
     private bool IsKnownElement(string normalizedPath)
     {
-        // Check if it exists as any type of element
-        var segmentFile = Path.Combine(_dataBasePath, "segments", $"{normalizedPath.ToLowerInvariant()}.json");
-        var dataTypeFile = Path.Combine(_dataBasePath, "data_types", $"{normalizedPath.ToLowerInvariant()}.json");
-        var tableFile = Path.Combine(_dataBasePath, "tables", $"{normalizedPath}.json");
-        var triggerFile = Path.Combine(_dataBasePath, "trigger_events", $"{normalizedPath.ToLowerInvariant()}.json");
+        if (_useEmbeddedResources)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var segmentResource = $"{_resourcePrefix}.segments.{normalizedPath.ToLowerInvariant()}.json";
+            var dataTypeResource = $"{_resourcePrefix}.data_types.{normalizedPath.ToLowerInvariant()}.json";
+            var tableResource = $"{_resourcePrefix}.tables.{normalizedPath}.json";
+            var triggerResource = $"{_resourcePrefix}.trigger_events.{normalizedPath.ToLowerInvariant()}.json";
 
-        return File.Exists(segmentFile) || File.Exists(dataTypeFile) || File.Exists(tableFile) || File.Exists(triggerFile);
+            return assembly.GetManifestResourceStream(segmentResource) != null ||
+                   assembly.GetManifestResourceStream(dataTypeResource) != null ||
+                   assembly.GetManifestResourceStream(tableResource) != null ||
+                   assembly.GetManifestResourceStream(triggerResource) != null;
+        }
+        else
+        {
+            // Check if it exists as any type of element
+            var segmentFile = Path.Combine(_dataBasePath, "segments", $"{normalizedPath.ToLowerInvariant()}.json");
+            var dataTypeFile = Path.Combine(_dataBasePath, "data_types", $"{normalizedPath.ToLowerInvariant()}.json");
+            var tableFile = Path.Combine(_dataBasePath, "tables", $"{normalizedPath}.json");
+            var triggerFile = Path.Combine(_dataBasePath, "trigger_events", $"{normalizedPath.ToLowerInvariant()}.json");
+
+            return File.Exists(segmentFile) || File.Exists(dataTypeFile) || File.Exists(tableFile) || File.Exists(triggerFile);
+        }
+    }
+
+    /// <summary>
+    /// Checks if embedded resources exist for the specified resource prefix.
+    /// </summary>
+    private static bool HasEmbeddedResources(Assembly assembly, string resourcePrefix)
+    {
+        var resourceNames = assembly.GetManifestResourceNames();
+        return resourceNames.Any(name => name.StartsWith(resourcePrefix, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// Loads content from embedded resource or file system based on current configuration.
+    /// </summary>
+    private async Task<string> LoadResourceContentAsync(string relativePath, CancellationToken cancellationToken)
+    {
+        if (_useEmbeddedResources)
+        {
+            var resourceName = $"{_resourcePrefix}.{relativePath.Replace('/', '.').Replace('\\', '.')}";
+            var assembly = Assembly.GetExecutingAssembly();
+
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
+                throw new FileNotFoundException($"Embedded resource not found: {resourceName}");
+
+            using var reader = new StreamReader(stream);
+            return await reader.ReadToEndAsync();
+        }
+        else
+        {
+            var filePath = Path.Combine(_dataBasePath, relativePath);
+            return await File.ReadAllTextAsync(filePath, cancellationToken);
+        }
     }
 }
