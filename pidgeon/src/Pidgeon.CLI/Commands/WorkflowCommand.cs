@@ -51,22 +51,20 @@ public class WorkflowCommand : CommandBuilderBase
     {
         var nameOption = CreateNullableOption("--name", "-n", "Name for the workflow scenario");
         var templateOption = CreateNullableOption("--template", "-t", "Start from a template");
-        var skipProCheckFlag = CreateFlag("--skip-pro-check", "Skip Pro tier validation (development only)");
 
         var command = new Command("wizard", "⚠️  Beta: Interactive guided workflow creation")
         {
-            nameOption, templateOption, skipProCheckFlag
+            nameOption, templateOption
         };
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
             var name = parseResult.GetValue(nameOption);
             var template = parseResult.GetValue(templateOption);
-            var skipProCheck = parseResult.GetValue(skipProCheckFlag);
 
             // Pro tier feature validation using new subscription system
             var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
-                FeatureFlags.WorkflowWizard, skipProCheck, cancellationToken);
+                FeatureFlags.WorkflowWizard, false, cancellationToken);
 
             if (validationResult.IsFailure)
             {
@@ -147,21 +145,19 @@ public class WorkflowCommand : CommandBuilderBase
     private Command CreateRunCommand()
     {
         var nameOption = CreateRequiredOption("--name", "Name of workflow scenario to run");
-        var skipProCheckFlag = CreateFlag("--skip-pro-check", "Skip Pro tier validation (development only)");
 
         var command = new Command("run", "⚠️  Beta: Execute a workflow scenario")
         {
-            nameOption, skipProCheckFlag
+            nameOption
         };
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
             var name = parseResult.GetValue(nameOption)!;
-            var skipProCheck = parseResult.GetValue(skipProCheckFlag);
 
             // Pro tier feature validation using new subscription system
             var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
-                FeatureFlags.WorkflowWizard, skipProCheck, cancellationToken);
+                FeatureFlags.WorkflowWizard, false, cancellationToken);
 
             if (validationResult.IsFailure)
             {

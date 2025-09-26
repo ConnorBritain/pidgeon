@@ -64,7 +64,6 @@ public class DiffCommand : CommandBuilderBase
         var modelOption = CreateNullableOption("--model", "-m", "Specify AI model (coming in future release)");
         var noAiOption = CreateBooleanOption("--no-ai", "Disable AI analysis (override config default)");
         var basicModeOption = CreateBooleanOption("--basic", "-b", "Use basic diff mode (disables constraint validation and demographic analysis)");
-        var skipProCheckOption = CreateBooleanOption("--skip-pro-check", "Skip Pro tier check (for development/testing)");
 
         command.Add(pathsArgument);
         command.Add(leftOption);
@@ -76,7 +75,6 @@ public class DiffCommand : CommandBuilderBase
         command.Add(modelOption);
         command.Add(noAiOption);
         command.Add(basicModeOption);
-        command.Add(skipProCheckOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
@@ -125,11 +123,10 @@ public class DiffCommand : CommandBuilderBase
                 var aiModel = parseResult.GetValue(modelOption);
                 var noAi = parseResult.GetValue(noAiOption);
                 var basicMode = parseResult.GetValue(basicModeOption);
-                var skipProCheck = parseResult.GetValue(skipProCheckOption);
 
                 return await ExecuteDiffAsync(
                     _diffService, leftPath, rightPath, ignoreFields,
-                    reportFile, severity, useAi, aiModel, noAi, basicMode, skipProCheck, cancellationToken);
+                    reportFile, severity, useAi, aiModel, noAi, basicMode, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -153,12 +150,11 @@ public class DiffCommand : CommandBuilderBase
         string? aiModel,
         bool noAi,
         bool basicMode,
-        bool skipProCheck,
         CancellationToken cancellationToken)
     {
         // Pro tier feature validation using new subscription system
         var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
-            FeatureFlags.DiffAnalysis, skipProCheck, cancellationToken);
+            FeatureFlags.DiffAnalysis, false, cancellationToken);
 
         if (validationResult.IsFailure)
         {

@@ -541,15 +541,12 @@ public class AiCommand : CommandBuilderBase
 
         var lockedOption = CreateNullableOption("--lock", "Lock fields (comma-separated, e.g., MSH.7,PID.3)");
 
-        var skipProCheckOption = CreateFlag("--skip-pro-check", "Skip professional tier validation");
-
         command.Add(fileArg);
         command.Add(intentOption);
         command.Add(wizardOption);
         command.Add(outputOption);
         command.Add(explainOption);
         command.Add(lockedOption);
-        command.Add(skipProCheckOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
@@ -559,7 +556,6 @@ public class AiCommand : CommandBuilderBase
             var output = parseResult.GetValue(outputOption);
             var explain = parseResult.GetValue(explainOption);
             var locked = parseResult.GetValue(lockedOption);
-            var skipProCheck = parseResult.GetValue(skipProCheckOption);
 
             // Parse locked fields from comma-separated string
             var lockedFields = string.IsNullOrEmpty(locked)
@@ -569,7 +565,7 @@ public class AiCommand : CommandBuilderBase
             // Always validate constraints (sensible default)
             var validate = true;
 
-            return await ExecuteModifyCommand(file, intent, wizard, output, validate, explain, lockedFields, skipProCheck, cancellationToken);
+            return await ExecuteModifyCommand(file, intent, wizard, output, validate, explain, lockedFields, cancellationToken);
         });
 
         return command;
@@ -589,19 +585,15 @@ public class AiCommand : CommandBuilderBase
             Description = "Context for value generation"
         };
 
-        var skipProCheckOption = CreateFlag("--skip-pro-check", "Skip professional tier validation");
-
         command.Add(fieldArg);
         command.Add(contextArg);
-        command.Add(skipProCheckOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
             var field = parseResult.GetValue(fieldArg)!;
             var context = parseResult.GetValue(contextArg)!;
-            var skipProCheck = parseResult.GetValue(skipProCheckOption);
 
-            return await ExecuteSuggestCommand(field, context, skipProCheck, cancellationToken);
+            return await ExecuteSuggestCommand(field, context, cancellationToken);
         });
 
         return command;
@@ -623,21 +615,17 @@ public class AiCommand : CommandBuilderBase
 
         var outputOption = CreateNullableOption("-o", "Output file (default: <input>.modified.hl7)");
 
-        var skipProCheckOption = CreateFlag("--skip-pro-check", "Skip professional tier validation");
-
         command.Add(fileArg);
         command.Add(templateArg);
         command.Add(outputOption);
-        command.Add(skipProCheckOption);
 
         SetCommandAction(command, async (parseResult, cancellationToken) =>
         {
             var file = parseResult.GetValue(fileArg)!;
             var template = parseResult.GetValue(templateArg)!;
             var output = parseResult.GetValue(outputOption);
-            var skipProCheck = parseResult.GetValue(skipProCheckOption);
 
-            return await ExecuteTemplateCommand(file, template, output, skipProCheck, cancellationToken);
+            return await ExecuteTemplateCommand(file, template, output, cancellationToken);
         });
 
         return command;
@@ -653,7 +641,6 @@ public class AiCommand : CommandBuilderBase
         bool validateConstraints,
         bool explainChanges,
         string[] lockedFields,
-        bool skipProCheck,
         CancellationToken cancellationToken)
     {
         try
@@ -661,7 +648,7 @@ public class AiCommand : CommandBuilderBase
             // Check professional tier
             var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
                 FeatureFlags.LocalAIModels,
-                skipProCheck,
+                false,
                 cancellationToken);
 
             if (!validationResult.IsSuccess)
@@ -705,7 +692,6 @@ public class AiCommand : CommandBuilderBase
     private async Task<int> ExecuteSuggestCommand(
         string field,
         string context,
-        bool skipProCheck,
         CancellationToken cancellationToken)
     {
         try
@@ -713,7 +699,7 @@ public class AiCommand : CommandBuilderBase
             // Check professional tier
             var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
                 FeatureFlags.LocalAIModels,
-                skipProCheck,
+                false,
                 cancellationToken);
 
             if (!validationResult.IsSuccess)
@@ -768,7 +754,6 @@ public class AiCommand : CommandBuilderBase
         string file,
         string template,
         string? output,
-        bool skipProCheck,
         CancellationToken cancellationToken)
     {
         try
@@ -776,7 +761,7 @@ public class AiCommand : CommandBuilderBase
             // Check professional tier
             var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
                 FeatureFlags.LocalAIModels,
-                skipProCheck,
+                false,
                 cancellationToken);
 
             if (!validationResult.IsSuccess)
