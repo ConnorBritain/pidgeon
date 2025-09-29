@@ -30,12 +30,10 @@ public class ProTierValidationService
     /// Validates feature access and provides user-friendly error messages for CLI.
     /// </summary>
     /// <param name="feature">Feature being accessed</param>
-    /// <param name="skipProCheck">Development flag to bypass checks</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Success if feature is available, failure with user-friendly message</returns>
     public async Task<Result> ValidateFeatureAccessAsync(
         FeatureFlags feature,
-        bool skipProCheck = false,
         CancellationToken cancellationToken = default)
     {
         try
@@ -46,13 +44,6 @@ public class ProTierValidationService
 
             // Note: Original subscription validation logic preserved below for future re-enablement
             #pragma warning disable CS0162 // Unreachable code detected
-
-            // Development bypass
-            if (skipProCheck)
-            {
-                _logger.LogWarning("Professional tier check bypassed for {Feature} (development mode)", feature);
-                return Result.Success();
-            }
 
             var validationResult = await _subscriptionService.ValidateFeatureAccessAsync(feature, cancellationToken);
             if (validationResult.IsSuccess)

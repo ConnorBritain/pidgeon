@@ -648,7 +648,6 @@ public class AiCommand : CommandBuilderBase
             // Check professional tier
             var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
                 FeatureFlags.LocalAIModels,
-                false,
                 cancellationToken);
 
             if (!validationResult.IsSuccess)
@@ -699,7 +698,6 @@ public class AiCommand : CommandBuilderBase
             // Check professional tier
             var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
                 FeatureFlags.LocalAIModels,
-                false,
                 cancellationToken);
 
             if (!validationResult.IsSuccess)
@@ -761,7 +759,6 @@ public class AiCommand : CommandBuilderBase
             // Check professional tier
             var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
                 FeatureFlags.LocalAIModels,
-                false,
                 cancellationToken);
 
             if (!validationResult.IsSuccess)

@@ -154,7 +154,7 @@ public class DiffCommand : CommandBuilderBase
     {
         // Pro tier feature validation using new subscription system
         var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
-            FeatureFlags.DiffAnalysis, false, cancellationToken);
+            FeatureFlags.DiffAnalysis, cancellationToken);
 
         if (validationResult.IsFailure)
         {

@@ -79,19 +79,25 @@ error() {
 
 # Validate .NET SDK
 step "Validating .NET SDK"
-if ! command -v dotnet &> /dev/null; then
+
+# Check for WSL dotnet path first, then fall back to system dotnet
+if [[ -f "/mnt/c/Program Files/dotnet/dotnet.exe" ]]; then
+    DOTNET="/mnt/c/Program Files/dotnet/dotnet.exe"
+elif command -v dotnet &> /dev/null; then
+    DOTNET="dotnet"
+else
     error ".NET SDK not found. Please install .NET 8.0 SDK."
     exit 1
 fi
 
-DOTNET_VERSION=$(dotnet --version 2>/dev/null || echo "unknown")
+DOTNET_VERSION=$("$DOTNET" --version 2>/dev/null || echo "unknown")
 if [[ ! $DOTNET_VERSION =~ ^8\. ]]; then
     warning "Expected .NET 8.x, found $DOTNET_VERSION"
 fi
 success ".NET SDK $DOTNET_VERSION found"
 
 # Set paths
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SRC_DIR="$ROOT_DIR/src"
 CLI_PROJECT="$SRC_DIR/Pidgeon.CLI/Pidgeon.CLI.csproj"
 DIST_DIR="$ROOT_DIR/dist"
@@ -163,7 +169,7 @@ for rid in "${RIDS[@]}"; do
         DOTNET_ARGS+=("/p:EnableAI=true")
     fi
 
-    if dotnet publish "${DOTNET_ARGS[@]}" >/dev/null 2>&1; then
+    if "$DOTNET" publish "${DOTNET_ARGS[@]}"; then
 
         END_TIME=$(date +%s.%N)
         BUILD_TIME=$(echo "$END_TIME - $START_TIME" | bc -l)
@@ -171,9 +177,9 @@ for rid in "${RIDS[@]}"; do
 
         # Get binary info
         if [[ $rid == win-* ]]; then
-            BINARY_NAME="pidgeon.exe"
+            BINARY_NAME="Pidgeon.CLI.exe"
         else
-            BINARY_NAME="pidgeon"
+            BINARY_NAME="Pidgeon.CLI"
         fi
         BINARY_PATH="$OUTPUT_DIR/$BINARY_NAME"
 

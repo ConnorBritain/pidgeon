@@ -64,7 +64,7 @@ public class WorkflowCommand : CommandBuilderBase
 
             // Pro tier feature validation using new subscription system
             var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
-                FeatureFlags.WorkflowWizard, false, cancellationToken);
+                FeatureFlags.WorkflowWizard, cancellationToken);
 
             if (validationResult.IsFailure)
             {
@@ -157,7 +157,7 @@ public class WorkflowCommand : CommandBuilderBase
 
             // Pro tier feature validation using new subscription system
             var validationResult = await _proTierValidation.ValidateFeatureAccessAsync(
-                FeatureFlags.WorkflowWizard, false, cancellationToken);
+                FeatureFlags.WorkflowWizard, cancellationToken);
 
             if (validationResult.IsFailure)
             {
