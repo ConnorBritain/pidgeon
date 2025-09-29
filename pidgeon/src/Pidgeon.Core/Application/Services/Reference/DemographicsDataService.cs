@@ -39,6 +39,7 @@ public class DemographicsDataService : IDemographicsDataService
         var dataAssembly = AppDomain.CurrentDomain.GetAssemblies()
             .FirstOrDefault(a => HasEmbeddedResources(a, resourcePrefix));
 
+
         if (dataAssembly != null)
         {
             _useEmbeddedResources = true;

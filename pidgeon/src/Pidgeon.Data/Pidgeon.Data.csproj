@@ -13,14 +13,14 @@
   <!-- Embed data files as resources for binary distribution -->
   <ItemGroup>
     <EmbeddedResource Include="standards\**\*.json">
-      <LogicalName>data.standards.%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+      <LogicalName>data.standards.$([System.String]::Copy('%(RecursiveDir)').Replace('\', '.'))%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="standards\**\*.md">
-      <LogicalName>data.standards.%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+      <LogicalName>data.standards.$([System.String]::Copy('%(RecursiveDir)').Replace('\', '.'))%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
 
     <EmbeddedResource Include="interop\**\*">
-      <LogicalName>data.interop.%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+      <LogicalName>data.interop.$([System.String]::Copy('%(RecursiveDir)').Replace('\', '.'))%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
 
     <EmbeddedResource Include="schema.sql">
