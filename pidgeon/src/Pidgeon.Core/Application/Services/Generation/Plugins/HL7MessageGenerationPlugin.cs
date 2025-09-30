@@ -249,14 +249,8 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
         if (patient == null)
             return Result<string>.Failure("Patient generation failed for ADT message");
 
-        // Use standards-compliant HL7 v2.3 message factory
-        return messageType switch
-        {
-            "ADT^A01" => _hl7MessageFactory.GenerateADT_A01(patient, encounter, options),
-            "ADT^A08" => _hl7MessageFactory.GenerateADT_A08(patient, encounter, options),
-            "ADT^A03" => _hl7MessageFactory.GenerateADT_A03(patient, encounter, options),
-            _ => Result<string>.Failure($"ADT message type {messageType} not yet implemented")
-        };
+        // Use standards-compliant HL7 v2.3 message factory with universal method
+        return await _hl7MessageFactory.GenerateMessageAsync(messageType, patient, encounter, null, null, null, options);
     }
 
     /// <summary>
@@ -271,7 +265,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
             return Result<string>.Failure(prescriptionResult.Error);
             
         var prescription = prescriptionResult.Value;
-        return Result<string>.Success($"ORM Message: Clinical order for {prescription.Patient.Name.DisplayName} - {prescription.Medication.DisplayName} ({messageType})");
+        return await _hl7MessageFactory.GenerateMessageAsync(messageType, prescription.Patient, null, prescription, null, null, options);
     }
 
     /// <summary>
@@ -294,11 +288,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
             
         var observation = observationResult.Value;
         
-        return messageType switch
-        {
-            "ORU^R01" => _hl7MessageFactory.GenerateORU_R01(patient, observation, options),
-            _ => Result<string>.Failure($"ORU message type {messageType} not yet implemented")
-        };
+        return await _hl7MessageFactory.GenerateMessageAsync(messageType, patient, null, null, observation, null, options);
     }
 
     /// <summary>
@@ -314,11 +304,7 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
             
         var prescription = prescriptionResult.Value;
         
-        return messageType switch
-        {
-            "RDE^O11" => _hl7MessageFactory.GenerateRDE_O11(prescription.Patient, prescription, options),
-            _ => Result<string>.Failure($"RDE message type {messageType} not yet implemented")
-        };
+        return await _hl7MessageFactory.GenerateMessageAsync(messageType, prescription.Patient, null, prescription, null, null, options);
     }
 
     /// <summary>
@@ -422,7 +408,12 @@ internal class HL7MessageGenerationPlugin : IMessageGenerationPlugin
     private async Task<Result<string>> GenerateAcknowledgmentAsync(string messageType, GenerationOptions options)
     {
         await Task.Yield();
-        return Result<string>.Success($"ACK Message: Application Accept - Message received and processed successfully ({messageType})");
+        var patientResult = _domainGenerationService.GeneratePatient(options);
+        if (!patientResult.IsSuccess)
+            return Result<string>.Failure(patientResult.Error);
+
+        var patient = patientResult.Value;
+        return await _hl7MessageFactory.GenerateMessageAsync(messageType, patient, null, null, null, null, options);
     }
 
     /// <summary>

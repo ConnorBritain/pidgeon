@@ -1,0 +1,9 @@
+event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
+CSU_C10,CSU C10 - Patient completes the clinical trial Trigger Event (HL7 v2.3),Observation Reporting,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CSU_C10
+CSU_C10,CSU C10 - Patient completes the clinical trial Trigger Event (HL7 v2.3),Observation Reporting,PATIENT,PATIENT group,R,inf,True,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CSU_C10
+CSU_C10,CSU C10 - Patient completes the clinical trial Trigger Event (HL7 v2.3),Observation Reporting,PID,Patient Identification,R,-,False,PATIENT,1,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CSU_C10
+CSU_C10,CSU C10 - Patient completes the clinical trial Trigger Event (HL7 v2.3),Observation Reporting,PD1,Patient Demographic,R,-,False,PATIENT,1,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CSU_C10
+CSU_C10,CSU C10 - Patient completes the clinical trial Trigger Event (HL7 v2.3),Observation Reporting,NTE,Notes and comments segment,R,-,False,PATIENT,1,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CSU_C10
+CSU_C10,CSU C10 - Patient completes the clinical trial Trigger Event (HL7 v2.3),Observation Reporting,VISIT,VISIT group,R,inf,True,PATIENT,1,5,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CSU_C10
+CSU_C10,CSU C10 - Patient completes the clinical trial Trigger Event (HL7 v2.3),Observation Reporting,CSR,Clinical Study Registration,R,-,False,PATIENT,1,6,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CSU_C10
+CSU_C10,CSU C10 - Patient completes the clinical trial Trigger Event (HL7 v2.3),Observation Reporting,STUDY PHASE,STUDY PHASE group,R,inf,True,PATIENT,1,7,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CSU_C10

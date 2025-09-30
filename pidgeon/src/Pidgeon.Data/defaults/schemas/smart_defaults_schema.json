@@ -1,0 +1,174 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Pidgeon Smart Defaults Configuration Schema",
+  "description": "JSON schema for Pidgeon smart default configuration files",
+  "type": "object",
+  "required": ["name", "description", "category"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this configuration"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of what this configuration provides"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["patient_demographics", "clinical_workflow", "vendor_patterns", "specialty_specific"],
+      "description": "Category of smart defaults configuration"
+    },
+    "vendor": {
+      "type": "string",
+      "description": "Specific vendor this configuration is optimized for (if applicable)"
+    },
+    "applicable_standards": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["hl7v23", "hl7v24", "hl7v25", "hl7v251", "fhirr4", "fhirr5", "ncpdp"]
+      },
+      "description": "Healthcare standards this configuration applies to"
+    },
+    "message_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Specific message types this configuration is optimized for"
+    },
+    "field_defaults": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9._]+$": {
+          "type": "string"
+        }
+      },
+      "description": "Default values for specific fields (semantic paths or direct field paths)"
+    },
+    "conditional_defaults": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9_]+$": {
+          "type": "object",
+          "required": ["condition", "fields"],
+          "properties": {
+            "condition": {
+              "type": "string",
+              "description": "Logical condition for when these defaults apply"
+            },
+            "fields": {
+              "type": "object",
+              "patternProperties": {
+                "^[a-zA-Z0-9._]+$": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "description": "Conditional field defaults based on logical conditions"
+    },
+    "field_patterns": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9_]+$": {
+          "type": "object",
+          "required": ["pattern", "example"],
+          "properties": {
+            "pattern": {
+              "type": "string",
+              "description": "Regular expression pattern for field format"
+            },
+            "example": {
+              "type": "string",
+              "description": "Example value matching the pattern"
+            },
+            "description": {
+              "type": "string",
+              "description": "Human-readable description of the pattern"
+            }
+          }
+        }
+      },
+      "description": "Field formatting patterns for consistent value generation"
+    },
+    "time_patterns": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9._]+$": {
+          "type": "string",
+          "enum": ["current_time", "current_time_minus_15_minutes", "current_time_plus_30_minutes", "today", "yesterday", "tomorrow"]
+        }
+      },
+      "description": "Time-related field patterns for temporal consistency"
+    },
+    "smart_randomization": {
+      "type": "object",
+      "properties": {
+        "weight_normal_results": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weight_chronic_medications": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weight_urgent_conditions": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "generate_vital_signs": {
+          "type": "boolean"
+        },
+        "realistic_clinical_patterns": {
+          "type": "boolean"
+        }
+      },
+      "description": "Weights and flags for intelligent randomization"
+    },
+    "required_segments": {
+      "type": "object",
+      "patternProperties": {
+        "^[A-Z]{3}$": {
+          "type": "string",
+          "enum": ["always", "usually", "sometimes", "rarely", "never"]
+        }
+      },
+      "description": "Segment inclusion patterns for message types"
+    },
+    "usage_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Usage notes and best practices for this configuration"
+    }
+  },
+  "examples": [
+    {
+      "name": "Emergency Department Admission",
+      "description": "Smart defaults for emergency department admissions",
+      "category": "clinical_workflow",
+      "applicable_standards": ["hl7v23", "hl7v24"],
+      "message_types": ["ADT^A01", "ADT^A04"],
+      "field_defaults": {
+        "encounter.class": "E",
+        "encounter.type": "EMER",
+        "PV1.2": "E"
+      },
+      "smart_randomization": {
+        "weight_urgent_conditions": 0.9,
+        "generate_vital_signs": true
+      },
+      "usage_notes": [
+        "Optimized for emergency department workflows",
+        "Includes appropriate urgency indicators"
+      ]
+    }
+  ]
+}

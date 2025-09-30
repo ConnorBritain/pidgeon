@@ -1,0 +1,40 @@
+{
+  "code": "QRY_A19",
+  "title": "QRY A19 - Patient query Trigger Event (HL7 v2.3)",
+  "chapter": "Control/Query,\nPatient Administration",
+  "description": "",
+  "detail_url": "https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/QRY_A19",
+  "segments": [
+    {
+      "segment_code": "MSH",
+      "segment_desc": "Message header segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [],
+      "level": 0,
+      "order_index": 0
+    },
+    {
+      "segment_code": "QRD",
+      "segment_desc": "Query definition segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [],
+      "level": 0,
+      "order_index": 1
+    },
+    {
+      "segment_code": "QRF",
+      "segment_desc": "Query filter segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [],
+      "level": 0,
+      "order_index": 2
+    }
+  ],
+  "segment_count": 3
+}

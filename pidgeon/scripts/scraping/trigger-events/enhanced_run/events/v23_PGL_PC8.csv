@@ -1,0 +1,15 @@
+event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,PID,Patient Identification,R,-,False,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,PATIENT VISIT,PATIENT VISIT group,R,inf,True,,0,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,PV1,Patient visit,R,-,False,PATIENT VISIT,1,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,PV2,Patient visit - additional information,R,-,False,PATIENT VISIT,1,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,GOAL,GOAL group,R,inf,True,,0,5,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,GOL,Goal Detail,R,-,False,GOAL,1,6,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,NTE,Notes and comments segment,R,-,False,GOAL,1,7,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,VAR,Variance,R,-,False,GOAL,1,8,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,GOAL ROLE,GOAL ROLE group,R,inf,True,GOAL,1,9,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,PATHWAY,PATHWAY group,R,inf,True,GOAL,1,10,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,OBSERVATION,OBSERVATION group,R,inf,True,GOAL,1,11,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,PROBLEM,PROBLEM group,R,inf,True,GOAL,1,12,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8
+PGL_PC8,PGL PC8 - Goal delete Trigger Event (HL7 v2.3),Patient Care,ORDER,ORDER group,R,inf,True,GOAL,1,13,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/PGL_PC8

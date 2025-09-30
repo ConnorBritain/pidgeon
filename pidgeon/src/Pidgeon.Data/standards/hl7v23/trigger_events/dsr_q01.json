@@ -28,7 +28,7 @@
     {
       "segment_code": "ERR",
       "segment_desc": "Error segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -38,7 +38,7 @@
     {
       "segment_code": "QAK",
       "segment_desc": "Query Acknowledgement",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -58,7 +58,7 @@
     {
       "segment_code": "QRF",
       "segment_desc": "Query filter segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -69,7 +69,7 @@
       "segment_code": "DSP",
       "segment_desc": "Display data segment",
       "optionality": "R",
-      "repeatability": "-",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,
@@ -78,7 +78,7 @@
     {
       "segment_code": "DSC",
       "segment_desc": "Continuation pointer segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],

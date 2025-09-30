@@ -28,7 +28,7 @@
     {
       "segment_code": "ERR",
       "segment_desc": "Error segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -48,8 +48,8 @@
     {
       "segment_code": "MFA",
       "segment_desc": "Master file acknowledgement segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,

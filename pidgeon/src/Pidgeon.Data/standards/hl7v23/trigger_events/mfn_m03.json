@@ -29,7 +29,7 @@
       "segment_code": "MF_TEST",
       "segment_desc": "MF_TEST group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -38,7 +38,7 @@
     {
       "segment_code": "MFE",
       "segment_desc": "Master file entry segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [

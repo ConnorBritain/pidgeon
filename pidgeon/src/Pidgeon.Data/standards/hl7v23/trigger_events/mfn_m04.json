@@ -29,7 +29,7 @@
       "segment_code": "MF CDM",
       "segment_desc": "MF CDM group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -62,8 +62,8 @@
     {
       "segment_code": "PRC",
       "segment_desc": "Pricing",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "MF CDM"

@@ -1,0 +1,7 @@
+event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
+CRM_C07,CRM C07 - Correct/update phase information Trigger Event (HL7 v2.3),Observation Reporting,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CRM_C07
+CRM_C07,CRM C07 - Correct/update phase information Trigger Event (HL7 v2.3),Observation Reporting,PATIENT,PATIENT group,R,inf,True,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CRM_C07
+CRM_C07,CRM C07 - Correct/update phase information Trigger Event (HL7 v2.3),Observation Reporting,PID,Patient Identification,R,-,False,PATIENT,1,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CRM_C07
+CRM_C07,CRM C07 - Correct/update phase information Trigger Event (HL7 v2.3),Observation Reporting,PV1,Patient visit,R,-,False,PATIENT,1,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CRM_C07
+CRM_C07,CRM C07 - Correct/update phase information Trigger Event (HL7 v2.3),Observation Reporting,CSR,Clinical Study Registration,R,-,False,PATIENT,1,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CRM_C07
+CRM_C07,CRM C07 - Correct/update phase information Trigger Event (HL7 v2.3),Observation Reporting,CSP,Clinical Study Phase,R,-,False,PATIENT,1,5,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/CRM_C07

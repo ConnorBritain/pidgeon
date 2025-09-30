@@ -1,0 +1,69 @@
+{
+  "name": "Outpatient Laboratory Order",
+  "description": "Smart defaults for routine outpatient laboratory orders and results",
+  "category": "clinical_workflow",
+  "applicable_standards": ["hl7v23", "hl7v24", "hl7v25"],
+  "message_types": ["ORM^O01", "ORU^R01"],
+  "field_defaults": {
+    "encounter.class": "O",
+    "encounter.type": "AMB",
+    "encounter.location": "Lab",
+    "order.priority": "R",
+    "order.status": "IP",
+    "specimen.type": "Blood",
+    "specimen.collection_method": "Venipuncture",
+    "PV1.2": "O",
+    "ORC.1": "NW",
+    "ORC.5": "IP",
+    "OBR.4": "Laboratory Panel",
+    "OBR.7": "today",
+    "OBR.27": "R",
+    "SPM.4": "Blood"
+  },
+  "common_lab_panels": {
+    "basic_metabolic": {
+      "panel_code": "80048",
+      "panel_name": "Basic Metabolic Panel",
+      "components": ["Glucose", "BUN", "Creatinine", "Sodium", "Potassium", "Chloride", "CO2"]
+    },
+    "lipid_panel": {
+      "panel_code": "80061",
+      "panel_name": "Lipid Panel",
+      "components": ["Total Cholesterol", "HDL", "LDL", "Triglycerides"]
+    },
+    "cbc_diff": {
+      "panel_code": "85025",
+      "panel_name": "Complete Blood Count with Differential",
+      "components": ["WBC", "RBC", "Hemoglobin", "Hematocrit", "Platelets"]
+    }
+  },
+  "typical_reference_ranges": {
+    "Glucose": "70-100 mg/dL",
+    "BUN": "7-20 mg/dL",
+    "Creatinine": "0.6-1.2 mg/dL",
+    "Total Cholesterol": "<200 mg/dL",
+    "HDL": ">40 mg/dL (M), >50 mg/dL (F)",
+    "LDL": "<100 mg/dL",
+    "WBC": "4.5-11.0 K/uL",
+    "Hemoglobin": "12.0-15.0 g/dL (F), 14.0-17.0 g/dL (M)"
+  },
+  "smart_randomization": {
+    "weight_normal_results": 0.7,
+    "weight_slightly_abnormal": 0.2,
+    "weight_significantly_abnormal": 0.1,
+    "generate_critical_values": false,
+    "include_delta_checks": true
+  },
+  "time_patterns": {
+    "order.entry_time": "current_time_minus_2_hours",
+    "specimen.collection_time": "current_time_minus_1_hour",
+    "result.available_time": "current_time",
+    "result.verified_time": "current_time_plus_15_minutes"
+  },
+  "usage_notes": [
+    "Optimized for routine outpatient laboratory workflows",
+    "Includes common lab panels with realistic reference ranges",
+    "Weights toward normal results with some abnormal values",
+    "Supports both order entry (ORM) and result reporting (ORU) scenarios"
+  ]
+}

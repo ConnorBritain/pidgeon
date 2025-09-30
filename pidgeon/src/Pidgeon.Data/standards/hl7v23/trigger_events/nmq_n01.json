@@ -18,8 +18,8 @@
     {
       "segment_code": "QRY WITH DETAIL",
       "segment_desc": "QRY WITH DETAIL group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "-",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -40,7 +40,7 @@
     {
       "segment_code": "QRF",
       "segment_desc": "Query filter segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -53,7 +53,7 @@
       "segment_code": "CLOCK AND STATISTICS",
       "segment_desc": "CLOCK AND STATISTICS group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -62,7 +62,7 @@
     {
       "segment_code": "NCK",
       "segment_desc": "System Clock",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -74,7 +74,7 @@
     {
       "segment_code": "NST",
       "segment_desc": "Statistics",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -86,7 +86,7 @@
     {
       "segment_code": "NSC",
       "segment_desc": "Status change",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [

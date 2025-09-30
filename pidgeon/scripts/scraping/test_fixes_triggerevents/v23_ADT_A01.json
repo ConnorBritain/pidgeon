@@ -1,0 +1,10 @@
+{
+  "code": "ADT_A01",
+  "name": "Admit/visit notification",
+  "version": "HL7 v2.3",
+  "chapter": "Unknown",
+  "description": "",
+  "detail_url": "https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADT_A01",
+  "segments": [],
+  "segment_count": 0
+}

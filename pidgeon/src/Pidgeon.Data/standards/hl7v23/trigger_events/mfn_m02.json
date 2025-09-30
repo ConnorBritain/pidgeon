@@ -29,7 +29,7 @@
       "segment_code": "MF STAFF",
       "segment_desc": "MF STAFF group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -62,7 +62,7 @@
     {
       "segment_code": "PRA",
       "segment_desc": "Practitioner detail segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [

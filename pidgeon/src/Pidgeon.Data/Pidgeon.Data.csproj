@@ -10,6 +10,8 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+
+
   <!-- Embed data files as resources for binary distribution -->
   <ItemGroup>
     <EmbeddedResource Include="standards\**\*.json">

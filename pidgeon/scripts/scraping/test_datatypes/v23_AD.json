@@ -1,0 +1,91 @@
+{
+  "code": "AD",
+  "name": "HL7-Definition V2",
+  "title": "HL7-Definition V2",
+  "description": "Example: \n|10 ASH LN^#3^LIMA^OH^48132|",
+  "category": "composite",
+  "detail_url": "https://hl7-definition.caristix.com/v2/HL7v2.3/DataTypes/AD",
+  "components": [
+    {
+      "position": 1,
+      "component_name": "AD.1",
+      "component_description": "Street Address",
+      "length": "0",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 2,
+      "component_name": "AD.2",
+      "component_description": "Other Designation",
+      "length": "0",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 3,
+      "component_name": "AD.3",
+      "component_description": "City",
+      "length": "0",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 4,
+      "component_name": "AD.4",
+      "component_description": "State Or Province",
+      "length": "0",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 5,
+      "component_name": "AD.5",
+      "component_description": "Zip Or Postal Code",
+      "length": "0",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 6,
+      "component_name": "AD.6",
+      "component_description": "Country",
+      "length": "0",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "ISO3166"
+    },
+    {
+      "position": 7,
+      "component_name": "AD.7",
+      "component_description": "Address Type",
+      "length": "0",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0190"
+    },
+    {
+      "position": 8,
+      "component_name": "AD.8",
+      "component_description": "Other Geographic Designation",
+      "length": "0",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    }
+  ],
+  "component_count": 8
+}

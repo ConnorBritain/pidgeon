@@ -28,7 +28,7 @@
     {
       "segment_code": "QRF",
       "segment_desc": "Query filter segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -38,7 +38,7 @@
     {
       "segment_code": "DSC",
       "segment_desc": "Continuation pointer segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],

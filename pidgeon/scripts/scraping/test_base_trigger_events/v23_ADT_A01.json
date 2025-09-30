@@ -1,0 +1,9 @@
+{
+  "code": "ADT_A01",
+  "name": "Admit/visit notification",
+  "version": "HL7 v2.3",
+  "chapter": "Patient Administration",
+  "description": "An A01 event is intended to be used for “Admitted” patients only. \n\nAn A01 event is sent as a result of a patient undergoing the admission process which assigns the patient to a bed. It signals the beginning of a patient’s stay in a healthcare facility. Normally, this information is entered in the primary Patient Administration system and broadcast to the nursing units and ancillary systems. It includes short stay and John Doe admissions.",
+  "segments": [],
+  "segment_count": 0
+}

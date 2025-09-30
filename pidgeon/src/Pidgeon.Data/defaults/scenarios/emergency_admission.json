@@ -1,0 +1,62 @@
+{
+  "name": "Emergency Department Admission",
+  "description": "Smart defaults for emergency department admissions with urgent care patterns",
+  "category": "clinical_workflow",
+  "applicable_standards": ["hl7v23", "hl7v24", "hl7v25"],
+  "message_types": ["ADT^A01", "ADT^A04", "ORU^R01"],
+  "field_defaults": {
+    "encounter.class": "E",
+    "encounter.type": "EMER",
+    "encounter.priority": "UR",
+    "encounter.location": "ED",
+    "encounter.admission_source": "7",
+    "encounter.referring_doctor": "Emergency Physician",
+    "PV1.2": "E",
+    "PV1.4": "UR",
+    "PV1.7": "Emergency Physician",
+    "PV1.14": "7",
+    "PV1.36": "D",
+    "PV1.39": "ED",
+    "EVN.6": "Emergency",
+    "MSH.4": "Emergency Department"
+  },
+  "time_patterns": {
+    "encounter.admission_time": "current_time",
+    "encounter.triage_time": "current_time_minus_15_minutes",
+    "encounter.bed_assignment_time": "current_time_plus_30_minutes"
+  },
+  "smart_randomization": {
+    "weight_urgent_conditions": 0.9,
+    "weight_trauma_related": 0.4,
+    "weight_chest_pain": 0.3,
+    "weight_psychiatric": 0.2,
+    "generate_vital_signs": true,
+    "generate_triage_notes": true
+  },
+  "required_segments": {
+    "MSH": "always",
+    "EVN": "always",
+    "PID": "always",
+    "PV1": "always",
+    "DG1": "usually",
+    "OBX": "vital_signs"
+  },
+  "typical_field_patterns": {
+    "chief_complaint": [
+      "Chest pain",
+      "Shortness of breath",
+      "Abdominal pain",
+      "Headache",
+      "Motor vehicle accident",
+      "Fall injury"
+    ],
+    "acuity_levels": ["1", "2", "3"],
+    "disposition_codes": ["01", "02", "03", "06", "07"]
+  },
+  "usage_notes": [
+    "Optimized for emergency department workflows",
+    "Includes appropriate urgency indicators and time patterns",
+    "Generates realistic chief complaints and acuity levels",
+    "Supports both trauma and medical emergency scenarios"
+  ]
+}

@@ -28,7 +28,7 @@
     {
       "segment_code": "ERR",
       "segment_desc": "Error segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -48,7 +48,7 @@
     {
       "segment_code": "QRF",
       "segment_desc": "Query filter segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -59,7 +59,7 @@
       "segment_code": "QUERY RESPONSE",
       "segment_desc": "QUERY RESPONSE group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -68,7 +68,7 @@
     {
       "segment_code": "EVN",
       "segment_desc": "Event type",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -92,7 +92,7 @@
     {
       "segment_code": "PD1",
       "segment_desc": "Patient Demographic",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -104,8 +104,8 @@
     {
       "segment_code": "NK1",
       "segment_desc": "Next of kin",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "QUERY RESPONSE"
@@ -128,7 +128,7 @@
     {
       "segment_code": "PV2",
       "segment_desc": "Patient visit - additional information",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -140,8 +140,8 @@
     {
       "segment_code": "DB1",
       "segment_desc": "Disability Segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "QUERY RESPONSE"
@@ -152,8 +152,8 @@
     {
       "segment_code": "OBX",
       "segment_desc": "Observation segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "QUERY RESPONSE"
@@ -164,8 +164,8 @@
     {
       "segment_code": "AL1",
       "segment_desc": "Patient Allergy Information",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "QUERY RESPONSE"
@@ -176,8 +176,8 @@
     {
       "segment_code": "DG1",
       "segment_desc": "Diagnosis",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "QUERY RESPONSE"
@@ -188,7 +188,7 @@
     {
       "segment_code": "DRG",
       "segment_desc": "Diagnosis Related Group",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -200,8 +200,8 @@
     {
       "segment_code": "PROCEDURE",
       "segment_desc": "PROCEDURE group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "QUERY RESPONSE"
@@ -212,8 +212,8 @@
     {
       "segment_code": "GT1",
       "segment_desc": "Guarantor",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "QUERY RESPONSE"
@@ -224,8 +224,8 @@
     {
       "segment_code": "INSURANCE",
       "segment_desc": "INSURANCE group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "QUERY RESPONSE"
@@ -236,7 +236,7 @@
     {
       "segment_code": "ACC",
       "segment_desc": "Accident",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -248,7 +248,7 @@
     {
       "segment_code": "UB1",
       "segment_desc": "UB82 data",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -260,7 +260,7 @@
     {
       "segment_code": "UB2",
       "segment_desc": "UB92 data",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -272,7 +272,7 @@
     {
       "segment_code": "DSC",
       "segment_desc": "Continuation pointer segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],

@@ -1,0 +1,9 @@
+event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
+ORF_W02,"ORF W02 - Waveform result, response to query Trigger Event (HL7 v2.3)",Observation Reporting,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORF_W02
+ORF_W02,"ORF W02 - Waveform result, response to query Trigger Event (HL7 v2.3)",Observation Reporting,MSA,Message acknowledgement segment,R,-,False,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORF_W02
+ORF_W02,"ORF W02 - Waveform result, response to query Trigger Event (HL7 v2.3)",Observation Reporting,QRD,Query definition segment,R,-,False,,0,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORF_W02
+ORF_W02,"ORF W02 - Waveform result, response to query Trigger Event (HL7 v2.3)",Observation Reporting,QRF,Query filter segment,R,-,False,,0,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORF_W02
+ORF_W02,"ORF W02 - Waveform result, response to query Trigger Event (HL7 v2.3)",Observation Reporting,QUERY RESPONSE,QUERY RESPONSE group,R,inf,True,,0,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORF_W02
+ORF_W02,"ORF W02 - Waveform result, response to query Trigger Event (HL7 v2.3)",Observation Reporting,PATIENT,PATIENT group,R,inf,True,QUERY RESPONSE,1,5,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORF_W02
+ORF_W02,"ORF W02 - Waveform result, response to query Trigger Event (HL7 v2.3)",Observation Reporting,ORDER,ORDER group,R,inf,True,QUERY RESPONSE,1,6,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORF_W02
+ORF_W02,"ORF W02 - Waveform result, response to query Trigger Event (HL7 v2.3)",Observation Reporting,DSC,Continuation pointer segment,R,-,False,,0,7,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORF_W02

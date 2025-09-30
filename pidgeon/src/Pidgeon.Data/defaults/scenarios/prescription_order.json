@@ -1,0 +1,123 @@
+{
+  "name": "Prescription Order",
+  "description": "Smart defaults for electronic prescription orders with common medication patterns",
+  "category": "clinical_workflow",
+  "applicable_standards": ["hl7v23", "hl7v24", "hl7v25"],
+  "message_types": ["RDE^O01", "RDS^O13"],
+  "field_defaults": {
+    "encounter.class": "O",
+    "encounter.type": "AMB",
+    "prescription.status": "NW",
+    "prescription.priority": "R",
+    "prescription.route": "PO",
+    "prescription.frequency": "BID",
+    "prescription.quantity": "30",
+    "prescription.refills": "2",
+    "ORC.1": "NW",
+    "ORC.5": "IP",
+    "RXE.2": "30",
+    "RXE.3": "TAB",
+    "RXE.6": "PO",
+    "RXE.7": "BID",
+    "RXE.12": "2"
+  },
+  "common_medications": {
+    "hypertension": {
+      "medications": [
+        {
+          "name": "Lisinopril",
+          "strength": "10mg",
+          "form": "Tablet",
+          "sig": "Take 1 tablet by mouth daily",
+          "quantity": "30",
+          "refills": "5"
+        },
+        {
+          "name": "Amlodipine",
+          "strength": "5mg",
+          "form": "Tablet",
+          "sig": "Take 1 tablet by mouth daily",
+          "quantity": "30",
+          "refills": "5"
+        }
+      ]
+    },
+    "diabetes": {
+      "medications": [
+        {
+          "name": "Metformin",
+          "strength": "500mg",
+          "form": "Tablet",
+          "sig": "Take 1 tablet by mouth twice daily with meals",
+          "quantity": "60",
+          "refills": "5"
+        }
+      ]
+    },
+    "infection": {
+      "medications": [
+        {
+          "name": "Amoxicillin",
+          "strength": "500mg",
+          "form": "Capsule",
+          "sig": "Take 1 capsule by mouth three times daily",
+          "quantity": "21",
+          "refills": "0"
+        }
+      ]
+    },
+    "pain": {
+      "medications": [
+        {
+          "name": "Ibuprofen",
+          "strength": "600mg",
+          "form": "Tablet",
+          "sig": "Take 1 tablet by mouth every 6 hours as needed for pain",
+          "quantity": "20",
+          "refills": "0"
+        }
+      ]
+    }
+  },
+  "dosage_forms": {
+    "oral": ["TAB", "CAP", "SYR", "SOL"],
+    "topical": ["CRM", "OIN", "LOT", "GEL"],
+    "injectable": ["INJ", "SUSP"],
+    "inhaled": ["AER", "INH"]
+  },
+  "frequencies": {
+    "daily": ["QD", "Daily", "Once daily"],
+    "twice_daily": ["BID", "Twice daily", "Every 12 hours"],
+    "three_times": ["TID", "Three times daily", "Every 8 hours"],
+    "four_times": ["QID", "Four times daily", "Every 6 hours"],
+    "as_needed": ["PRN", "As needed"]
+  },
+  "smart_randomization": {
+    "weight_chronic_medications": 0.6,
+    "weight_acute_medications": 0.4,
+    "generate_drug_interactions": false,
+    "include_allergy_checks": true,
+    "realistic_dosing": true
+  },
+  "compliance_patterns": {
+    "controlled_substances": {
+      "max_quantity": "30",
+      "max_refills": "0",
+      "dea_required": true
+    },
+    "antibiotics": {
+      "typical_duration": "7-14 days",
+      "refills": "0"
+    },
+    "maintenance_drugs": {
+      "typical_quantity": "30-90",
+      "typical_refills": "3-5"
+    }
+  },
+  "usage_notes": [
+    "Optimized for electronic prescription workflows",
+    "Includes realistic medication patterns by therapeutic class",
+    "Supports both new prescriptions and refill requests",
+    "Follows typical prescribing compliance patterns"
+  ]
+}

@@ -29,7 +29,7 @@
       "segment_code": "MF LOCATION",
       "segment_desc": "MF LOCATION group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -62,8 +62,8 @@
     {
       "segment_code": "LCH",
       "segment_desc": "Location Characteristic",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "MF LOCATION"
@@ -74,8 +74,8 @@
     {
       "segment_code": "LRL",
       "segment_desc": "Location Relationship",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "MF LOCATION"
@@ -87,14 +87,53 @@
       "segment_code": "MF LOC DEPT",
       "segment_desc": "MF LOC DEPT group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "MF LOCATION"
       ],
       "level": 1,
       "order_index": 7
+    },
+    {
+      "segment_code": "LDP",
+      "segment_desc": "Location Department",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "MF LOCATION",
+        "MF LOC DEPT"
+      ],
+      "level": 2,
+      "order_index": 8
+    },
+    {
+      "segment_code": "LCH",
+      "segment_desc": "Location Characteristic",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "MF LOCATION",
+        "MF LOC DEPT"
+      ],
+      "level": 2,
+      "order_index": 9
+    },
+    {
+      "segment_code": "LCC",
+      "segment_desc": "Location Charge Code",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "MF LOCATION",
+        "MF LOC DEPT"
+      ],
+      "level": 2,
+      "order_index": 10
     }
   ],
-  "segment_count": 8
+  "segment_count": 11
 }

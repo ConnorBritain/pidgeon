@@ -29,7 +29,7 @@
       "segment_code": "MF CLIN STUDY",
       "segment_desc": "MF CLIN STUDY group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -62,15 +62,41 @@
     {
       "segment_code": "MF PHASE SCHED DETAIL",
       "segment_desc": "MF PHASE SCHED DETAIL group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "MF CLIN STUDY"
       ],
       "level": 1,
       "order_index": 5
+    },
+    {
+      "segment_code": "CM1",
+      "segment_desc": "Clinical Study Phase Master",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "MF CLIN STUDY",
+        "MF PHASE SCHED DETAIL"
+      ],
+      "level": 2,
+      "order_index": 6
+    },
+    {
+      "segment_code": "CM2",
+      "segment_desc": "Clinical Study Schedule Master",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "MF CLIN STUDY",
+        "MF PHASE SCHED DETAIL"
+      ],
+      "level": 2,
+      "order_index": 7
     }
   ],
-  "segment_count": 6
+  "segment_count": 8
 }

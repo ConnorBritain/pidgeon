@@ -1,0 +1,108 @@
+{
+  "code": "SQM_S25",
+  "title": "SQM S25 - Schedule query message and response Trigger Event (HL7 v2.3)",
+  "chapter": "Scheduling",
+  "description": "",
+  "detail_url": "https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/SQM_S25",
+  "segments": [
+    {
+      "segment_code": "MSH",
+      "segment_desc": "Message header segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [],
+      "level": 0,
+      "order_index": 0
+    },
+    {
+      "segment_code": "QRD",
+      "segment_desc": "Query definition segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [],
+      "level": 0,
+      "order_index": 1
+    },
+    {
+      "segment_code": "QRF",
+      "segment_desc": "Query filter segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [],
+      "level": 0,
+      "order_index": 2
+    },
+    {
+      "segment_code": "REQUEST",
+      "segment_desc": "REQUEST group",
+      "optionality": "R",
+      "repeatability": "inf",
+      "is_group": true,
+      "group_path": [],
+      "level": 0,
+      "order_index": 3
+    },
+    {
+      "segment_code": "ARQ",
+      "segment_desc": "Appointment Request",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "REQUEST"
+      ],
+      "level": 1,
+      "order_index": 4
+    },
+    {
+      "segment_code": "APR",
+      "segment_desc": "Appointment Preferences",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "REQUEST"
+      ],
+      "level": 1,
+      "order_index": 5
+    },
+    {
+      "segment_code": "PID",
+      "segment_desc": "Patient Identification",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "REQUEST"
+      ],
+      "level": 1,
+      "order_index": 6
+    },
+    {
+      "segment_code": "RESOURCES",
+      "segment_desc": "RESOURCES group",
+      "optionality": "R",
+      "repeatability": "inf",
+      "is_group": true,
+      "group_path": [
+        "REQUEST"
+      ],
+      "level": 1,
+      "order_index": 7
+    },
+    {
+      "segment_code": "DSC",
+      "segment_desc": "Continuation pointer segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [],
+      "level": 0,
+      "order_index": 8
+    }
+  ],
+  "segment_count": 9
+}

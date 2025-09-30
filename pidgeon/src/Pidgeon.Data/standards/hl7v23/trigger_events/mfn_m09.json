@@ -29,7 +29,7 @@
       "segment_code": "MF TEST CATEGORICAL",
       "segment_desc": "MF TEST CATEGORICAL group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -62,15 +62,41 @@
     {
       "segment_code": "MF TEST CAT DETAIL",
       "segment_desc": "MF TEST CAT DETAIL group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "-",
       "is_group": true,
       "group_path": [
         "MF TEST CATEGORICAL"
       ],
       "level": 1,
       "order_index": 5
+    },
+    {
+      "segment_code": "OM3",
+      "segment_desc": "Categorical test/observation",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "MF TEST CATEGORICAL",
+        "MF TEST CAT DETAIL"
+      ],
+      "level": 2,
+      "order_index": 6
+    },
+    {
+      "segment_code": "OM4",
+      "segment_desc": "Observations that require specimens",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "MF TEST CATEGORICAL",
+        "MF TEST CAT DETAIL"
+      ],
+      "level": 2,
+      "order_index": 7
     }
   ],
-  "segment_count": 6
+  "segment_count": 8
 }

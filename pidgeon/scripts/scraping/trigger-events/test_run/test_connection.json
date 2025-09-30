@@ -1,0 +1,20 @@
+{
+  "test_time": "2025-09-17 16:38:52",
+  "page_title": "HL7 Standard Message / Trigger Event List (HL7 v2.3)",
+  "events_found": 19,
+  "sample_events": [
+    {
+      "url": "https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ACK",
+      "text": "ACK - General acknowledgment message\nThe simple general acknowledgment (ACK) can be used where the application does not define a special application level acknowledgment message or where there has been an error that precludes application processing. It is also used for accept level acknowledgments. The details are described in Section 2.12.1, \u201cOriginal and enhanced processing rules.\u201d"
+    },
+    {
+      "url": "https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADR_A19",
+      "text": "ADR_A19 - Patient query\nThe following trigger event is served by QRY (a query from another system) and ADR (a response from an Patient Administration system.) Another application determines a need for Patient Administration data about a patient and sends a query to the Patient Administration system. The Who Filter in the QRD can identify the patient or account number upon which the query is defined and can contain a format code of \u201cR\u201d (record-oriented). If the query is based on the Patient ID and there are data associated with multiple accounts, the problem of which account data should be returned becomes an implementation issue. The ADT event-type segment, if included in the response, describes the last event for which the Patient Administration system initiated an unsolicited update"
+    },
+    {
+      "url": "https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADT_A01",
+      "text": "ADT_A01 - Admit/visit notification\nAn A01 event is intended to be used for \u201cAdmitted\u201d patients only. An A01 event is sent as a result of a patient undergoing the admission process which assigns the patient to a bed. It signals the beginning of a patient\u2019s stay in a healthcare facility. Normally, this information is entered in the primary Patient Administration system and broadcast to the nursing units and ancillary systems. It includes short stay and John Doe admissions."
+    }
+  ],
+  "status": "success"
+}

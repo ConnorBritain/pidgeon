@@ -50,8 +50,12 @@ public static class ServiceCollectionExtensions
         // Register message generation plugins
         services.AddMessageGenerationPlugins();
         
-        // Register HL7 v2.3 message factory
+        // Register HL7 v2.3 message factory and data providers
         services.AddScoped<IHL7MessageFactory, HL7v23MessageFactory>();
+        services.AddHL7DataProviders();
+
+        // Register field value resolver system for session context integration
+        services.AddFieldValueResolvers();
         
         // Register FHIR R4 resource factory
         services.AddScoped<Pidgeon.Core.Infrastructure.Standards.FHIR.R4.IFHIRResourceFactory, 
@@ -272,6 +276,56 @@ public static class ServiceCollectionExtensions
         // Register the procedural analysis engine
         services.AddScoped<Pidgeon.Core.Application.Interfaces.Comparison.IProceduralAnalysisEngine,
                           Pidgeon.Core.Application.Services.Comparison.ProceduralAnalysisEngine>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers HL7 data providers for completely data-driven message generation.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddHL7DataProviders(this IServiceCollection services)
+    {
+        // Register all HL7 data providers - load JSON from Pidgeon.Data assembly
+        services.AddScoped<IHL7TriggerEventProvider, HL7TriggerEventProvider>();
+        services.AddScoped<IHL7SegmentProvider, HL7SegmentProvider>();
+        services.AddScoped<IHL7DataTypeProvider, HL7DataTypeProvider>();
+        services.AddScoped<IHL7TableProvider, HL7TableProvider>();
+
+        // Register HL7MessageComposer for data-driven message composition
+        services.AddScoped<HL7MessageComposer>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the field value resolver system for priority-based field resolution.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddFieldValueResolvers(this IServiceCollection services)
+    {
+        // Register the main resolver service
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolverService,
+                          Pidgeon.Core.Services.FieldValueResolvers.FieldValueResolverService>();
+
+        // Register individual resolvers in priority order (highest to lowest)
+        // Priority 100: Session context (user-set values override all)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.SemanticPathResolver>();
+
+        // Priority 90: HL7 specific fields (MSH fields, message structure)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.HL7SpecificFieldResolver>();
+
+        // Priority 80: Demographic tables (realistic patient data)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.DemographicFieldResolver>();
+
+        // Priority 10: Smart random fallback (always provides value)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.SmartRandomResolver>();
 
         return services;
     }

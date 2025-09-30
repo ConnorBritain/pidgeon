@@ -28,7 +28,7 @@
     {
       "segment_code": "ERR",
       "segment_desc": "Error segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -48,7 +48,7 @@
     {
       "segment_code": "QRF",
       "segment_desc": "Query filter segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -69,7 +69,7 @@
       "segment_code": "MF QUERY",
       "segment_desc": "MF QUERY group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -90,7 +90,7 @@
     {
       "segment_code": "DSC",
       "segment_desc": "Continuation pointer segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],

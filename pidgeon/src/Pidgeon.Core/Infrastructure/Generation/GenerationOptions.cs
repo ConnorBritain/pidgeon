@@ -64,6 +64,18 @@ public record GenerationOptions
     public string? LockSessionName { get; init; }
 
     /// <summary>
+    /// Gets custom probabilities for optional segment inclusion (0.0 to 1.0).
+    /// Allows fine-grained control over which optional segments appear in messages.
+    /// </summary>
+    public Dictionary<string, double>? SegmentProbabilities { get; init; }
+
+    /// <summary>
+    /// Gets custom repeat counts for repeatable segments.
+    /// Overrides default repeat count logic for specific segments.
+    /// </summary>
+    public Dictionary<string, int>? SegmentRepeatCounts { get; init; }
+
+    /// <summary>
     /// Creates default generation options for algorithmic generation.
     /// </summary>
     public static GenerationOptions Default => new();

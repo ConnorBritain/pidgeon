@@ -38,7 +38,7 @@
     {
       "segment_code": "PD1",
       "segment_desc": "Patient Demographic",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -48,7 +48,7 @@
     {
       "segment_code": "PV1",
       "segment_desc": "Patient visit",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -58,7 +58,7 @@
     {
       "segment_code": "PV2",
       "segment_desc": "Patient visit - additional information",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -68,8 +68,8 @@
     {
       "segment_code": "DB1",
       "segment_desc": "Disability Segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,
@@ -78,8 +78,8 @@
     {
       "segment_code": "OBX",
       "segment_desc": "Observation segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,
@@ -89,7 +89,7 @@
       "segment_code": "FINANCIAL",
       "segment_desc": "FINANCIAL group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -110,8 +110,8 @@
     {
       "segment_code": "FINANCIAL PROCEDURE",
       "segment_desc": "FINANCIAL PROCEDURE group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "FINANCIAL"
@@ -120,44 +120,70 @@
       "order_index": 10
     },
     {
-      "segment_code": "DG1",
-      "segment_desc": "Diagnosis",
+      "segment_code": "PR1",
+      "segment_desc": "Procedures",
       "optionality": "R",
       "repeatability": "-",
       "is_group": false,
-      "group_path": [],
-      "level": 0,
+      "group_path": [
+        "FINANCIAL",
+        "FINANCIAL PROCEDURE"
+      ],
+      "level": 2,
       "order_index": 11
     },
     {
-      "segment_code": "DRG",
-      "segment_desc": "Diagnosis Related Group",
-      "optionality": "R",
-      "repeatability": "-",
+      "segment_code": "ROL",
+      "segment_desc": "Role",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
-      "group_path": [],
-      "level": 0,
+      "group_path": [
+        "FINANCIAL",
+        "FINANCIAL PROCEDURE"
+      ],
+      "level": 2,
       "order_index": 12
     },
     {
-      "segment_code": "GT1",
-      "segment_desc": "Guarantor",
-      "optionality": "R",
-      "repeatability": "-",
+      "segment_code": "DG1",
+      "segment_desc": "Diagnosis",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,
       "order_index": 13
     },
     {
-      "segment_code": "INSURANCE",
-      "segment_desc": "INSURANCE group",
-      "optionality": "R",
-      "repeatability": "inf",
-      "is_group": true,
+      "segment_code": "DRG",
+      "segment_desc": "Diagnosis Related Group",
+      "optionality": "O",
+      "repeatability": "-",
+      "is_group": false,
       "group_path": [],
       "level": 0,
       "order_index": 14
+    },
+    {
+      "segment_code": "GT1",
+      "segment_desc": "Guarantor",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [],
+      "level": 0,
+      "order_index": 15
+    },
+    {
+      "segment_code": "INSURANCE",
+      "segment_desc": "INSURANCE group",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [],
+      "level": 0,
+      "order_index": 16
     },
     {
       "segment_code": "IN1",
@@ -169,42 +195,42 @@
         "INSURANCE"
       ],
       "level": 1,
-      "order_index": 15
+      "order_index": 17
     },
     {
       "segment_code": "IN2",
       "segment_desc": "Insurance additional info",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
         "INSURANCE"
       ],
       "level": 1,
-      "order_index": 16
+      "order_index": 18
     },
     {
       "segment_code": "IN3",
       "segment_desc": "Insurance additional info - certification",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
         "INSURANCE"
       ],
       "level": 1,
-      "order_index": 17
+      "order_index": 19
     },
     {
       "segment_code": "ACC",
       "segment_desc": "Accident",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
       "level": 0,
-      "order_index": 18
+      "order_index": 20
     }
   ],
-  "segment_count": 19
+  "segment_count": 21
 }

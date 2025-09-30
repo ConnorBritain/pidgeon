@@ -28,8 +28,8 @@
     {
       "segment_code": "ERR",
       "segment_desc": "Error segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,
@@ -38,7 +38,7 @@
     {
       "segment_code": "QRD",
       "segment_desc": "Query definition segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -49,7 +49,7 @@
       "segment_code": "CLOCK AND STATS WITH NOTES ALT",
       "segment_desc": "CLOCK AND STATS WITH NOTES ALT group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -58,7 +58,7 @@
     {
       "segment_code": "NCK",
       "segment_desc": "System Clock",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -70,8 +70,8 @@
     {
       "segment_code": "NTE",
       "segment_desc": "Notes and comments segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "CLOCK AND STATS WITH NOTES ALT"
@@ -82,7 +82,7 @@
     {
       "segment_code": "NST",
       "segment_desc": "Statistics",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -94,8 +94,8 @@
     {
       "segment_code": "NTE",
       "segment_desc": "Notes and comments segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "CLOCK AND STATS WITH NOTES ALT"
@@ -106,7 +106,7 @@
     {
       "segment_code": "NSC",
       "segment_desc": "Status change",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -118,8 +118,8 @@
     {
       "segment_code": "NTE",
       "segment_desc": "Notes and comments segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "CLOCK AND STATS WITH NOTES ALT"

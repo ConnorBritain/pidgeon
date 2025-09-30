@@ -38,7 +38,7 @@
     {
       "segment_code": "PD1",
       "segment_desc": "Patient Demographic",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -48,7 +48,7 @@
     {
       "segment_code": "MRG",
       "segment_desc": "Merge patient information",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],

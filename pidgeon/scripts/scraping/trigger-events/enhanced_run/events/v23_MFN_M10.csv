@@ -1,0 +1,7 @@
+event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
+MFN_M10,MFN M10 - Test/observation batteries master file Trigger Event (HL7 v2.3),Master Files,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M10
+MFN_M10,MFN M10 - Test/observation batteries master file Trigger Event (HL7 v2.3),Master Files,MFI,Master file identification segment,R,-,False,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M10
+MFN_M10,MFN M10 - Test/observation batteries master file Trigger Event (HL7 v2.3),Master Files,MF TEST BATTERIES,MF TEST BATTERIES group,R,inf,True,,0,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M10
+MFN_M10,MFN M10 - Test/observation batteries master file Trigger Event (HL7 v2.3),Master Files,MFE,Master file entry segment,R,-,False,MF TEST BATTERIES,1,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M10
+MFN_M10,MFN M10 - Test/observation batteries master file Trigger Event (HL7 v2.3),Master Files,OM1,General - fields that apply to most observations,R,-,False,MF TEST BATTERIES,1,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M10
+MFN_M10,MFN M10 - Test/observation batteries master file Trigger Event (HL7 v2.3),Master Files,MF TEST BATT DETAIL,MF TEST BATT DETAIL group,R,inf,True,MF TEST BATTERIES,1,5,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M10

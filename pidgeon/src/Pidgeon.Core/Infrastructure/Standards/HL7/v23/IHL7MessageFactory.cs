@@ -8,46 +8,31 @@ using Pidgeon.Core.Generation;
 namespace Pidgeon.Core.Infrastructure.Standards.HL7.v23;
 
 /// <summary>
-/// Factory interface for generating HL7 v2.3 standards-compliant messages.
-/// Follows HL7.org v2.3 specification for segment structure and field requirements.
+/// Universal factory interface for generating any HL7 v2.3 standards-compliant message.
+/// Uses data-driven approach to support all trigger events defined in Pidgeon.Data JSON files.
 /// </summary>
 public interface IHL7MessageFactory
 {
     /// <summary>
-    /// Generates an HL7 v2.3 compliant ADT^A01 (Admit/Visit Notification) message.
-    /// Required segments: MSH, EVN, PID, PV1
+    /// Universal message generation method - takes any HL7 message type and generates it
+    /// using the corresponding trigger event JSON definition from Pidgeon.Data.
     /// </summary>
-    Result<string> GenerateADT_A01(Patient patient, Encounter encounter, GenerationOptions options);
-
-    /// <summary>
-    /// Generates an HL7 v2.3 compliant ADT^A08 (Update Patient Information) message.
-    /// Required segments: MSH, EVN, PID, PV1
-    /// </summary>
-    Result<string> GenerateADT_A08(Patient patient, Encounter encounter, GenerationOptions options);
-
-    /// <summary>
-    /// Generates an HL7 v2.3 compliant ADT^A03 (Discharge Patient) message.
-    /// Required segments: MSH, EVN, PID, PV1
-    /// </summary>
-    Result<string> GenerateADT_A03(Patient patient, Encounter encounter, GenerationOptions options);
-
-    /// <summary>
-    /// Generates an HL7 v2.3 compliant ORU^R01 (Observation Result) message.
-    /// Required segments: MSH, PID, OBR, OBX
-    /// </summary>
-    Result<string> GenerateORU_R01(Patient patient, ObservationResult observation, GenerationOptions options);
-
-    /// <summary>
-    /// Generates an HL7 v2.3 compliant RDE^O11 (Pharmacy Order) message.
-    /// Required segments: MSH, PID, RXE
-    /// </summary>
-    Result<string> GenerateRDE_O11(Patient patient, Prescription prescription, GenerationOptions options);
-
-    /// <summary>
-    /// Generates an HL7 v2.3 compliant ORM^O01 (Order Management) message.
-    /// Required segments: MSH, PID, ORC, OBR
-    /// </summary>
-    Result<string> GenerateORM_O01(Patient patient, Order order, GenerationOptions options);
+    /// <param name="messageType">Any HL7 message type (e.g., "ADT^A01", "ORM^O01", "ORU^R01")</param>
+    /// <param name="patient">Patient data (required for all messages)</param>
+    /// <param name="encounter">Encounter data (optional, for visit-related messages)</param>
+    /// <param name="prescription">Prescription data (optional, for pharmacy messages)</param>
+    /// <param name="observation">Observation data (optional, for lab messages)</param>
+    /// <param name="order">Order data (optional, for order messages)</param>
+    /// <param name="options">Generation options</param>
+    /// <returns>Standards-compliant HL7 message generated from trigger event definition</returns>
+    Task<Result<string>> GenerateMessageAsync(
+        string messageType,
+        Patient patient,
+        Encounter? encounter = null,
+        Prescription? prescription = null,
+        ObservationResult? observation = null,
+        Order? order = null,
+        GenerationOptions? options = null);
 }
 
 

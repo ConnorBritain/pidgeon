@@ -29,7 +29,7 @@
       "segment_code": "PATIENT",
       "segment_desc": "PATIENT group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -50,7 +50,7 @@
     {
       "segment_code": "PD1",
       "segment_desc": "Patient Demographic",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -62,7 +62,7 @@
     {
       "segment_code": "PV1",
       "segment_desc": "Patient visit",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -74,8 +74,8 @@
     {
       "segment_code": "DB1",
       "segment_desc": "Disability Segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "PATIENT"

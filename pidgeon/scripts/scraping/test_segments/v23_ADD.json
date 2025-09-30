@@ -1,0 +1,21 @@
+{
+  "code": "ADD",
+  "name": "HL7-Definition V2",
+  "title": "HL7-Definition V2",
+  "chapter": "Control/Query",
+  "description": "The ADD segment is used to define the continuation of the prior segment in a continuation message. See Section 2.23.2, “Continuation messages and segments,” for details.",
+  "detail_url": "https://hl7-definition.caristix.com/v2/HL7v2.3/Segments/ADD",
+  "fields": [
+    {
+      "position": 1,
+      "field_name": "ADD.1",
+      "field_description": "Addendum Continuation Pointer",
+      "length": "65536",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    }
+  ],
+  "field_count": 1
+}

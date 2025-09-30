@@ -72,6 +72,9 @@ public class MessageTypeRegistry
         // HL7 v2 Messages - QRY (Query)
         ["QRY^A19"] = "hl7", // Patient query
         ["QRY^Q02"] = "hl7", // Query for results of previous query
+
+        // HL7 v2 Messages - ACK (Acknowledgment)
+        ["ACK"] = "hl7", // General acknowledgment
         
         // FHIR R4 Resources - Core Patient/Demographics
         ["Patient"] = "fhir",        // Patient demographics and identifiers
@@ -253,6 +256,7 @@ public class MessageTypeRegistry
             "ORM" => new[] { ("ORM^O01", "General order"), ("ORM^O02", "Order response") },
             "RDE" => new[] { ("RDE^O11", "Pharmacy order"), ("RDE^O25", "Refill authorization") },
             "SIU" => new[] { ("SIU^S12", "New appointment"), ("SIU^S13", "Reschedule appointment") },
+            "ACK" => new[] { ("ACK", "General acknowledgment") },
             _ => new[] { ("ADT^A01", "Patient admission"), ("ORU^R01", "Lab results") }
         };
 

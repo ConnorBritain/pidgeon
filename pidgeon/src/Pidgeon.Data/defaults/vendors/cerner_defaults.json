@@ -1,0 +1,83 @@
+{
+  "name": "Cerner (Oracle Health) Defaults",
+  "description": "Smart defaults for Cerner/Oracle Health EHR system message patterns",
+  "vendor": "cerner",
+  "category": "vendor_patterns",
+  "applicable_standards": ["hl7v23", "hl7v24", "hl7v25"],
+  "field_defaults": {
+    "MSH.3": "CERNER^MILLENNIUM^DNS",
+    "MSH.4": "CERNER_FACILITY",
+    "MSH.5": "TARGET^TARGET_APP^DNS",
+    "MSH.6": "TARGET_FACILITY",
+    "MSH.21": "MILLENNIUM_2023",
+    "patient.id_format": "numeric_variable",
+    "encounter.id_format": "numeric_variable",
+    "provider.id_format": "numeric_variable"
+  },
+  "field_patterns": {
+    "patient_id": {
+      "pattern": "\\d{1,10}",
+      "example": "123456",
+      "description": "Variable-length numeric patient identifier"
+    },
+    "encounter_id": {
+      "pattern": "\\d{1,12}",
+      "example": "987654321",
+      "description": "Variable-length numeric encounter identifier"
+    },
+    "provider_id": {
+      "pattern": "\\d{1,8}",
+      "example": "12345",
+      "description": "Numeric provider identifier"
+    },
+    "mrn_format": {
+      "pattern": "\\d{6,10}",
+      "example": "1234567",
+      "description": "Numeric MRN without prefix"
+    }
+  },
+  "message_control_patterns": {
+    "MSH.10": {
+      "format": "sequential_numeric",
+      "example": "123456789"
+    },
+    "MSH.11": "P",
+    "MSH.12": "2.3"
+  },
+  "segment_ordering": {
+    "ADT": ["MSH", "EVN", "PID", "NK1", "PV1", "PV2", "OBX", "DG1", "GT1", "IN1"],
+    "ORU": ["MSH", "PID", "PV1", "ORC", "OBR", "OBX", "NTE"],
+    "RDE": ["MSH", "PID", "PV1", "ORC", "RXE", "RXR", "RXC"]
+  },
+  "time_formatting": {
+    "timestamp_format": "YYYYMMDDHHMMSS",
+    "date_format": "YYYYMMDD",
+    "time_format": "HHMM",
+    "timezone_handling": "local_no_offset"
+  },
+  "coding_systems": {
+    "diagnosis_codes": "ICD10",
+    "procedure_codes": "CPT4",
+    "drug_codes": "MULTUM",
+    "provider_taxonomy": "INTERNAL"
+  },
+  "cerner_specific_features": {
+    "use_obx_for_vitals": true,
+    "detailed_demographics": true,
+    "comprehensive_allergies": true,
+    "medication_reconciliation": true,
+    "clinical_notes_integration": true
+  },
+  "smart_randomization": {
+    "realistic_cerner_workflows": true,
+    "typical_cerner_field_population": 0.75,
+    "cerner_naming_conventions": true,
+    "multum_drug_codes": true
+  },
+  "usage_notes": [
+    "Optimized for Cerner/Oracle Health integration testing",
+    "Uses variable-length numeric identifiers typical of Cerner",
+    "Includes Cerner-specific segment patterns",
+    "Supports Multum drug coding system commonly used with Cerner"
+  ]
+}

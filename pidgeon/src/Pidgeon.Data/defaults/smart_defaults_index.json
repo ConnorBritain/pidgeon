@@ -1,0 +1,111 @@
+{
+  "name": "Pidgeon Smart Defaults Index",
+  "description": "Master index of all available smart default configurations for healthcare message generation",
+  "version": "1.0",
+  "created_date": "2025-09-30",
+  "categories": {
+    "patient_demographics": {
+      "description": "Pre-configured patient demographic patterns for different populations",
+      "configurations": [
+        {
+          "id": "pediatric_patient",
+          "file": "scenarios/pediatric_patient.json",
+          "name": "Pediatric Patient",
+          "description": "Smart defaults for patients 0-17 years old",
+          "use_cases": ["Pediatric clinic visits", "Child immunizations", "School physicals"]
+        }
+      ]
+    },
+    "clinical_workflow": {
+      "description": "Pre-configured clinical workflow patterns for common healthcare processes",
+      "configurations": [
+        {
+          "id": "emergency_admission",
+          "file": "scenarios/emergency_admission.json",
+          "name": "Emergency Department Admission",
+          "description": "Smart defaults for ED admissions and urgent care",
+          "use_cases": ["Emergency admissions", "Trauma cases", "Urgent care visits"]
+        },
+        {
+          "id": "outpatient_lab_order",
+          "file": "scenarios/outpatient_lab_order.json",
+          "name": "Outpatient Laboratory Order",
+          "description": "Smart defaults for routine lab orders and results",
+          "use_cases": ["Routine lab orders", "Preventive screening", "Chronic disease monitoring"]
+        },
+        {
+          "id": "prescription_order",
+          "file": "scenarios/prescription_order.json",
+          "name": "Prescription Order",
+          "description": "Smart defaults for electronic prescription orders",
+          "use_cases": ["E-prescribing", "Medication refills", "Chronic disease management"]
+        }
+      ]
+    },
+    "vendor_patterns": {
+      "description": "EHR vendor-specific field patterns and formatting conventions",
+      "configurations": [
+        {
+          "id": "epic_defaults",
+          "file": "vendors/epic_defaults.json",
+          "name": "Epic Systems Defaults",
+          "description": "Smart defaults optimized for Epic EHR systems",
+          "use_cases": ["Epic integration testing", "Epic interface development", "Epic data migration"]
+        },
+        {
+          "id": "cerner_defaults",
+          "file": "vendors/cerner_defaults.json",
+          "name": "Cerner (Oracle Health) Defaults",
+          "description": "Smart defaults optimized for Cerner/Oracle Health systems",
+          "use_cases": ["Cerner integration testing", "Oracle Health interfaces", "Millennium compatibility"]
+        }
+      ]
+    }
+  },
+  "usage_patterns": {
+    "cli_integration": {
+      "description": "How to use smart defaults with Pidgeon CLI",
+      "examples": [
+        "pidgeon generate ADT^A01 --scenario pediatric_patient",
+        "pidgeon generate ORU^R01 --scenario outpatient_lab_order",
+        "pidgeon generate RDE^O01 --scenario prescription_order --vendor epic"
+      ]
+    },
+    "session_templates": {
+      "description": "Smart defaults can be loaded as session templates",
+      "examples": [
+        "pidgeon session load --template pediatric_patient",
+        "pidgeon session apply --scenario emergency_admission"
+      ]
+    }
+  },
+  "extensibility": {
+    "custom_scenarios": {
+      "description": "Users can create custom scenario files following the established JSON schema",
+      "schema_location": "schemas/smart_defaults_schema.json"
+    },
+    "vendor_patterns": {
+      "description": "Additional vendor patterns can be added for other EHR systems",
+      "supported_vendors": ["epic", "cerner", "allscripts", "athenahealth", "nextgen"]
+    }
+  },
+  "integration_points": {
+    "field_value_resolvers": {
+      "description": "Smart defaults integrate with the field value resolver chain",
+      "priority": 85,
+      "resolver_class": "SmartDefaultsResolver"
+    },
+    "session_management": {
+      "description": "Scenarios can be applied to sessions for persistent field values",
+      "supports_inheritance": true,
+      "supports_overrides": true
+    }
+  },
+  "future_enhancements": [
+    "AI-enhanced scenario generation",
+    "Machine learning from real message patterns",
+    "Dynamic scenario adaptation based on usage",
+    "Integration with HL7 FHIR R4/R5 resources",
+    "Support for specialty-specific workflows (cardiology, oncology, etc.)"
+  ]
+}

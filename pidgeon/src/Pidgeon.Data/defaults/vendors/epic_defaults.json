@@ -1,0 +1,82 @@
+{
+  "name": "Epic Systems Defaults",
+  "description": "Smart defaults for Epic EHR system message patterns and field formatting",
+  "vendor": "epic",
+  "category": "vendor_patterns",
+  "applicable_standards": ["hl7v23", "hl7v24", "hl7v25"],
+  "field_defaults": {
+    "MSH.3": "EPIC^EPIC_APP^IP",
+    "MSH.4": "EPIC_FACILITY",
+    "MSH.5": "TARGET^TARGET_APP^IP",
+    "MSH.6": "TARGET_FACILITY",
+    "MSH.21": "EPIC_2023",
+    "patient.id_format": "numeric_10_digit",
+    "encounter.id_format": "numeric_8_digit",
+    "provider.id_format": "alphanumeric_6_char"
+  },
+  "field_patterns": {
+    "patient_id": {
+      "pattern": "\\d{10}",
+      "example": "1234567890",
+      "description": "10-digit numeric patient identifier"
+    },
+    "encounter_id": {
+      "pattern": "\\d{8}",
+      "example": "12345678",
+      "description": "8-digit numeric encounter identifier"
+    },
+    "provider_id": {
+      "pattern": "[A-Z]{2}\\d{4}",
+      "example": "EP1234",
+      "description": "2-letter prefix + 4-digit provider ID"
+    },
+    "mrn_format": {
+      "pattern": "E\\d{9}",
+      "example": "E123456789",
+      "description": "Epic MRN format with E prefix"
+    }
+  },
+  "message_control_patterns": {
+    "MSH.10": {
+      "format": "timestamp_based",
+      "example": "20251230143025.1234"
+    },
+    "MSH.11": "P",
+    "MSH.12": "2.3"
+  },
+  "segment_ordering": {
+    "ADT": ["MSH", "EVN", "PID", "PD1", "NK1", "PV1", "PV2", "DG1", "GT1", "IN1", "IN2", "IN3"],
+    "ORU": ["MSH", "PID", "PV1", "ORC", "OBR", "OBX"],
+    "RDE": ["MSH", "PID", "PV1", "ORC", "RXE", "RXR"]
+  },
+  "time_formatting": {
+    "timestamp_format": "YYYYMMDDHHMMSS",
+    "date_format": "YYYYMMDD",
+    "time_format": "HHMM",
+    "timezone_handling": "local_no_offset"
+  },
+  "coding_systems": {
+    "diagnosis_codes": "ICD10",
+    "procedure_codes": "CPT4",
+    "drug_codes": "NDC",
+    "provider_taxonomy": "NUCC"
+  },
+  "epic_specific_features": {
+    "use_pd1_segment": true,
+    "include_patient_aliases": true,
+    "extended_person_names": true,
+    "comprehensive_insurance": true,
+    "detailed_visit_info": true
+  },
+  "smart_randomization": {
+    "realistic_epic_workflows": true,
+    "typical_epic_field_population": 0.8,
+    "epic_naming_conventions": true
+  },
+  "usage_notes": [
+    "Optimized for Epic EHR integration testing",
+    "Includes Epic-specific field patterns and formatting",
+    "Supports Epic's comprehensive data model",
+    "Uses typical Epic naming and ID conventions"
+  ]
+}

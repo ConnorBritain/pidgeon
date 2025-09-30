@@ -59,7 +59,7 @@
       "segment_code": "OBX",
       "segment_desc": "Observation segment",
       "optionality": "R",
-      "repeatability": "-",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,

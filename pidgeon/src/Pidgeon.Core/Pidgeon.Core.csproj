@@ -18,4 +18,8 @@
     <!-- <PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.24.0" /> -->
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pidgeon.Data\Pidgeon.Data.csproj" />
+  </ItemGroup>
+
 </Project>

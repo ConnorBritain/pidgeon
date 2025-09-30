@@ -1,0 +1,6 @@
+event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
+ADT_A46,ADT A46 - Change external ID Trigger Event (HL7 v2.3),Patient Administration,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADT_A46
+ADT_A46,ADT A46 - Change external ID Trigger Event (HL7 v2.3),Patient Administration,EVN,Event type,R,-,False,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADT_A46
+ADT_A46,ADT A46 - Change external ID Trigger Event (HL7 v2.3),Patient Administration,PID,Patient Identification,R,-,False,,0,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADT_A46
+ADT_A46,ADT A46 - Change external ID Trigger Event (HL7 v2.3),Patient Administration,PD1,Patient Demographic,R,-,False,,0,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADT_A46
+ADT_A46,ADT A46 - Change external ID Trigger Event (HL7 v2.3),Patient Administration,MRG,Merge patient information,R,-,False,,0,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADT_A46

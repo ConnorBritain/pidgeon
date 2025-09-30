@@ -1,0 +1,15 @@
+event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,NTE,Notes and comments segment,R,-,False,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,PATIENT,PATIENT group,R,inf,True,,0,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,PID,Patient Identification,R,-,False,PATIENT,1,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,PD1,Patient Demographic,R,-,False,PATIENT,1,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,NTE,Notes and comments segment,R,-,False,PATIENT,1,5,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,PATIENT VISIT,PATIENT VISIT group,R,inf,True,PATIENT,1,6,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,INSURANCE,INSURANCE group,R,inf,True,PATIENT,1,7,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,GT1,Guarantor,R,-,False,PATIENT,1,8,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,AL1,Patient Allergy Information,R,-,False,PATIENT,1,9,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,ORDER,ORDER group,R,inf,True,,0,10,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,ORC,Common order segment,R,-,False,ORDER,1,11,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,ORDER DETAIL,ORDER DETAIL group,R,inf,True,ORDER,1,12,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01
+OMS_O01,OMS O01 - Stock requisition order message Trigger Event (HL7 v2.3),Order Entry,BLG,Billing,R,-,False,ORDER,1,13,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/OMS_O01

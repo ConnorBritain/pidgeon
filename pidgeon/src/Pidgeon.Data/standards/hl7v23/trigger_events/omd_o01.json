@@ -18,8 +18,8 @@
     {
       "segment_code": "NTE",
       "segment_desc": "Notes and comments segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,
@@ -28,8 +28,8 @@
     {
       "segment_code": "PATIENT",
       "segment_desc": "PATIENT group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "-",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -50,7 +50,7 @@
     {
       "segment_code": "PD1",
       "segment_desc": "Patient Demographic",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -62,8 +62,8 @@
     {
       "segment_code": "NTE",
       "segment_desc": "Notes and comments segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "PATIENT"
@@ -74,8 +74,8 @@
     {
       "segment_code": "PATIENT VISIT",
       "segment_desc": "PATIENT VISIT group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "-",
       "is_group": true,
       "group_path": [
         "PATIENT"
@@ -84,35 +84,37 @@
       "order_index": 6
     },
     {
-      "segment_code": "INSURANCE",
-      "segment_desc": "INSURANCE group",
+      "segment_code": "PV1",
+      "segment_desc": "Patient visit",
       "optionality": "R",
-      "repeatability": "inf",
-      "is_group": true,
+      "repeatability": "-",
+      "is_group": false,
       "group_path": [
-        "PATIENT"
+        "PATIENT",
+        "PATIENT VISIT"
       ],
-      "level": 1,
+      "level": 2,
       "order_index": 7
     },
     {
-      "segment_code": "GT1",
-      "segment_desc": "Guarantor",
-      "optionality": "R",
+      "segment_code": "PV2",
+      "segment_desc": "Patient visit - additional information",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
-        "PATIENT"
+        "PATIENT",
+        "PATIENT VISIT"
       ],
-      "level": 1,
+      "level": 2,
       "order_index": 8
     },
     {
-      "segment_code": "AL1",
-      "segment_desc": "Patient Allergy Information",
-      "optionality": "R",
-      "repeatability": "-",
-      "is_group": false,
+      "segment_code": "INSURANCE",
+      "segment_desc": "INSURANCE group",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": true,
       "group_path": [
         "PATIENT"
       ],
@@ -120,76 +122,182 @@
       "order_index": 9
     },
     {
-      "segment_code": "ORDER DIET",
-      "segment_desc": "ORDER DIET group",
+      "segment_code": "IN1",
+      "segment_desc": "Insurance",
       "optionality": "R",
-      "repeatability": "inf",
-      "is_group": true,
-      "group_path": [],
-      "level": 0,
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "PATIENT",
+        "INSURANCE"
+      ],
+      "level": 2,
       "order_index": 10
     },
     {
-      "segment_code": "ORC",
-      "segment_desc": "Common order segment",
-      "optionality": "R",
+      "segment_code": "IN2",
+      "segment_desc": "Insurance additional info",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
-        "ORDER DIET"
+        "PATIENT",
+        "INSURANCE"
       ],
-      "level": 1,
+      "level": 2,
       "order_index": 11
     },
     {
-      "segment_code": "DIET",
-      "segment_desc": "DIET group",
-      "optionality": "R",
-      "repeatability": "inf",
-      "is_group": true,
-      "group_path": [
-        "ORDER DIET"
-      ],
-      "level": 1,
-      "order_index": 12
-    },
-    {
-      "segment_code": "ORDER TRAY",
-      "segment_desc": "ORDER TRAY group",
-      "optionality": "R",
-      "repeatability": "inf",
-      "is_group": true,
-      "group_path": [],
-      "level": 0,
-      "order_index": 13
-    },
-    {
-      "segment_code": "ORC",
-      "segment_desc": "Common order segment",
-      "optionality": "R",
+      "segment_code": "IN3",
+      "segment_desc": "Insurance additional info - certification",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
-        "ORDER TRAY"
+        "PATIENT",
+        "INSURANCE"
+      ],
+      "level": 2,
+      "order_index": 12
+    },
+    {
+      "segment_code": "GT1",
+      "segment_desc": "Guarantor",
+      "optionality": "O",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "PATIENT"
+      ],
+      "level": 1,
+      "order_index": 13
+    },
+    {
+      "segment_code": "AL1",
+      "segment_desc": "Patient Allergy Information",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "PATIENT"
       ],
       "level": 1,
       "order_index": 14
     },
     {
-      "segment_code": "ODT",
-      "segment_desc": "Diet tray instructions segment",
+      "segment_code": "ORDER DIET",
+      "segment_desc": "ORDER DIET group",
+      "optionality": "R",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [],
+      "level": 0,
+      "order_index": 15
+    },
+    {
+      "segment_code": "ORC",
+      "segment_desc": "Common order segment",
       "optionality": "R",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
-        "ORDER TRAY"
+        "ORDER DIET"
       ],
       "level": 1,
-      "order_index": 15
+      "order_index": 16
+    },
+    {
+      "segment_code": "DIET",
+      "segment_desc": "DIET group",
+      "optionality": "O",
+      "repeatability": "-",
+      "is_group": true,
+      "group_path": [
+        "ORDER DIET"
+      ],
+      "level": 1,
+      "order_index": 17
+    },
+    {
+      "segment_code": "ODS",
+      "segment_desc": "Dietary orders, supplements, and preferences",
+      "optionality": "R",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "ORDER DIET",
+        "DIET"
+      ],
+      "level": 2,
+      "order_index": 18
     },
     {
       "segment_code": "NTE",
       "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "ORDER DIET",
+        "DIET"
+      ],
+      "level": 2,
+      "order_index": 19
+    },
+    {
+      "segment_code": "OBSERVATION",
+      "segment_desc": "OBSERVATION group",
+      "optionality": "R",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [
+        "ORDER DIET",
+        "DIET"
+      ],
+      "level": 2,
+      "order_index": 20
+    },
+    {
+      "segment_code": "OBX",
+      "segment_desc": "Observation segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "ORDER DIET",
+        "DIET",
+        "OBSERVATION"
+      ],
+      "level": 3,
+      "order_index": 21
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "ORDER DIET",
+        "DIET",
+        "OBSERVATION"
+      ],
+      "level": 3,
+      "order_index": 22
+    },
+    {
+      "segment_code": "ORDER TRAY",
+      "segment_desc": "ORDER TRAY group",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [],
+      "level": 0,
+      "order_index": 23
+    },
+    {
+      "segment_code": "ORC",
+      "segment_desc": "Common order segment",
       "optionality": "R",
       "repeatability": "-",
       "is_group": false,
@@ -197,8 +305,32 @@
         "ORDER TRAY"
       ],
       "level": 1,
-      "order_index": 16
+      "order_index": 24
+    },
+    {
+      "segment_code": "ODT",
+      "segment_desc": "Diet tray instructions segment",
+      "optionality": "R",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "ORDER TRAY"
+      ],
+      "level": 1,
+      "order_index": 25
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "ORDER TRAY"
+      ],
+      "level": 1,
+      "order_index": 26
     }
   ],
-  "segment_count": 17
+  "segment_count": 27
 }

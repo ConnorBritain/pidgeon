@@ -28,7 +28,7 @@
     {
       "segment_code": "DSC",
       "segment_desc": "Continuation pointer segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],

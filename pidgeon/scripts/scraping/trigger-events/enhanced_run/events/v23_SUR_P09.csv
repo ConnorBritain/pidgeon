@@ -1,0 +1,7 @@
+event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
+SUR_P09,SUR P09 - Summary product experience report Trigger Event (HL7 v2.3),Observation Reporting,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/SUR_P09
+SUR_P09,SUR P09 - Summary product experience report Trigger Event (HL7 v2.3),Observation Reporting,FACILITY,FACILITY group,R,inf,True,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/SUR_P09
+SUR_P09,SUR P09 - Summary product experience report Trigger Event (HL7 v2.3),Observation Reporting,FAC,Facility,R,-,False,FACILITY,1,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/SUR_P09
+SUR_P09,SUR P09 - Summary product experience report Trigger Event (HL7 v2.3),Observation Reporting,PRODUCT,PRODUCT group,R,inf,True,FACILITY,1,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/SUR_P09
+SUR_P09,SUR P09 - Summary product experience report Trigger Event (HL7 v2.3),Observation Reporting,PSH,Product Summary Header,R,-,False,FACILITY,1,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/SUR_P09
+SUR_P09,SUR P09 - Summary product experience report Trigger Event (HL7 v2.3),Observation Reporting,FACILITY DETAIL,FACILITY DETAIL group,R,inf,True,FACILITY,1,5,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/SUR_P09

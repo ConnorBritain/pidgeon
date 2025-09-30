@@ -19,7 +19,7 @@
       "segment_code": "PATIENT",
       "segment_desc": "PATIENT group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -40,7 +40,7 @@
     {
       "segment_code": "PD1",
       "segment_desc": "Patient Demographic",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -52,8 +52,8 @@
     {
       "segment_code": "NTE",
       "segment_desc": "Notes and comments segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "PATIENT"
@@ -64,14 +64,40 @@
     {
       "segment_code": "VISIT",
       "segment_desc": "VISIT group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "-",
       "is_group": true,
       "group_path": [
         "PATIENT"
       ],
       "level": 1,
       "order_index": 5
+    },
+    {
+      "segment_code": "PV1",
+      "segment_desc": "Patient visit",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "PATIENT",
+        "VISIT"
+      ],
+      "level": 2,
+      "order_index": 6
+    },
+    {
+      "segment_code": "PV2",
+      "segment_desc": "Patient visit - additional information",
+      "optionality": "O",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "PATIENT",
+        "VISIT"
+      ],
+      "level": 2,
+      "order_index": 7
     },
     {
       "segment_code": "CSR",
@@ -83,20 +109,195 @@
         "PATIENT"
       ],
       "level": 1,
-      "order_index": 6
+      "order_index": 8
     },
     {
       "segment_code": "STUDY PHASE",
       "segment_desc": "STUDY PHASE group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "PATIENT"
       ],
       "level": 1,
-      "order_index": 7
+      "order_index": 9
+    },
+    {
+      "segment_code": "CSP",
+      "segment_desc": "Clinical Study Phase",
+      "optionality": "O",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE"
+      ],
+      "level": 2,
+      "order_index": 10
+    },
+    {
+      "segment_code": "STUDY SCHEDULE",
+      "segment_desc": "STUDY SCHEDULE group",
+      "optionality": "R",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE"
+      ],
+      "level": 2,
+      "order_index": 11
+    },
+    {
+      "segment_code": "CSS",
+      "segment_desc": "Clinical Study Data Schedule",
+      "optionality": "O",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE",
+        "STUDY SCHEDULE"
+      ],
+      "level": 3,
+      "order_index": 12
+    },
+    {
+      "segment_code": "STUDY OBSERVATION",
+      "segment_desc": "STUDY OBSERVATION group",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE",
+        "STUDY SCHEDULE"
+      ],
+      "level": 3,
+      "order_index": 13
+    },
+    {
+      "segment_code": "ORC",
+      "segment_desc": "Common order segment",
+      "optionality": "O",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE",
+        "STUDY SCHEDULE",
+        "STUDY OBSERVATION"
+      ],
+      "level": 4,
+      "order_index": 14
+    },
+    {
+      "segment_code": "OBR",
+      "segment_desc": "Observation request segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE",
+        "STUDY SCHEDULE",
+        "STUDY OBSERVATION"
+      ],
+      "level": 4,
+      "order_index": 15
+    },
+    {
+      "segment_code": "OBX",
+      "segment_desc": "Observation segment",
+      "optionality": "R",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE",
+        "STUDY SCHEDULE",
+        "STUDY OBSERVATION"
+      ],
+      "level": 4,
+      "order_index": 16
+    },
+    {
+      "segment_code": "STUDY PHARM",
+      "segment_desc": "STUDY PHARM group",
+      "optionality": "R",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE",
+        "STUDY SCHEDULE"
+      ],
+      "level": 3,
+      "order_index": 17
+    },
+    {
+      "segment_code": "ORC",
+      "segment_desc": "Common order segment",
+      "optionality": "O",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE",
+        "STUDY SCHEDULE",
+        "STUDY PHARM"
+      ],
+      "level": 4,
+      "order_index": 18
+    },
+    {
+      "segment_code": "RX ADMIN",
+      "segment_desc": "RX ADMIN group",
+      "optionality": "R",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE",
+        "STUDY SCHEDULE",
+        "STUDY PHARM"
+      ],
+      "level": 4,
+      "order_index": 19
+    },
+    {
+      "segment_code": "RXA",
+      "segment_desc": "Pharmacy administration segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE",
+        "STUDY SCHEDULE",
+        "STUDY PHARM",
+        "RX ADMIN"
+      ],
+      "level": 5,
+      "order_index": 20
+    },
+    {
+      "segment_code": "RXR",
+      "segment_desc": "Pharmacy route segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "PATIENT",
+        "STUDY PHASE",
+        "STUDY SCHEDULE",
+        "STUDY PHARM",
+        "RX ADMIN"
+      ],
+      "level": 5,
+      "order_index": 21
     }
   ],
-  "segment_count": 8
+  "segment_count": 22
 }

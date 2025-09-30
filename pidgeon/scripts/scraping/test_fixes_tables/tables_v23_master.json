@@ -1,0 +1,45 @@
+{
+  "domain": "Tables",
+  "version": "2.3",
+  "scraped_date": "2025-09-17 23:45:37",
+  "item_count": 1,
+  "total_elements": 4,
+  "items": [
+    {
+      "code": "0001",
+      "name": "Sex",
+      "version": "HL7 v2.3",
+      "chapter": "Patient Administration",
+      "description": "User Defined Tables - Tables with data suggested by HL7 organization. Most table are customized to reflect system workflows and coded values (such as lab values).",
+      "type": "User",
+      "detail_url": "https://hl7-definition.caristix.com/v2/HL7v2.3/Tables/0001",
+      "values": [
+        {
+          "value": "F",
+          "description": "Female",
+          "comment": "",
+          "sort_order": 1
+        },
+        {
+          "value": "M",
+          "description": "Male",
+          "comment": "",
+          "sort_order": 2
+        },
+        {
+          "value": "O",
+          "description": "Other",
+          "comment": "",
+          "sort_order": 3
+        },
+        {
+          "value": "U",
+          "description": "Unknown",
+          "comment": "",
+          "sort_order": 4
+        }
+      ],
+      "value_count": 4
+    }
+  ]
+}

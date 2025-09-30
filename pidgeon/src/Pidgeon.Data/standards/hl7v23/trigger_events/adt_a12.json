@@ -38,7 +38,7 @@
     {
       "segment_code": "PD1",
       "segment_desc": "Patient Demographic",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -58,7 +58,7 @@
     {
       "segment_code": "PV2",
       "segment_desc": "Patient visit - additional information",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -68,8 +68,8 @@
     {
       "segment_code": "DB1",
       "segment_desc": "Disability Segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,
@@ -78,8 +78,8 @@
     {
       "segment_code": "OBX",
       "segment_desc": "Observation segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,
@@ -88,7 +88,7 @@
     {
       "segment_code": "DG1",
       "segment_desc": "Diagnosis",
-      "optionality": "R",
+      "optionality": "B",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],

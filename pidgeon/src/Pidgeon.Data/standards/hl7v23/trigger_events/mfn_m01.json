@@ -29,7 +29,7 @@
       "segment_code": "MF",
       "segment_desc": "MF group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,

@@ -1,0 +1,62 @@
+{
+  "url": "https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/BAR_P06",
+  "total_rows_after_expansion": 4,
+  "segments_extracted": [
+    {
+      "segment_code": "MSH",
+      "segment_desc": "Message header segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [],
+      "level": 0,
+      "order_index": 0
+    },
+    {
+      "segment_code": "EVN",
+      "segment_desc": "Event type",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [],
+      "level": 0,
+      "order_index": 1
+    },
+    {
+      "segment_code": "PATIENT",
+      "segment_desc": "PATIENT group",
+      "optionality": "R",
+      "repeatability": "inf",
+      "is_group": true,
+      "group_path": [],
+      "level": 0,
+      "order_index": 2
+    }
+  ],
+  "row_details": [
+    {
+      "index": 0,
+      "text": "SEGMENT",
+      "classes": "flex-segment",
+      "html": "<div _ngcontent-uen-c146=\"\" aria-label=\"columnheader\" class=\"flex-segment\" style=\"flex-direction: row; box-sizing: border-box; display: flex;\"><div _ngcontent-uen-c146=\"\" fxflex=\"40px\" aria-label=\"gridcell\" style=\"flex: 1 1 40px; box-sizing: border-box; max-width: 40px; min-width: 40px;\"></div> Segment </div>"
+    },
+    {
+      "index": 1,
+      "text": "MSH\n - Message header segment",
+      "classes": "flex-segment",
+      "html": "<div _ngcontent-uen-c146=\"\" aria-label=\"gridcell\" class=\"flex-segment\" style=\"padding-left: 0px; flex-direction: row; box-sizing: border-box; display: flex;\"><div _ngcontent-uen-c146=\"\" fxflex=\"40px\" aria-label=\"gridcell\" style=\"flex: 1 1 40px; box-sizing: border-box; max-width: 40px; min-width: 40px;\"></div><div _ngcontent-uen-c146=\"\" class=\"segment-label\"><span _ngcontent-uen-c146=\"\" class=\"cx-body-strong\"><a _ngcontent-uen-c146=\"\" click-stop-propagation=\"\" aria-label=\"HL7 v2.3 - MSH - MSH (Se"
+    },
+    {
+      "index": 2,
+      "text": "EVN\n - Event type",
+      "classes": "flex-segment",
+      "html": "<div _ngcontent-uen-c146=\"\" aria-label=\"gridcell\" class=\"flex-segment\" style=\"padding-left: 0px; flex-direction: row; box-sizing: border-box; display: flex;\"><div _ngcontent-uen-c146=\"\" fxflex=\"40px\" aria-label=\"gridcell\" style=\"flex: 1 1 40px; box-sizing: border-box; max-width: 40px; min-width: 40px;\"></div><div _ngcontent-uen-c146=\"\" class=\"segment-label\"><span _ngcontent-uen-c146=\"\" class=\"cx-body-strong\"><a _ngcontent-uen-c146=\"\" click-stop-propagation=\"\" aria-label=\"HL7 v2.3 - EVN - EVN (Se"
+    },
+    {
+      "index": 3,
+      "text": "chevron_right\nPATIENT",
+      "classes": "flex-segment tree-table-cell-content-with-button",
+      "html": "<div _ngcontent-uen-c146=\"\" aria-label=\"gridcell\" class=\"flex-segment tree-table-cell-content-with-button\" style=\"padding-left: 0px; flex-direction: row; box-sizing: border-box; display: flex;\"><div _ngcontent-uen-c146=\"\" fxflex=\"40px\" aria-label=\"gridcell\" class=\"tree-table-expansion-button\" style=\"flex: 1 1 40px; box-sizing: border-box; max-width: 40px; min-width: 40px;\"><button _ngcontent-uen-c146=\"\" mat-icon-button=\"\" aria-label=\"expand\" class=\"mat-focus-indicator mat-icon-button mat-button-"
+    }
+  ]
+}

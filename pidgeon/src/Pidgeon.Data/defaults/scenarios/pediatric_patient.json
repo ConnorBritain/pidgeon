@@ -1,0 +1,47 @@
+{
+  "name": "Pediatric Patient",
+  "description": "Smart defaults for pediatric patients (0-17 years)",
+  "category": "patient_demographics",
+  "applicable_standards": ["hl7v23", "hl7v24", "hl7v25"],
+  "field_defaults": {
+    "patient.age_category": "pediatric",
+    "patient.age_years": "8",
+    "patient.date_of_birth": "2016-03-15",
+    "patient.marital_status": "S",
+    "patient.emergency_contact": "Mother",
+    "patient.emergency_contact_relationship": "MTH",
+    "patient.insurance_type": "pediatric",
+    "PID.7": "20160315",
+    "PID.16": "S",
+    "NK1.3": "MTH",
+    "NK1.2": "Emergency Contact Parent"
+  },
+  "conditional_defaults": {
+    "if_age_under_2": {
+      "condition": "patient.age_years < 2",
+      "fields": {
+        "patient.primary_language": "N/A",
+        "patient.education_level": "N/A",
+        "PID.15": ""
+      }
+    },
+    "if_age_school": {
+      "condition": "patient.age_years >= 5 AND patient.age_years <= 17",
+      "fields": {
+        "patient.occupation": "Student",
+        "patient.employer": "School District"
+      }
+    }
+  },
+  "smart_randomization": {
+    "weight_pediatric_conditions": 0.8,
+    "weight_preventive_care": 0.9,
+    "weight_family_history": 0.6
+  },
+  "usage_notes": [
+    "Automatically sets age-appropriate defaults for pediatric patients",
+    "Includes proper emergency contact relationships",
+    "Excludes adult-only fields like employment history",
+    "Weights toward preventive care and common pediatric conditions"
+  ]
+}

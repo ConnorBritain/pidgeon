@@ -1,0 +1,8 @@
+event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
+ADR_A19,ADR A19 - Patient query Trigger Event (HL7 v2.3),,MSH,,-,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADR_A19
+ADR_A19,ADR A19 - Patient query Trigger Event (HL7 v2.3),,MSA,,-,-,False,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADR_A19
+ADR_A19,ADR A19 - Patient query Trigger Event (HL7 v2.3),,ERR,,-,-,False,,0,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADR_A19
+ADR_A19,ADR A19 - Patient query Trigger Event (HL7 v2.3),,QRD,,-,-,False,,0,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADR_A19
+ADR_A19,ADR A19 - Patient query Trigger Event (HL7 v2.3),,QRF,,-,-,False,,0,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADR_A19
+ADR_A19,ADR A19 - Patient query Trigger Event (HL7 v2.3),,chevron_right,,-,-,False,,0,5,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADR_A19
+ADR_A19,ADR A19 - Patient query Trigger Event (HL7 v2.3),,DSC,,-,-,False,,0,6,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADR_A19

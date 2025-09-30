@@ -11,50 +11,52 @@ using Microsoft.Extensions.Logging;
 namespace Pidgeon.Core.Infrastructure.Standards.HL7.v23;
 
 /// <summary>
-/// Factory for generating HL7 v2.3 standards-compliant messages.
-/// Delegates to HL7v23MessageComposer for clean segment-based composition.
+/// Universal HL7 v2.3 message factory that generates any message type using trigger event data.
+/// No hardcoded message types - dynamically reads trigger event JSON and builds messages.
 /// </summary>
 public class HL7v23MessageFactory : IHL7MessageFactory
 {
     private readonly ILogger<HL7v23MessageFactory> _logger;
-    private readonly HL7v23MessageComposer _composer;
-    
-    public HL7v23MessageFactory(ILogger<HL7v23MessageFactory> logger, HL7v23MessageComposer composer)
+    private readonly HL7MessageComposer _composer;
+
+    public HL7v23MessageFactory(ILogger<HL7v23MessageFactory> logger, HL7MessageComposer composer)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _composer = composer ?? throw new ArgumentNullException(nameof(composer));
     }
 
-    public Result<string> GenerateADT_A01(Patient patient, Encounter encounter, GenerationOptions options)
+    /// <summary>
+    /// Universal message generation method - takes any HL7 message type and generates it
+    /// using the corresponding trigger event JSON definition from Pidgeon.Data.
+    /// </summary>
+    /// <param name="messageType">Any HL7 message type (e.g., "ADT^A01", "ORM^O01", "ORU^R01")</param>
+    /// <param name="patient">Patient data (required for all messages)</param>
+    /// <param name="encounter">Encounter data (optional, for visit-related messages)</param>
+    /// <param name="prescription">Prescription data (optional, for pharmacy messages)</param>
+    /// <param name="observation">Observation data (optional, for lab messages)</param>
+    /// <param name="order">Order data (optional, for order messages)</param>
+    /// <param name="options">Generation options</param>
+    /// <returns>Standards-compliant HL7 message generated from trigger event definition</returns>
+    public async Task<Result<string>> GenerateMessageAsync(
+        string messageType,
+        Patient patient,
+        Encounter? encounter = null,
+        Prescription? prescription = null,
+        ObservationResult? observation = null,
+        Order? order = null,
+        GenerationOptions? options = null)
     {
-        return _composer.ComposeADT_A01(patient, encounter, options);
-    }
+        try
+        {
+            _logger.LogDebug("Generating HL7 message {MessageType} using data-driven approach", messageType);
 
-    public Result<string> GenerateADT_A08(Patient patient, Encounter encounter, GenerationOptions options)
-    {
-        return _composer.ComposeADT_A08(patient, encounter, options);
-    }
-
-    public Result<string> GenerateADT_A03(Patient patient, Encounter encounter, GenerationOptions options)
-    {
-        return _composer.ComposeADT_A03(patient, encounter, options);
-    }
-
-    public Result<string> GenerateORU_R01(Patient patient, ObservationResult observation, GenerationOptions options)
-    {
-        return _composer.ComposeORU_R01(patient, observation, options);
-    }
-
-    public Result<string> GenerateRDE_O11(Patient patient, Prescription prescription, GenerationOptions options)
-    {
-        return _composer.ComposeRDE_O11(patient, prescription, options);
-    }
-
-    public Result<string> GenerateORM_O01(Patient patient, Order order, GenerationOptions options)
-    {
-        // TODO: Implement ORM_O01 in message composer
-        return Result<string>.Failure("ORM^O01 not yet implemented in new architecture");
+            return await _composer.ComposeMessageAsync(messageType, patient, encounter, prescription, observation, options);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating HL7 message {MessageType}", messageType);
+            return Result<string>.Failure($"Failed to generate {messageType}: {ex.Message}");
+        }
     }
 
 }
-

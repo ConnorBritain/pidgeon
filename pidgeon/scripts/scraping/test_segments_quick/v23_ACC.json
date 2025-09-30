@@ -1,0 +1,65 @@
+{
+  "code": "ACC",
+  "name": "HL7-Definition V2",
+  "title": "HL7-Definition V2",
+  "chapter": "Unknown",
+  "description": "The ACC segment contains patient information relative to an accident in which the patient has been involved.",
+  "detail_url": "https://hl7-definition.caristix.com/v2/HL7v2.3/Segments/ACC",
+  "fields": [
+    {
+      "position": 1,
+      "field": "ACC.1 - Accident Date/Time",
+      "length": "26",
+      "data_type": "TS",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 3,
+      "field": "ACC.2 - Accident Code",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0050"
+    },
+    {
+      "position": 5,
+      "field": "ACC.3 - Accident Location",
+      "length": "25",
+      "data_type": "ST",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 7,
+      "field": "ACC.4 - Auto Accident State",
+      "length": "60",
+      "data_type": "CE",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": ""
+    },
+    {
+      "position": 9,
+      "field": "ACC.5 - Accident Job Related Indicator",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
+    },
+    {
+      "position": 11,
+      "field": "ACC.6 - Accident Death Indicator",
+      "length": "2",
+      "data_type": "ID",
+      "optionality": "O",
+      "repeatability": "-",
+      "table": "0136"
+    }
+  ],
+  "field_count": 6
+}
