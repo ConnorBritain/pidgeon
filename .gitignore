@@ -31,7 +31,9 @@ pidgeon/tests/message_outputs/
 pidgeon/dist/
 **/dist/
 *.tar.gz
-*.zip
+# Note: *.zip commented out to allow dataset ZIPs to be tracked
+# If you want to ignore distribution zips, be more specific:
+# pidgeon/dist/*.zip
 
 # Documentation data
 # Ignore the entire docs/data_sourcing/ folder and all future PNGs within it (recursively)
@@ -42,3 +44,22 @@ docs/data_sourcing/**/*.png
 **/.pidgeon/models/
 **/models/*.gguf
 **/models/*.bin
+
+# Large reference datasets (extracted files)
+# Keep .zip files, ignore extracted directories
+pidgeon/src/Pidgeon.Data/datasets/NPPES_Data_Dissemination_September_2025/
+pidgeon/src/Pidgeon.Data/datasets/Loinc_2.81/
+pidgeon/src/Pidgeon.Data/datasets/EOBZIP_2025_08/
+pidgeon/src/Pidgeon.Data/datasets/ndctext/
+pidgeon/src/Pidgeon.Data/datasets/icd10cm-Code Descriptions-2026/
+pidgeon/src/Pidgeon.Data/datasets/simplemaps_uszips_basicv1.911/
+pidgeon/src/Pidgeon.Data/datasets/table-and-index/
+
+# Exclude NPPES ZIP (1.03 GB - too large for GitHub)
+pidgeon/src/Pidgeon.Data/datasets/NPPES_Data_Dissemination_September_2025.zip
+
+# Note: Other dataset ZIPs (<100MB) are tracked in git for convenience
+
+# Database files (generated locally)
+pidgeon/src/Pidgeon.Data/datasets/*.db
+pidgeon/src/Pidgeon.Data/datasets/*.sqlite

@@ -49,6 +49,100 @@
 
 ---
 
+## LEDGER-043: Healthcare Dataset Acquisition and Operationalization
+**Date**: October 1, 2025
+**Type**: Data Integration Implementation - Real Healthcare Dataset Processing
+**Status**: 🔄 **IN PROGRESS** - Datasets acquired, extraction strategy defined, gaps identified
+
+### **📦 Acquired Datasets (in `Pidgeon.Data/datasets/`)**
+**Successfully Downloaded**:
+- **NDC Drug Products** (`ndctext.zip`): 68MB uncompressed, 200K+ medications
+- **LOINC Lab Tests** (`Loinc_2.81.zip`): 95K+ test codes with metadata
+- **NPPES Provider Registry** (`NPPES_Data_Dissemination_September_2025.zip`): 11GB uncompressed, 7M+ providers
+- **US ZIP Codes** (`simplemaps_uszips_basicv1.911.zip`): Complete geographic data
+- **CVX Vaccine Codes** (`cvx.txt`): 288 vaccine codes, already extracted
+- **FDA Orange Book** (`EOBZIP_2025_08.zip`): Brand/generic equivalents
+- **ICD-10 Index** (`table-and-index.zip`): Index files but missing actual code mappings
+
+### **🚨 Critical Gaps Identified**
+**High Priority - Immediate Action Required**:
+1. **Census Names Data**: Missing patient name frequency distributions
+   - **Impact**: Generic name generation instead of realistic demographics
+   - **Source**: https://www.census.gov/topics/population/genealogy/data.html
+   - **TODO**: Circle back when access obtained
+
+2. **ICD-10 Code Mappings**: Have index but need actual codes
+   - **Impact**: Cannot generate realistic diagnosis codes for DG1 segments
+   - **Source**: https://www.cms.gov/files/zip/2024-icd-10-cm-codes.zip
+   - **Action**: Download actual code-description mappings
+
+**Future Integration (Professional/Enterprise Tiers)**:
+3. **RxNorm Drug Database**: Requires UMLS license registration
+   - **Impact**: Enhanced drug normalization and interactions
+   - **TODO**: Circle back after UMLS registration
+
+4. **SNOMED CT**: Comprehensive clinical terminology
+   - **Impact**: Complete clinical concept coverage
+   - **TODO**: Circle back after UMLS license obtained
+
+### **🏗️ Operationalization Strategy**
+**Week 1 - Core Extraction**:
+- Extract NDC product.txt (~40MB)
+- Extract LOINC main table (~200MB)
+- Extract ZIP codes CSV (~6MB)
+- Process CVX vaccine data (already done)
+- **CRITICAL**: Stream process NPPES to extract 10K provider subset (avoid 11GB extraction)
+
+**Week 2 - Database Integration**:
+- Extend SQLite schema with healthcare tables
+- Load extracted data with proper indexing
+- Integrate with field value resolver chain
+- Implement three-tier caching (memory → SQLite → files)
+
+**Week 3 - Gap Filling**:
+- **TODO**: Download Census names when available
+- **TODO**: Register for UMLS license for RxNorm/SNOMED
+- Create clinical correlation tables
+- Add smart randomization (70% normal, 20% mild abnormal, 10% severe)
+
+### **📊 Technical Implementation Details**
+**Extraction Commands**:
+```bash
+# Create organized structure
+mkdir -p extracted/{ndc,loinc,geographic,vaccines,fda,nppes_subset}
+
+# Priority extractions
+unzip ndctext.zip product.txt -d extracted/ndc/
+unzip Loinc_2.81.zip "LoincTable/Loinc.csv" -d extracted/loinc/
+unzip simplemaps_uszips_basicv1.911.zip uszips.csv -d extracted/geographic/
+```
+
+**NPPES Subset Strategy** (Avoid 11GB extraction):
+```python
+# Stream process to extract 10K most common providers
+# Target specialties: Internal Medicine, Emergency, Family Practice, etc.
+# Output: ~50MB subset file for fast loading
+```
+
+### **🎯 Performance Targets Maintained**
+- **Field Resolution**: <50ms with database backing
+- **Memory Usage**: <100MB for in-memory caches
+- **Database Size**: <2GB total with all datasets
+- **Coverage**: 95% common medications, 90% routine lab tests
+
+### **📋 Documentation Created**
+- **Web Search Results**: `docs/data/sprint4/websites_for_datasets.md`
+- **Operationalization Plan**: `docs/data/sprint4/dataset_operationalization_strategy.md`
+- **Integration Strategy**: Enhanced field resolver implementation defined
+
+### **⚠️ Action Items for Future Circles**
+1. **Register for UMLS License** → Unlock RxNorm and SNOMED CT
+2. **Download Census Names Data** → Enable realistic demographic generation
+3. **Process Medicare Utilization Data** → Create specialty-diagnosis correlations
+4. **Integrate NHANES Lab Values** → Add reference ranges and distributions
+
+---
+
 ## LEDGER-041: Message Type Coverage Analysis - Realistic Dataset Requirements Assessment
 **Date**: September 30, 2025
 **Type**: Analysis Report - Coverage Assessment + Dataset Strategy

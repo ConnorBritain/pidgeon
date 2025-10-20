@@ -28,7 +28,7 @@
     {
       "segment_code": "ERR",
       "segment_desc": "Error segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -38,8 +38,8 @@
     {
       "segment_code": "NTE",
       "segment_desc": "Notes and comments segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,
@@ -48,8 +48,8 @@
     {
       "segment_code": "RESPONSE",
       "segment_desc": "RESPONSE group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "-",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -58,8 +58,8 @@
     {
       "segment_code": "PATIENT",
       "segment_desc": "PATIENT group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "-",
       "is_group": true,
       "group_path": [
         "RESPONSE"
@@ -68,17 +68,82 @@
       "order_index": 5
     },
     {
+      "segment_code": "PID",
+      "segment_desc": "Patient Identification",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "PATIENT"
+      ],
+      "level": 2,
+      "order_index": 6
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "PATIENT"
+      ],
+      "level": 2,
+      "order_index": 7
+    },
+    {
       "segment_code": "ORDER",
       "segment_desc": "ORDER group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "RESPONSE"
       ],
       "level": 1,
-      "order_index": 6
+      "order_index": 8
+    },
+    {
+      "segment_code": "ORC",
+      "segment_desc": "Common order segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "ORDER"
+      ],
+      "level": 2,
+      "order_index": 9
+    },
+    {
+      "segment_code": "RQD",
+      "segment_desc": "Requisition detail",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "ORDER"
+      ],
+      "level": 2,
+      "order_index": 10
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "ORDER"
+      ],
+      "level": 2,
+      "order_index": 11
     }
   ],
-  "segment_count": 7
+  "segment_count": 12
 }

@@ -28,8 +28,8 @@
     {
       "segment_code": "PATIENT VISIT",
       "segment_desc": "PATIENT VISIT group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "-",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -50,7 +50,7 @@
     {
       "segment_code": "PV2",
       "segment_desc": "Patient visit - additional information",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [
@@ -63,7 +63,7 @@
       "segment_code": "GOAL",
       "segment_desc": "GOAL group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -84,8 +84,8 @@
     {
       "segment_code": "NTE",
       "segment_desc": "Notes and comments segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "GOAL"
@@ -96,8 +96,8 @@
     {
       "segment_code": "VAR",
       "segment_desc": "Variance",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [
         "GOAL"
@@ -108,8 +108,8 @@
     {
       "segment_code": "GOAL ROLE",
       "segment_desc": "GOAL ROLE group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "GOAL"
@@ -118,34 +118,36 @@
       "order_index": 9
     },
     {
-      "segment_code": "PATHWAY",
-      "segment_desc": "PATHWAY group",
+      "segment_code": "ROL",
+      "segment_desc": "Role",
       "optionality": "R",
-      "repeatability": "inf",
-      "is_group": true,
+      "repeatability": "-",
+      "is_group": false,
       "group_path": [
-        "GOAL"
+        "GOAL",
+        "GOAL ROLE"
       ],
-      "level": 1,
+      "level": 2,
       "order_index": 10
     },
     {
-      "segment_code": "OBSERVATION",
-      "segment_desc": "OBSERVATION group",
-      "optionality": "R",
-      "repeatability": "inf",
-      "is_group": true,
+      "segment_code": "VAR",
+      "segment_desc": "Variance",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
       "group_path": [
-        "GOAL"
+        "GOAL",
+        "GOAL ROLE"
       ],
-      "level": 1,
+      "level": 2,
       "order_index": 11
     },
     {
-      "segment_code": "PROBLEM",
-      "segment_desc": "PROBLEM group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "segment_code": "PATHWAY",
+      "segment_desc": "PATHWAY group",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "GOAL"
@@ -154,17 +156,431 @@
       "order_index": 12
     },
     {
-      "segment_code": "ORDER",
-      "segment_desc": "ORDER group",
+      "segment_code": "PTH",
+      "segment_desc": "Pathway",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "PATHWAY"
+      ],
+      "level": 2,
+      "order_index": 13
+    },
+    {
+      "segment_code": "VAR",
+      "segment_desc": "Variance",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "PATHWAY"
+      ],
+      "level": 2,
+      "order_index": 14
+    },
+    {
+      "segment_code": "OBSERVATION",
+      "segment_desc": "OBSERVATION group",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "GOAL"
       ],
       "level": 1,
-      "order_index": 13
+      "order_index": 15
+    },
+    {
+      "segment_code": "OBX",
+      "segment_desc": "Observation segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "OBSERVATION"
+      ],
+      "level": 2,
+      "order_index": 16
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "OBSERVATION"
+      ],
+      "level": 2,
+      "order_index": 17
+    },
+    {
+      "segment_code": "PROBLEM",
+      "segment_desc": "PROBLEM group",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [
+        "GOAL"
+      ],
+      "level": 1,
+      "order_index": 18
+    },
+    {
+      "segment_code": "PRB",
+      "segment_desc": "Problem Detail",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "PROBLEM"
+      ],
+      "level": 2,
+      "order_index": 19
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "PROBLEM"
+      ],
+      "level": 2,
+      "order_index": 20
+    },
+    {
+      "segment_code": "VAR",
+      "segment_desc": "Variance",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "PROBLEM"
+      ],
+      "level": 2,
+      "order_index": 21
+    },
+    {
+      "segment_code": "PROBLEM ROLE",
+      "segment_desc": "PROBLEM ROLE group",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [
+        "GOAL",
+        "PROBLEM"
+      ],
+      "level": 2,
+      "order_index": 22
+    },
+    {
+      "segment_code": "ROL",
+      "segment_desc": "Role",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "PROBLEM",
+        "PROBLEM ROLE"
+      ],
+      "level": 3,
+      "order_index": 23
+    },
+    {
+      "segment_code": "VAR",
+      "segment_desc": "Variance",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "PROBLEM",
+        "PROBLEM ROLE"
+      ],
+      "level": 3,
+      "order_index": 24
+    },
+    {
+      "segment_code": "PROBLEM OBSERVATION",
+      "segment_desc": "PROBLEM OBSERVATION group",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [
+        "GOAL",
+        "PROBLEM"
+      ],
+      "level": 2,
+      "order_index": 25
+    },
+    {
+      "segment_code": "OBX",
+      "segment_desc": "Observation segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "PROBLEM",
+        "PROBLEM OBSERVATION"
+      ],
+      "level": 3,
+      "order_index": 26
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "PROBLEM",
+        "PROBLEM OBSERVATION"
+      ],
+      "level": 3,
+      "order_index": 27
+    },
+    {
+      "segment_code": "ORDER",
+      "segment_desc": "ORDER group",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [
+        "GOAL"
+      ],
+      "level": 1,
+      "order_index": 28
+    },
+    {
+      "segment_code": "ORC",
+      "segment_desc": "Common order segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER"
+      ],
+      "level": 2,
+      "order_index": 29
+    },
+    {
+      "segment_code": "ORDER DETAIL",
+      "segment_desc": "ORDER DETAIL group",
+      "optionality": "O",
+      "repeatability": "-",
+      "is_group": true,
+      "group_path": [
+        "GOAL",
+        "ORDER"
+      ],
+      "level": 2,
+      "order_index": 30
+    },
+    {
+      "segment_code": "ORDER DETAIL SEGMENT",
+      "segment_desc": "ORDER DETAIL SEGMENT group",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": true,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL"
+      ],
+      "level": 3,
+      "order_index": 31
+    },
+    {
+      "segment_code": "OBR",
+      "segment_desc": "Observation request segment",
+      "optionality": "C",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL",
+        "ORDER DETAIL SEGMENT"
+      ],
+      "level": 4,
+      "order_index": 32
+    },
+    {
+      "segment_code": "RQD",
+      "segment_desc": "Requisition detail",
+      "optionality": "C",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL",
+        "ORDER DETAIL SEGMENT"
+      ],
+      "level": 4,
+      "order_index": 33
+    },
+    {
+      "segment_code": "RQ1",
+      "segment_desc": "Requisition detail-1 segment",
+      "optionality": "C",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL",
+        "ORDER DETAIL SEGMENT"
+      ],
+      "level": 4,
+      "order_index": 34
+    },
+    {
+      "segment_code": "RXO",
+      "segment_desc": "Pharmacy prescription order segment",
+      "optionality": "C",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL",
+        "ORDER DETAIL SEGMENT"
+      ],
+      "level": 4,
+      "order_index": 35
+    },
+    {
+      "segment_code": "ODS",
+      "segment_desc": "Dietary orders, supplements, and preferences",
+      "optionality": "C",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL",
+        "ORDER DETAIL SEGMENT"
+      ],
+      "level": 4,
+      "order_index": 36
+    },
+    {
+      "segment_code": "ODT",
+      "segment_desc": "Diet tray instructions segment",
+      "optionality": "C",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL",
+        "ORDER DETAIL SEGMENT"
+      ],
+      "level": 4,
+      "order_index": 37
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL"
+      ],
+      "level": 3,
+      "order_index": 38
+    },
+    {
+      "segment_code": "VAR",
+      "segment_desc": "Variance",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL"
+      ],
+      "level": 3,
+      "order_index": 39
+    },
+    {
+      "segment_code": "ORDER OBSERVATION",
+      "segment_desc": "ORDER OBSERVATION group",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": true,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL"
+      ],
+      "level": 3,
+      "order_index": 40
+    },
+    {
+      "segment_code": "OBX",
+      "segment_desc": "Observation segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL",
+        "ORDER OBSERVATION"
+      ],
+      "level": 4,
+      "order_index": 41
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL",
+        "ORDER OBSERVATION"
+      ],
+      "level": 4,
+      "order_index": 42
+    },
+    {
+      "segment_code": "VAR",
+      "segment_desc": "Variance",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "GOAL",
+        "ORDER",
+        "ORDER DETAIL",
+        "ORDER OBSERVATION"
+      ],
+      "level": 4,
+      "order_index": 43
     }
   ],
-  "segment_count": 14
+  "segment_count": 44
 }

@@ -28,7 +28,7 @@
     {
       "segment_code": "ERR",
       "segment_desc": "Error segment",
-      "optionality": "R",
+      "optionality": "O",
       "repeatability": "-",
       "is_group": false,
       "group_path": [],
@@ -38,8 +38,8 @@
     {
       "segment_code": "NTE",
       "segment_desc": "Notes and comments segment",
-      "optionality": "R",
-      "repeatability": "-",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": false,
       "group_path": [],
       "level": 0,
@@ -48,8 +48,8 @@
     {
       "segment_code": "RESPONSE",
       "segment_desc": "RESPONSE group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "-",
       "is_group": true,
       "group_path": [],
       "level": 0,
@@ -58,8 +58,8 @@
     {
       "segment_code": "PATIENT",
       "segment_desc": "PATIENT group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "-",
       "is_group": true,
       "group_path": [
         "RESPONSE"
@@ -68,29 +68,133 @@
       "order_index": 5
     },
     {
+      "segment_code": "PID",
+      "segment_desc": "Patient Identification",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "PATIENT"
+      ],
+      "level": 2,
+      "order_index": 6
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "PATIENT"
+      ],
+      "level": 2,
+      "order_index": 7
+    },
+    {
       "segment_code": "ORDER DIET",
       "segment_desc": "ORDER DIET group",
       "optionality": "R",
-      "repeatability": "inf",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "RESPONSE"
       ],
       "level": 1,
-      "order_index": 6
+      "order_index": 8
+    },
+    {
+      "segment_code": "ORC",
+      "segment_desc": "Common order segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "ORDER DIET"
+      ],
+      "level": 2,
+      "order_index": 9
+    },
+    {
+      "segment_code": "ODS",
+      "segment_desc": "Dietary orders, supplements, and preferences",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "ORDER DIET"
+      ],
+      "level": 2,
+      "order_index": 10
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "ORDER DIET"
+      ],
+      "level": 2,
+      "order_index": 11
     },
     {
       "segment_code": "ORDER TRAY",
       "segment_desc": "ORDER TRAY group",
-      "optionality": "R",
-      "repeatability": "inf",
+      "optionality": "O",
+      "repeatability": "∞",
       "is_group": true,
       "group_path": [
         "RESPONSE"
       ],
       "level": 1,
-      "order_index": 7
+      "order_index": 12
+    },
+    {
+      "segment_code": "ORC",
+      "segment_desc": "Common order segment",
+      "optionality": "R",
+      "repeatability": "-",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "ORDER TRAY"
+      ],
+      "level": 2,
+      "order_index": 13
+    },
+    {
+      "segment_code": "ODT",
+      "segment_desc": "Diet tray instructions segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "ORDER TRAY"
+      ],
+      "level": 2,
+      "order_index": 14
+    },
+    {
+      "segment_code": "NTE",
+      "segment_desc": "Notes and comments segment",
+      "optionality": "O",
+      "repeatability": "∞",
+      "is_group": false,
+      "group_path": [
+        "RESPONSE",
+        "ORDER TRAY"
+      ],
+      "level": 2,
+      "order_index": 15
     }
   ],
-  "segment_count": 8
+  "segment_count": 16
 }
