@@ -66,7 +66,7 @@ if (-not $dotnetVersion.StartsWith("8.")) {
 Write-Success ".NET SDK $dotnetVersion found"
 
 # Set paths
-$RootDir = $PSScriptRoot
+$RootDir = Split-Path -Parent $PSScriptRoot
 $SrcDir = Join-Path $RootDir "src"
 $CliProject = Join-Path $SrcDir "Pidgeon.CLI" "Pidgeon.CLI.csproj"
 $DistDir = Join-Path $RootDir "dist"
@@ -88,10 +88,15 @@ New-Item -ItemType Directory -Path $PackageDir -Force | Out-Null
 Write-Step "Setting version to $Version"
 $buildPropsPath = Join-Path $RootDir "Directory.Build.props"
 if (Test-Path $buildPropsPath) {
+    # Extract numeric version (strip pre-release suffix like -test, -alpha, etc.)
+    $numericVersion = $Version -replace '-.*$', ''
+
     $buildProps = Get-Content $buildPropsPath -Raw
+    # Version and InformationalVersion can include pre-release tags
+    # AssemblyVersion and FileVersion must be numeric only
     $buildProps = $buildProps -replace '<Version>.*</Version>', "<Version>$Version</Version>"
-    $buildProps = $buildProps -replace '<AssemblyVersion>.*</AssemblyVersion>', "<AssemblyVersion>$Version.0</AssemblyVersion>"
-    $buildProps = $buildProps -replace '<FileVersion>.*</FileVersion>', "<FileVersion>$Version.0</FileVersion>"
+    $buildProps = $buildProps -replace '<AssemblyVersion>.*</AssemblyVersion>', "<AssemblyVersion>$numericVersion.0</AssemblyVersion>"
+    $buildProps = $buildProps -replace '<FileVersion>.*</FileVersion>', "<FileVersion>$numericVersion.0</FileVersion>"
     $buildProps = $buildProps -replace '<InformationalVersion>.*</InformationalVersion>', "<InformationalVersion>$Version</InformationalVersion>"
     Set-Content $buildPropsPath $buildProps -NoNewline
 }

@@ -81,8 +81,10 @@ error() {
 step "Validating .NET SDK"
 
 # Check for WSL dotnet path first, then fall back to system dotnet
+USE_WINDOWS_DOTNET=false
 if [[ -f "/mnt/c/Program Files/dotnet/dotnet.exe" ]]; then
     DOTNET="/mnt/c/Program Files/dotnet/dotnet.exe"
+    USE_WINDOWS_DOTNET=true
 elif command -v dotnet &> /dev/null; then
     DOTNET="dotnet"
 else
@@ -95,6 +97,15 @@ if [[ ! $DOTNET_VERSION =~ ^8\. ]]; then
     warning "Expected .NET 8.x, found $DOTNET_VERSION"
 fi
 success ".NET SDK $DOTNET_VERSION found"
+
+# Helper function to convert WSL paths to Windows paths when using Windows dotnet
+convert_path() {
+    if [[ "$USE_WINDOWS_DOTNET" == true ]]; then
+        wslpath -w "$1"
+    else
+        echo "$1"
+    fi
+}
 
 # Set paths
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -117,11 +128,16 @@ mkdir -p "$DIST_DIR" "$PACKAGE_DIR"
 step "Setting version to $VERSION"
 BUILD_PROPS="$ROOT_DIR/Directory.Build.props"
 if [[ -f "$BUILD_PROPS" ]]; then
+    # Extract numeric version (strip pre-release suffix like -test, -alpha, etc.)
+    NUMERIC_VERSION="${VERSION%%-*}"
+
     # Use sed to update version fields
+    # Version and InformationalVersion can include pre-release tags
+    # AssemblyVersion and FileVersion must be numeric only
     sed -i.bak \
         -e "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" \
-        -e "s|<AssemblyVersion>.*</AssemblyVersion>|<AssemblyVersion>$VERSION.0</AssemblyVersion>|g" \
-        -e "s|<FileVersion>.*</FileVersion>|<FileVersion>$VERSION.0</FileVersion>|g" \
+        -e "s|<AssemblyVersion>.*</AssemblyVersion>|<AssemblyVersion>$NUMERIC_VERSION.0</AssemblyVersion>|g" \
+        -e "s|<FileVersion>.*</FileVersion>|<FileVersion>$NUMERIC_VERSION.0</FileVersion>|g" \
         -e "s|<InformationalVersion>.*</InformationalVersion>|<InformationalVersion>$VERSION</InformationalVersion>|g" \
         "$BUILD_PROPS"
     rm -f "$BUILD_PROPS.bak"
@@ -140,21 +156,22 @@ for rid in "${RIDS[@]}"; do
     step "Building for $rid"
 
     OUTPUT_DIR="$DIST_DIR/pidgeon-$rid"
-    if [[ $rid == win-* ]]; then
-        ARCHIVE_NAME="pidgeon-$rid.zip"
-    else
-        ARCHIVE_NAME="pidgeon-$rid.tar.gz"
-    fi
+    # Use tar.gz for all platforms (universal format, better compression)
+    ARCHIVE_NAME="pidgeon-$rid.tar.gz"
     ARCHIVE_PATH="$PACKAGE_DIR/$ARCHIVE_NAME"
 
     START_TIME=$(date +%s.%N)
 
     # Build dotnet publish command with conditional AI flag
+    # Convert paths for Windows dotnet if needed
+    CLI_PROJECT_ARG="$(convert_path "$CLI_PROJECT")"
+    OUTPUT_DIR_ARG="$(convert_path "$OUTPUT_DIR")"
+
     DOTNET_ARGS=(
-        "$CLI_PROJECT"
+        "$CLI_PROJECT_ARG"
         --configuration "$CONFIGURATION"
         --runtime "$rid"
-        --output "$OUTPUT_DIR"
+        --output "$OUTPUT_DIR_ARG"
         --self-contained true
         --verbosity minimal
         "/p:Version=$VERSION"
@@ -186,15 +203,9 @@ for rid in "${RIDS[@]}"; do
         if [[ -f "$BINARY_PATH" ]]; then
             BINARY_SIZE=$(du -m "$BINARY_PATH" | cut -f1)
 
-            # Create archive
+            # Create archive (tar.gz for all platforms)
             pushd "$OUTPUT_DIR" >/dev/null
-            if [[ $rid == win-* ]]; then
-                # Windows: ZIP archive
-                zip -r "$ARCHIVE_PATH" . >/dev/null 2>&1
-            else
-                # Unix: TAR.GZ archive
-                tar -czf "$ARCHIVE_PATH" * >/dev/null 2>&1
-            fi
+            tar -czf "$ARCHIVE_PATH" * >/dev/null 2>&1
             popd >/dev/null
 
             ARCHIVE_SIZE=$(du -m "$ARCHIVE_PATH" | cut -f1)
