@@ -1,4 +1,0 @@
-event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
-ADT_A20,ADT A20 - Bed status update Trigger Event (HL7 v2.3),Patient Administration,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADT_A20
-ADT_A20,ADT A20 - Bed status update Trigger Event (HL7 v2.3),Patient Administration,EVN,Event type,R,-,False,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADT_A20
-ADT_A20,ADT A20 - Bed status update Trigger Event (HL7 v2.3),Patient Administration,NPU,Bed status update,R,-,False,,0,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ADT_A20

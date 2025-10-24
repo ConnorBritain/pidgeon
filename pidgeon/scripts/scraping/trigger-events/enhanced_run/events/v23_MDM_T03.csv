@@ -1,6 +1,0 @@
-event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
-MDM_T03,MDM T03 - Document status change notification Trigger Event (HL7 v2.3),Medical Records/Information Management,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MDM_T03
-MDM_T03,MDM T03 - Document status change notification Trigger Event (HL7 v2.3),Medical Records/Information Management,EVN,Event type,R,-,False,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MDM_T03
-MDM_T03,MDM T03 - Document status change notification Trigger Event (HL7 v2.3),Medical Records/Information Management,PID,Patient Identification,R,-,False,,0,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MDM_T03
-MDM_T03,MDM T03 - Document status change notification Trigger Event (HL7 v2.3),Medical Records/Information Management,PV1,Patient visit,R,-,False,,0,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MDM_T03
-MDM_T03,MDM T03 - Document status change notification Trigger Event (HL7 v2.3),Medical Records/Information Management,TXA,Document notification segment,R,-,False,,0,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MDM_T03

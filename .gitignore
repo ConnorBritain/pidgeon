@@ -4,7 +4,9 @@
 /specs/
 /.claude/
 /.vs/
+CLAUDE.md
 /private/
+/pidgeon-dev/
 
 # .NET Build Artifacts
 **/bin/

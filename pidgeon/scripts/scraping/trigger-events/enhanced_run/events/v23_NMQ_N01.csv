@@ -1,9 +1,0 @@
-event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
-NMQ_N01,NMQ N01 - Network management query message Trigger Event (HL7 v2.3),Control/Query,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/NMQ_N01
-NMQ_N01,NMQ N01 - Network management query message Trigger Event (HL7 v2.3),Control/Query,QRY WITH DETAIL,QRY WITH DETAIL group,R,inf,True,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/NMQ_N01
-NMQ_N01,NMQ N01 - Network management query message Trigger Event (HL7 v2.3),Control/Query,QRD,Query definition segment,R,-,False,QRY WITH DETAIL,1,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/NMQ_N01
-NMQ_N01,NMQ N01 - Network management query message Trigger Event (HL7 v2.3),Control/Query,QRF,Query filter segment,R,-,False,QRY WITH DETAIL,1,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/NMQ_N01
-NMQ_N01,NMQ N01 - Network management query message Trigger Event (HL7 v2.3),Control/Query,CLOCK AND STATISTICS,CLOCK AND STATISTICS group,R,inf,True,,0,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/NMQ_N01
-NMQ_N01,NMQ N01 - Network management query message Trigger Event (HL7 v2.3),Control/Query,NCK,System Clock,R,-,False,CLOCK AND STATISTICS,1,5,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/NMQ_N01
-NMQ_N01,NMQ N01 - Network management query message Trigger Event (HL7 v2.3),Control/Query,NST,Statistics,R,-,False,CLOCK AND STATISTICS,1,6,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/NMQ_N01
-NMQ_N01,NMQ N01 - Network management query message Trigger Event (HL7 v2.3),Control/Query,NSC,Status change,R,-,False,CLOCK AND STATISTICS,1,7,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/NMQ_N01

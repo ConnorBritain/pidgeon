@@ -1,7 +1,0 @@
-event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
-MFN_M06,MFN M06 - Clinical study with phases and schedules master file Trigger Event (HL7 v2.3),Master Files,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M06
-MFN_M06,MFN M06 - Clinical study with phases and schedules master file Trigger Event (HL7 v2.3),Master Files,MFI,Master file identification segment,R,-,False,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M06
-MFN_M06,MFN M06 - Clinical study with phases and schedules master file Trigger Event (HL7 v2.3),Master Files,MF CLIN STUDY,MF CLIN STUDY group,R,inf,True,,0,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M06
-MFN_M06,MFN M06 - Clinical study with phases and schedules master file Trigger Event (HL7 v2.3),Master Files,MFE,Master file entry segment,R,-,False,MF CLIN STUDY,1,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M06
-MFN_M06,MFN M06 - Clinical study with phases and schedules master file Trigger Event (HL7 v2.3),Master Files,CM0,Clinical Study Master,R,-,False,MF CLIN STUDY,1,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M06
-MFN_M06,MFN M06 - Clinical study with phases and schedules master file Trigger Event (HL7 v2.3),Master Files,MF PHASE SCHED DETAIL,MF PHASE SCHED DETAIL group,R,inf,True,MF CLIN STUDY,1,5,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/MFN_M06

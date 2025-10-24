@@ -1,9 +1,0 @@
-event_code,event_title,chapter,segment_code,segment_desc,optionality,repeatability,is_group,group_path,level,order_index,detail_url
-ORD_O02,ORD O02 - Dietary order acknowledgment message Trigger Event (HL7 v2.3),Order Entry,MSH,Message header segment,R,-,False,,0,0,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORD_O02
-ORD_O02,ORD O02 - Dietary order acknowledgment message Trigger Event (HL7 v2.3),Order Entry,MSA,Message acknowledgement segment,R,-,False,,0,1,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORD_O02
-ORD_O02,ORD O02 - Dietary order acknowledgment message Trigger Event (HL7 v2.3),Order Entry,ERR,Error segment,R,-,False,,0,2,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORD_O02
-ORD_O02,ORD O02 - Dietary order acknowledgment message Trigger Event (HL7 v2.3),Order Entry,NTE,Notes and comments segment,R,-,False,,0,3,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORD_O02
-ORD_O02,ORD O02 - Dietary order acknowledgment message Trigger Event (HL7 v2.3),Order Entry,RESPONSE,RESPONSE group,R,inf,True,,0,4,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORD_O02
-ORD_O02,ORD O02 - Dietary order acknowledgment message Trigger Event (HL7 v2.3),Order Entry,PATIENT,PATIENT group,R,inf,True,RESPONSE,1,5,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORD_O02
-ORD_O02,ORD O02 - Dietary order acknowledgment message Trigger Event (HL7 v2.3),Order Entry,ORDER DIET,ORDER DIET group,R,inf,True,RESPONSE,1,6,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORD_O02
-ORD_O02,ORD O02 - Dietary order acknowledgment message Trigger Event (HL7 v2.3),Order Entry,ORDER TRAY,ORDER TRAY group,R,inf,True,RESPONSE,1,7,https://hl7-definition.caristix.com/v2/HL7v2.3/TriggerEvents/ORD_O02

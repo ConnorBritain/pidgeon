@@ -47,3 +47,18 @@ src/Pidgeon.Data/datasets/enterprise/
 
 # Free tier is committed (small curated files)
 # No ignore needed for src/Pidgeon.Data/datasets/free/
+
+# Python artifacts
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.pytest_cache/
+
+# Development/exploratory scripts (archived in pidgeon-dev/)
+scripts/scraping/
+scripts/experimental/
+
+# Packaging configs (for local distribution testing only)
+packaging/
