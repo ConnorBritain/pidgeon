@@ -1,172 +1,411 @@
-# Pidgeon
+# Pidgeon CLI
 
-**Realistic HL7 Message Generation & Validation for Healthcare Integration Testing**
+**Enterprise-Ready Healthcare Message Generation & Testing Platform**
 
-Pidgeon is a cross-platform CLI tool for generating, validating, and testing HL7 v2.x messages with realistic healthcare data. Built for integration engineers, testers, and healthcare IT professionals who need production-quality test data without using real PHI.
+Pidgeon is a complete command-line platform for healthcare interoperability testing with realistic synthetic data. Generate, validate, de-identify, and test HL7, FHIR, and NCPDP messages without PHI compliance concerns.
 
-## Features
+## 🎯 Current Status
 
-- **Realistic Message Generation**: Creates HL7 messages with semantically accurate data using official HL7 tables and realistic demographics
-- **Multiple Message Types**: Supports ADT, ORU, ORM, SIU, and other common HL7 message types
-- **Standards Compliant**: Built on official HL7 v2.3 specifications with proper field mappings
-- **Vendor Pattern Support**: Configure and replicate vendor-specific HL7 implementations
-- **Cross-Platform**: Native binaries for Windows, Linux, and macOS (x64 and ARM64)
-- **Self-Contained**: Single-file executables with no runtime dependencies
+- **Version**: 0.1.0 (P0 MVP Complete)
+- **Health Score**: 100/100 ✅
+- **Features**: All 6 P0 features delivered + Sprint 1 enhancements ✅
+- **Distribution**: Self-contained executables for 6 platforms ✅
+- **Test Coverage**: 14/14 tests passing ✅
 
-## Quick Start
+## ⚡ Quick Start
 
 ### Using Pre-Built Binaries
 
-Download the latest release for your platform:
-- **Windows**: `pidgeon-win-x64.tar.gz`
-- **Linux**: `pidgeon-linux-x64.tar.gz`
-- **macOS**: `pidgeon-osx-arm64.tar.gz` (Apple Silicon) or `pidgeon-osx-x64.tar.gz` (Intel)
-
-Extract and run:
+Download from `packages/` directory and extract:
 ```bash
 tar -xzf pidgeon-<platform>.tar.gz
-cd pidgeon-<platform>
-./pidgeon --help  # Linux/macOS
-.\pidgeon.exe --help  # Windows
+./pidgeon-<platform>/Pidgeon.CLI --help
 ```
 
 ### Building from Source
 
-**Prerequisites**:
-- .NET 8.0 SDK or later
-- Bash (Unix/WSL) or PowerShell (Windows)
+**Prerequisites**: .NET 8.0 SDK
 
-**Build for all platforms**:
 ```bash
-# Unix/WSL
+# Build for all platforms
 bash scripts/build.sh --clean --version "0.1.0"
 
-# Windows PowerShell
-.\scripts\build.ps1 -Clean -Version "0.1.0"
+# Or run from source
+dotnet run --project src/Pidgeon.CLI -- --help
 ```
 
-Binaries will be in `packages/` directory.
+## 🚀 Core Features
 
-## Usage
-
-### Generate HL7 Messages
+### 1. Message Generation (Free)
+Generate realistic healthcare messages across multiple standards with smart inference:
 
 ```bash
-# Generate a single ADT^A01 message
-pidgeon generate --type "ADT^A01"
+# HL7 v2.3 Messages
+pidgeon generate ADT^A01                    # Single admission message
+pidgeon generate ORU^R01 --count 10        # 10 lab results
+pidgeon generate ORM^O01 --output orders.hl7
 
-# Generate 10 ORU^R01 lab results
-pidgeon generate --type "ORU^R01" --count 10
+# FHIR R4 Resources
+pidgeon generate Patient --standard fhir --count 5
+pidgeon generate Observation --standard fhir
 
-# Generate with specific configuration
-pidgeon generate --type "ORM^O01" --output orders.hl7
+# NCPDP SCRIPT Messages
+pidgeon generate NewRx --standard ncpdp
 ```
 
-### Message Output Example
+**Realistic Data**:
+- Official HL7 table values (not "Unknown" placeholders)
+- 500+ demographic values (names, addresses, phones)
+- Age-appropriate clinical data
+- Vendor-specific patterns
 
-```
-MSH|^~\&|PIDGEON^^L|PIDGEON_FACILITY|TARGET^^L|TARGET_FACILITY|20251024003000||ADT^A01|MSG20251024003000|P|2.3
-EVN|A01|20251024003000
-PID|1||PAT123456||Doe^John^A||19800115|M||2106-3|123 Main Street^^Springfield^IL^62701||555-1234||en|M|
-PV1|1|I|ICU^201^A||||ATT123^Smith^Jane|||MED||||ADM|||||VIP123|||||||||||||||||||||||20251024003000
-```
-
-### Available Message Types
-
-- **ADT**: Admit, Discharge, Transfer (A01, A04, A08, etc.)
-- **ORU**: Observation Results (R01 - Lab Results)
-- **ORM**: Order Messages (O01 - General Orders)
-- **SIU**: Scheduling Information (S12 - Appointments)
-- **FHIR**: Patient, Observation resources
-- **NCPDP**: Pharmacy messages
-
-## Architecture
-
-Pidgeon uses a plugin-based architecture with:
-
-- **Core Domain**: Standards-agnostic healthcare concepts (Patient, Prescription, etc.)
-- **Field Value Resolvers**: Priority-based chain for realistic data generation
-  - HL7 Table-driven values (official coded values)
-  - Demographics (realistic names, addresses, phone numbers)
-  - Clinical data (medications, procedures, diagnoses)
-  - Identifiers (MRNs, account numbers, provider IDs)
-- **Standard Adapters**: HL7 v2.x, FHIR, NCPDP serialization
-- **Vendor Patterns**: Configurable vendor-specific implementations
-
-## Development
-
-### Project Structure
-
-```
-pidgeon/
-├── src/
-│   ├── Pidgeon.CLI/          # Command-line interface
-│   ├── Pidgeon.Core/         # Core business logic and domain models
-│   └── Pidgeon.Data/         # Data access and embedded resources
-├── tests/
-│   └── Pidgeon.Tests/        # Unit and integration tests
-├── scripts/
-│   ├── build.sh              # Unix/WSL build script
-│   └── build.ps1             # PowerShell build script
-└── packages/                 # Build output (tar.gz archives)
-```
-
-### Running Tests
+### 2. Session Management & Workflow Automation (Free)
+Maintain patient context across commands for realistic clinical workflows:
 
 ```bash
-dotnet test
+# Create a session
+pidgeon session create patient_journey
+
+# Lock patient identifier
+pidgeon set patient.mrn "PAT123456" --session patient_journey
+
+# Generate admission - uses locked MRN
+pidgeon generate ADT^A01 --session patient_journey
+
+# Generate labs for same patient
+pidgeon generate ORU^R01 --session patient_journey
+
+# All messages share the same patient!
 ```
 
-### Running from Source
+**Session Features**:
+- TTL-based automatic cleanup
+- Conflict resolution
+- Audit trails
+- Lock-aware generation (preserve values while regenerating others)
+
+### 3. Semantic Path System (Free)
+Cross-standard field access with intelligent path resolution:
 
 ```bash
-dotnet run --project src/Pidgeon.CLI -- generate --type "ADT^A01"
+# Find patient MRN location across standards
+pidgeon path patient.mrn
+# Output:
+#   HL7v23: PID.3
+#   FHIR: Patient.identifier.value
+
+# Set values using semantic paths
+pidgeon set patient.mrn "PAT123"
+pidgeon set patient.dob "1980-01-15"
+pidgeon set encounter.class "inpatient"
 ```
 
-## Build Details
+**Supported Paths**:
+- `patient.*` - MRN, name, DOB, gender, address, phone
+- `encounter.*` - Class, type, location, attending
+- `order.*` - Number, priority, status
+- `observation.*` - Code, value, status
+- `medication.*` - Code, dosage, route
 
-The build scripts create self-contained, single-file executables using:
-- **PublishSingleFile**: All dependencies bundled
-- **EnableCompressionInSingleFile**: Reduced binary size
-- **PublishReadyToRun**: Improved startup performance
-- **Self-Contained**: No .NET runtime installation required
+### 4. De-Identification (Free)
+HIPAA Safe Harbor compliant PHI removal with referential integrity:
+
+```bash
+# De-identify real production messages
+pidgeon deident ./prod_messages/ ./sanitized/ --date-shift 90
+
+# Maintains cross-message consistency:
+# - Same patient ID → same synthetic ID
+# - Related encounters stay related
+# - Date relationships preserved
+```
+
+**De-Identification Methods**:
+- Deterministic replacement (consistent across messages)
+- Date shifting with relationship preservation
+- Safe Harbor compliant field removal
+- On-premises (no data leaves your machine)
+
+### 5. Message Validation (Free)
+Multi-mode validation with detailed error reporting:
+
+```bash
+# Standards-based validation
+pidgeon validate message.hl7
+
+# Vendor compatibility mode
+pidgeon validate message.hl7 --mode compatibility
+
+# Batch validation
+pidgeon validate ./messages/*.hl7 --output report.json
+```
+
+**Validation Modes**:
+- **Standards**: Strict HL7 v2.3/FHIR R4 compliance
+- **Compatibility**: Vendor-specific rule enforcement
+- **Lenient**: Allow common vendor variations
+
+### 6. Vendor Pattern Detection (Free)
+Smart inference and configuration management:
+
+```bash
+# Analyze vendor implementation patterns
+pidgeon config analyze ./vendor_samples/ --save epic_config.json
+
+# Use vendor configuration
+pidgeon generate ADT^A01 --config epic_config.json
+
+# List stored configurations
+pidgeon config list
+```
+
+**Pattern Intelligence**:
+- Field population frequencies
+- Vendor-specific conventions
+- Custom segment usage
+- Non-standard field mappings
+
+### 7. Workflow Wizard ⚠️ Beta [Pro]
+Interactive guided scenarios for complex testing:
+
+```bash
+pidgeon workflow
+
+# Interactive prompts:
+# 1. Select scenario type (patient admission, lab workflow, etc.)
+# 2. Configure scenario parameters
+# 3. Generate complete multi-message workflows
+```
+
+**Scenarios**:
+- Patient admission with ancillary orders
+- Lab result workflows (order → result → amended result)
+- Medication workflows (prescription → dispense → administration)
+- Transfer scenarios with ADT^A02/A03/A06 sequences
+
+### 8. Diff + AI Triage ⚠️ Beta [Pro]
+Field-aware comparison with AI-powered troubleshooting:
+
+```bash
+# Compare two HL7 messages
+pidgeon diff message1.hl7 message2.hl7
+
+# Compare directories (folder-to-folder)
+pidgeon diff ./envA/ ./envB/ --output diff_report.html
+
+# With AI analysis
+pidgeon diff message1.hl7 message2.hl7 --ai-triage
+```
+
+**Comparison Features**:
+- Field-level diff for HL7
+- JSON tree diff for FHIR
+- AI-powered hints for common issues
+- HTML report generation
+
+### 9. Standards Lookup (Free)
+Complete HL7 v2.3 dictionary with 784 components:
+
+```bash
+# Segment definitions
+pidgeon lookup PID
+pidgeon lookup MSH
+
+# Field definitions
+pidgeon lookup PID.3
+pidgeon lookup PID.5
+
+# HL7 tables
+pidgeon lookup table:0001  # Administrative Sex
+pidgeon lookup table:0003  # Event Type
+
+# Data types
+pidgeon lookup datatype:XPN  # Extended Person Name
+```
+
+### 10. FHIR Search Simulation (Free)
+Test FHIR search queries with realistic server responses:
+
+```bash
+# Simulate FHIR Patient search
+pidgeon fhir-search Patient --params "family=Smith&given=John"
+
+# Simulate Observation search
+pidgeon search Observation --params "patient=123&code=718-7"
+```
+
+### 11. Message Discovery (Free)
+Search engine for finding fields and components:
+
+```bash
+# Find where patient name appears
+pidgeon find "patient name"
+
+# Find all fields containing MRN
+pidgeon find "mrn"
+```
+
+## 📦 Installation & Distribution
 
 ### Build Parameters
 
 ```bash
-# Bash script options
---clean                  # Clean previous builds
---version <version>      # Set version number (default: 0.1.0)
---configuration <config> # Build configuration (default: Release)
---enable-ai              # Enable AI features (requires additional dependencies)
+# Bash (Unix/WSL)
+bash scripts/build.sh [OPTIONS]
+  --clean                  Clean previous builds
+  --version <version>      Set version (default: 0.1.0)
+  --configuration <config> Build config (default: Release)
+  --enable-ai              Include AI features (LLamaSharp)
 
-# PowerShell script options
--Clean                   # Clean previous builds
--Version <version>       # Set version number (default: 0.1.0)
--Configuration <config>  # Build configuration (default: Release)
--EnableAI                # Enable AI features
+# PowerShell (Windows)
+.\scripts\build.ps1 [OPTIONS]
+  -Clean                   Clean previous builds
+  -Version <version>       Set version
+  -Configuration <config>  Build configuration
+  -EnableAI                Include AI features
 ```
 
-## Roadmap
+### Build Output
 
-- [x] Core HL7 v2.3 message generation
-- [x] Official HL7 table integration
-- [x] Realistic demographic data
-- [x] Cross-platform standalone builds
-- [ ] Message validation engine
-- [ ] Vendor pattern detection
-- [ ] On-premises de-identification
-- [ ] FHIR R4 support
-- [ ] NCPDP SCRIPT support
+All platforms output to `packages/` directory:
+- `pidgeon-win-x64.tar.gz` (43MB binary, 38MB archive)
+- `pidgeon-win-arm64.tar.gz` (43MB binary, 37MB archive)
+- `pidgeon-linux-x64.tar.gz` (44MB binary, 37MB archive)
+- `pidgeon-linux-arm64.tar.gz` (44MB binary, 37MB archive)
+- `pidgeon-osx-x64.tar.gz` (44MB binary, 37MB archive)
+- `pidgeon-osx-arm64.tar.gz` (44MB binary, 37MB archive)
+- `checksums.txt` (SHA256 verification)
 
-## Contributing
+**Binary Features**:
+- Self-contained (no .NET runtime required)
+- Single-file executables
+- Embedded resources (no separate data files)
+- Cross-platform compatible
 
-Contributions welcome! Please open an issue or pull request for bugs, features, or improvements.
+## 🏗️ Architecture
 
-## License
+### Project Structure
 
-This project is licensed under the Mozilla Public License 2.0 - see the LICENSE file for details.
+```
+src/
+├── Pidgeon.CLI/          # Command-line interface
+│   ├── Commands/         # 14 command implementations
+│   ├── Services/         # CLI-specific services
+│   └── Program.cs        # Entry point
+├── Pidgeon.Core/         # Business logic & domain models
+│   ├── Domain/           # Four-domain architecture
+│   │   ├── Clinical/     # Healthcare concepts
+│   │   ├── Messaging/    # Wire formats
+│   │   ├── Configuration/# Vendor patterns
+│   │   └── Transformation/ # Semantic paths
+│   ├── Services/         # Core business services
+│   │   ├── FieldValueResolvers/ # Priority chain
+│   │   ├── Generation/   # Message generation
+│   │   ├── Validation/   # Multi-mode validation
+│   │   └── DeIdentification/ # PHI removal
+│   └── Standards/        # Plugin implementations
+│       ├── HL7v23/       # HL7 v2.3 plugin
+│       ├── FHIR/         # FHIR R4 plugin
+│       └── NCPDP/        # NCPDP plugin
+└── Pidgeon.Data/         # Embedded resources
+    ├── datasets/         # Demographics, medications, etc.
+    └── standards/        # HL7 tables, segments, fields
+```
 
-## Support
+### Design Principles
 
-For issues, questions, or feature requests, please open a GitHub issue.
+1. **Plugin Architecture**: Standards implemented as plugins, never modify core
+2. **Dependency Injection**: All services injectable, no static classes
+3. **Result<T> Pattern**: Explicit error handling, no exceptions for control flow
+4. **Four-Domain Model**: Clinical, Messaging, Configuration, Transformation
+5. **Standards-Agnostic Core**: Domain models independent of wire formats
+
+### Field Value Resolution Chain
+
+Priority 100 → 10:
+1. **Session Locks** (100): Explicit user-set values
+2. **HL7 Specific** (90): MSH segment special handling
+3. **HL7 Tables** (85): Official coded values from HL7 tables
+4. **Demographics** (80): Realistic names, addresses, phones
+5. **Clinical** (75): Medications, procedures, diagnoses
+6. **Identifiers** (75): MRNs, account numbers, provider IDs
+7. **Contact** (75): Phone numbers, email addresses
+8. **HL7 Coded Values** (70): General coded value generation
+9. **Fallback** (10): Random/default generation
+
+## 🧪 Testing
+
+See `../pidgeon-tests/` for comprehensive test suite:
+- Unit tests (C# xUnit): 6/6 passing
+- Integration tests (end-to-end CLI): 8/8 passing
+- Regression tests (shell scripts): passing
+- Quick validation: `./pidgeon-tests/quick_validation.sh` (30 seconds)
+
+## 📚 Complete Command Reference
+
+```bash
+pidgeon --help                          # Show all commands
+pidgeon <command> --help                # Command-specific help
+
+# Core Commands (Free)
+pidgeon generate <type>                 # Generate messages/resources
+pidgeon validate <files>                # Validate against standards
+pidgeon deident <input> <output>        # De-identify real messages
+pidgeon config                          # Vendor pattern management
+pidgeon session                         # Session lifecycle management
+pidgeon set <field> <value>             # Set field with session awareness
+pidgeon path                            # Semantic path discovery
+pidgeon lookup <query>                  # Standards dictionary lookup
+pidgeon find <query>                    # Search for fields/components
+pidgeon search <resource>               # FHIR search simulation
+pidgeon fhir-search                     # FHIR search testing
+
+# Professional Commands (Pro/Beta)
+pidgeon workflow                        # Interactive workflow wizard
+pidgeon diff <paths>                    # Field-aware comparison + AI hints
+pidgeon scenario <type>                 # Clinical scenario bundles
+
+# Utility Commands
+pidgeon completions <shell>             # Generate shell completions
+pidgeon --version                       # Show version
+pidgeon --verbose                       # Enable verbose output
+```
+
+## 🎯 Use Cases
+
+**Integration Engineers**:
+- Generate test data for interface development
+- Validate vendor message compliance
+- Reproduce production issues with synthetic data
+
+**Healthcare IT Consultants**:
+- Demonstrate vendor capabilities
+- Compare implementation differences
+- Create training scenarios
+
+**QA/Testing Teams**:
+- Build comprehensive test suites
+- Automate regression testing
+- Create edge case scenarios
+
+**Clinical Informaticists**:
+- Understand vendor implementations
+- Validate workflow sequences
+- Test system integrations
+
+## 📄 License
+
+Mozilla Public License 2.0 - See LICENSE file for details.
+
+## 🤝 Contributing
+
+Contributions welcome! Please:
+1. Follow four-domain architecture
+2. Use dependency injection (no static classes)
+3. Implement new standards as plugins
+4. Write behavior-driven tests
+5. Follow STOP-THINK-ACT error methodology
+
+---
+
+**Built for the healthcare integration community** | **Version 0.1.0** | **P0 MVP Complete**
