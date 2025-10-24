@@ -528,23 +528,88 @@ public class HL7MessageComposer
     private string GenerateCodedValue(SegmentField field, SegmentGenerationContext context)
     {
         var fieldName = field.Name?.ToLowerInvariant() ?? "";
+        var description = field.Description?.ToLowerInvariant() ?? "";
+        var combined = $"{fieldName} {description}";
 
-        // Use field semantics to generate appropriate coded values
-        if (fieldName.Contains("sex") || fieldName.Contains("gender"))
+        // Patient demographics
+        if (combined.Contains("sex") || combined.Contains("gender"))
             return _random.Next(2) == 0 ? "M" : "F";
-        if (fieldName.Contains("marital"))
-            return new[] { "S", "M", "D", "W" }[_random.Next(4)];
-        if (fieldName.Contains("race"))
-            return new[] { "1002-5", "2028-9", "2054-5", "2076-8" }[_random.Next(4)];
-        if (fieldName.Contains("admission"))
-            return new[] { "E", "I", "O", "P" }[_random.Next(4)];
-        if (fieldName.Contains("class"))
-            return new[] { "E", "I", "O", "P", "R" }[_random.Next(5)];
-        if (fieldName.Contains("status"))
-            return new[] { "A", "I", "P" }[_random.Next(3)];
+        if (combined.Contains("marital"))
+            return new[] { "S", "M", "D", "W", "A", "L" }[_random.Next(6)]; // Single, Married, Divorced, Widowed, Separated, Living Together
+        if (combined.Contains("race"))
+            return new[] { "1002-5", "2028-9", "2054-5", "2076-8", "2106-3" }[_random.Next(5)];
+        if (combined.Contains("ethnicity"))
+            return _random.Next(2) == 0 ? "H" : "N"; // Hispanic or Not Hispanic
+        if (combined.Contains("religion"))
+            return new[] { "CHR", "JUD", "MOS", "BAH", "HIN", "BUD", "OTH" }[_random.Next(7)];
+        if (combined.Contains("language"))
+            return new[] { "en", "es", "fr", "de", "zh", "ja", "ar" }[_random.Next(7)];
+        if (combined.Contains("nationality") || combined.Contains("citizenship"))
+            return new[] { "USA", "CAN", "MEX", "GBR", "CHN", "IND" }[_random.Next(6)];
 
-        // Default coded value
-        return "U"; // Unknown/Other
+        // Admission/Encounter types
+        if (combined.Contains("admission") && (combined.Contains("type") || combined.Contains("source")))
+            return new[] { "E", "I", "O", "P", "R", "U" }[_random.Next(6)]; // Emergency, Inpatient, Outpatient, Preadmit, Recurring, Urgent
+        if (combined.Contains("patient") && combined.Contains("class"))
+            return new[] { "E", "I", "O", "P", "R", "B", "N" }[_random.Next(7)]; // Various patient classes
+        if (combined.Contains("hospital") && combined.Contains("service"))
+            return new[] { "MED", "SUR", "URO", "PUL", "CAR", "GYN", "OBS", "PED", "PSY", "NEU" }[_random.Next(10)];
+        if (combined.Contains("admit") && combined.Contains("source"))
+            return new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" }[_random.Next(9)];
+
+        // Status codes
+        if (combined.Contains("status"))
+            return new[] { "A", "I", "P", "C", "S", "D" }[_random.Next(6)]; // Active, Inactive, Pending, Complete, Suspended, Discontinued
+        if (combined.Contains("result") && combined.Contains("status"))
+            return new[] { "F", "P", "C", "R", "X" }[_random.Next(5)]; // Final, Preliminary, Correction, Results stored, Canceled
+
+        // Priority codes
+        if (combined.Contains("priority"))
+            return new[] { "S", "A", "R", "P", "C", "T" }[_random.Next(6)]; // Stat, ASAP, Routine, Preop, Callback, Timing critical
+
+        // Yes/No/Unknown patterns
+        if (combined.Contains("indicator") || combined.Contains("flag"))
+            return new[] { "Y", "N" }[_random.Next(2)];
+        if (combined.Contains("living") && combined.Contains("dependency"))
+            return new[] { "S", "M", "C", "WU", "O" }[_random.Next(5)]; // Spouse, Medical supervision, Child, Walk up, Other
+
+        // Financial/Insurance codes
+        if (combined.Contains("financial") || combined.Contains("billing"))
+            return new[] { "COM", "HMO", "INS", "MED", "MM", "PPO", "POS" }[_random.Next(7)];
+        if (combined.Contains("relationship") && combined.Contains("patient"))
+            return new[] { "SEL", "SPO", "CHD", "PAR", "OTH", "GRD", "DEP" }[_random.Next(7)]; // Self, Spouse, Child, Parent, Other, Guardian, Dependent
+
+        // Event/Reason codes
+        if (combined.Contains("event") && combined.Contains("reason"))
+            return new[] { "01", "02", "03", "O", "U" }[_random.Next(5)];
+        if (combined.Contains("event") && combined.Contains("type"))
+            return new[] { "A01", "A02", "A03", "A04", "A05", "A08", "A11" }[_random.Next(7)];
+
+        // Allergy/Sensitivity
+        if (combined.Contains("allergy") && combined.Contains("type"))
+            return new[] { "DA", "FA", "MA", "MC", "EA", "AA", "LA", "PA" }[_random.Next(8)]; // Drug, Food, Misc, Misc contraindication, Environmental, Animal, Pollen, Plant
+        if (combined.Contains("allergy") && combined.Contains("severity"))
+            return new[] { "SV", "MO", "MI", "U" }[_random.Next(4)]; // Severe, Moderate, Mild, Unknown
+
+        // Diagnostic codes
+        if (combined.Contains("diagnosis") && combined.Contains("type"))
+            return new[] { "A", "W", "F" }[_random.Next(3)]; // Admitting, Working, Final
+        if (combined.Contains("diagnosis") && combined.Contains("priority"))
+            return (_random.Next(1, 10)).ToString(); // 1-9 priority
+
+        // Observation/Result codes
+        if (combined.Contains("observation") && combined.Contains("result") && combined.Contains("status"))
+            return new[] { "F", "P", "C", "R", "X", "S", "I" }[_random.Next(7)];
+        if (combined.Contains("abnormal") && combined.Contains("flags"))
+            return new[] { "L", "H", "LL", "HH", "N", "A", "<", ">" }[_random.Next(8)]; // Low, High, Critical low, Critical high, Normal, Abnormal
+
+        // Specimen codes
+        if (combined.Contains("specimen") && (combined.Contains("source") || combined.Contains("type")))
+            return new[] { "BLD", "BLDV", "BLDA", "UR", "CSF", "GAST", "SPUT", "SER", "PLAS" }[_random.Next(9)];
+
+        // Default to empty or Unknown based on field optionality
+        // Empty is preferable to "U" for optional fields
+        return field.Optionality == "O" ? "" : "U";
     }
 
     /// <summary>
