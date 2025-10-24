@@ -34,3 +34,16 @@ TestResults/
 
 # Log files
 *.log
+
+# Datasets - development and large files
+src/Pidgeon.Data/datasets/_dev/sources/*.zip
+src/Pidgeon.Data/datasets/_dev/extracted/
+src/Pidgeon.Data/datasets/pro/
+src/Pidgeon.Data/datasets/enterprise/
+
+# Exception: Keep source metadata and scripts in version control
+!src/Pidgeon.Data/datasets/_dev/scripts/
+!src/Pidgeon.Data/datasets/_dev/metadata.json
+
+# Free tier is committed (small curated files)
+# No ignore needed for src/Pidgeon.Data/datasets/free/

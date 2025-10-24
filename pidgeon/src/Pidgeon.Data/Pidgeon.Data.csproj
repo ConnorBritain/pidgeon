@@ -25,6 +25,11 @@
       <LogicalName>data.interop.$([System.String]::Copy('%(RecursiveDir)').Replace('\', '.'))%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
 
+    <!-- Free tier datasets (standard-agnostic) -->
+    <EmbeddedResource Include="datasets\free\*.json">
+      <LogicalName>data.datasets.free.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+
     <EmbeddedResource Include="schema.sql">
       <LogicalName>data.schema.sql</LogicalName>
     </EmbeddedResource>

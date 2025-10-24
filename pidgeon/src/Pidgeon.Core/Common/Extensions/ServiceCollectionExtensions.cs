@@ -54,6 +54,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IHL7MessageFactory, HL7v23MessageFactory>();
         services.AddHL7DataProviders();
 
+        // Register embedded data sources for free tier realistic data
+        services.AddEmbeddedDataSources();
+
         // Register field value resolver system for session context integration
         services.AddFieldValueResolvers();
         
@@ -323,9 +326,49 @@ public static class ServiceCollectionExtensions
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.DemographicFieldResolver>();
 
+        // Priority 75: Clinical data (medications, diagnoses, lab tests)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.MedicationFieldResolver>();
+
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.DiagnosisFieldResolver>();
+
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.LabTestFieldResolver>();
+
         // Priority 10: Smart random fallback (always provides value)
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.SmartRandomResolver>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers embedded data sources for free tier realistic healthcare data.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddEmbeddedDataSources(this IServiceCollection services)
+    {
+        // Register demographic data source (names and addresses)
+        services.AddSingleton<Pidgeon.Core.Application.Interfaces.Data.IDemographicDataSource,
+                             Pidgeon.Core.Infrastructure.Data.EmbeddedDemographicDataSource>();
+
+        // Register medication data source
+        services.AddSingleton<Pidgeon.Core.Application.Interfaces.Data.IMedicationDataSource,
+                             Pidgeon.Core.Infrastructure.Data.EmbeddedMedicationDataSource>();
+
+        // Register diagnosis data source
+        services.AddSingleton<Pidgeon.Core.Application.Interfaces.Data.IDiagnosisDataSource,
+                             Pidgeon.Core.Infrastructure.Data.EmbeddedDiagnosisDataSource>();
+
+        // Register lab test data source
+        services.AddSingleton<Pidgeon.Core.Application.Interfaces.Data.ILabTestDataSource,
+                             Pidgeon.Core.Infrastructure.Data.EmbeddedLabTestDataSource>();
+
+        // Register vaccine data source
+        services.AddSingleton<Pidgeon.Core.Application.Interfaces.Data.IVaccineDataSource,
+                             Pidgeon.Core.Infrastructure.Data.EmbeddedVaccineDataSource>();
 
         return services;
     }

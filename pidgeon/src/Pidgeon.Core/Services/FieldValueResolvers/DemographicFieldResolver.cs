@@ -3,34 +3,28 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using Microsoft.Extensions.Logging;
-using System.Reflection;
-using System.Text.Json;
+using Pidgeon.Core.Application.Interfaces.Data;
 
 namespace Pidgeon.Core.Services.FieldValueResolvers;
 
 /// <summary>
-/// Resolves field values using demographic tables (FirstName.json, LastName.json, City.json, etc.).
+/// Resolves field values using demographic data source (names and addresses).
 /// Provides realistic demographic data for patient-related fields.
 /// Priority: 80 (medium-high - demographic data preferred over random)
 /// </summary>
 public class DemographicFieldResolver : IFieldValueResolver
 {
     private readonly ILogger<DemographicFieldResolver> _logger;
-    private readonly Assembly _assembly;
-    private readonly Random _random;
-    private readonly Dictionary<string, List<string>> _demographicTableCache = new();
+    private readonly IDemographicDataSource _demographicDataSource;
 
     public int Priority => 80;
 
-    public DemographicFieldResolver(ILogger<DemographicFieldResolver> logger)
+    public DemographicFieldResolver(
+        ILogger<DemographicFieldResolver> logger,
+        IDemographicDataSource demographicDataSource)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _random = new Random();
-
-        // Load resources from Pidgeon.Data assembly
-        _assembly = AppDomain.CurrentDomain.GetAssemblies()
-            .FirstOrDefault(a => a.GetName().Name == "Pidgeon.Data")
-            ?? throw new InvalidOperationException("Pidgeon.Data assembly not found");
+        _demographicDataSource = demographicDataSource ?? throw new ArgumentNullException(nameof(demographicDataSource));
     }
 
     public async Task<string?> ResolveAsync(FieldResolutionContext context)
@@ -38,108 +32,71 @@ public class DemographicFieldResolver : IFieldValueResolver
         var fieldName = context.Field.Name?.ToLowerInvariant() ?? "";
         var fieldDescription = context.Field.Description?.ToLowerInvariant() ?? "";
 
-        // Map field semantics to demographic table names
-        var demographicTable = GetDemographicTableForField(fieldName, fieldDescription);
-        if (demographicTable == null)
-            return null; // Not a demographic field
-
-        // Load value from demographic table
-        var value = await GenerateValueFromDemographicTableAsync(demographicTable);
-        return value;
-    }
-
-    /// <summary>
-    /// Determine which demographic table to use for a field based on its semantics.
-    /// Returns null if field is not demographic-related.
-    /// </summary>
-    private string? GetDemographicTableForField(string fieldName, string fieldDescription)
-    {
-        // Patient name fields
-        if (fieldName.Contains("family name") || fieldName.Contains("last name") ||
-            fieldDescription.Contains("family name") || fieldDescription.Contains("last name"))
-            return "LastName";
-
-        if (fieldName.Contains("given name") || fieldName.Contains("first name") ||
-            fieldDescription.Contains("given name") || fieldDescription.Contains("first name"))
-            return "FirstName";
-
-        if (fieldName.Contains("patient name") || fieldName.Contains("person name"))
-        {
-            // For full name fields, we'll use FirstName (could be enhanced to combine first+last)
-            return "FirstName";
-        }
-
-        // Address fields
-        if (fieldName.Contains("city") || fieldDescription.Contains("city"))
-            return "City";
-
-        if (fieldName.Contains("country") || fieldDescription.Contains("country"))
-            return "Country";
-
-        // No demographic mapping for this field
-        return null;
-    }
-
-    /// <summary>
-    /// Load random value from demographic table (FirstName.json, LastName.json, etc.).
-    /// Uses caching for performance.
-    /// </summary>
-    private async Task<string?> GenerateValueFromDemographicTableAsync(string tableName)
-    {
         try
         {
-            // Check cache first
-            if (_demographicTableCache.TryGetValue(tableName, out var cachedValues))
+            // Patient name fields
+            if (fieldName.Contains("family name") || fieldName.Contains("last name") ||
+                fieldDescription.Contains("family name") || fieldDescription.Contains("last name"))
             {
-                return cachedValues.Count > 0 ? cachedValues[_random.Next(cachedValues.Count)] : null;
+                return await _demographicDataSource.GetRandomLastNameAsync();
             }
 
-            // Build resource name for demographic table JSON file
-            var resourceName = $"data.standards.hl7v23.tables.{tableName}.json";
-
-            _logger.LogDebug("Loading demographic table {TableName} from resource {ResourceName}",
-                tableName, resourceName);
-
-            // Load from embedded resource
-            using var stream = _assembly.GetManifestResourceStream(resourceName);
-            if (stream == null)
+            if (fieldName.Contains("given name") || fieldName.Contains("first name") ||
+                fieldDescription.Contains("given name") || fieldDescription.Contains("first name"))
             {
-                _logger.LogDebug("Demographic table resource not found: {ResourceName}", resourceName);
-                _demographicTableCache[tableName] = new List<string>(); // Cache empty list to avoid repeated lookups
-                return null;
+                // Use random gender for first name
+                var random = new Random();
+                return random.Next(2) == 0
+                    ? await _demographicDataSource.GetRandomMaleFirstNameAsync()
+                    : await _demographicDataSource.GetRandomFemaleFirstNameAsync();
             }
 
-            // Parse JSON to extract values
-            var json = await new StreamReader(stream).ReadToEndAsync();
-            var jsonDoc = JsonDocument.Parse(json);
-
-            var values = new List<string>();
-            if (jsonDoc.RootElement.TryGetProperty("values", out var valuesArray))
+            if (fieldName.Contains("patient name") || fieldName.Contains("person name"))
             {
-                foreach (var valueElement in valuesArray.EnumerateArray())
-                {
-                    if (valueElement.TryGetProperty("value", out var valueProperty))
-                    {
-                        var value = valueProperty.GetString();
-                        if (!string.IsNullOrEmpty(value))
-                        {
-                            values.Add(value);
-                        }
-                    }
-                }
+                // Generate full name with random gender
+                var random = new Random();
+                var gender = random.Next(2) == 0 ? "M" : "F";
+                return await _demographicDataSource.GetRandomFullNameAsync(gender);
             }
 
-            // Cache for future requests
-            _demographicTableCache[tableName] = values;
+            // Address fields
+            if (fieldName.Contains("street") || fieldDescription.Contains("street address"))
+            {
+                var address = await _demographicDataSource.GetRandomAddressAsync();
+                return address.Street;
+            }
 
-            _logger.LogDebug("Successfully loaded demographic table {TableName} with {ValueCount} values",
-                tableName, values.Count);
+            if (fieldName.Contains("city") || fieldDescription.Contains("city"))
+            {
+                var address = await _demographicDataSource.GetRandomAddressAsync();
+                return address.City;
+            }
 
-            return values.Count > 0 ? values[_random.Next(values.Count)] : null;
+            if (fieldName.Contains("state") || fieldDescription.Contains("state"))
+            {
+                var address = await _demographicDataSource.GetRandomAddressAsync();
+                return address.State;
+            }
+
+            if (fieldName.Contains("zip") || fieldName.Contains("postal") ||
+                fieldDescription.Contains("zip") || fieldDescription.Contains("postal"))
+            {
+                var address = await _demographicDataSource.GetRandomAddressAsync();
+                return address.ZipCode;
+            }
+
+            if (fieldName.Contains("country") || fieldDescription.Contains("country"))
+            {
+                // All free tier addresses are US
+                return "USA";
+            }
+
+            // Not a demographic field
+            return null;
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error loading demographic table {TableName}", tableName);
+            _logger.LogWarning(ex, "Error resolving demographic field {FieldName}", fieldName);
             return null;
         }
     }

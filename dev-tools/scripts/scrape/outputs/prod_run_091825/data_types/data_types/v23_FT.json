@@ -1,9 +1,0 @@
-{
-  "code": "FT",
-  "name": "Formatted Text Data",
-  "version": "HL7 v2.3",
-  "description": "This data type is derived from the string data type by allowing the addition of embedded formatting instructions. These instructions are limited to those that are intrinsic and independent of the circumstances under which the field is being used. The actual instructions and their representation are described later in this chapter. The FT field is of arbitrary length (up to 64k) and may contain formatting commands enclosed in escape characters. Example: \n|\\.sp\\(skip one vertical line)| \n\nFor additional examples of formatting commands see Section 2.9, “Use of escape sequences in text fields.”",
-  "category": "primitive",
-  "fields": [],
-  "field_count": 0
-}

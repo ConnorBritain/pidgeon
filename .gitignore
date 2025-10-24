@@ -4,6 +4,7 @@
 /specs/
 /.claude/
 /.vs/
+/private/
 
 # .NET Build Artifacts
 **/bin/
