@@ -4,6 +4,8 @@
 /specs/
 /.claude/
 /.vs/
+/.vscode/
+/.github/
 CLAUDE.md
 /private/
 /pidgeon-dev/
