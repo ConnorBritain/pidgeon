@@ -269,13 +269,13 @@ public class HL7MessageComposer
                     fieldValue = "^~\\&";
                     break;
                 case 3: // Sending Application
-                    fieldValue = "PIDGEON^PIDGEON_APP^L";
+                    fieldValue = "PIDGEON^^L";
                     break;
                 case 4: // Sending Facility
                     fieldValue = "PIDGEON_FACILITY";
                     break;
                 case 5: // Receiving Application
-                    fieldValue = "TARGET^TARGET_APP^L";
+                    fieldValue = "TARGET^^L";
                     break;
                 case 6: // Receiving Facility
                     fieldValue = "TARGET_FACILITY";
@@ -304,8 +304,8 @@ public class HL7MessageComposer
                     break;
             }
 
-            // For position 1 (field separator), don't add delimiter - it IS the delimiter
-            if (field.Position == 1)
+            // For positions 1-2, special MSH formatting (field separator and encoding chars)
+            if (field.Position == 1 || field.Position == 2)
             {
                 mshBuilder.Append(fieldValue);
             }
@@ -562,9 +562,9 @@ public class HL7MessageComposer
         if (fieldName.Contains("encoding characters") || fieldName.Contains("encoding_characters"))
             return "^~\\&";
         if (fieldDescription.Contains("sending application"))
-            return "PIDGEON^PIDGEON_APP^L";
+            return "PIDGEON^^L";
         if (fieldDescription.Contains("receiving application"))
-            return "TARGET^TARGET_APP^L";
+            return "TARGET^^L";
         if (fieldDescription.Contains("message type"))
             return context.MessageType;
         if (fieldDescription.Contains("message control id"))
@@ -736,10 +736,10 @@ public class HL7MessageComposer
 
     /// <summary>
     /// Generates minimal segment when schema/builder unavailable.
+    /// Shows segment code to help identify missing schemas during development.
     /// </summary>
     private Result<string> GenerateMinimalSegment(string segmentCode)
     {
-        // Generate just the segment ID - minimal valid segment
         return Result<string>.Success(segmentCode);
     }
 

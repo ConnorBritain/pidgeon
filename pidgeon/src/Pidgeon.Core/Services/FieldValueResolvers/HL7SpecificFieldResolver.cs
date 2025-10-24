@@ -48,9 +48,9 @@ public class HL7SpecificFieldResolver : IFieldValueResolver
         {
             1 => "|",                                           // Field Separator - always "|"
             2 => "^~\\&",                                       // Encoding Characters - always "^~\&"
-            3 => "PIDGEON^PIDGEON_APP^L",                      // Sending Application
+            3 => "PIDGEON^^L",                                  // Sending Application
             4 => "PIDGEON_FACILITY",                           // Sending Facility
-            5 => "TARGET^TARGET_APP^L",                        // Receiving Application
+            5 => "TARGET^^L",                                   // Receiving Application
             6 => "TARGET_FACILITY",                            // Receiving Facility
             7 => DateTime.Now.ToString("yyyyMMddHHmmss"),      // Date/Time of Message
             8 => "",                                           // Security (usually empty)

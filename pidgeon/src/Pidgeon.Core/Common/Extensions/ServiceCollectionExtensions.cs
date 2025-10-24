@@ -322,6 +322,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.HL7SpecificFieldResolver>();
 
+        // Priority 85: HL7 table-driven coded values (uses official HL7 tables)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.HL7TableFieldResolver>();
+
         // Priority 80: Demographic tables (realistic patient data)
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.DemographicFieldResolver>();
@@ -335,6 +339,18 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.LabTestFieldResolver>();
+
+        // Priority 75: Identifier fields (patient IDs, account numbers, license numbers)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.IdentifierFieldResolver>();
+
+        // Priority 75: Contact information (phone numbers, emails, fax)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.ContactFieldResolver>();
+
+        // Priority 70: HL7 coded values (language codes, status codes, types)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.HL7CodedValueResolver>();
 
         // Priority 10: Smart random fallback (always provides value)
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,

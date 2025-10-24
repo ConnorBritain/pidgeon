@@ -129,11 +129,11 @@ public class GenerateCommand : CommandBuilderBase
                 Console.WriteLine($"Generating {count} {request.Standard.ToUpperInvariant()} {request.MessageType} message(s)...");
                 if (request.ExplicitStandardProvided)
                 {
-                    Console.WriteLine($"Standard: {request.Standard} (explicit)");
+                    Console.WriteLine($"Standard: {request.Standard.ToUpperInvariant()} (explicit)");
                 }
                 else
                 {
-                    Console.WriteLine($"Standard: {request.Standard} (inferred from message type)");
+                    Console.WriteLine($"Standard: {request.Standard.ToUpperInvariant()}");
                 }
 
                 if (!string.IsNullOrEmpty(sessionToUse))

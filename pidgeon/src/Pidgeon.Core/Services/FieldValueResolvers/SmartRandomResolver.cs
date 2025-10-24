@@ -47,41 +47,79 @@ public class SmartRandomResolver : IFieldValueResolver
     private string GenerateStringValue(FieldResolutionContext context)
     {
         var fieldName = context.Field.Name?.ToLowerInvariant() ?? "";
+        var description = context.Field.Description?.ToLowerInvariant() ?? "";
+        var combined = $"{fieldName} {description}";
+
+        // Provider/clinician/physician/observer names
+        if (combined.Contains("clinician") || combined.Contains("physician") ||
+            combined.Contains("provider") || combined.Contains("observer") ||
+            combined.Contains("practitioner") || combined.Contains("doctor"))
+            return "Dr. Smith";
+
+        // Organization/clinic names
+        if (combined.Contains("organization") || combined.Contains("clinic") ||
+            combined.Contains("facility name") || combined.Contains("institution"))
+            return "General Healthcare Center";
+
+        // Location names (including pending locations, birth place, etc.)
+        if (combined.Contains("location") || combined.Contains("place"))
+        {
+            if (combined.Contains("birth"))
+                return "General Hospital";
+            if (combined.Contains("pending") || combined.Contains("prior"))
+                return "Ward 3B";
+            return "Main Building";
+        }
 
         // Patient demographic defaults
-        if (fieldName.Contains("name"))
+        if (combined.Contains("name") && !combined.Contains("file"))
             return "DefaultName";
-        if (fieldName.Contains("address") || fieldName.Contains("street"))
+        if (combined.Contains("maiden"))
+            return "Jones";
+        if (combined.Contains("alias"))
+            return "Smith";
+        if (combined.Contains("address") || combined.Contains("street"))
             return "123 Main St";
-        if (fieldName.Contains("city"))
+        if (combined.Contains("city"))
             return "Anytown";
-        if (fieldName.Contains("state"))
-            return "ST";
-        if (fieldName.Contains("zip") || fieldName.Contains("postal"))
+        if (combined.Contains("state") && !combined.Contains("patient"))
+            return "CA";
+        if (combined.Contains("zip") || combined.Contains("postal"))
             return "12345";
-        if (fieldName.Contains("phone") || fieldName.Contains("telephone"))
-            return "555-123-4567";
+        if (combined.Contains("country"))
+            return "USA";
 
-        // Location fields
-        if (fieldName.Contains("room"))
+        // Room and bed fields
+        if (combined.Contains("room"))
             return GenerateRandomRoom();
-        if (fieldName.Contains("bed"))
+        if (combined.Contains("bed"))
             return GenerateRandomBed();
-        if (fieldName.Contains("facility") || fieldName.Contains("hospital"))
+
+        // Facility/department fields
+        if (combined.Contains("facility") || combined.Contains("hospital"))
             return "General Hospital";
-        if (fieldName.Contains("department") || fieldName.Contains("unit"))
+        if (combined.Contains("department") || combined.Contains("unit"))
             return "General Medicine";
+        if (combined.Contains("ward"))
+            return $"Ward {_random.Next(1, 10)}";
 
         // Clinical fields
-        if (fieldName.Contains("medication") || fieldName.Contains("drug"))
+        if (combined.Contains("medication") || combined.Contains("drug"))
             return "Unknown Medication";
-        if (fieldName.Contains("result") || fieldName.Contains("value"))
+        if (combined.Contains("result") || combined.Contains("value"))
             return "Normal";
-        if (fieldName.Contains("diagnosis"))
+        if (combined.Contains("diagnosis"))
             return "General Diagnosis";
 
-        // Generic fallback
-        return $"Generated_{context.Field.Name?.Replace(" ", "_") ?? "Value"}";
+        // Description fields
+        if (combined.Contains("description"))
+            return "Standard description";
+        if (combined.Contains("comment") || combined.Contains("notes"))
+            return "No additional comments";
+        if (combined.Contains("reason"))
+            return "Routine care";
+
+        return "";
     }
 
     /// <summary>
@@ -90,18 +128,34 @@ public class SmartRandomResolver : IFieldValueResolver
     private string GenerateNumericValue(FieldResolutionContext context)
     {
         var fieldName = context.Field.Name?.ToLowerInvariant() ?? "";
+        var description = context.Field.Description?.ToLowerInvariant() ?? "";
+        var combined = $"{fieldName} {description}";
 
         // Sequence numbers and IDs
-        if (fieldName.Contains("sequence") || fieldName.Contains("set id"))
+        if (combined.Contains("sequence") || combined.Contains("set id"))
             return "1";
-        if (fieldName.Contains("patient") && fieldName.Contains("id"))
+        if (combined.Contains("patient") && combined.Contains("id"))
             return _random.Next(100000, 999999).ToString();
-        if (fieldName.Contains("account"))
+        if (combined.Contains("account"))
             return _random.Next(1000000, 9999999).ToString();
 
         // Age fields
-        if (fieldName.Contains("age"))
+        if (combined.Contains("age"))
             return _random.Next(18, 80).ToString();
+
+        // Financial/cost fields
+        if (combined.Contains("cost") || combined.Contains("charge") ||
+            combined.Contains("amount") || combined.Contains("reimbursement") ||
+            combined.Contains("payment"))
+            return $"{_random.Next(100, 10000)}.00";
+
+        // Days/length of stay
+        if (combined.Contains("days") || combined.Contains("length"))
+            return _random.Next(1, 14).ToString();
+
+        // Counts/quantities
+        if (combined.Contains("count") || combined.Contains("quantity"))
+            return _random.Next(1, 100).ToString();
 
         // Generic numeric
         return _random.Next(1, 100).ToString();
@@ -137,7 +191,7 @@ public class SmartRandomResolver : IFieldValueResolver
     /// </summary>
     private string GenerateGenericValue(FieldResolutionContext context)
     {
-        return $"Generated_{context.Field.Name?.Replace(" ", "_") ?? "Field"}";
+        return "";
     }
 
     /// <summary>
