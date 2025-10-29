@@ -163,6 +163,8 @@ public class SmartRandomResolver : IFieldValueResolver
 
     /// <summary>
     /// Generate coded values by examining field semantics.
+    /// Returns "U" (Unknown) only for required fields without matches.
+    /// Returns empty string for optional fields without matches per HL7 standard.
     /// </summary>
     private string GenerateCodedValue(FieldResolutionContext context)
     {
@@ -182,8 +184,15 @@ public class SmartRandomResolver : IFieldValueResolver
         if (fieldName.Contains("status"))
             return new[] { "A", "I", "P" }[_random.Next(3)];
 
-        // Default coded value
-        return "U"; // Unknown/Other
+        // No pattern match - distinguish required vs optional fields
+        // HL7 Standard: Empty means "not provided", "U" means "exists but unknown"
+        if (context.Field.Optionality == "R")
+        {
+            return "U"; // Required field without data - use Unknown
+        }
+
+        // Optional field without match - return empty (not "U")
+        return string.Empty;
     }
 
     /// <summary>

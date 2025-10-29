@@ -483,6 +483,7 @@ public class HL7MessageComposer
     /// <summary>
     /// Generates component values for composite data types using the resolver chain.
     /// Now properly routes composite components through FieldValueResolverService instead of bypassing it.
+    /// Uses semantic awareness to distinguish critical components (address core fields) from truly optional ones.
     /// </summary>
     private async Task<string> GenerateComponentValueAsync(
         DataTypeComponent component,
@@ -490,10 +491,22 @@ public class HL7MessageComposer
         SegmentGenerationContext context,
         GenerationOptions options)
     {
-        // Handle optional components with probability
-        if (component.Optionality == "O" && _random.NextDouble() > 0.8)
+        // Handle optional components with semantic probability
+        if (component.Optionality == "O")
         {
-            return string.Empty;
+            // Critical components (address core, name core, ID core) - 5% skip rate
+            // These are technically optional but semantically required for realistic data
+            if (IsCriticalComponent(component, parentField))
+            {
+                if (_random.NextDouble() > 0.95)
+                    return string.Empty;
+            }
+            else
+            {
+                // Truly optional components (address line 2, suffix, etc.) - 40% skip rate
+                if (_random.NextDouble() > 0.6)
+                    return string.Empty;
+            }
         }
 
         // Create a pseudo-field from component for resolver chain
@@ -525,6 +538,55 @@ public class HL7MessageComposer
         // - ContactFieldResolver (Priority 75) - Phone/email/fax
         // - All other resolvers in the chain
         return await _fieldValueResolverService.ResolveFieldValueAsync(resolverContext);
+    }
+
+    /// <summary>
+    /// Determines if a composite component is "semantically critical" - technically optional
+    /// but needed for realistic data generation. Critical components get 5% skip rate vs 40%.
+    /// </summary>
+    private bool IsCriticalComponent(DataTypeComponent component, SegmentField parentField)
+    {
+        var fieldName = component.Name?.ToLowerInvariant() ?? "";
+
+        // XAD (Extended Address): Street, City, State, Zip are critical
+        if (parentField.DataType == "XAD")
+        {
+            return fieldName.Contains("street") ||
+                   fieldName.Contains("city") ||
+                   fieldName.Contains("state") ||
+                   fieldName.Contains("zip") || fieldName.Contains("postal");
+        }
+
+        // XPN (Extended Person Name): Family name, Given name are critical
+        if (parentField.DataType == "XPN")
+        {
+            return fieldName.Contains("family") ||
+                   fieldName.Contains("given") ||
+                   fieldName.Contains("first");
+        }
+
+        // CX (Extended Composite ID): First component (the actual ID) is critical
+        if (parentField.DataType == "CX")
+        {
+            return component.Position == 1 ||
+                   fieldName.Contains("id") && !fieldName.Contains("check");
+        }
+
+        // XTN (Extended Telecommunication): Number itself is critical
+        if (parentField.DataType == "XTN")
+        {
+            return component.Position == 1 ||
+                   fieldName.Contains("number");
+        }
+
+        // CE/CWE (Coded Element): Identifier and Text are critical
+        if (parentField.DataType == "CE" || parentField.DataType == "CWE")
+        {
+            return component.Position <= 2 || // First two components (ID and text)
+                   fieldName.Contains("identifier") || fieldName.Contains("text");
+        }
+
+        return false;
     }
 
     /// <summary>

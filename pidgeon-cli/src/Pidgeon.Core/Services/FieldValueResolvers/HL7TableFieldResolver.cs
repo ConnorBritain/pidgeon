@@ -177,15 +177,28 @@ public class HL7TableFieldResolver : IFieldValueResolver
             // Build lookup key: "SEGMENT-POSITION"
             var lookupKey = $"{context.SegmentCode}-{context.FieldPosition}";
 
-            // Check if we have a table mapping for this field
+            // Try to get table ID from field-to-table map first
             if (!FieldToTableMap.TryGetValue(lookupKey, out var tableId))
             {
-                // No table mapping for this field
-                return null;
+                // No segment-field mapping found - check if field itself has TableId
+                // This handles composite components (e.g., XAD.7, CX.3) that specify their own tables
+                if (context.Field.TableId.HasValue)
+                {
+                    tableId = context.Field.TableId.Value;
+                    _logger.LogDebug("Using TableId {TableId} from field {FieldName} (composite component)",
+                        tableId, context.Field.Name);
+                }
+                else
+                {
+                    // No table mapping for this field
+                    return null;
+                }
             }
-
-            _logger.LogDebug("Resolving {LookupKey} using HL7 Table {TableId}",
-                lookupKey, tableId);
+            else
+            {
+                _logger.LogDebug("Resolving {LookupKey} using HL7 Table {TableId}",
+                    lookupKey, tableId);
+            }
 
             // Load table from provider
             var tableResult = await _tableProvider.GetTableAsync(tableId);
