@@ -320,6 +320,7 @@ public class HL7MessageComposer
 
     /// <summary>
     /// Generates field values using priority-based resolver chain.
+    /// Handles composite data types (XAD, XPN, XTN, etc.) by expanding into components.
     /// Tries resolvers in order: Session context → HL7 semantics → Demographics → Random
     /// </summary>
     private async Task<string> GenerateFieldFromSchemaAsync(
@@ -335,7 +336,24 @@ public class HL7MessageComposer
                 return string.Empty;
             }
 
-            // Create resolution context for resolver chain
+            // Check if this field has a composite data type (XAD, XPN, XTN, CE, CX, etc.)
+            // If so, expand it into components and generate each component through resolver chain
+            var dataTypeResult = await _dataTypeProvider.GetDataTypeAsync(field.DataType);
+            if (dataTypeResult.IsSuccess && dataTypeResult.Value.Components.Any())
+            {
+                // Composite data type - generate each component through resolver chain
+                var componentValues = new List<string>();
+
+                foreach (var component in dataTypeResult.Value.Components)
+                {
+                    var componentValue = await GenerateComponentValueAsync(component, field, context, options);
+                    componentValues.Add(componentValue);
+                }
+
+                return string.Join("^", componentValues);
+            }
+
+            // Simple/primitive field - use resolver chain directly
             var resolverContext = new FieldResolutionContext
             {
                 SegmentCode = context.SegmentCode,
