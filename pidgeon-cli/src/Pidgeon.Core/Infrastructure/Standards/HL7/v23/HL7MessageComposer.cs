@@ -441,7 +441,8 @@ public class HL7MessageComposer
     private async Task<string> GenerateValueFromDataTypeAsync(
         DataType dataType,
         SegmentField field,
-        SegmentGenerationContext context)
+        SegmentGenerationContext context,
+        GenerationOptions options)
     {
         // For composite data types, generate each component
         if (dataType.Components.Any())
@@ -450,7 +451,7 @@ public class HL7MessageComposer
 
             foreach (var component in dataType.Components)
             {
-                var componentValue = await GenerateComponentValueAsync(component, field, context);
+                var componentValue = await GenerateComponentValueAsync(component, field, context, options);
                 componentValues.Add(componentValue);
             }
 
@@ -462,26 +463,24 @@ public class HL7MessageComposer
     }
 
     /// <summary>
-    /// Generates component values for composite data types.
+    /// Generates component values for composite data types using the resolver chain.
+    /// Now properly routes composite components through FieldValueResolverService instead of bypassing it.
     /// </summary>
     private async Task<string> GenerateComponentValueAsync(
         DataTypeComponent component,
         SegmentField parentField,
-        SegmentGenerationContext context)
+        SegmentGenerationContext context,
+        GenerationOptions options)
     {
+        // Handle optional components with probability
         if (component.Optionality == "O" && _random.NextDouble() > 0.8)
         {
             return string.Empty;
         }
 
-        if (component.TableId.HasValue)
-        {
-            return await GenerateValueFromTableAsync(component.TableId.Value);
-        }
-
-        // Create a pseudo-field for the component to reuse field generation logic
+        // Create a pseudo-field from component for resolver chain
         var componentField = new SegmentField(
-            Position: 0,
+            Position: parentField.Position,  // Use parent field position for resolver context
             Name: component.Name,
             DataType: component.DataType,
             Optionality: component.Optionality,
@@ -490,7 +489,24 @@ public class HL7MessageComposer
             TableId: component.TableId,
             Description: null);
 
-        return await GeneratePrimitiveValueAsync(component.DataType, componentField, context);
+        // Create resolution context to use resolver chain (proper architecture!)
+        var resolverContext = new FieldResolutionContext
+        {
+            SegmentCode = context.SegmentCode,
+            FieldPosition = parentField.Position,
+            Field = componentField,
+            GenerationContext = context,
+            Options = options
+        };
+
+        // Use resolver service instead of bypassing it
+        // This allows composite components to benefit from:
+        // - HL7TableFieldResolver (Priority 85) - HL7 table lookups
+        // - DemographicFieldResolver (Priority 80) - Realistic names/addresses
+        // - IdentifierFieldResolver (Priority 75) - Patient/encounter IDs
+        // - ContactFieldResolver (Priority 75) - Phone/email/fax
+        // - All other resolvers in the chain
+        return await _fieldValueResolverService.ResolveFieldValueAsync(resolverContext);
     }
 
     /// <summary>
