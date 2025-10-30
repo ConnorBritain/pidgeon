@@ -326,6 +326,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.HL7TableFieldResolver>();
 
+        // Priority 82: Composite-aware coded element resolver (CE/CF semantic coherence)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.ICompositeAwareResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.CodedElementResolver>();
+
         // Priority 80: Demographic tables (realistic patient data)
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.DemographicFieldResolver>();

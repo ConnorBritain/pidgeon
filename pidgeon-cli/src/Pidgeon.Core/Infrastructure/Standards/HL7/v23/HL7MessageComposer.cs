@@ -31,6 +31,7 @@ public class HL7MessageComposer
     private readonly IHL7DataTypeProvider _dataTypeProvider;
     private readonly IHL7TableProvider _tableProvider;
     private readonly IFieldValueResolverService _fieldValueResolverService;
+    private readonly IEnumerable<ICompositeAwareResolver> _compositeAwareResolvers;
     private readonly Random _random;
     private readonly Assembly _assembly;
     private readonly Dictionary<string, List<string>> _demographicTableCache = new();
@@ -41,7 +42,8 @@ public class HL7MessageComposer
         IHL7SegmentProvider segmentProvider,
         IHL7DataTypeProvider dataTypeProvider,
         IHL7TableProvider tableProvider,
-        IFieldValueResolverService fieldValueResolverService)
+        IFieldValueResolverService fieldValueResolverService,
+        IEnumerable<ICompositeAwareResolver> compositeAwareResolvers)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _triggerEventProvider = triggerEventProvider ?? throw new ArgumentNullException(nameof(triggerEventProvider));
@@ -49,6 +51,7 @@ public class HL7MessageComposer
         _dataTypeProvider = dataTypeProvider ?? throw new ArgumentNullException(nameof(dataTypeProvider));
         _tableProvider = tableProvider ?? throw new ArgumentNullException(nameof(tableProvider));
         _fieldValueResolverService = fieldValueResolverService ?? throw new ArgumentNullException(nameof(fieldValueResolverService));
+        _compositeAwareResolvers = compositeAwareResolvers ?? throw new ArgumentNullException(nameof(compositeAwareResolvers));
         _random = new Random();
 
         // Load resources from Pidgeon.Data assembly
@@ -337,11 +340,44 @@ public class HL7MessageComposer
             }
 
             // Check if this field has a composite data type (XAD, XPN, XTN, CE, CX, etc.)
-            // If so, expand it into components and generate each component through resolver chain
             var dataTypeResult = await _dataTypeProvider.GetDataTypeAsync(field.DataType);
             if (dataTypeResult.IsSuccess && dataTypeResult.Value.Components.Any())
             {
-                // Composite data type - generate each component through resolver chain
+                // Check if any composite-aware resolver can handle this composite type
+                // This ensures semantic coherence (e.g., CE components all refer to same code)
+                var compositeResolvers = _compositeAwareResolvers
+                    .Where(r => r.CanHandleComposite(field.DataType))
+                    .OrderByDescending(r => r.Priority);
+
+                foreach (var resolver in compositeResolvers)
+                {
+                    var compositeResolverContext = new FieldResolutionContext
+                    {
+                        SegmentCode = context.SegmentCode,
+                        FieldPosition = field.Position,
+                        Field = field,
+                        GenerationContext = context,
+                        Options = options
+                    };
+
+                    var compositeResult = await resolver.ResolveCompositeAsync(field, dataTypeResult.Value, compositeResolverContext);
+                    if (compositeResult != null)
+                    {
+                        // Resolver handled it - build composite string from component dictionary
+                        var resolvedComponents = new List<string>();
+                        for (int i = 1; i <= dataTypeResult.Value.Components.Count; i++)
+                        {
+                            resolvedComponents.Add(compositeResult.ContainsKey(i) ? compositeResult[i] : string.Empty);
+                        }
+
+                        _logger.LogDebug("Composite {DataType} resolved by {Resolver} for field {Field}",
+                            field.DataType, resolver.GetType().Name, field.Name);
+
+                        return string.Join("^", resolvedComponents);
+                    }
+                }
+
+                // No composite-aware resolver handled it - fall back to component-by-component generation
                 var componentValues = new List<string>();
 
                 foreach (var component in dataTypeResult.Value.Components)
