@@ -330,6 +330,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.ICompositeAwareResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.CodedElementResolver>();
 
+        // Priority 78: Identifier coherence resolver (CX/EI/XCN/XON with check digits)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.ICompositeAwareResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.IdentifierCoherenceResolver>();
+
         // Priority 80: Demographic tables (realistic patient data)
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.DemographicFieldResolver>();
