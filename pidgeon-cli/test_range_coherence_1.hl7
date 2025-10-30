@@ -1,0 +1,12 @@
+MSH|^~\&|PIDGEON^^L|PIDGEON_FACILITY|TARGET^^L|TARGET_FACILITY|20251030104853||RDE^O01|716624|P|2.3|1||PRV65304|PRV53735|USA|8859/6|fr^French^ISO639^^^
+NTE|1||
+PID|1|ID596967^6^ISO^^VS^|ID788491^6^M10^^MA^|ID802394^6^ISO^^GN^|Chambers|||||2054-5|321 Pine Road^^New York^^19101^USA^F^^^||(600)413-6649^^^individual845@patient.net^USA^Philadelphia^^^|(982)924-2155^VHN^Internet^individual576@patient.net^USA^Atlanta^(674)798-8533^76^|en^English^ISO639^^^|D||ID831242^6^M10^^DI^|954-83-6523|^^|||Y||59||ID216000^^DefaultName^ID745110^^|GBR^United Kingdom^ISO3166^^^||
+PD1|WU|S|General Healthcare Center^L^292103^9^M10^^AN^|ID495331^Bolton^Charmaine^^^^^^^L^2^M10^DI^|P||03|03||ID227126^5^M11^^PI^|ID908915^^^ID612469^^|N
+NTE|1|O|No additional comments
+GT1|1|ID647343^5^ISO^^DS^|Hoover|Gaines|U^U^M^M^F^^^F^F^|||||||954-83-6523|20251030|20251030||Ashley|987 Cedar Court^^Phoenix^NY^77001^^C^^^|(797)993-7253^WPN^^individual517@mail.com^USA^Atlanta^(721)206-1378^40^|ID980506^9^ISO^^MS^||Veterans Administration Hospital^L^485738^0^M11^^AN^|N|||Y|ID869680^^^ID106146^^|USA^^USA^MEX^CHN^USA||ID150909^6^ISO^^PT^|A|20251030|||A7||fr^French^ISO639^^^|S||Y|P||Logan||F|Faulkner|(774)795-1685^PRN^MD^patient805@patient.net^USA^^(344)347-5112^97^|ID439337^^DefaultName^ID145498^^DefaultName|OTH|||Veterans Administration Hospital^D^831082^9^ISO^^MA^|||R^20251030104853|2076-8
+AL1|1|MA|ID137197^^^ID334081^^DefaultName|SV|DI|20251030
+ORC|CA|ID129860^^^|ID328847^^^|ID345644^^^|CM||^^^20251030104853^^^^^^|ORD273117^ORD465009||ID500142^Merrill^Nellie^^^^^^^M^0^M11^MS^|ID550388^Manning^Ray^^^^^^^A^4^M11^DL^|ID236684^Hampton^Cyril^^^^^^^L^3^M10^MS^|^^^^A^^^^Main Building||Wed|03^02^01^02^02^|ID156454^^^ID782359^^DefaultName|ID234831^^DefaultName^ID274976^^DefaultName|ID342407^Dillard^Delmar^^^^^^^A^4^ISO^AM^
+RXE|^^^^20251030104853^^^^^|89^polio, NOS^HL70292^^^|479.00|3577.00|ID667993^^DefaultName^ID632455^^DefaultName|||^^^^P^^^^^^^CA^^USA^^||6812.00|ID543176^^DefaultName^ID925931^^|64|ID348635^Bolton^Mack^^^^^^^L^3^ISO^SS^|ID580166^Mccarthy^Cody^^^^^^^L^1^M10^BR^||54|2.5 mg/1||951^capsules||ID371324^^DefaultName^ID703553^^|||ID321752^^^ID944046^^||ID679610^^^ID200056^^DefaultName|ID226274^^DefaultName^ID700380^^DefaultName||ID465096^^DefaultName^ID793218^^|AD
+RXR|IC^Intracardiac^HL70162^^^|||DU^Dust^HL70165^^^
+RXC|A|ID631834^^DefaultName^ID296496^^DefaultName|3326.00|ID773140^^^ID822126^^DefaultName|40 mg/1|ID431010^^DefaultName^ID309270^^
+CTI|ID692313^^^|^^DefaultName^ID710095^^DefaultName|ID242406^^DefaultName^ID841869^^DefaultName

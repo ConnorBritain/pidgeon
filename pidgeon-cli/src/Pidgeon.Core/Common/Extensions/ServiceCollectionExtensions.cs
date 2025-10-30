@@ -334,6 +334,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.ICompositeAwareResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.IdentifierCoherenceResolver>();
 
+        // Priority 76: Range coherence resolver (CQ/CM_RANGE/DR with coherent values)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.ICompositeAwareResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.RangeCoherenceResolver>();
+
         // Priority 80: Demographic tables (realistic patient data)
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.DemographicFieldResolver>();
