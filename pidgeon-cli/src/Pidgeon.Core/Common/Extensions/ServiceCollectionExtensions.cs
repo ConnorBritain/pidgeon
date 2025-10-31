@@ -91,6 +91,9 @@ public static class ServiceCollectionExtensions
         // Register procedural analysis engine for enhanced diff analysis
         services.AddProceduralAnalysisEngine();
 
+        // Register clinical scenario system for clinically coherent message generation
+        services.AddClinicalScenarioSystem();
+
         return services;
     }
 
@@ -397,6 +400,22 @@ public static class ServiceCollectionExtensions
         // Register vaccine data source
         services.AddSingleton<Pidgeon.Core.Application.Interfaces.Data.IVaccineDataSource,
                              Pidgeon.Core.Infrastructure.Data.EmbeddedVaccineDataSource>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the clinical scenario system for clinically coherent message generation.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddClinicalScenarioSystem(this IServiceCollection services)
+    {
+        // Register scenario repository as singleton (shared across all requests)
+        services.AddSingleton<Pidgeon.Core.Application.Services.Clinical.ClinicalScenarioRepository>();
+
+        // Register scenario coordinator as scoped (one per message generation)
+        services.AddScoped<Pidgeon.Core.Application.Services.Clinical.ClinicalScenarioCoordinator>();
 
         return services;
     }
