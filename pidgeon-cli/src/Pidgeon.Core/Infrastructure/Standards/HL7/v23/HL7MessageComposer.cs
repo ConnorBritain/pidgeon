@@ -584,13 +584,14 @@ public class HL7MessageComposer
     {
         var fieldName = component.Name?.ToLowerInvariant() ?? "";
 
-        // XAD (Extended Address): Street, City, State, Zip are critical
+        // XAD (Extended Address): Street, City, State, Zip, AddressType are critical
         if (parentField.DataType == "XAD")
         {
             return fieldName.Contains("street") ||
                    fieldName.Contains("city") ||
                    fieldName.Contains("state") ||
-                   fieldName.Contains("zip") || fieldName.Contains("postal");
+                   fieldName.Contains("zip") || fieldName.Contains("postal") ||
+                   fieldName.Contains("address type") || component.Position == 7; // XAD.7 - Address Type (Table 0190)
         }
 
         // XPN (Extended Person Name): Family name, Given name are critical

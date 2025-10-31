@@ -31,6 +31,14 @@ public class ContactFieldResolver : IFieldValueResolver
         var fieldName = context.Field.Name?.ToLowerInvariant() ?? "";
         var description = context.Field.Description?.ToLowerInvariant() ?? "";
         var combined = $"{fieldName} {description}";
+        var dataType = context.Field.DataType?.ToUpperInvariant() ?? "";
+
+        // Skip numeric fields - they need numeric values, not formatted strings
+        // This prevents XTN.7 (Phone Number - NM) from getting "(999)999-9999" instead of just digits
+        if (dataType == "NM")
+        {
+            return null;
+        }
 
         try
         {
