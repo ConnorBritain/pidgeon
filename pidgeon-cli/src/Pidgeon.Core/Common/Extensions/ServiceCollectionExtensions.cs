@@ -341,6 +341,16 @@ public static class ServiceCollectionExtensions
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.ICompositeAwareResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.RangeCoherenceResolver>();
 
+        // Priority 77: Clinical scenario resolvers (diagnosis, medication, lab results)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.ClinicalDiagnosisResolver>();
+
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.ClinicalMedicationResolver>();
+
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.ClinicalLabResultResolver>();
+
         // Priority 80: Demographic tables (realistic patient data)
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.DemographicFieldResolver>();

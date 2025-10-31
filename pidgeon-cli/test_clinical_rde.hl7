@@ -1,0 +1,12 @@
+MSH|^~\&|PIDGEON^^L|PIDGEON_FACILITY|TARGET^^L|TARGET_FACILITY|20251031115451||RDE^O01|224231|P|2.3||||PRV38524|USA|8859/6|de^German^ISO639^^^
+NTE|1||No additional comments
+PID|1|ID321073^1^M11^^VS^|ID909720^1^M10^^MA^||Walters|Sheppard||F|Savage|2028-9|||(338)668-4873^^BP^^USA^Miami^(481)305-3135^56^|(505)295-3255^PRN^^^USA^Boston^(355)836-7008^^|en^English^ISO639^^^|W||ID395758^6^M11^^AM^|984-93-3747|^AZ^20251031|ID873191^3^ISO^^SS^||N|||N|ID751738^^^ID547446^^DefaultName|||N
+PD1|S|M|Community Medical Center^L^753054^9^M10^^AM^|ID782061^Hampton^Darold^^^^^^^C^5^M11^DI^|F||04|03|N|||Y
+NTE|1|O|No additional comments
+GT1|1|ID840099^1^M10^^MR^|Ashley|Faulkner||(777)875-6826^^FX^^USA^Los Angeles^(434)759-7037^^|(264)510-8386^^BP^^^Los Angeles^(795)345-7773^^||SIB||PAR|984-93-3747||20251031||Dillard|789 Elm Drive^^Phoenix^WA^85001^^^^^|(278)991-3582^^MD^^USA^Philadelphia^(776)482-2133^41^|ID204017^3^ISO^^AN^|P|University Medical Center^SL^563330^2^ISO^^RR^||ID780517^^^ID390273^^||N|ID613680^^DefaultName^ID505266^^|USA^USA^CAN^CHN^MEX^CAN|fr|ID295915^9^ISO^^RR^|A|20251031|||||es^Spanish^ISO639^^^||ID493053^^DefaultName^ID808097^^|N|N||||M|Barr|(590)282-5592^PRN^CP^^USA^^(938)890-3435^99^|ID157525^^DefaultName^ID551502^^|SPO|||Community Medical Center^SL^228541^0^ISO^^MC^||U|O^20251031115451|2028-9
+AL1|1|MA|ID378637^^^ID975870^^|||
+ORC|CR|ID212898^^^|ID373987^^^|ID766532^^^|A|R|^^^20251031115451^^^^^^|ORD932999^||ID826315^Mccarthy^Frances^^^^^^^D^8^M10^DS^|ID309591^Navarro^Dayna^^^^^^^C^0^M10^DN^|ID808730^Hayes^Ray^^^^^^^O^X^M11^MS^|^^^^^^^^Main Building||Sat|03^03^01^^^|ID643751^^DefaultName^ID702569^^|ID771807^^^ID398532^^DefaultName|ID204498^Barr^Forest^^^^^^^L^6^M11^DN^
+RXE|^^^^^^^^^|05^measles^HL70292^^^|4287.00||ID472900^^DefaultName^ID416168^^||ID904563^^DefaultName^ID615693^^DefaultName|^^^^^^^^321 Pine Road^^^AZ^98101^^^|T|3822.00|ID873193^^^ID280924^^DefaultName|46|ID286630^Sheppard^Von^^^^^^^L^7^M11^PT^|ID488936^Price^Sadie^^^^^^^M^6^M10^MS^||58|12.5-25mg daily||703^L|Y||||ID913528^^DefaultName^ID540094^^|325mg loading, then 81mg daily||ID987447^^DefaultName^ID125785^^|33|ID738482^^DefaultName^ID197466^^|AD
+RXR|PO^Oral^HL70162^^^|||PT^Pain^HL70165^^^
+RXC|B|ID754142^^DefaultName^ID724072^^|3121.00|^^DefaultName^ID797866^^|5-10mg daily|ID322828^^^ID928207^^DefaultName
+CTI|ID445442^^^|ID513704^^DefaultName^ID959434^^DefaultName|
