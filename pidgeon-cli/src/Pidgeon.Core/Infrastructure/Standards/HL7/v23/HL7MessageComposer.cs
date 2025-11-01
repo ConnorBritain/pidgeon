@@ -13,6 +13,16 @@ using Pidgeon.Core.Services.FieldValueResolvers;
 
 namespace Pidgeon.Core.Infrastructure.Standards.HL7.v23;
 
+/// <summary>
+/// Semantic importance of composite components for realistic data generation.
+/// Determines population probability: Critical=95%, Important=50%, Optional=20%
+/// </summary>
+internal enum ComponentImportance
+{
+    Critical,   // Core fields needed for realistic data (Street, City, Name)
+    Important,  // Commonly populated fields that add realism (Suite, Email, Middle name)
+    Optional    // Rarely used fields (Census Tract, Other designation)
+}
 
 /// <summary>
 /// Completely data-driven HL7 message composer that generates any HL7 v2.3 message
@@ -364,8 +374,14 @@ public class HL7MessageComposer
                     if (compositeResult != null)
                     {
                         // Resolver handled it - build composite string from component dictionary
+                        // Use the max of JSON component count and resolver's component count
+                        // (Some data types like XPN have incomplete JSON definitions)
+                        var maxComponentPosition = compositeResult.Keys.Any()
+                            ? Math.Max(dataTypeResult.Value.Components.Count, compositeResult.Keys.Max())
+                            : dataTypeResult.Value.Components.Count;
+
                         var resolvedComponents = new List<string>();
-                        for (int i = 1; i <= dataTypeResult.Value.Components.Count; i++)
+                        for (int i = 1; i <= maxComponentPosition; i++)
                         {
                             resolvedComponents.Add(compositeResult.ContainsKey(i) ? compositeResult[i] : string.Empty);
                         }
@@ -527,22 +543,21 @@ public class HL7MessageComposer
         SegmentGenerationContext context,
         GenerationOptions options)
     {
-        // Handle optional components with semantic probability
+        // Handle optional components with 3-tier semantic probability
         if (component.Optionality == "O")
         {
-            // Critical components (address core, name core, ID core) - 5% skip rate
-            // These are technically optional but semantically required for realistic data
-            if (IsCriticalComponent(component, parentField))
+            var importance = GetComponentImportance(component, parentField);
+
+            var shouldSkip = importance switch
             {
-                if (_random.NextDouble() > 0.95)
-                    return string.Empty;
-            }
-            else
-            {
-                // Truly optional components (address line 2, suffix, etc.) - 40% skip rate
-                if (_random.NextDouble() > 0.6)
-                    return string.Empty;
-            }
+                ComponentImportance.Critical => _random.NextDouble() > 0.95,  // 95% populated
+                ComponentImportance.Important => _random.NextDouble() > 0.50, // 50% populated
+                ComponentImportance.Optional => _random.NextDouble() > 0.20,  // 20% populated
+                _ => _random.NextDouble() > 0.20
+            };
+
+            if (shouldSkip)
+                return string.Empty;
         }
 
         // Create a pseudo-field from component for resolver chain
@@ -577,53 +592,101 @@ public class HL7MessageComposer
     }
 
     /// <summary>
-    /// Determines if a composite component is "semantically critical" - technically optional
-    /// but needed for realistic data generation. Critical components get 5% skip rate vs 40%.
+    /// Determines the semantic importance of a composite component for realistic data generation.
+    /// Three tiers: Critical (95% populated), Important (50% populated), Optional (20% populated)
     /// </summary>
-    private bool IsCriticalComponent(DataTypeComponent component, SegmentField parentField)
+    private ComponentImportance GetComponentImportance(DataTypeComponent component, SegmentField parentField)
     {
         var fieldName = component.Name?.ToLowerInvariant() ?? "";
 
-        // XAD (Extended Address): Street, City, State, Zip, AddressType are critical
+        // XAD (Extended Address)
         if (parentField.DataType == "XAD")
         {
-            return fieldName.Contains("street") ||
-                   fieldName.Contains("city") ||
-                   fieldName.Contains("state") ||
-                   fieldName.Contains("zip") || fieldName.Contains("postal") ||
-                   fieldName.Contains("address type") || component.Position == 7; // XAD.7 - Address Type (Table 0190)
+            // Critical (95%): Core address components
+            if (fieldName.Contains("street") || fieldName.Contains("city") ||
+                fieldName.Contains("state") || fieldName.Contains("zip") || fieldName.Contains("postal") ||
+                fieldName.Contains("address type") || component.Position == 7)
+                return ComponentImportance.Critical;
+
+            // Important (50%): Suite/apt, country
+            if (fieldName.Contains("other designation") || component.Position == 2 ||
+                fieldName.Contains("country") || component.Position == 6)
+                return ComponentImportance.Important;
+
+            // Optional (20%): Census tract, county, other geographic
+            return ComponentImportance.Optional;
         }
 
-        // XPN (Extended Person Name): Family name, Given name are critical
+        // XPN (Extended Person Name)
         if (parentField.DataType == "XPN")
         {
-            return fieldName.Contains("family") ||
-                   fieldName.Contains("given") ||
-                   fieldName.Contains("first");
+            // Critical (95%): Core name components
+            if (fieldName.Contains("family") || fieldName.Contains("given") || fieldName.Contains("first"))
+                return ComponentImportance.Critical;
+
+            // Important (50%): Middle name/initial, prefix, suffix
+            if (fieldName.Contains("middle") || component.Position == 3 ||
+                fieldName.Contains("prefix") || component.Position == 4 ||
+                fieldName.Contains("suffix") || component.Position == 5)
+                return ComponentImportance.Important;
+
+            // Optional (20%): Degree, name type code, validity range
+            return ComponentImportance.Optional;
         }
 
-        // CX (Extended Composite ID): First component (the actual ID) is critical
+        // CX (Extended Composite ID)
         if (parentField.DataType == "CX")
         {
-            return component.Position == 1 ||
-                   fieldName.Contains("id") && !fieldName.Contains("check");
+            // Critical (95%): ID value, check digit, check digit scheme
+            if (component.Position == 1 || component.Position == 2 || component.Position == 3 ||
+                (fieldName.Contains("id") && !fieldName.Contains("assigning")) ||
+                fieldName.Contains("check digit"))
+                return ComponentImportance.Critical;
+
+            // Important (50%): Assigning authority, identifier type
+            if (component.Position == 4 || component.Position == 5 ||
+                fieldName.Contains("assigning authority") || fieldName.Contains("identifier type"))
+                return ComponentImportance.Important;
+
+            // Optional (20%): Assigning facility
+            return ComponentImportance.Optional;
         }
 
-        // XTN (Extended Telecommunication): Number itself is critical
+        // XTN (Extended Telecommunication)
         if (parentField.DataType == "XTN")
         {
-            return component.Position == 1 ||
-                   fieldName.Contains("number");
+            // Critical (95%): Phone number, use code, equipment type
+            if (component.Position == 1 || component.Position == 2 || component.Position == 3 ||
+                (fieldName.Contains("telephone") && !fieldName.Contains("use") && !fieldName.Contains("equipment")))
+                return ComponentImportance.Critical;
+
+            // Important (50%): Email, area code
+            if (fieldName.Contains("email") || component.Position == 4 ||
+                fieldName.Contains("area") || component.Position == 6)
+                return ComponentImportance.Important;
+
+            // Optional (20%): Country code, extension, any text
+            return ComponentImportance.Optional;
         }
 
-        // CE/CWE (Coded Element): Identifier and Text are critical
+        // CE/CWE (Coded Element): Identifier and Text are critical, alternates are important
         if (parentField.DataType == "CE" || parentField.DataType == "CWE")
         {
-            return component.Position <= 2 || // First two components (ID and text)
-                   fieldName.Contains("identifier") || fieldName.Contains("text");
+            // Critical (95%): Primary identifier and text
+            if (component.Position <= 2 || fieldName.Contains("identifier") || fieldName.Contains("text"))
+                return ComponentImportance.Critical;
+
+            // Important (50%): Coding system, alternate codes
+            if (component.Position == 3 || fieldName.Contains("coding system") ||
+                fieldName.Contains("alternate"))
+                return ComponentImportance.Important;
+
+            // Optional (20%): Rarely used alternate system fields
+            return ComponentImportance.Optional;
         }
 
-        return false;
+        // Default: Optional (20% population)
+        return ComponentImportance.Optional;
     }
 
     /// <summary>
@@ -945,10 +1008,96 @@ public class HL7MessageComposer
     private string GenerateRandomId() => _random.Next(100000, 999999).ToString();
     private string GenerateRandomRoom() => $"{_random.Next(100, 999)}";
     private string GenerateRandomBed() => $"{(char)('A' + _random.Next(0, 4))}";
+
+    #region Temporal Coherence
+
+    /// <summary>
+    /// Defines temporal relationships between HL7 fields for realistic timestamp generation.
+    /// Maps target field → (anchor field, min delta, max delta).
+    /// </summary>
+    private static readonly Dictionary<string, (string AnchorField, TimeSpan MinDelta, TimeSpan MaxDelta)> TemporalRelationships = new()
+    {
+        // PV1.44 (Admit Date/Time) should match EVN.2 (Event Occurred) within a few minutes
+        ["PV1.44"] = ("EVN.2", TimeSpan.Zero, TimeSpan.FromMinutes(5)),
+
+        // DG1.5 (Diagnosis Date/Time) should be within 0-48 hours after admission
+        ["DG1.5"] = ("EVN.2", TimeSpan.Zero, TimeSpan.FromHours(48)),
+
+        // OBX.14 (Observation Date/Time) should be within 0-24 hours after admission
+        ["OBX.14"] = ("EVN.2", TimeSpan.Zero, TimeSpan.FromHours(24)),
+
+        // MSH.7 (Message Date/Time) is typically "now" - same as event or up to 1 hour after
+        ["MSH.7"] = ("EVN.2", TimeSpan.Zero, TimeSpan.FromHours(1)),
+
+        // ORC.9 (Order Date/Time) should be within encounter timespan
+        ["ORC.9"] = ("EVN.2", TimeSpan.Zero, TimeSpan.FromHours(24)),
+
+        // RXE.32 (Original Order Date/Time) should match or precede current order
+        ["RXE.32"] = ("ORC.9", TimeSpan.FromHours(-24), TimeSpan.Zero),
+    };
+
+    /// <summary>
+    /// Gets the temporal anchor timestamp for a field, if one exists.
+    /// Returns the anchor timestamp and relationship definition.
+    /// </summary>
+    private (DateTime? AnchorTime, (string AnchorField, TimeSpan MinDelta, TimeSpan MaxDelta)? Relationship)
+        GetTemporalAnchor(string fieldPath, SegmentGenerationContext context)
+    {
+        // Check if this field has a defined temporal relationship
+        if (!TemporalRelationships.TryGetValue(fieldPath, out var relationship))
+            return (null, null);
+
+        // Try to find the anchor timestamp in the context
+        if (context.GeneratedTimestamps.TryGetValue(relationship.AnchorField, out var anchorTime))
+        {
+            return (anchorTime, relationship);
+        }
+
+        // Special case: If anchor is EVN.2, use EncounterStartTime if available
+        if (relationship.AnchorField == "EVN.2" && context.EncounterStartTime.HasValue)
+        {
+            return (context.EncounterStartTime.Value, relationship);
+        }
+
+        return (null, relationship);
+    }
+
+    /// <summary>
+    /// Generates a timestamp relative to an anchor time with realistic variation.
+    /// </summary>
+    private DateTime GenerateRelativeTimestamp(DateTime anchor, TimeSpan minDelta, TimeSpan maxDelta)
+    {
+        // Calculate random delta within the specified range
+        var deltaRange = maxDelta - minDelta;
+        var randomDelta = TimeSpan.FromSeconds(_random.NextDouble() * deltaRange.TotalSeconds);
+        var actualDelta = minDelta + randomDelta;
+
+        return anchor.Add(actualDelta);
+    }
+
+    /// <summary>
+    /// Records a generated timestamp in the context for future field references.
+    /// </summary>
+    private void RecordGeneratedTimestamp(string fieldPath, DateTime timestamp, SegmentGenerationContext context)
+    {
+        context.GeneratedTimestamps[fieldPath] = timestamp;
+
+        // If this is EVN.2 and we don't have an encounter start time yet, set it as the anchor
+        if (fieldPath == "EVN.2" && !context.EncounterStartTime.HasValue)
+        {
+            // Use 'with' to create a new record instance with updated EncounterStartTime
+            // Note: This doesn't mutate the existing context, but the caller should use the returned context
+            // For now, we'll just log this - actual implementation needs context to be mutable or returned
+            _logger.LogDebug("Generated EVN.2 timestamp as encounter anchor: {Timestamp}", timestamp);
+        }
+    }
+
+    #endregion
 }
 
 /// <summary>
 /// Context object for segment generation containing all available clinical data.
+/// Includes temporal coherence tracking to ensure realistic timestamp relationships.
 /// </summary>
 public record SegmentGenerationContext(
     Patient Patient,
@@ -961,5 +1110,17 @@ public record SegmentGenerationContext(
     /// Gets the segment code being generated (set by generation process).
     /// </summary>
     public string SegmentCode { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Tracks generated timestamps by field path (e.g., "EVN.2", "PV1.44") for temporal coherence.
+    /// Enables subsequent fields to generate timestamps relative to anchors.
+    /// </summary>
+    public Dictionary<string, DateTime> GeneratedTimestamps { get; init; } = new();
+
+    /// <summary>
+    /// Primary temporal anchor for the encounter (typically EVN.2 - Event Occurred).
+    /// Other timestamps are generated relative to this anchor.
+    /// </summary>
+    public DateTime? EncounterStartTime { get; init; }
 };
 

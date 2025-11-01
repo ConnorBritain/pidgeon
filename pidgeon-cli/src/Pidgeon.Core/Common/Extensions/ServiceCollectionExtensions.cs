@@ -321,6 +321,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.SemanticPathResolver>();
 
+        // Priority 92: Temporal coherence (timestamp relationships: EVN.2 ≈ PV1.44, DG1.5 within encounter)
+        // Registered as both IFieldValueResolver AND ICompositeAwareResolver (TS is composite)
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.TemporalCoherenceResolver>();
+        services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.ICompositeAwareResolver,
+                          Pidgeon.Core.Services.FieldValueResolvers.TemporalCoherenceResolver>();
+
         // Priority 90: HL7 specific fields (MSH fields, message structure)
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.IFieldValueResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.HL7SpecificFieldResolver>();
@@ -332,6 +339,7 @@ public static class ServiceCollectionExtensions
         // Priority 82: Composite-aware coded element resolver (CE/CF semantic coherence)
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.ICompositeAwareResolver,
                           Pidgeon.Core.Services.FieldValueResolvers.CodedElementResolver>();
+
 
         // Priority 78: Identifier coherence resolver (CX/EI/XCN/XON with check digits)
         services.AddScoped<Pidgeon.Core.Services.FieldValueResolvers.ICompositeAwareResolver,

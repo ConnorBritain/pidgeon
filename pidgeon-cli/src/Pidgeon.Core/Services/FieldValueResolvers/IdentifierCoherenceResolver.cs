@@ -50,7 +50,7 @@ public class IdentifierCoherenceResolver : ICompositeAwareResolver
     }
 
     public bool CanHandleComposite(string dataTypeCode)
-        => dataTypeCode is "CX" or "EI" or "XCN" or "XON";
+        => dataTypeCode is "CX" or "EI" or "XCN" or "XON" or "XPN";
 
     public async Task<Dictionary<int, string>?> ResolveCompositeAsync(
         SegmentField parentField,
@@ -65,6 +65,7 @@ public class IdentifierCoherenceResolver : ICompositeAwareResolver
                 "EI" => await ResolveEIAsync(parentField, context),
                 "XCN" => await ResolveXCNAsync(parentField, context),
                 "XON" => await ResolveXONAsync(parentField, context),
+                "XPN" => await ResolveXPNAsync(parentField, context),
                 _ => null
             };
         }
@@ -203,6 +204,32 @@ public class IdentifierCoherenceResolver : ICompositeAwareResolver
             { 6, string.Empty },            // XON.6: Assigning Authority
             { 7, identifierType },          // XON.7: Identifier Type Code
             { 8, string.Empty }             // XON.8: Assigning Facility ID
+        };
+    }
+
+    /// <summary>
+    /// Resolves XPN (Extended Person Name).
+    /// Structure: FamilyName^GivenName^MiddleName^Suffix^Prefix^Degree...
+    /// </summary>
+    private async Task<Dictionary<int, string>> ResolveXPNAsync(SegmentField parentField, FieldResolutionContext context)
+    {
+        // Get realistic names from demographic data source
+        var familyName = await _demographicDataSource.GetRandomLastNameAsync();
+        var givenName = _random.Next(2) == 0
+            ? await _demographicDataSource.GetRandomMaleFirstNameAsync()
+            : await _demographicDataSource.GetRandomFemaleFirstNameAsync();
+
+        return new Dictionary<int, string>
+        {
+            { 1, familyName },      // XPN.1: Family Name
+            { 2, givenName },       // XPN.2: Given Name
+            { 3, string.Empty },    // XPN.3: Middle Name (will be handled by 3-tier probability)
+            { 4, string.Empty },    // XPN.4: Suffix (will be handled by 3-tier probability)
+            { 5, string.Empty },    // XPN.5: Prefix (will be handled by 3-tier probability)
+            { 6, string.Empty },    // XPN.6: Degree (will be handled by 3-tier probability)
+            { 7, string.Empty },    // XPN.7: Name Type Code (will be handled by 3-tier probability)
+            { 8, string.Empty },    // XPN.8: Name Representation Code
+            { 9, string.Empty }     // XPN.9: Name Context
         };
     }
 
